@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet"th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet"th:href="@{/resources/style/bootstrap-switch.css}" />
+<link type="text/css" rel="stylesheet"th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet"th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet"th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+
+<body>
+
+	<!-- start: HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top"
+		th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+				<!-- end: MAIN NAVIGATION MENU -->
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+
+			<div id="common-modal" class="modal datatable fade"
+				data-backdrop="static" role="dialog" tabindex="-1"
+				style="margin-top: 10px; position: relative;"
+				data-focus-on="input:first"></div>
+			<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+			<div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+
+			<div class="container">
+
+				<!-- start: PAGE HEADER -->
+				<div class="row"
+					th:replace="biz/warehouse/page-header :: pageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<div class="row btn-bar">
+
+					<a class="btn btn-default btn-sm active tooltips" id="new"
+						th:href="@{/warehouse/add}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_WEARHOUSE_ADD.id)"
+						data-placement="top" data-original-title="Add"> <i
+                            class="clip-plus-circle-2  btn-new"></i> Warehouse
+					</a> <a class="btn btn-default btn-sm active tooltips" id="save"
+						data-placement="top" data-original-title="Save"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_WEARHOUSE_ADD.id)"
+						onclick="document.getElementById('wearhouse_add_btn').click();">
+						<i class="clip-checkmark-circle-2 btn-save"></i> Save
+					</a> <a class="btn btn-default btn-sm active tooltips" id="delete"
+						th:href="@{/warehouse/delete(id=${warehouse.id})}"
+						th:disabled="${warehouse.id} == null ? 'disabled'"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_WEARHOUSE_ADD.id)"
+						data-placement="top" data-original-title="Delete"> <i
+						class=" clip-cancel-circle-2 btn-delete"></i> Delete
+					</a> <a class="btn btn-default btn-sm active tooltips" id="cancel"
+						th:href="@{/warehouse/}" data-placement="top"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_WEARHOUSE_ADD.id)"
+						data-original-title="Back"> <i class="clip-arrow-left-2 "></i>
+						Cancel
+					</a>
+
+				</div>
+
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+                                <i class="fa fa-university"></i> Warehouse
+							</div>
+
+							<div class="panel-body">
+
+								<div th:replace="template/messageview :: message"></div>
+
+								<form role="form" id="wearhouse_add_frm" th:action="@{/warehouse/save}" th:object="${warehouse}"
+									method="post">
+									<input type="hidden" id="id" name="id" th:field="*{id}" /> <input
+										type="hidden" id="type" name="type" th:value="${type}" /> <input
+										type="hidden" id="version" name="version"
+										th:field="*{version}" />
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+                                                <label class="control-label"> Business <span
+                                                        class="symbol required"></span>
+                                                </label>
+                                                <select th:field="*{businessId}" class="search-select"
+                                                        style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="business : ${businesses}"
+														th:value="${business.id}" th:text="${business.name}"></option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-md-6"
+											th:if="${type != T(com.neolith.focus.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
+											<div class="form-group">
+												<label class="control-label"> Site <span
+													class="symbol required"></span>
+												</label> <select id="siteId" th:field="*{siteId}"
+													class="search-select" style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="site : ${sites}" th:value="${site.id}"
+														th:text="${site.name}"></option>
+												</select>
+											</div>
+										</div>
+
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Name <span
+													class="symbol required"></span>
+                                                </label> <input type="text" placeholder="Insert the Warehouse Name"
+                                                                th:field="*{name}" class="form-control" id="name">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Code <span
+													class="symbol required"></span>
+                                                </label> <input type="text" placeholder="Insert the Warehouse Code"
+                                                                th:field="*{code}" class="form-control" id="code">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+                                                <label class="control-label">Address<span
+                                                        class="symbol required"></span></label> <textarea placeholder="Insert the Address Line 1"
+													id="address" name="address" class="form-control"
+													th:field="*{address}"></textarea>
+											</div>
+										</div>
+
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">City</label> <input type="text"
+													placeholder="Insert the City" th:field="*{city}"
+													class="form-control" id="city" name="city">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">Province</label> <input
+													type="text" placeholder="Insert the Province"
+													th:field="*{province}" class="form-control" id="province"
+													name="province">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+<!-- 										<div id="map-container-custome" class="col-md-6"></div>
+ -->										<div class="col-md-6">
+<!-- 										  <div class="form-group">
+										      <label class="control-label"> Longitude
+										      </label>
+										      <input type="number" class="form-control" id="longitude" th:field="*{locationDTO.longitude}" >
+										    </div>
+											<div class="form-group">
+											    <label class="control-label"> Latitude 
+											    </label>
+											    <input type="number"  class="form-control" id="latitude" th:field="*{locationDTO.latitude}" >
+											</div> -->
+											<div class="form-group">
+												<label for="form-field-select-3">Country</label> <select
+													id="countryId" th:field="*{countryId}"
+													class="search-select" style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="country : ${countryList}"
+														th:value="${country.id}" th:text="${country.name}"></option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+												<div class="form-group">
+												<label class="control-label">Postal Code</label> <input
+													type="text" placeholder="Insert the Postal Code"
+													th:field="*{postalCode}" class="form-control"
+													id="postalCode" name="postalCode">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+						            			<div class="form-group">
+								                    <label class="control-label">
+								                         Parent Warehouse Category <span class="symbol required"></span>
+								                    </label>
+								                    <div class="input-group">
+								                        <input type="hidden" th:field="*{parentAssetCategoryId}" id="parentCategoryId">
+								                        <input type="text" th:field="*{parentAssetCategoryName}" readonly class="form-control" placeholder="Select Parent Warehouse Category" id="parentCategoryName">                     
+								                    </div>
+									            </div>
+										</div>
+										<div class="col-md-6">
+						            			<div class="form-group">
+								                    <label class="control-label">
+								                         Warehouse Category <span class="symbol required"></span>
+								                    </label>
+								                    <div class="input-group">
+								                        <input type="hidden" th:field="*{assetCategoryId}" id="warehouseCategoryId">
+								                        <input type="text" th:field="*{assetCategoryName}" readonly class="form-control" placeholder="Select Warehouse Category" id="warehouseCategoryName">                     
+								                    </div>
+									            </div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label class="control-label">Description</label>
+												<textarea placeholder="Insert the description" id="notes"
+													name="notes" class="form-control" th:field="*{description}"></textarea>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-12">
+											<div>
+												<span class="symbol required"></span>Required Fields
+												<hr>
+											</div>
+										</div>
+									</div>
+									<div class="row" style="visibility: hidden;">
+										<button id="wearhouse_add_btn" type="submit"></button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end: PAGE CONTENT-->
+			</div>
+		</div>
+		<!-- end: PAGE -->
+	</div>
+	<!-- end: MAIN CONTAINER -->
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/moment.min.js}"></script>
+
+	<script type="text/javascript"
+            th:src="@{/resources/script/app/biz/warehouse/init.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/add-view.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/datatable/dt-warehouse-category.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/modal/warehouse-category-add-modal.js}"></script>
+<!-- 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
+ -->	
+	
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+
+	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+<script th:inline="javascript">
+var categoryType  = [[${type}]];
+var locationDetails=[[${warehouse.locationDTO}]];
+</script>
+</body>
+
+</html>

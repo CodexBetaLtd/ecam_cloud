@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/fullcalendar.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/animationCounter.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dashboard.css}"/>
+
+<body>
+
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
+    
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+        <div class="navbar-content">
+        
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
+            
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i>
+                    <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+                
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            </div>
+            <!-- end: SIDEBAR -->
+            
+        </div>
+
+        <!-- start: PAGE -->
+        <div class="main-content">
+            <!-- <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div> -->
+            <div id="common-modal" class="modal fade" tabindex="-1" data-width="760" style="display: none;"></div>
+            <div class="container">
+                
+                <!-- start: PAGE HEADER -->
+                <div class="row" th:replace="dashboard/pageheader :: pageheader"></div>
+                <!-- end: PAGE HEADER -->
+                
+                <!-- start: PAGE CONTENT -->
+                <div class="row" th:replace="dashboard/summary :: summary"></div>
+                <!-- <div class="row" th:replace="dashboard/list :: list"></div> -->
+                <!-- end: PAGE CONTENT-->
+                
+            </div>
+        </div>
+        <!-- end: PAGE -->
+        
+    </div>
+    <!-- end: MAIN CONTAINER -->
+   
+    <!-- start: FOOTER -->
+   	<div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
+    
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+    <!-- end: MAIN JAVASCRIPTS -->
+    
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{resources/script/app/dashboard/index.js}"></script>
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/fullcalendar.min.js}"></script> 
+	<script type="text/javascript" th:src="@{/resources/script/libs/animationCounter.min.js}"></script> 
+	
+	<script type="text/javascript" th:src="@{/resources/script/libs/charts/jquery.flot.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/charts/jquery.flot.resize.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/charts/jquery.flot.categories.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/charts/jquery.flot.pie.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/charts/jquery.flot.canvas.js}"></script> 
+    <script type="text/javascript" th:src="@{/resources/script/libs/charts/Chart.min.js}"></script>  
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/dashboard/workordercomparison/workorder-comparison-chart.js}"></script>  
+
+    <script th:inline="javascript">
+    
+   	 	var woComparison = [[${woComparison}]];
+   	 	
+        jQuery(document).ready(function() {
+            Main.init();
+            Index.init();
+        });
+        
+    </script>
+
+</body>
+
+</html>

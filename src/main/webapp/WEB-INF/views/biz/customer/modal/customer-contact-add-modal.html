@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"> Customer Contact </h4>
+    </div>
+    
+    <div class="modal-body">
+    
+    	<form id="customer-contact-frm">
+    	
+	    	<input type="hidden" id="contactId" />
+	        <input type="hidden" id="contactVersion" />
+	        <input type="hidden" id="contactIndex" />
+	
+	        <div class="row">
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> Name <span class="symbol required"></span> </label>
+	                    <input type="text" placeholder="Insert the Name" id="contactName" name="contactName" class="form-control">
+	                </div>
+	            </div>
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> Designation <span class="symbol required"></span></label>
+	                    <input type="text" placeholder="Insert the Designation" id="contactDesignation" name="contactDesignation" class="form-control">
+	                </div>
+	            </div>
+	        </div>
+	        
+	        <div class="row">
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> Telephone <span class="symbol required"></span> </label>
+	                    <input type="text" placeholder="Insert the Telephone" id="contactTelephone" name="contactTelephone" class="form-control">
+	                </div>
+	            </div>
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> E Mail <span class="symbol required"></span></label>
+	                    <input type="text" placeholder="Insert the Email" id="contactEmail" name="contactEmail" class="form-control">
+	                </div>
+	            </div>
+	        </div>
+        
+        </form>
+        
+    </div>
+    
+    <div class="modal-footer">
+        <a type="button" class="btn btn-primary btn-sm" id="btn-add-customer-contact"> Add </a>
+        <a type="button" data-dismiss="modal" class="btn btn-blue btn-sm"> Close </a>
+    </div>
+
+</html>

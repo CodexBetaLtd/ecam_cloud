@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+	<div th:fragment="userSiteWithGroupsFragment" >
+
+		<div class="container">
+			<table class="table-hover">
+				<thead>
+					<tr>
+						<th> </th>
+						<th> </th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr th:each="userGroup : ${userSite.userGroupDTOList}">
+					<td> <input type="checkbox" th:field ="${userSite.assignedUserGroups}" th:value="${userGroup.id}" class="grey userGroupCls"> </td>
+					<td> <label class="control-label"> <span th:text="${userGroup.description}"></span> </label> </td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+    </div>
+</html>
+
+
+

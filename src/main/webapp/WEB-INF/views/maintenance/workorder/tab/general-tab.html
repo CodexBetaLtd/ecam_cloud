@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div th:fragment="generalTabFragment">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="form-group">
+				<label class="control-label"> Description </label>
+				<textarea th:field="*{description}" placeholder="Insert description about issue" class="form-control"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		
+		<div class="col-md-6">
+			<div class="form-group">
+				<label class="control-label"> Work Instructions </label>
+                <textarea th:field="*{instruction}" placeholder="Insert instrucation how to solve issue" class="form-control" rows="14"></textarea>
+			</div>
+		</div>
+		
+		<div class="col-md-6">
+		
+            <div class="row">
+				<div class="col-md-12">
+		            <div class="form-group">
+			            <label class="control-label"> Assigned To User <span class="symbol required"></span></label>
+			            <div class="input-group">
+			                <input type="hidden" th:field="*{requestedByUserId}">
+			                <input type="text" th:field="*{requestedByUserName}" readonly class="form-control" placeholder="Select a Assigned  User">
+			            </div>
+		            </div>
+	            </div>
+            </div>
+
+			<div class="row">
+				<div class="col-md-12">
+		            <div class="form-group">
+		                <label class="control-label"> Estimated Labor <span class="symbol required"></span></label>
+		                <input th:field="*{timeEstimatedHours}" type="text" placeholder="Insert Estimated Labor" class="form-control">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+		            <div class="form-group">
+			            <label class="control-label"> Completed By User </label>
+			            <div class="input-group">
+			                <input type="hidden" th:field="*{completedByUserId}">
+			                <input type="text" th:field="*{completedByUserName}" readonly class="form-control" placeholder="Select a Assigned  User">
+			            </div>
+		            </div>
+            	</div>
+            </div>
+
+			<div class="row">
+				<div class="col-md-12">
+		            <div class="form-group">
+		                <label class="control-label"> Actual Labor </label>
+		                <input th:field="*{timeSpentHours}" type="text" placeholder="Insert the Actual Labor" class="form-control">
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+		            <div class="form-group">
+						<label class="control-label"> Completed Date </label>
+						<div class="input-group" id="picker-container">
+		                    <input th:field="*{dateCompleted}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Specify a Completed Date">
+		                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+</html>

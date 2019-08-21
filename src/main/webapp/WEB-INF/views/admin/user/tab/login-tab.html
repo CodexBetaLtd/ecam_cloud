@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="userLoginTabFragment">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> User Name </label>
+                <input type="hidden" th:field="*{userCredentialDTO.id}">
+                <input th:field="*{userCredentialDTO.userName}" id="userName" name="userName" placeholder="Eg : Smith" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+        	<div class="passwordChange">
+	        	<label class="checkbox-inline">
+	        		<input  type="checkbox" th:field="*{changePassword}" value="" class="grey" id="changePassword" name="changePassword">
+	        		<span th:if="*{userCredentialDTO.id != null}"> Change Password</span>
+	        		<span th:unless="*{userCredentialDTO.id != null}"> Set Password</span>
+	        	</label>
+        	</div>
+            <div class="form-group">
+                <label class="control-label"> Password </label>
+                <input type="password" th:field="*{userCredentialDTO.password}" placeholder="XXXXXXXX" class="form-control" id="password" name="password">
+            </div>
+            <div class="form-group">
+                <label class="control-label"> Re-Password </label>
+                <input type="password" placeholder="XXXXXXXX" class="form-control" id="passwordAgain" name="passwordAgain"/>
+            </div>	
+        </div>
+    </div>
+</div>
+</html>

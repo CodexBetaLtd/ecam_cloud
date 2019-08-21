@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+<div th:fragment="facilityGeneralTabFragment">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+                    <label class="control-label">Address</label>
+                    <textarea placeholder="Insert the Address" id="address" name="address" class="form-control" th:field="*{address}"></textarea>
+                </div>			
+			</div>
+		</div>
+		<div class="row">
+		    <div class="col-md-6">
+		        <div class="form-group">
+		            <label class="control-label">City</label>
+		            <input type="text" placeholder="Insert the City" th:field="*{city}" class="form-control" id="city" name="city">
+		        </div>
+		    </div>
+		    <div class="col-md-6">
+		    	 <div class="form-group">
+		            <label class="control-label">Province</label>
+		            <input type="text" placeholder="Insert the Province" th:field="*{province}" class="form-control" id="province" name="province">
+		        </div>
+		    </div>
+		</div>
+		<div class="row">
+		    <div class="col-md-6">
+		        <div class="form-group">
+		            <label class="control-label">Postal Code</label>
+		            <input type="text" placeholder="Insert the Postal Code" th:field="*{postalCode}" class="form-control" id="postalCode" name="postalCode" >
+		        </div>
+		    </div>
+		    <div class="col-md-6">
+		        <div class="form-group">
+                    <label for="form-field-select-3">Country</label>
+                    <select id="countryId" th:field="*{countryId}" class="search-select" style="width: 100%;">
+						<option value="">&nbsp;</option>
+						<option th:each="country : ${countryList}" th:value="${country.id}" th:text="${country.name}"></option>
+					</select>
+		        </div>
+		    </div>
+		</div>	
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+                    <label class="control-label">Notes</label>
+                    <textarea placeholder="Insert the Notes" id="notes" name="notes" class="form-control" th:field="*{notes}"></textarea>
+                </div>			
+			</div>
+		</div>	
+	</div>
+</html>

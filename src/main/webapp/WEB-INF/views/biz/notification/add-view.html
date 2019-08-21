@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+
+
+<body>
+
+	<!-- start: HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top"
+		th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+			<div class="container">
+
+				<!-- start: PAGE HEADER -->
+                <div class="row" th:replace="biz/notification/common/page-header :: notificationPageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<form method="POST" th:action="@{/notification/save}" th:object="${notificationDTO}" id="frm_notification" role="form">
+
+					<div class="row btn-bar" >
+                        <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/notification/new}"
+                           sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_NOTIFICTION_ADD.id)"
+                           data-placement="top" data-original-title="Add">
+							<i class="clip-plus-circle-2  btn-new" ></i> New
+						</a>
+
+                        <button type="submit" class="btn btn-default btn-sm active tooltips" id="save"
+                                sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_NOTIFICTION_ADD.id)"
+                                data-placement="top" data-original-title="Save">
+
+							<i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Send</span>
+
+						</button>
+
+                        <a class="btn btn-default btn-sm active tooltips" id="delete"
+                           sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_NOTIFICTION_ADD.id)"
+                           th:disabled="${notificationDTO.id} == null ? 'disabled'" data-placement="top"
+                           data-original-title="Delete">
+							<i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+						</a>
+
+                        <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/notification/inbox}"
+                           sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_NOTIFICTION_ADD.id)"
+                           data-placement="top" data-original-title="Back">
+							<i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
+						</a>
+					</div>
+
+
+					<!-- start: PAGE CONTENT -->
+					<div class="row">
+						<div class="col-xs-12 col-sm-12 col-md-12">
+							<div class="panel panel-default">
+
+
+								<div class="panel-heading">
+									<i class="clip-bubble"></i> 
+									New Notification
+								</div>
+								<div class="panel-body">
+										<input type="hidden" th:field="*{id}" />
+										<input type="hidden" th:field="*{version}" />
+
+									<div id="stackable-datatable-modal" class="modal datatable fade"
+										 data-backdrop="static" role="dialog"
+										 tabindex="-1"
+										 data-focus-on="input:first"
+										 style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+										<div class="modal-content"></div>
+									</div>
+
+									<div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL')">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">
+													Business <span class="symbol required"></span>
+												</label>
+												<select th:field="*{businessId}" class="search-select"
+														style="width:100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="business : ${businesses}" th:value="${business.id}"
+															th:text="${business.name}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> TO <span class="symbol required"></span>
+												</label>
+												<br/>
+												<div class="input-group">
+													<input type="hidden" th:field="*{receivedUserId}"
+														   id="receivedUserId">
+                                                    <input type="text" th:field="*{receiverName}"
+                                                           id="receivedUserName" readonly>
+												</div>
+											</div>
+										</div>
+										</div>
+
+
+									<div class="row">
+											<div class="col-md-12">
+												<div class="form-group">
+													<label class="control-label"> Subject <span class="symbol required"></span>
+													</label> <input type="text" placeholder="Eg: Message Subject" id="subject"
+														th:field="*{subject}" class="form-control">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<div class="form-group">
+													<label class="control-label"> Content <span
+														class="symbol required"></span>
+													</label>
+													<textarea class="ckeditor" th:field="*{content}" placeholder="Eg: Message Body" id="content"> </textarea>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<div>
+													<span class="symbol required"></span> Required Fields
+													<hr>
+												</div>
+											</div>
+										</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- end: PAGE -->
+
+	<!-- </div> -->
+	<!-- end: MAIN CONTAINER -->
+
+
+
+
+
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript"
+			th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
+
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+		<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+
+    <!-- start: REQUIRED JS ; THIS PAGE ONLY -->
+	<script type="text/javascript" th:src="@{//cdn.ckeditor.com/4.8.0/standard/ckeditor.js}"></script>
+	<!--<script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>-->
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/notification/init.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/notification/add-view.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/notification/datatable/dt-users.js}"></script>
+	<!-- end: REQUIRED JS ; THIS PAGE ONLY -->
+
+
+</body>
+
+</html>

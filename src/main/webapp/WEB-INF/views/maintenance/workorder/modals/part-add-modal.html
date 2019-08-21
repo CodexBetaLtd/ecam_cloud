@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title"> Parts</h4>
+</div>
+
+<div class="modal-body">
+
+	<div id="select-pages-open-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+
+	<form id="part-add-frm" >  
+
+		<input type="hidden" id="woPartIndex">
+	    <input type="hidden" id="woPartId">
+	    <input type="hidden" id="woPartVersion">		
+	    <input type="hidden" id="woPartWorkOrderId">
+	
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+	                <label class="control-label"> Asset <span class="symbol required"></span> </label>
+	                <select id="woPartAssetId" name="woPartAssetId" class="search-select" style="width: 100%;"></select>
+				</div>
+			</div>
+			<div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Task <span class="symbol required"></span> </label>
+	                <select id="woPartTaskIndex" name="woPartTaskIndex" class="search-select" style="width: 100%;"></select>
+	            </div>
+	        </div>		
+		</div>
+	
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+	                <label class="control-label"> Stock Part (Asset's Part) <span class="symbol required"></span></label>
+					<div class="input-group">
+	                    <input type="hidden" id="woPartStockId" />
+	                    <input type="hidden" id="woPartPartId">
+	    				<input type="hidden" id="woPartLocation">
+						<input id="woPartPartName" name="woPartPartName" type="text" readonly />
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Estimated Quantity <span class="symbol required"></span></label>
+	                <input id="woPartEstimatedQuantity" name="woPartEstimatedQuantity" type="text" placeholder="Eg: 1.000" class="form-control" />
+				</div>
+			</div>
+		</div>
+	
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Actual Quantity </label>
+	                <input id="woPartActualQuantity" name="woPartActualQuantity" type="text" placeholder="Eg: 1.000" class="form-control"  />
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Remark </label>
+	                <input id="woPartRemark" name="woPartRemark" type="text" placeholder="Remarks" class="form-control"  />
+				</div>
+			</div>
+		</div>
+		
+	</form>
+</div>
+
+<div class="modal-footer">
+	<button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+	<button id="add-part-btn" type="button" class="btn btn-sm btn-blue" ><i class="clip-plus-circle-2"></i> Add </button>
+</div>
+
+</html>

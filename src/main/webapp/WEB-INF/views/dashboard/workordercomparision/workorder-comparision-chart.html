@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+	<div th:fragment="workorderComparisionChart">
+		<div class="section-header">
+			<h2> Work Order Comparison </h2>
+			<hr>
+		</div>
+		<div class="col-sm-12 col-md-4 center" >
+		<canvas id="previous" class="canvas doughnut" width="200px" height="200px"></canvas> 
+		</div>
+		<div class="col-sm-12 col-md-4 center" >
+			<canvas id="current" class="canvas doughnut" width="200px" height="200px"></canvas>
+		</div>
+		<div class="col-sm-12 col-md-4 center" >
+			<canvas id="next" class="canvas doughnut" width="200px" height="200px"></canvas> 
+		</div>
+	</div> 
+    
+</html>

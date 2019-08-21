@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.springframework.org/security/tags" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+		
+        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: auto; top: 50%; position: fixed;z-index:1050 !important;"></div>
+        	<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+            <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+        	
+        	<div class="container">
+        	
+			<div class="row" th:replace="admin/user/page-header :: userPageheader"></div>
+
+            <div class="btn-bar row">
+            
+                <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/userProfile/add}" data-placement="top"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_USERS_VIEW.id)"
+                   data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_USERS_VIEW.id)"
+                   onclick="document.getElementById('userAddBtn').click();"> <i class="clip-checkmark-circle-2 btn-save"></i> Save
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/userProfile/delete(id=${userDTO.id})}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_USERS_VIEW.id)"
+                   th:disabled="${userDTO.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/userProfile/}" data-placement="top"
+                   data-original-title="Back"> <i class="clip-arrow-left-2 "></i> Cancel
+                </a>
+
+            </div>
+
+            <!-- start: PAGE CONTENT -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">
+                            <i class="clip-user"></i> User - Create
+                        </div>
+                        <div class="panel-body">
+
+                            <div th:replace="template/messageview :: message"></div>                   			
+
+                            <form method="POST" th:action="@{/userProfile/save}" th:object="${userDTO}" id="userProfileForm">
+                                
+                                <input type="hidden" th:field="*{id}" id="userId" name="userId"/>
+                                <input type="hidden" th:field="*{version}"/>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Title </label>
+                                            <input type="text" placeholder="Eg: Mr." th:field="*{userTitle}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> User Level <span class="symbol required"></span> </label>
+                                            <select th:field="*{userLevel}" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="userLevel : ${userDTO.userLevelList}" th:value="${userLevel}" th:text="${userLevel.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Name <span class="symbol required"></span> </label>
+                                            <input type="text" placeholder="Eg:Peter" th:field="*{fullName}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="businessSelect" style="display:none">
+                                        <div class="form-group">
+                                            <label class="control-label"> Business <span class="symbol required"></span></label>
+                                            <select id="businessId" th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="business : ${businessList}" th:value="${business.id}" th:text="${business.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+								<div class="row">
+									<div class="col-md-6">
+							            <div class="form-group">
+							                <label class="control-label"> Job Title <span class="symbol required"></span></label>
+							                <div class="input-group">
+							                    <input type="hidden" id='jobTitleId' th:field="*{jobTitle}" >
+							                    <input type="text" id="jobTitleName" th:field="*{jobTitleName}" readonly class="form-control"  placeholder="Select a Job Title" >
+							                </div>
+							            </div>
+							        </div>
+							        <div class="col-md-6">
+							            <div class="form-group">
+							                <label class="control-label"> Skill Level <span class="symbol required"></span></label>
+							                <div class="input-group">
+							                    <input type="hidden" id='skillLevelId' th:field="*{skillLevel}" >
+							                    <input type="text" id="userSkillLevelName" th:field="*{skillLevelName}" readonly class="form-control"  placeholder="Select a User Skill Level" >
+							                </div>
+							            </div>
+							        </div>
+								</div>
+									<div class="row">
+                                  	<div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> User Address </label>
+                                            <textarea th:field="*{address}" placeholder="Eg:No.45,Colombo" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+									</div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="tabbable wrapper">
+
+                                            <ul id="myTab" class="nav nav-tabs tab-bricky list">
+                                                <li class="active"><a href="#usersGeneralTab" data-toggle="tab"> General </a></li>
+                                                <li><a href="#usersLoginTab" data-toggle="tab"> Login </a></li>
+                                                <li><a href="#usersContactTab" data-toggle="tab"> Contacts </a></li>
+                                                <li id="userSiteTab"><a href="#usersSiteTab" data-toggle="tab"> User Sites </a></li>
+                                                <li><a href="#usersSettingTab" data-toggle="tab"> Setting </a></li>
+                                                <li><a href="#usersNotificationTab" data-toggle="tab"> Notification </a></li>
+                                                <li><a href="#usersOtherTab" data-toggle="tab"> Other </a></li>
+                                                <li><a href="#usersCertificationTab" data-toggle="tab"> Certification </a></li>
+                                            </ul>
+
+                                            <div class="tab-content">
+
+                                                <div class="tab-pane in active" id="usersGeneralTab">
+                                                    <div th:replace="admin/user/tab/general-tab :: userGeneralTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersContactTab">
+                                                    <div th:replace="admin/user/tab/contacts-tab :: userContactsTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersLoginTab">
+                                                    <div th:replace="admin/user/tab/login-tab :: userLoginTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersSiteTab">
+                                                    <div th:replace="admin/user/tab/sites-tab :: userSitesTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersSettingTab">
+                                                    <div th:replace="admin/user/tab/setting-tab :: userSettingTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersNotificationTab">
+                                                    <div th:replace="admin/user/tab/notification-tab :: userNotificationTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersOtherTab">
+                                                    <div th:replace="admin/user/tab/other-tab :: userOtherTabFragment"></div>
+                                                </div>
+
+                                                <div class="tab-pane" id="usersCertificationTab">
+                                                    <div th:replace="admin/user/tab/certification-tab  :: userCertificationTabFragment"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="visibility: hidden;">
+                                    <button id="userAddBtn" type="submit"></button>
+                                </div>
+                        	</form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<!-- end: PAGE -->
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/ui-button/bootstrap-switch.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/add-view.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/tab/sites-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/tab/certification-tab.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/modal/site-add-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/modal/certification-add-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/modal/job-title-add-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/modal/skill-level-add-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/modal/certification-type-add-modal.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-certification-type.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-job-title.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-skill-level.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/add-view.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/home-view.js}"></script>
+
+
+<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script th:inline="javascript">
+
+	var sites = [];   
+	var userCertifications = [];
+	
+    var thymeLeafSites = [[${userDTO.userSiteDTOList}]];
+    var thymeLeafUserCredentials = [[${userDTO.userCredentialDTO}]];
+    var thymeLeafUserPassword = [[${generatePassword}]];
+    var themaleafUserGroup = [[${userGroupDTOList}]];
+    var thymeLeafUseCertifications = [[${userDTO.useCertificationDTOs}]];
+    
+</script>
+</body>
+</html>
+

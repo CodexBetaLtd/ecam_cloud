@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="itemTabFragment">
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-blue btn-sm active tooltips" id="btn-new-item"
+                    data-toggle="modal" data-placement="top" data-original-title="Add New Item">
+                <i class="clip-plus-circle-2 "></i> Items
+            </button>
+            <button th:if="${purchaseOrder.purchaseOrderstatus == T(com.neolith.focus.constants.PurchaseOrderStatus).DRAFT or 
+            		 purchaseOrder.purchaseOrderstatus == T(com.neolith.focus.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL }" 
+            		type="button" class="btn btn-blue btn-sm active tooltips" id="btn-new-rfq"
+                    data-toggle="modal" data-placement="top" data-original-title="Add New RFQ">
+                <i class="clip-plus-circle-2 "></i> Request Quote
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 table-scroll" style="padding-top: 15px;">
+            <table class="table table-striped table-bordered table-hover table-full-width" style="width:100%;" id="item-tbl">
+                <thead>
+	                <tr>
+	                    <th> #</th>
+	                    <th> Item</th>
+	                    <th> Quantity</th>
+	                    <th> Unit Price</th>
+	                    <th> Tax Rate(%)</th>
+	                    <th> Sub Total</th>
+	                    <th> RFQ</th>
+	                    <th> More</th>
+	                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+	   	<div class="col-md-12">
+	   		<div class="col-md-6"></div>
+	   		<div class="col-md-6">
+	   			<div class="col-md-9" align="right">
+	   				<span style="font-size: small;">Sub Total</span>
+	   			</div>
+	   			<div class="col-md-3" align="right">
+	   				<span style="font-size: small;" id="subTotal" >--.--</span>
+	   			</div>
+	   		</div>
+	   	</div>
+    </div>
+    <div class="row">
+	   	<div class="col-md-12">
+	   		<div class="col-md-6"></div>
+	   		<div class="col-md-6">
+	   			<div class="col-md-9" align="right">
+	   				<span style="font-size: small;">Additional Cost</span>
+	   			</div>
+	   			<div class="col-md-3" align="right">
+	   				<span style="font-size: small;" id="additionalCostTotal" >--.--</span>
+	   			</div>
+	   		</div>
+	   	</div>    
+    </div>
+    <div class="row">
+	   	<div class="col-md-12">
+	   		<div class="col-md-6"></div>
+	   		<div class="col-md-6">
+	   			<div class="col-md-9" align="right">
+	   				<span style="font-size: small;">Tax</span>
+	   			</div>
+	   			<div class="col-md-3" align="right">
+	   				<span style="font-size: small;" id="taxTotal" >--.--</span>
+	   			</div>
+	   		</div>
+	   	</div>
+    </div>
+    <div class="row">
+	   	<div class="col-md-12">
+	   		<div class="col-md-6"></div>
+	   		<div class="col-md-6">
+	   			<div class="col-md-9" align="right">
+	   				<span style="font-size: medium;font-weight: bold;">Total</span>
+	   			</div>
+	   			<div class="col-md-3" align="right">
+	   				<span style="font-size: medium;font-weight: bold;" id="total" >--.--</span>
+	   			</div>
+	   		</div>
+	   	</div>
+    </div>
+</div>
+</html>

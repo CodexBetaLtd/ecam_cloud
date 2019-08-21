@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"> Installation Confirmation </h4>
+</div>
+
+<div class="modal-body">
+
+    <div class="panel-body">
+        <div th:if="${ relatedApps != null && relatedApps.size() > 0 }" class="row">
+            <p> Following Related Apps going to subscribe with this application. </p>
+            <div th:each="app : ${relatedApps}">
+                <p th:text="${app.name}"></p>
+            </div>
+        </div>
+        <div class="row">
+            <p> Are you sure you want to subscribe for the App ? </p>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+    <button class="btn btn-blue btn-sm active tooltips" id="btn-app-install-btn" data-placement="top" data-original-title="Proceed">
+        <i class="clip-checkmark-circle-2" style="color: white"></i> Proceed
+    </button>
+</div>
+
+</html> 

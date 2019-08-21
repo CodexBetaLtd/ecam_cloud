@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.springframework.org/security/tags">
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+	<h4 class="modal-title">Add User Job Title</h4>
+</div>
+
+<div class="modal-body">
+
+	<!-- start: PAGE -->
+
+	<!-- start: PAGE CONTENT -->
+	<div class="row" style="margin-top: 15px">
+		<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div th:replace="template/messageview :: message"></div>
+						
+						<form th:action="@{/userjobtitle/jobTitlesave}" method="post" role="form" th:object="${userJobTitle}" id="userJobTitleForm">
+							
+							<input type="hidden" id="id" name="id" th:field="*{id}" /> 
+							<input type="hidden" id="version" name="version" th:field="*{version}" />
+							
+							<div class="row">
+								<div class="col-md-6" >
+                                    <div class="form-group">
+                                        <label class="control-label"> Business <span class="symbol required"></span></label>
+                                        <select id="businessId" th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                            <option value="">&nbsp;</option>
+                                            <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label"> Job Title <span class="symbol required"></span>
+										</label> 
+										<input type="text" class="form-control" id="jobtitle" name="jobtitle" th:field="*{jobTitle}" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label"> Description <span class="symbol required"></span>
+										</label> 
+										<input type="text" class="form-control" id="description" name="description" th:field="*{description}" >
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div>
+										<span class="symbol required"></span>Required Fields
+										<hr>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+		</div>
+	</div>
+
+	<!-- end: PAGE CONTENT-->
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-blue btn-sm active tooltips" id="jobTitleSave" data-placement="top" data-original-title="Save" >
+		<i class="clip-checkmark-circle-2"></i> Save
+	</button>
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+</div>
+</html>

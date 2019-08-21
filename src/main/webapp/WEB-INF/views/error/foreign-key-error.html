@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i>
+                <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+        </div>
+        <!-- end: SIDEBAR -->
+
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <ol class="breadcrumb">
+                        <li>
+                            <i class="clip-attachment-2"></i>
+                            <a href="#">
+                                Error
+                            </a>
+                        </li>
+                        <li class="active">
+                            Used Entity
+                        </li>
+                    </ol>
+                    <div class="page-header">
+                        <h2>Used Entity</h2>
+                    </div>
+                    <!-- end: PAGE TITLE & BREADCRUMB -->
+                </div>
+            </div>
+            <!-- end: PAGE HEADER -->
+            <!-- start: PAGE CONTENT -->
+            <div class="row">
+                <!-- start: 500 -->
+                <div class="col-sm-12 page-error">
+                    <div class="error-number bricky" style="font-size: 80px;">
+                        Used Entity
+                    </div>
+                    <div class="error-details col-sm-6 col-sm-offset-3">
+                        <h3>Entity Already Used By Other Entities.</h3>
+                        <p>
+                            Coudn't Delete. Please Remove RelationShip Data and Try Again....!!!
+                        </p>
+                        <a th:href="@{/dashboard}" class="btn btn-teal btn-return">
+                            Return home
+                        </a>
+                    </div>
+                </div>
+                <!-- end: 500 -->
+            </div>
+        </div>
+    </div>
+    <!-- end: PAGE -->
+
+</div>
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER --1
+   <div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<script>
+    jQuery(document).ready(function () {
+        Main.init();
+    });
+</script>
+</body>
+
+</html>

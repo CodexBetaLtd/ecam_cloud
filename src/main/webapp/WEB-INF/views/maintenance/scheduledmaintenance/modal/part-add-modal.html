@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">Add Parts</h4>
+		</div>
+
+        <div class="modal-body">
+
+            <div id="select-pages-open-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+
+			<form id="part-add-frm" >           
+            
+	            <input type="hidden" id="partIndex">
+	            <input type="hidden" id="partId">
+	            <input type="hidden" id="partPartId">
+	            <input type="hidden" id="partLocation">
+	            <input type="hidden" id="partVersion">
+	
+	            <div class="row">
+	            	<div class="col-md-6">
+			            <div class="form-group">
+			                <label class="control-label"> Asset <span class="symbol required"></span></label>
+			                <select id="partTaskAssetId" name="partTaskAssetId" class="search-select" style="width: 100%;"></select>
+			            </div>
+			        </div>
+	                <div class="col-md-6">
+	                    <div class="form-group">
+	                        <label class="control-label"> Task <span class="symbol required"></span> </label>
+	                        <select id="partTaskIndex" name="partTaskIndex" class="search-select" style="width: 100%;"></select>
+	                    </div>
+	                </div>	                
+	            </div>
+	            <div class="row"> 
+	            	<div class="col-md-6">
+	                    <div class="form-group">
+	                        <label class="control-label"> Parts <span class="symbol required"></span></label>
+	                        <div class="input-group">
+	                            <input type="hidden" id="partStockId">
+	                            <input id="partName" name="partName" type="text" readonly class="form-control" placeholder="Select a part">
+	                        </div>
+	                    </div>
+	                </div>  
+	            	<div class="col-md-6">
+	                    <div class="form-group">
+	                        <label class="control-label"> Suggested Quantity <span class="symbol required"></span></label>
+	                        <input id="partSuggestedQuantity" name="partSuggestedQuantity" type="text" placeholder="Eg: 1.000" class="form-control" >
+	                    </div>
+	                </div>             
+	                
+	            </div>
+	            
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-blue" id="add-part-btn" >Add </button>
+            <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+        </div>
+</html>

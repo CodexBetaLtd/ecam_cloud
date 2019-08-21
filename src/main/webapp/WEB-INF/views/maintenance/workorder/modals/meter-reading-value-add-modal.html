@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Meter Reading Value</h4>
+</div>
+<div class="modal-body">
+
+	<form id="meter-reading-value-add-frm">
+	
+	    <input type="hidden" id="meterReadingIndex">
+	    <input type="hidden" id="meterReadingId">
+	
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label">Meter Reading</label>
+	                <input type="text" class="form-control" id="meterReadingName" name="meterReadingName" readonly="readonly" >
+	            </div>
+	        </div>
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label">Meter Value</label>
+	                <input type="text" placeholder="Please Insert a Value" class="form-control" id="meterReadingValue" name="meterReadingValue">
+	            </div>
+	        </div>
+	    </div>
+	    
+	</form>
+
+</div>
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+    <button type="button" class="btn btn-blue" id="add-meter-reading-value-btn" >
+    	<i class="clip-plus-circle-2"></i>Add
+    </button>
+</div>
+
+</html>

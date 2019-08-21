@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+
+<div class="row" th:fragment="notificationPageheader">
+    <div class="col-sm-12">
+        <!-- start: BREADCRUMB -->
+        <ol class="breadcrumb" >
+         	<li class="active">Notification</li>
+	     	<li class="inActive" th:text="${folderType}"> </li>
+		</ol>
+		 <!-- end: BREADCRUMB -->
+		
+
+		 <!-- start: PAGE TITLE -->
+<!--        <div class="page-header">
+        	&lt;!&ndash;<h1 th:text="${titleNotification}"> </h1>&ndash;&gt;
+        	&lt;!&ndash;<h1 th:text="${titleNotification} > <small th:text="${smallNotification}> </small> </h1>&ndash;&gt;
+        	<h1 th:text="${folderType}"> <small> Notification Panel </small> </h1>
+        </div>-->
+         <!-- end: PAGE TITLE -->
+       
+    </div>
+</div>
+

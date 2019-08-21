@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js" >
+
+<div th:fragment="commonjs">
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery-ui.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-hover-dropdown.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.blockUI.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/icheck.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/perfect-scrollbar.jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.cookie.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/sweetalert.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/active-menu.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/colResizable-1.6.js}"></script>
+   
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/util/input-clear.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/util/scroll-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/accordion-col-resizable.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/main.js}"></script>
+
+    <script type="text/javascript">
+
+        $(window).load(function () {
+            $("#loader").fadeOut("slow");
+        });        
+
+    </script>
+</div> 
+
+<div th:fragment="commonjstables">
+	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.responsive.min.js}"></script>  
+	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.buttons.min.js}"></script> 
+	<script type="text/javascript" th:src="@{/resources/script/libs/buttons.colVis.min.js}"></script>   
+</div>

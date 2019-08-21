@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"> Task Group </h4>
+</div>
+
+<div class="modal-body">	
+
+	<div id="wo-task-group-add-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+        <div class="modal-content"></div>
+    </div>
+
+	<form id="task-group-add-frm">
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Asset <span class="symbol required"></span></label>
+					<select id="woTaskGroupAssetId" name="woTaskGroupAssetId" class="search-select" style="width: 100%;">
+					</select>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Task Group <span class="symbol required"></span></label>
+					<div class="input-group">
+						<input type="hidden" id="woTaskGroupId">
+						<input type="text" id="woTaskGroupName" name="woTaskGroupName" readonly>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table table-striped table-bordered table-hover table-full-width" style="width: 100%;" id="wo_task_group_task_list_tbl">
+					<thead>
+					<tr>
+						<th> #</th>
+						<th> Name</th>
+						<th> Description</th>
+						<th> Estimated Hour</th>
+						<th> More</th>
+					</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	
+	</form>
+
+</div>
+
+<div class="modal-footer">
+	<button id="add-task-group-btn" type="button" class="btn btn-sm btn-blue" >
+        <i class="fa fa-arrow-circle-right"></i> Add
+    </button>
+    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
+    
+</div>
+</html>

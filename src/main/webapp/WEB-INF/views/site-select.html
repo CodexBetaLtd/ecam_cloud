@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+
+<body class="login example2">
+
+	<div class="main-login col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+        <div class="logo">
+               <img th:src="@{/resources/images/ecam_logo.png}" class="login-focus-logo">       
+        </div>
+		<div class="box-login">
+			<form id="site-select-frm" class="form-register" th:action="@{/set-user-site}" method="post" role="form" >
+				
+				<h3 class="sign-in">Select Site</h3>
+	            <p>You have access on multiple sites. Please select one to continue.</p>	
+				
+				<fieldset>
+					<div class="form-group">
+						<label class="control-label"> Site / Facility </label>
+						<select id="siteId" name="siteId" class="search-select" style="width:100%;">
+							<option th:each="site : ${siteList}" th:value="${site.id}" th:text="${site.name}"></option>
+						</select>
+					</div>
+					<div class="form-actions">
+					    <a th:href="@{/logout}" class="btn btn-light-grey go-back">
+                            <i class="fa fa-circle-arrow-left"></i> Logout
+                        </a>
+						<button type="submit" class="btn btn-bricky pull-right">
+							Select <i class="fa fa-arrow-circle-right"></i>
+						</button>
+					</div>
+				</fieldset>
+				
+			</form>
+		</div>
+		<!-- end: REGISTER BOX -->
+		
+		<!-- start: COPYRIGHT -->
+		        <div class="row copy-write-img">
+				<img th:src="@{/resources/images/codex.png}" class="custom-footer-img center">
+			</div>
+		<div class="copyright">
+			<script>
+                document.write(new Date().getFullYear())
+            </script>
+			&copy; eCAM by CodexBeta.
+		</div>
+		<!-- end: COPYRIGHT -->
+	</div>
+
+	<div th:include="template/commonjs :: commonjs"></div>
+	
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/site-select.js}"></script>
+
+	<script>
+        jQuery(document).ready(function() {
+            Main.init();
+            SiteSelect.init();
+        });
+    </script>
+
+</body>
+</html>

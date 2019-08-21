@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            <!-- end: MAIN NAVIGATION MENU -->
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+    
+    	<!-- start : MODALS  -->
+		<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+		<!-- end : MODALS  -->
+
+        <div class="container">
+
+            <!-- start: PAGE HEADER -->
+            <div class="row" th:replace="maintenance/project/page-header :: pageheader"></div>
+            <!-- end: PAGE HEADER -->
+
+            <div class="row btn-bar">
+                <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/project/add}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_PART_ADD.id)"
+                   data-placement="top" data-original-title="Add">
+                    <i class="clip-plus-circle-2 btn-new"></i> New
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_PART_ADD.id)"
+                   data-original-title="Save" onclick="document.getElementById('project_add_btn').click();">
+                    <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs"> Save</span>
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/project/delete(id=${project.id})}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_PART_ADD.id)"
+                   th:disabled="${project.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete">
+                    <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs"> Delete</span>
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/project/}"
+                   data-placement="top" data-original-title="Back">
+                    <i class="clip-arrow-left-2 "></i> <span class="hidden-xs"> Cancel</span>
+                </a>
+            </div>
+            <!-- start: PAGE CONTENT -->
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="clip-stack-2 "></i> Project - Create
+                        </div>
+                        <div class="panel-body project-create-body">
+                            <div th:replace="template/messageview :: message"></div>
+
+                            <form role="form" id="project_add_frm" th:action="@{/project/save}" th:object="${project}"
+                                  method="post">
+
+                                <input type="hidden" th:field="*{id}"/>
+                                <input type="hidden" th:field="*{version}"/>
+
+                                <div class="row" style="visibility: hidden;">
+                                    <button id="project_add_btn" type="submit"></button>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Business <span class="symbol required"></span>
+                                            </label>
+                                            <select th:field="*{businessId}" class="search-select" style="width:100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="business : ${businesses}" th:value="${business.id}"
+                                                        th:text="${business.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Site <span class="symbol required"></span>
+                                            </label>
+                                            <select id="siteId" th:field="*{siteId}" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="site : ${sites}" th:value="${site.id}"
+                                                        th:text="${site.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                Name <span class="symbol required"></span>
+                                            </label>
+                                            <input type="text" placeholder="Please Type Work Order Name" class="form-control" th:field="*{name}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Description</label>
+                                            <textarea th:field="*{description}"
+                                                      placeholder="Insert description about the project"
+                                                      class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Notes</label>
+                                            <textarea th:field="*{notes}" placeholder="Insert Notes about the project"
+                                                      class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div>
+                                            <span class="symbol required"></span>Required Fields
+                                            <hr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="tabbable wrapper project-gen-tab">
+                                            <ul id="myTab" class="nav nav-tabs tab-bricky list">
+                                                <li class="active">
+                                                    <a href="#general_tab" data-toggle="tab"> General </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#schedule_tab" data-toggle="tab"> Schedule Maintenance </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#work_order_tab" data-toggle="tab"> Works Orders </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#technician_tab" data-toggle="tab"> Technicians </a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane in active" id="general_tab">
+                                                    <div th:replace="maintenance/project/tab/general-tab :: generalTabFragment"></div>
+                                                </div>
+                                                <div class="tab-pane" id="schedule_tab">
+                                                    <div th:replace="maintenance/project/tab/scheduledmaintenance-tab :: scheduledMaintenanceTableFragment"></div>
+                                                </div>
+                                                <div class="tab-pane" id="work_order_tab">
+                                                    <div th:replace="maintenance/project/tab/work-order-tab :: workOrderTableFragment"></div>
+                                                </div>
+                                                <div class="tab-pane" id="technician_tab">
+                                                    <div th:replace="maintenance/project/tab/technician-tab :: technicianTabFragment"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- end: PAGE CONTENT-->
+                        </div>
+                    </div>
+                </div>
+                <!-- end: PAGE -->
+            </div>
+            <!-- end: MAIN CONTAINER -->
+        </div>
+    </div>
+</div>
+
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/add-view.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/tab/scheduledmaintenance-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/tab/technician-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/tab/work-order-tab.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/modals/user-select-modal.js}"></script>
+
+<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script th:inline="javascript">
+
+    var projectId = [[${project.id}]];
+    var users = [];
+    var thymeLeafUsers = [[${project.users}]];    
+
+</script>
+</body>
+
+</html>

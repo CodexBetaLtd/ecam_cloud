@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" class="no-js">
+<!-- start: CSS REQUIRED FOR THIS PAGE ONLY -->
+<head th:include="template/commoncss :: commoncss"></head>
+
+
+<div th:fragment="editAccount">
+    <div>
+        <!-- start: PAGE CONTENT -->
+        <div th:replace="template/messageview :: message"></div>
+        <form role="form" id="myProfileForm" th:action="@{/profile/save} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" th:object="${userDTO}"method="post" enctype="multipart/form-data">
+            <input type="hidden" th:field="*{id}"/>
+            <input type="hidden" th:field="*{version}"/>
+            <input type="hidden" th:field="*{imagePath}">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Account Info</h3>
+                    <hr>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label class="control-label"> Title </label>
+                            <input type="text" th:field="*{userTitle}" placeholder="Eg:Mr." class="form-control" id="title" name="title">
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label class="control-label"> Full Name </label>
+                            <input type="text" th:field="*{fullName}" placeholder="Eg:Peter Clerk" class="form-control" id="fullname" name="fullname">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Address </label>
+                        <input type="text" th:field="*{address}" placeholder="Eg: No 50, Colombo" class="form-control" id="address" name="address">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label"> Email Address </label>
+                        <input type="email" th:field="*{emailAddress}" placeholder="user@example.com" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="form-field-mask-1"> Telephone 1
+                                <small
+                                        class="text-warning">(999) 999-9999
+                                </small>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"> <i class="fa fa-phone"></i> </span>
+                                <input type="text" th:field="*{telephone1}" id="form-field-mask-1" class="form-control input-mask-phone" name="phone1">
+                            </div>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="form-field-mask-2"> Telephone 2
+                                <small class="text-warning">(999) 999-9999</small>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"> <i class="fa fa-phone"></i> </span>
+                                <input type="text" th:field="*{telephone2}" id="form-field-mask-2" class="form-control input-mask-phone" name="phone1">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" th:field="*{changePassword}" value="" class="grey" id="changePassword" name="changePassword"> Change Password
+                        </label>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label class="control-label"> Current Password </label> 
+                            <input type="password" th:field="*{currentPassword}" placeholder="Current Password" class="form-control" name="passwordCurrent" id="passwordCurrent" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label class="control-label"> New Password </label>
+                            <input type="password" th:field="*{newPassword}" placeholder="New Password" class="form-control" name="password" id="password" disabled="disabled">
+                        </div>
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label class="control-label"> Confirm Password </label> 
+                            <input type="password" placeholder="Re-enter Password" class="form-control" id="passwordAgain" name="passwordAgain" disabled="disabled">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label> Image Upload </label>
+                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                            <div id="kv-avatar-errors-2" class="center-block" style="display: none"></div>
+                            <div class="kv-avatar ">
+                                <input id="avatar" name="avatar" type="file" class="file-loading">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        Required Fields
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <p>By clicking UPDATE, you are agreeing to the Policy and Terms
+                        &amp; Conditions.</p>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-teal btn-block" type="submit">Update <i class="fa fa-arrow-circle-right"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

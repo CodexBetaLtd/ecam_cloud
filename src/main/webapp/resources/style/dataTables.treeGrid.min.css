@@ -1,0 +1,4 @@
+.treegrid-control i, .treegrid-control-open i{cursor: pointer; font-size: 16px; padding-right: 2px;}
+.node-expand{color : #1fae4b;}
+.node-collapse{color : #1fae4b}
+.tree-node {padding:10px 5px;} 

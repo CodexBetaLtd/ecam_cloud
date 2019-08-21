@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="stockLedgerTabFragment">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered table-hover table-full-width" id="tbl_stock_ledger">
+                <thead>
+                <tr>
+                    <th class="first-col"><span th:text="#{global.symbol.count}"/></th>
+                    <th> Business</th>
+                    <th> Batch No</th>
+                    <th> Warehouse</th>
+                    <th> Previous Quantity</th>
+                    <th> Quantity Movement</th>
+                    <th> Current Quantity</th>
+                    <th> Price</th>
+                    <th> Date</th>
+                </tr>
+                </thead>
+                <tbody th:if="${not #lists.isEmpty(ledgerDTOs)}">
+                <tr th:each="ledger,iter : ${ledgerDTOs}">
+                    <td><span th:text="${iter.index+1}"></span></td>
+                    <td><span th:text="${ledger.businessName}"></span></td>
+                    <td><span th:text="${ledger.batchNo}"></span></td>
+                    <td><span th:text="${ledger.warehouseName}"></span></td>
+                    <td><span th:text="${ledger.beforeQuantity}"></span></td>
+                    <td><span th:text="${ledger.beforeQuantity}"></span></td>
+                    <td><span th:text="${ledger.quantityMovement}"></span></td>
+                    <td><b> <span th:text="${ledger.afterQuantity}"></span> </b>
+                    <td><b> <span th:text="${#dates.format(ledger.date, 'dd-MM-yyyy')}"></span> </b>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody th:if="${#lists.isEmpty(ledgerDTOs)}">
+                <tr>
+                    <td colspan="9" style="text-align:center;"><i>Table Data Not Found.</i></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</html>

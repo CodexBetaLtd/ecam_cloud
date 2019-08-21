@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Site/Facility </label>
+                <input id="txtSelectedSiteId" type="hidden" th:field="${assetDTO.id}">
+                <input th:field="${assetDTO.name}" class="form-control" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- start: USER SITE GROUP FRAGMENT-->
+    <div class="row" th:replace="general/dropdown/userSiteWithGroupListSelection :: userSiteWithGroupsFragment"></div>
+    <!-- end: USER SITE GROUP FRAGMENT-->
+
+</html>

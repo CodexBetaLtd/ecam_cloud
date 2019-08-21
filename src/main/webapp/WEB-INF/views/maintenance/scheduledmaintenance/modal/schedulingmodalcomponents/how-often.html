@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div th:fragment="howOften">
+	<div class=" panel panel-default">
+		<div class="panel-body">
+			<label class="radio-inline"> 
+				<input type="radio" id="hourlyRadioBtn" value="HOURLY" name="ttOccurenceType" class="grey" checked="checked"> Hourly
+			</label> 
+			<label class="radio-inline"> 
+				<input type="radio" id="dailyRadioBtn" value="DAILY" name="ttOccurenceType" class="grey"> Daily
+			</label> 
+			<label class="radio-inline"> 
+				<input type="radio" id="weeklyRadioBtn" value="WEEKLY" name="ttOccurenceType" class="grey"> Weekly
+			</label> 
+			<label class="radio-inline" > 
+				<input type="radio" id="monthlyRadioBtn" value="MONTHLY" name="ttOccurenceType" class="grey"> Monthly
+			</label> 
+			<label class="radio-inline">
+				<input type="radio" id="yearlyRadioBtn" value="YEARLY" name="ttOccurenceType" class="grey"> Yearly
+			</label>
+		</div>
+	</div>
+</div>
+
+<!--  hourly  -->
+<div id="divHourly" th:fragment="divHourly">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Every <span class="symbol required"></span></label>
+                        <input type="text" id="ttHourlyEveryValue" name="ttHourlyEveryValue" class="form-control" placeholder="Insert Number Of Hours"> Hour(s)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- daily -->
+<div id="divDaily" th:fragment="divDaily">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> Every<span class="symbol required"></span></label>
+	                    <input type="text" id="ttDailyEveryValue" name="ttDailyEveryValue" placeholder="Insert Number Of Days" class="form-control">
+	                    Day(s)
+	                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<!-- weekly  -->
+<div id="divWeekly" th:fragment="divWeekly">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="form-group">
+                <label class="control-label"> Every <span class="symbol required"></span></label>
+                <input type="text" id="ttWeeklyEveryValue" name="ttWeeklyEveryValue" placeholder="Insert Number Of Weeks" class="form-control">
+                Week(s) On
+			</div>
+			<div class="row col-md-12">
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInSunday" value="true"> Sunday
+				</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInMonday" value="true"> Monday
+				</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInTuesday" value="true"> Tuesday
+				</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInWednesday" value="true"> Wednesday
+				</label> 
+			</div>
+			<div class="row col-md-12">
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInThursday" value="true"> Thursday
+				</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInFriday" value="true"> Friday
+				</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" class="grey" id="ttWeeklyInSaturday" value="true"> Saturday
+				</label>
+			</div>
+			<div class="form-group">
+			 	<input type="hidden" name="ttWeekDays" id="ttWeekDays"/>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--  Monthly-->
+<div id="divMonthly" th:fragment="divMonthly">
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="control-label"> Every<span class="symbol required"></span></label> 
+						<input type="text" id="ttMonthlyEveryValue" name="ttMonthlyEveryValue" placeholder="Insert Number Of Months" class="form-control"> 
+						Month(s)
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="control-label">Day of Month<span class="symbol required"></span></label> 
+						<input type="number" id="ttMonthlyDayOfMonth" name="ttMonthlyDayOfMonth" class="form-control" max="31" min="1" value="1">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--  yearly-->
+<div id="divYearly" th:fragment="divYearly">
+    <div class=" panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Every<span class="symbol required"></span></label>
+                        <input id="ttYearlyEveryValue" name="ttYearlyEveryValue" type="text" class="form-control number"  placeholder="Insert Number Of Years">
+                        Year(s)
+					</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Month <span class="symbol required"></span></label>
+                        <select id="ttYearlyMonth" name="ttYearlyMonth" class="search-select" style="width: 100%;">
+                            <option value="">&nbsp;</option>
+                            <option th:each="month : ${months}" th:value="${month}" th:text="${month.name}"></option>
+                        </select>
+					</div>
+				</div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Day Of Month<span class="symbol required"></span></label>
+                        <input type="number" id="ttYearlyDayOfMonth" name="ttYearlyDayOfMonth" class="form-control" max="31" min="1" value="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divHowlong" th:fragment="divHowlong">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Start Date </label>
+                <div class="input-group">
+                    <input type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 08-01-2020" class="form-control date-picker" id="ttStartDate" name="ttStartDate">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label> End Date </label>
+                <div class="input-group" id="picker-container">
+                    <input type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 08-01-2020" class="form-control date-picker" id="ttEndDate" name="ttEndDate">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    <input id="ttCreateWorkOrderOnStart" type="checkbox" class="grey" value="true"> Create Work Order On
+                    Start Date
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6" id="picker-container">
+            <label class="radio-inline">
+                <input id="ttNoEndDate" type="checkbox" value="true" class="grey"> No End Date
+            </label>
+        </div>
+    </div>
+</div>
+</html>

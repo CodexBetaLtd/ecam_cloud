@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.springframework.org/security/tags">
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title">Add User Certification Type</h4>
+</div>
+
+<div class="modal-body"> 
+	<!-- start: PAGE -->
+
+	<!-- start: PAGE CONTENT -->
+	<div class="row" style="margin-top: 15px">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+				<div class="panel-body">
+				<div th:replace="template/messageview :: message"></div>
+					
+				<form action="#" th:action='@{/certification/save}' method="post" role="form" th:object="${certification}" id="certificationAddForm">
+					
+					<input type="hidden" id="id" name="id" th:field="*{id}" /> 
+					<input type="hidden" id="version" name="version" th:field="*{version}" /> 
+					<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label"> Certification Type <span class="symbol required"></span> </label> 
+									<input type="text" placeholder="Eg:OS&H - Construction Safety & Health Certificate" class="form-control" id="certificationType" name="certificationType" th:field="*{certificationType}" />
+								</div>
+							</div>
+							<div class="col-md-6">
+                                 <div class="form-group">
+                                     <label class="control-label"> Business <span class="symbol required"></span> </label>
+                                     <select th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                         <option value="">&nbsp;</option>
+                                         <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                     </select>
+                                 </div>
+                             </div>
+						</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div>
+								<span class="symbol required"></span>Required Fields
+								<hr>
+							</div>
+						</div>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- end: PAGE CONTENT-->
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-blue btn-sm active tooltips" id="btn-save-certification-type" data-placement="top" data-original-title="Save">
+		<i class="clip-checkmark-circle-2"></i> Save
+	</button>
+	    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close</button>
+</div>
+</html>

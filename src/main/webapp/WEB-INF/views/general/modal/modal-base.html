@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+
+<!-- General datatable Modal-->
+<div th:fragment="modalDatatableFragment">
+    <div id="master-modal-datatable" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         style="margin-bottom: 0px; bottom: auto; margin-top:-10%!important; position: fixed;">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<!-- General Modal-->
+<div th:fragment="modalFragment">
+    <div id="master-modal" class="modal fade" tabindex="-1" data-backdrop="static">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<!-- Large Modal-->
+<div th:fragment="largeModalFragment">
+    <div id="master-modal-lg" class="modal large-modal fade" tabindex="-1" data-backdrop="static">
+        <div class="modal-lg">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Small Modal-->
+<div th:fragment="smallModalFragment">
+    <div id="master-modal-sm" class="modal fade" tabindex="-1" data-backdrop="static">
+        <div class="modal-sm">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stackable Modal-->
+<div th:fragment="stackableModalFragment">
+    <div id="stackable-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         style="margin-bottom: 0px; bottom: auto; top: 50%; position: fixed;" data-focus-on="input:first">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Stackable Datatable Modal-->
+<div th:fragment="stackableDataTableModalFragment">
+    <div id="stackable-datatable-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+
+<!-- Stackable modal with 4 Levels-->
+<div th:fragment="stackableModalFourLevelsFragment">
+    <div id="stackable-modal-1" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first">
+        <div class="modal-content"></div>
+        <div id="stackable-modal-2" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1"
+             data-focus-on="input:first">
+            <div class="modal-content"></div>
+            <div id="stackable-modal-3" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1"
+                 data-focus-on="input:first">
+                <div class="modal-content"></div>
+                <div id="stackable-modal-4" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1"
+                     data-focus-on="input:first">
+                    <div class="modal-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</html>

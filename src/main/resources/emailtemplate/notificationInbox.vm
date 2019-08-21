@@ -1,0 +1,21 @@
+<html>
+<head>
+
+</head>
+<br>
+<h3>Dear ${user},</h3>
+<div><strong> Inbox notification received.. </strong></div>
+<br/>
+<div><strong> From : </strong> ${notificationFrom} </div>
+<br/>
+<div><strong> To : </strong> ${notificationTo} </div>
+<br/>
+<br/>
+<div> ${notificationSubject}</div>
+<br/>
+<div> ${notificationContent}</div>
+<br/>
+<span>Thank you</span>
+<div> - - - F O C U S - -</div>
+</body>
+</html>

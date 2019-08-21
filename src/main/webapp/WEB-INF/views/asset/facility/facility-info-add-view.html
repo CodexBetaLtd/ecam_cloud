@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+	<div class="row" th:fragment="facilityinfo" >
+    	<div class="col-sm-12">
+              <div class="tabbable wrapper">
+                  <ul id="myTab" class="nav nav-tabs tab-bricky list">
+                      <li class="active">
+                          <a href="#general_tab" data-toggle="tab">
+                             General
+                          </a>
+                      </li>
+<!--                    	 	<li>
+                          <a href="#location_tab"  data-toggle="tab">
+                              Location
+                          </a>
+                      </li> -->
+                      <li>
+                          <a href="#event_tab"  data-toggle="tab">
+                              Asset Event 
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#meter_reading_tab" data-toggle="tab">
+                              Meter Readings
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#personal_tab" data-toggle="tab">
+                              Personal
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#parts_tab" data-toggle="tab">
+                              Parts/BOM
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#logs_tab"  data-toggle="tab">
+                              Logs
+                          </a>
+                      </li>
+                       <li>
+                          <a href="#file_tab"  data-toggle="tab">
+                              File
+                          </a>
+                      </li>
+                  </ul>
+                  <div class="tab-content">
+                      <div class="tab-pane in active" id="general_tab">
+                          <div th:replace="asset/tab/facility-general-tab :: facilityGeneralTabFragment"></div>
+                      </div>
+<!--                       <div class="tab-pane" id="location_tab">
+                          <div th:replace="asset/tab/location-tab :: locationTabFragment"></div>
+                      </div> -->
+                      <div class="tab-pane" id="event_tab">
+                          <div th:replace="asset/tab/asset-event-tab :: assetEventTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="meter_reading_tab">
+                          <div th:replace="asset/tab/meter-reading-tab :: meterReadingTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="personal_tab">
+                          <div th:replace="asset/tab/personnel-tab :: personnelTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="parts_tab">
+                          <div th:replace="asset/tab/bom-tab :: bomTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="logs_tab">
+                          <div th:replace="asset/tab/log-tab :: assetLogTableFragment"></div>
+                      </div>
+                       <div class="tab-pane" id="file_tab">
+                          <div th:replace="asset/tab/file-tab :: fileTabFragment"></div>
+                      </div>
+
+                  </div>
+              </div>
+    	</div>
+	</div>
+</html>       
+					              

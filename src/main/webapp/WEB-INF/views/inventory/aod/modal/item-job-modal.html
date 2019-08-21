@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"> AOD <span th:text="#{aod.tab.item}"> (JOB) </span></h4>
+</div>
+
+<div class="modal-body">
+
+
+    <!-- Stackable Modal-->
+
+    <div id="jobItemStackableModal" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first">
+        <div class="modal-content"></div>
+    </div>
+    <form id="frm_job_item">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="control-label"> Job <span
+                            class="symbol required"></span></label>
+                    <br/>
+                    <div class="input-group">
+                        <input type="hidden" id="aodTempItemJobId">
+                        <input type="text" name="aodTempItemJobNo" id="aodTempItemJobNo" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <button type="button" class="btn btn-blue btn-sm active tooltips" id="btnAodJobItemView"
+                        data-toggle="modal" data-placement="top" data-original-title="Add New Item">
+                    <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"> Item </span>
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <br/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-bordered table-hover table-full-width" style="width:100%;"
+                       id="tbl_job_aod_item">
+                    <thead>
+                    <tr>
+                        <th width="5%"><span th:text="#{global.symbol.count}"></span></th>
+                        <th><span th:text="#{aod.tab.item.part}"></span></th>
+                        <th><span th:text="#{aod.tab.item.warehouse}"></span></th>
+                        <th><span th:text="#{aod.tab.item.partStockNo}"></span></th>
+                        <th width="10%"><span th:text="#{aod.tab.item.qty}"></span></th>
+                        <th width="10%"><span th:text="#{aod.tab.item.returnQty}"></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
+        <span th:text="#{form.btn.close}"></span>
+    </button>
+    <button type="button" class="btn btn-sm btn-blue" id="btnAODJobItemAdd">
+        <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span>
+    </button>
+</div>
+</html>

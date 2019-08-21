@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head>
+	<meta name="ctx" th:content="${#httpServletRequest.getContextPath()}" />
+</head>
+
+<body>
+
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.min.js}"></script>
+	
+	<script>
+		var ctx = $("meta[name='ctx']").attr("content");
+	    window.location.href =  ctx + '/login?expired';
+	</script>
+</body>
+
+
+</html>

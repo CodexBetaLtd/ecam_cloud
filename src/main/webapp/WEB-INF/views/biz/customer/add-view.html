@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            <!-- end: MAIN NAVIGATION MENU -->
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+
+        <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div> 
+		<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+        <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+        
+        <div class="container">
+
+            <!-- start: PAGE HEADER -->
+			<div class="row" th:replace="biz/customer/page-header :: pageheader"></div>
+            <!-- end: PAGE HEADER -->
+
+            <div class="row btn-bar">
+
+				<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/customer/add}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_BUSINESS_ADD.id)"
+                   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+                </a>				
+                <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_ADD.id)"
+                   onclick="document.getElementById('customer_add_btn').click();"> <i class="clip-checkmark-circle-2 btn-save"></i> Save
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/customer/delete(id=${customer.id})}" th:disabled="${customer.id} == null ? 'disabled'"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_ADD.id)"
+                   data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
+                </a>
+                <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/customer/}" data-placement="top"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_ASSET_ADD.id)"
+                   data-original-title="Back"> <i class="clip-arrow-left-2 "></i> Cancel
+                </a>
+
+            </div>
+
+            <!-- start: PAGE CONTENT -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="clip-cube "></i> Customer
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div th:replace="template/messageview :: message"></div>
+                            
+                            <form role="form" id="customer_add_frm" th:action="@{/customer/save}" th:object="${customer}" method="post">
+                             	<input type="hidden" id="customerId" th:field="*{id}"/>
+           						<input type="hidden" id="customerVersion" th:field="*{version}"/>
+            
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Name <span class="symbol required"></span> </label> 
+											<input type="text" placeholder="Insert the Name" id="customerName" name="customerName" class="form-control" th:field="*{name}"></input>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Code <span class="symbol required"></span> </label>
+											<input type="text" placeholder="Insert the Code" id="customerCode" name="customerCode"  class="form-control" th:field="*{code}"></input>
+										</div>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Address<span class="symbol required"></span> </label>
+											<textarea placeholder="Insert the Address" id="customerAddress" class="form-control" name="customerAddress" th:field="*{address}"></textarea>
+										</div>
+									</div>
+                            	<div class="col-md-6">
+                                 <div class="form-group">
+                                     <label class="control-label"> Business <span class="symbol required"></span>
+                                     </label>
+                                     <select th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                         <option value="">&nbsp;</option>
+                                         <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                     </select>
+                                 </div>
+                            </div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">City</label> 
+											<input type="text" placeholder="Insert the City" th:field="*{city}" class="form-control" id="customerCity">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Province</label> 
+											<input type="text" placeholder="Insert the Province" th:field="*{province}" class="form-control" id="customerProvince">
+										</div>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Postal Code</label> 
+											<input type="text" placeholder="Insert the Postal Code" th:field="*{postalCode}" class="form-control" id="customerPostalCode">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="form-field-select-3">Country</label> 
+											<select id="customerCountryId" th:field="*{countryId}" class="search-select" style="width: 100%;">
+												<option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Telephone <span class="symbol required"></span></label> 
+											<input type="text" placeholder="Insert the Telephone" th:field="*{telephone}" class="form-control" id="customerTelephone" name="customerTelephone">
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">Fax </label> 
+											<input type="text" placeholder="Insert the Fax" th:field="*{fax}" class="form-control" id="customerFax">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+							        <div class="col-md-12">
+							            <div>
+							            	<span class="symbol required"></span> Required Fields
+							                <hr>
+							            </div>
+							        </div>
+							    </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="tabbable wrapper">
+                                        
+                                            <ul id="myTab" class="nav nav-tabs tab-bricky">
+                                                <li class="active"><a href="#assetTab" data-toggle="tab"> Assets </a></li>
+                                                <li><a href="#contactTab" data-toggle="tab"> Contacts </a></li>
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div class="tab-pane in active" id="assetTab">
+                                                    <div th:replace="biz/customer/tab/asset-tab :: assetTabFragment"></div> 
+                                                </div>
+                                                <div class="tab-pane" id="contactTab">
+                                                	<div th:replace="biz/customer/tab/contact-tab :: contactTabFragment"></div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="visibility: hidden;">
+                                    <button id="customer_add_btn" type="submit"></button>
+                                </div>								
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end: PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- end: PAGE -->
+</div>
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/add-view.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/tab/asset-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/tab/contact-tab.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/modal/asset-select-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/modal/customer-contact-add-modal.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+
+<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script th:inline="javascript">
+
+	var contacts = [[${customer.contacts}]];
+	var assets = [[${customer.assets}]];
+
+</script>
+
+</body>
+
+</html>

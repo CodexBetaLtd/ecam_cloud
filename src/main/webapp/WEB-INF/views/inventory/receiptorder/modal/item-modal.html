@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"> Receipt Order Item </h4>
+        </div>
+
+        <div class="modal-body">
+        
+		   <input type="hidden" id="itemId">
+           <input type="hidden" id="itemIndex">
+           <input type="hidden" id="itemVersion">
+
+           <div class="row">
+               <div class="col-md-6">
+             		<label class="control-label"> Asset <span class="symbol required"></span></label><br/>
+	                <div class="input-group">
+						<input type="hidden" id="itemAssetId">
+						<input type="text" id="itemAssetName" readonly class="form-control" placeholder="Select Asset">
+						<span class="input-group-btn">
+							<button class="btn btn-blue" id="asset-select-modal-btn" data-placement="top">
+								<i class="clip-pencil"></i>
+							</button>
+						</span>
+					</div>
+               </div>
+               <div class="col-md-6">
+                   	<div class="form-group">
+               			<label class="control-label"> Quantity <span class="symbol required"></span> </label><br/>
+                       	<input id="itemQtyReceived" type="text" placeholder="Item Quantity" class="form-control" >
+                   </div>
+               </div>
+           </div>
+           <div class="row">
+               <div class="col-md-6">
+                   	<div class="form-group">
+               			<label class="control-label"> Unit Price <span class="symbol required"></span> </label><br/>
+                       	<input id="itemUnitPrice" type="text" placeholder="Item Unit Price" class="form-control" >
+                   </div>
+               </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Received To Stock </label>
+		                <div class="input-group">
+							<input type="hidden" id="itemStockId">
+							<input type="text" id="itemStockName" readonly class="form-control" placeholder="Select Stock">
+							<span class="input-group-btn">
+								<button class="btn btn-blue" id="stock-select-modal-btn" data-placement="top">
+									<i class="clip-pencil"></i>
+								</button>
+							</span>
+						</div>
+		            </div>
+		        </div>
+		   </div>
+		    <div class="row">
+               <div class="col-md-6">
+                   	<div class="form-group">
+               			<label class="control-label"> Description <span class="symbol required"></span> </label><br/>
+                       	<input id="itemDescription" type="text" placeholder="Item Description" class="form-control" >
+                   </div>
+               </div>
+           </div>
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+        <button type="button" class="btn btn-sm btn-blue" id="btnAddReceiptItem" data-dismiss="modal"><i
+                class="clip-plus-circle-2 "></i> Add
+        </button>
+	</div>
+	
+</html>

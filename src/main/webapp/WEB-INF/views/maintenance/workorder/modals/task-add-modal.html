@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Labor Task</h4>
+</div>
+
+<div id="woTaskModalBody" class="modal-body">
+
+	<div id="wo-task-add-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+        <div class="modal-content"></div>
+    </div>
+
+	<form id="task-add-frm">
+
+	    <input type="hidden" id="woTaskId">
+	    <input type="hidden" id="woTaskVersion">
+	    <input type="hidden" id="woTaskGroupId">
+	    <input type="hidden" id="woTaskGroupVersion">
+	    <input type="hidden" id="woTaskIndex">
+	
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Name <span class="symbol required"></span></label>
+	                <input id="woTaskName" name="woTaskName" type="text" placeholder="Eg: Do This" class="form-control"/>
+	            </div>
+	        </div>
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Description </label>
+	                <input id="woTaskDescription" name="woTaskDescription" type="text" placeholder="Eg: Labour Task Description" class="form-control">
+	            </div>
+	        </div>
+	    </div>
+	
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Asset <span class="symbol required"></span></label>
+	                <select id="woTaskAsset" name="woTaskAsset" class="search-select" style="width: 100%;">
+	                </select>
+	            </div>
+	        </div>
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Task Type <span class="symbol required"></span></label>
+	                <select id="woTaskTaskType" name="woTaskTaskType" class="search-select" style="width: 100%;">
+	                    <option th:each="taskType : ${taskTypeList}" th:value="${taskType}" th:text="${taskType.name}"></option>
+	                </select>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <div class="tabbable">
+	        <ul id="myTab" class="nav nav-tabs tab-bricky">
+	            <li class="active"><a href="#assigned_tab" data-toggle="tab"> General </a></li>
+	            <li><a href="#completed_tab" data-toggle="tab"> Completion </a></li>
+	        </ul>
+	        <div class="tab-content">
+	
+	            <div class="tab-pane in active" id="assigned_tab">
+	            
+	                <div class="row">
+	                    <div class="col-md-6">
+	                        <div class="form-group">
+	                            <label class="control-label"> Assigned User <span class="symbol required"></span></label>
+	                            <div class="input-group">
+	                                <input type="hidden" id="woTaskAssignedUserId">
+	                                <input type="text" id="woTaskAssignedUserName" name="woTaskAssignedUserName" readonly>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="col-md-6">
+	                    	<div class="form-group">
+		                         <label class="control-label"> Time estimate (hours) <span class="symbol required"></span></label>
+		                         <input id="woTaskTimeEstimate" name="woTaskTimeEstimate" type="text" placeholder="Eg: 15 Hr" class="form-control" >
+	                    	</div>
+	                	</div>	                   	
+	                </div>
+	
+	                <div class="row">
+	                	<div class="col-md-6">
+	                        <div class="form-group">
+	                            <label class="control-label"> Start Date </label>
+	                            <div class="input-group">
+	                                <input id="woTaskStartDate" name="woTaskStartDate" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 08-01-2020" class="form-control date-picker" >
+	                                <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+	                            </div>
+	                        </div>
+	                    </div>    
+	                </div>
+	                
+	            </div>
+	
+	            <div class="tab-pane" id="completed_tab">
+	            
+	                <div class="row">
+	                    <div class="col-md-6">
+	                        <div class="form-group">
+	                            <label class="control-label"> Completed User </label>
+	                            <div class="input-group">
+	                                <input type="hidden" id="woTaskCompletedUserId">
+	                                <input id="woTaskCompletedUserName" name="woTaskCompletedUserName" type="text" readonly>
+	                            </div>
+	                        </div>
+	                    </div>
+	                 	<div class="col-md-6">
+		                     <div class="form-group">
+		                         <label class="control-label"> Date Completed </label>
+		                         <div class="input-group">
+		                             <input id="woTaskCompletedDate" name="woTaskCompletedDate" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 15-01-2020" class="form-control date-picker" >
+		                             <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+		                         </div>
+		                     </div>
+		                 </div>
+	                 </div>
+	
+	                 <div class="row">
+	                 	<div class="col-md-6">
+	                        <div class="form-group">
+	                            <label class="control-label">Task Completion Notes </label>
+	                            <input id="woTaskCompletionNote" name="woTaskCompletionNote" type="text" placeholder="Eg: Task Done"  class="form-control"/>
+	                        </div>
+	                   	</div>
+	                    <div class="col-md-6">
+	                        <div class="form-group">
+	                            <label class="control-label">Task Completion Remark </label>
+	                            <input id="woTaskCompletionRemark" name="woTaskCompletionRemark" type="text" placeholder="Eg: Task Remark" class="form-control"/>
+	                        </div>
+	                    </div>
+	               	</div>
+	               	
+	               	<div class="row">
+	               		<div class="col-md-6">
+	                		<div class="form-group">
+		                       <label class="control-label"> Time spent (hours) </label>
+		                       <input id="woTaskTimeSpent" name="woTaskTimeSpent" type="text" placeholder="Eg: 12Hr" class="form-control" >
+	                     	</div>
+	                    </div>
+	                </div>
+	                
+	            </div>
+	        </div>
+	    </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button id="add-task-btn" type="button" class="btn btn-blue btn-sm"><i class="clip-plus-circle-2" ></i> Add </button>
+    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
+</div>
+
+</html>

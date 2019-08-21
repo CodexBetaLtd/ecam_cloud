@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head> 
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+
+<body>
+
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
+    
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+        <div class="navbar-content">
+        
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
+            
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i>
+                    <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+                
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+                <!-- end: MAIN NAVIGATION MENU -->
+            </div>
+            <!-- end: SIDEBAR -->
+        </div>
+
+        <!-- start: PAGE -->
+        <div class="main-content">
+            
+            <div class="container">
+                
+                <!-- start: PAGE HEADER -->
+                <div class="row" th:replace="biz/business/page-header :: pageheader"></div>
+                <!-- end: PAGE HEADER -->
+                
+                <div class="row btn-bar">
+
+                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/business/add}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_BUSINESS_VIEW.id)"
+                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new" ></i> New
+				    </a>
+				                                      
+				    <a class="btn btn-default btn-sm active tooltips" id="save" th:disabled="disabled" data-placement="top" 
+				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_BUSINESS_VIEW.id)" data-original-title="Save">
+				        <i class="clip-checkmark-circle-2 btn-save"></i> Save
+				    </a>
+				    
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top" 
+				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_BUSINESS_VIEW.id)" data-original-title="Delete">
+				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
+				    </a>
+
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:disabled="disabled" data-placement="top"
+                        data-original-title="Back"> <i class="clip-arrow-left-2 "></i> Cancel
+				    </a>
+				    
+			    </div>
+                
+                <!-- start: PAGE CONTENT -->
+                <div class="row" th:fragment="list">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+						       <i class="fa fa-building-o"></i> Business
+						       <div class="panel-tools">
+						           <a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
+						           <a class="btn btn-xs btn-link panel-refresh" href="#"> <i class="fa fa-refresh"></i> </a>
+						       </div>
+						   	</div>
+
+                            <div class="panel-body">
+					    	
+					    		<div th:replace="template/messageview :: message"></div>
+
+                                <table class="table table-striped table-bordered table-hover table-full-width"
+                                       id="tbl_bussiness">
+                                    <thead>
+                                    <tr>
+                                        <th class="first-col"> #</th>
+                                        <th>Name</th>
+                                        <th class="hidden-xs">Code</th>
+                                        <th class="last-col">More</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+					 		</div>
+					 	</div>
+					</div>
+				</div>
+                <!-- end: PAGE CONTENT-->
+                
+            </div>
+        </div>
+        <!-- end: PAGE -->
+    </div>
+    <!-- end: MAIN CONTAINER -->
+   
+    <!-- start: FOOTER -->
+   	<div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
+    
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+    <!-- end: MAIN JAVASCRIPTS -->
+    
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/biz/business/home-view.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+    <script>
+        jQuery(document).ready(function() {
+            Main.init();
+            BusinessHome.init();
+        });
+    </script>
+	 
+</body>
+
+</html>

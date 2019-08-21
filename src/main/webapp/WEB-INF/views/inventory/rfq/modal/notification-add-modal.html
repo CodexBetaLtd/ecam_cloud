@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+	        &times;
+	    </button>
+	    <h4 class="modal-title">Notification</h4>
+	</div>
+
+	<div class="modal-body">
+	
+	    <div id="rfq-notification-add-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+	         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+	        <div class="modal-content"></div>
+	    </div>
+	
+		<form id="part-notification-add-frm">
+		
+	        <input type="hidden" id="notificationId">
+	        <input type="hidden" id="notificationVersion">
+	        <input type="hidden" id="notificationIndex">
+	
+			<div class="row">
+		        <div class="col-md-8 col-sm-12">
+		            <div class="form-group">
+		                <label class="control-label"> User <span class="symbol required"></span></label>
+		                <div class="input-group">
+		                    <input type="hidden" id="rfqNotificationUserId">
+		                    <input id="rfqNotificationUserName" name="rfqNotificationUserName" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+	        </div>
+	
+			<div class="row">
+		        <div class="col-md-12"> 
+		            <div class="checkbox">
+		                <input id="notifyOnStockAdd" name="notifyOnStockAdd" type="checkbox" value="" class="grey partNotificationCls">
+		                <label>Notify On Status Changed</label>
+		            </div>
+		        </div>
+	        </div> 
+	        
+	   </form>     
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close </button>
+	    <button id="add-rfq-notification-btn" type="button" class="btn btn-sm btn-blue">
+	        <i class="clip-plus-circle-2 "></i> Add
+	    </button>
+	</div> 
+
+</html>

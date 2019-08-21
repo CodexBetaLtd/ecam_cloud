@@ -1,0 +1,15 @@
+<html>
+<head>
+
+</head>
+    <body>
+        <h3>Dear ${user},</h3>
+ 
+        <div>
+            Your Receipt order status change <b>${priviousreceiptOrderStatus}</b>  to <b>${currentreceiptOrderstatus}</b>.
+            
+        </div>
+        <span>Thank you</span>
+        
+    </body>
+</html>

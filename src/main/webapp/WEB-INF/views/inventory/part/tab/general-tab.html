@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="generalTabFragment">
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Inventory Code </label>
+                <input th:field="*{inventoryCode}" type="text" placeholder="Add Inventory Code Here"
+                       class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Un-Spc Code </label>
+                <input th:field="*{unspcCode}" type="text" placeholder="Add Unspc Code Here" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Barcode </label>
+                <input th:field="*{barcode}" type="text" placeholder="Add Barcode Here" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+    
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Brand </label>
+                 <div class="input-group">
+                        <input type="hidden" th:field="*{brandId}">
+                        <input type="text" th:field="*{brandName}" readonly class="form-control" placeholder="Select a Brand" id="brandName">                     
+                    </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Model </label>
+                 <div class="input-group">
+                        <input type="hidden" th:field="*{modelId}">
+                        <input type="text" th:field="*{modelName}" readonly class="form-control" placeholder="Select a Model" id="modelName">                     
+                    </div>
+                  </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="control-label"> Last Price </label>
+                <input th:field="*{lastPrice}" type="text" placeholder="Please Type Work Order Code"
+                       class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="control-label"> Notes </label>
+                <textarea th:field="*{completionNotes}" placeholder="Insert a Note about Stock Item"
+                          class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i>
+                <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+        </div>
+        <!-- end: SIDEBAR -->
+
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <!-- start: PAGE TITLE & BREADCRUMB -->
+                    <ol class="breadcrumb">
+                        <li>
+                            <i class="clip-attachment-2"></i>
+                            <a th:href="@{/dashboard}">
+                                Home
+                            </a>
+                        </li>
+                        <li class="active">
+                            Error 404
+                        </li>
+                    </ol>
+                    <div class="page-header">
+                        <h1>Error 404
+                            <small>404 page not found</small>
+                        </h1>
+                    </div>
+                    <!-- end: PAGE TITLE & BREADCRUMB -->
+                </div>
+            </div>
+            <!-- end: PAGE HEADER -->
+            <!-- start: PAGE CONTENT -->
+            <div class="row">
+                <!-- start: 404 -->
+                <div class="col-sm-12 page-error">
+                    <div class="error-number teal">
+                        404
+                    </div>
+                    <div class="error-details col-sm-6 col-sm-offset-3">
+                        <h3>Oops! You are stuck at 404</h3>
+                        <p>
+                            Unfortunately the page you were looking for could not be found.
+                            <br> It may be temporarily unavailable, moved or no longer exist.
+                            <br> Check the URL you entered for any mistakes and try again.
+                            <br>
+                            <a th:href="@{/dashboard}" class="btn btn-teal btn-return">
+                                Return home
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <!-- end: 404 -->
+            </div>
+
+        </div>
+    </div>
+    <!-- end: PAGE -->
+
+</div>
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<script>
+    jQuery(document).ready(function () {
+        Main.init();
+    });
+</script>
+</body>
+
+</html>

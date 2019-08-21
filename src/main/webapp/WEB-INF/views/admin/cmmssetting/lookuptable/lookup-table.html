@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+<head >
+ <!-- start: Styles REQUIRED FOR MODAL-->
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+
+   
+</head>
+<body>
+<div th:fragment="lookupTable">
+	<div class=row>
+        <div th:replace="meterreadingunnits/home-view :: homeview">
+        </div>
+        <div th:replace="meterreadingunnits/home-view :: homeview">
+	     </div>	
+	
+	</div>
+	<div class=row>
+        <div th:replace="meterreadingunnits/home-view :: homeview">
+        </div>
+        <div th:replace="meterreadingunnits/home-view :: homeview">
+	     </div>	
+	
+	</div>
+</div>
+</body>
+</html>

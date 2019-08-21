@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+
+<div th:fragment="scheduleMaintenance">  
+	<div class="row" th:object="${scheduleMaintenenceCount}">  
+		<div class="col-sm-12 col-md-12">  
+			<div class="section-header">
+				<h2> Scheduled Maintenance </h2>
+				<hr>
+			</div>
+			<div class="col-sm-6 col-md-3" >
+				<div class="circle-tile">
+					<div class="circle-tile-title text-center"> Out Dated</div>
+					<div class="circle-tile-heading box-red">
+						<i class="fa fa-calendar-times-o fa-fw fa-2x"></i>
+					</div>
+					<div class="circle-tile-content box-red">
+						<div class="circle-tile-number text-faded"><span th:text="*{smOutDatedCount}"></span></div>
+						<a th:href="@{/scheduled-maintenance-trigger/outdated(from=*{smOutDatedFromDate},to=*{smOutDatedToDate})}" class="circle-tile-footer" target="blank">Details <i class="fa fa-chevron-circle-right"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="circle-tile">
+				<div class="circle-tile-title text-center"> This Week</div>
+					<div class="circle-tile-heading box-darker-blue">
+						<i class="fa fa-calendar-check-o fa-fw fa-2x"></i>
+					</div>
+					<div class="circle-tile-content box-darker-blue">
+						<div class="circle-tile-number text-faded"><span th:text="*{smCurrentWeekCount}"></span></div>
+						<a th:href="@{/scheduled-maintenance-trigger/currentweek(from=*{smCurrentWeekFromDate},to=*{smCurrentWeekToDate})}"  class="circle-tile-footer" target="blank">Details <i class="fa fa-chevron-circle-right"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<div class="circle-tile">
+				<div class="circle-tile-title text-center"> Next Week</div>
+					<div class="circle-tile-heading box-dark-blue">
+						<i class="fa fa-calendar fa-fw fa-2x"></i>
+					</div>
+					<div class="circle-tile-content box-dark-blue">
+						<div class="circle-tile-number text-faded"><span th:text="*{smNextWeekCount}"></span></div>
+						<a th:href="@{/scheduled-maintenance-trigger/nextweek(from=*{smNextWeekFromDate},to=*{smNextWeekToDate})}" class="circle-tile-footer" target="blank">Details <i class="fa fa-chevron-circle-right"></i></a>
+					</div>
+				</div>
+			</div> 
+			<div class="col-sm-6 col-md-3">
+				<div class="circle-tile">
+				<div class="circle-tile-title text-center"> Next Month</div>
+					<div class="circle-tile-heading box-light-blue">
+						<i class="fa fa-calendar fa-fw fa-2x"></i>
+					</div>
+					<div class="circle-tile-content box-light-blue">
+						<div class="circle-tile-number text-faded"><span th:text="*{smNextMonthCount}"></span></div>
+						<a th:href="@{/scheduled-maintenance-trigger/nextmonth(from=*{smNextMonthFromDate},to=*{smNextMonthToDate})}" class="circle-tile-footer" target="blank">Details <i class="fa fa-chevron-circle-right"></i></a>
+					</div>
+				</div>
+			</div> 
+		</div> 
+	</div>
+</div>
+</html>

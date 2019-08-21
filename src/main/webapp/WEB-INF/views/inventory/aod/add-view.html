@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+
+<body>
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            <!-- end: MAIN NAVIGATION MENU -->
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+        <div th:replace="general/modal/modal-base :: modalFragment "></div>
+        <div th:replace="general/modal/modal-base :: largeModalFragment "></div>
+        <div th:replace="general/modal/modal-base :: modalDatatableFragment"></div>
+        <div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+        <div th:replace="general/modal/modal-base :: stackableDataTableModalFragment "></div>
+        <div th:replace="general/modal/modal-base :: stackableModalFourLevelsFragment "></div>
+        <div class="container">
+
+            <!-- start: PAGE HEADER -->
+            <div class="row" th:replace="inventory/aod/page-header :: pageheader"></div>
+            <!-- end: PAGE HEADER -->
+            <form role="form" id="frm_aod" th:action="@{/aod/save}" th:object="${aod}" method="post">
+
+                <div class="row btn-bar">
+
+                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/aod/add}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i>
+                        <span th:text="#{form.btn.new}"> </span>
+                    </a>
+                    <!-- Save -->
+                    <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
+                       data-original-title="Save"
+                       th:disabled="${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_AOD_ADD.id)">
+                        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
+                    </a>
+
+                    <!-- Delete -->
+                    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/aod/delete(id=${aod.id})}"
+                       th:disabled="${aod.id} == null or ${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="Delete">
+                        <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs" th:text="#{form.btn.delete}"> </span>
+                    </a>
+
+                    <!-- Cancel -->
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/aod/}"
+                       data-placement="top"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_AOD_ADD.id)"
+                       data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span
+                           class="hidden-xs" th:text="#{form.btn.cancel}"> </span>
+                    </a>
+
+                    <!--inventory-->
+                    <!-- Print -->
+                    <a class="btn btn-default btn-sm active tooltips" id="printReport"
+                       th:href="@{/report/aod/aodView(id=${aod.id})}" th:disabled="${aod.id} == null ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="Print AOD Report"> <i class="fa fa-print"></i> Print
+                    </a>
+
+                    <!-- Approved -->
+                    <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
+                       th:if="${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).DRAFT} "
+                       th:disabled="${aod.id} == null ? 'disabled'"
+                       th:href="@{/aod/statusChange(id=${aod.id},aodStatus=${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED})}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="AOD Approved">
+                        <i class="fa fa-share-square-o"></i><span th:text="#{aod.form.btn.apporved}"></span>
+                    </a>
+
+                </div>
+
+                <!-- start: PAGE CONTENT -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="fa fa-sticky-note-o"></i> <span th:text="#{aod.homeView.title}"> </span>
+                            </div>
+                            <div class="panel-body">
+                                <div th:replace="template/messageview :: message"></div>
+
+                                <input type="hidden" id="aodId" name="id" th:field="*{id}"/>
+                                <input type="hidden" id="aodVersion" name="version" th:field="*{version}"/>
+
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"><span th:text="#{aod.status}"></span></label>
+                                            <input type="text" th:field="*{aodStatus}" class="form-control bold" readonly="readonly"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Business <span class="symbol required"></span> </label>
+                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Site <span class="symbol required"></span> </label>
+                                            <select th:field="*{siteId}" class="search-select" style="width: 100%;">
+                                                <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span th:text="#{aod.aodNo}"> </span> <span class="symbol required"></span> </label>
+                                            <input type="text" placeholder="Insert the Name" th:field="*{aodNo}" class="form-control" id="aodNo" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span th:text="#{aod.customerName}"> </span><span class="symbol required"></span></label>
+                                            <div class="input-group">
+                                                <input type="hidden" id="aodCustomerId" th:field="*{aodCustomerId}">
+                                                <input type="text" id="aodCustomerName" name=" aodCustomerName" readonly th:field="*{aodCustomerName}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span th:text="#{aod.requestedUser}"> </span></label>
+                                            <div class="input-group">
+                                                <input type="hidden" id="requestedUserId" th:field="*{requestedUserId}">
+                                                <input type="text" id="requestedUserName" readonly th:field="*{requestedUserName}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span th:text="#{aod.date}"> </span> </label>
+                                            <div class="input-group">
+                                                <input th:field="*{date}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker">
+                                                <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> <span th:text="#{aod.aodType}"> </span> <span class="symbol required"></span> </label>
+                                            <select th:field="*{aodType}" id="aodTypeId" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="aodType : ${aodTypes}" th:value="${aodType}" th:text="${aodType.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> Work Order No </label>
+                                            <div class="input-group">
+                                                <input type="hidden" th:field="*{woId}" id="aodWoId">
+                                                <input type="text" th:field="*{woNo}" id="aodWoNo" readonly placeholder="Please Specify a Work Order">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div>
+                                            <span class="symbol required"></span><span
+                                                th:text="#{global.keyword.required}"></span>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="tabbable">
+                                            <ul id="myTab" class="nav nav-tabs tab-bricky">
+                                                <li class="active"><a href="#item_tab" data-toggle="tab"> <span th:text="#{aod.tab.item}"> </span> </a></li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div class="tab-pane in active" id="item_tab">
+                                                    <div th:replace="inventory/aod/tab/item-tab :: aodItemTabFragment"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="visibility: hidden;">
+                                    <button id="btn_aod_submit" type="submit"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: PAGE CONTENT-->
+            </form>
+        </div>
+    </div>
+    <!-- end: PAGE -->
+</div>
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/add-view.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/tab/item-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/modal/item-modal.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/datatable/dt-customers.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/datatable/dt-users.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/datatable/dt-workorders.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/datatable/dt-part.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/aod/datatable/dt-stock.js}"></script>
+<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script th:inline="javascript"> 
+    var aodItemList = [[${aod.aodItemList}]]; 
+</script>
+
+</body>
+
+</html>

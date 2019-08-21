@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml"
+      class="no-js">
+
+<!-- start: MAIN NAVIGATION MENU -->
+<ul class="main-navigation-menu" th:fragment="menu">
+
+    <li>
+		<!--active open--> 
+		<a th:href="@{/dashboard}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL',  T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).DASHBOARD.id )">
+			<i class=" clip-grid "></i> 
+			<span class="title"> Dashboard </span><span class="selected"></span>
+		</a>
+	</li>
+
+    <!-- MENU : ASSET -->
+	<li>
+		<a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL',  T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).ASSETS.id)">
+			<i class="icon-custom icon-assets"></i>
+			<span class="title"> Asset </span><i class="icon-arrow"></i> <span class="selected"></span>
+		</a>
+		<ul class="sub-menu">
+			<li>
+                <a th:href="@{/asset/machine/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).EQUIPMENTS.id)">
+					<i class="icon-custom icon-tool"></i><span class="title"> Machine / Tool </span>
+				</a>
+			</li>
+			<li>
+                <a th:href="@{/asset/facility/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).FACILITIES.id)">
+					<i class="icon-custom icon-site"></i> <span class="title"> Facility </span>
+				</a>
+			</li>
+		</ul>
+	</li>
+
+    <!-- MENU : Maintenance -->
+	<li>
+		<a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).MAINTENANCE.id)">
+			<i class="icon-custom icon-maintain"></i> <span class="title">Maintenance</span>
+			<i class="icon-arrow"></i> <span class="selected"></span>
+		</a>
+		<ul class="sub-menu">
+			<li>
+				<a th:href="@{/workorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).WORK_ORDER.id)">
+                    <i class="icon-custom icon-work-order"></i> <span class="title">Work Order</span>
+				</a>
+			</li>
+            <li>
+                <a th:href="@{/scheduledmaintenance/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).SCHEDULED_MAINTENANCE.id)">
+                    <i class="icon-custom icon-shedule-maintain"></i> <span class="title">Scheduled Maintenance</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/taskGroup/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).TASK_GROUP.id)">
+                    <i class="fa fa-tasks "></i> <span class="title">Task Group</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/project/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).PROJECT.id)">
+                    <i class="icon-custom icon-project"></i> <span class="title">Project</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/bomgroup/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).BOM_GROUP.id)">
+                    <i class="fa fa-building-o"></i> <span class="title">BOM Group</span>
+                </a>
+            </li>
+		</ul>
+	</li>
+
+    <!-- MENU : SALEs -->
+    <!--<li>
+        <a href="javascript:void(0)"
+           sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).SALE.id)">
+            <i class="icon-custom icon-sales"></i> <span class="title">Sales</span>
+            <i class="icon-arrow"></i> <span class="selected"></span>
+        </a>
+        <ul class="sub-menu">
+            <li>
+                <a th:href="@{/quotation/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).QUOTATION.id)">
+                    <i class="fa fa-newspaper-o"></i> <span class="title">Quotation</span>
+                </a>
+            </li>
+		</ul>
+	</li>-->
+
+
+    <!-- MENU : Inventory -->
+  <!--   <li>
+        <a href="javascript:void(0)"
+           sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).INVENTORY.id)">
+            <i class="icon-custom icon-inventory"></i> <span class="title">Inventory</span>
+            <i class="icon-arrow"></i> <span class="selected"></span>
+        </a>
+        <ul class="sub-menu">
+
+            <li>
+                <a th:href="@{/rfq/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).RFQ.id)">
+                    <i class="icon-custom icon-rfq"></i> <span class="title">RFQ</span>
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/purchaseorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).PURCHASE_ORDER.id)">
+                    <i class="icon-custom icon-work-order-rfq"></i> <span class="title">Purchase Order</span>
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/receiptorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).RECEIPT_ORDER.id)">
+                    <i class="icon-custom icon-receipt"></i> <span class="title">Receipt Order</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/aod/}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).AOD.id)">
+                    <i class="icon-custom icon-aod"></i> <span class="title">AOD</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/aodReturn/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).AOD_RETURN.id)">
+                    <i class="icon-custom icon-aod-return"></i> <span class="title">AOD Return</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/stock/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).STOCK.id)">
+                    <i class="icon-custom icon-stock"></i> <span class="title">Stock</span>
+                </a>
+            </li>
+                        <li>
+                            <a th:href="@{/stockAdjustment/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).STOCK_ADJUSTMENT.id)">
+                                <i class="icon-custom icon-stock-adj"></i> <span class="title">Stock Adjustment</span>
+                            </a>
+                        </li>
+        </ul>
+    </li> -->
+
+    <!-- MENU : Notification -->
+    <li>
+        <a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).NOTIFICATIONS.id)">
+            <i class="icon-custom icon-notify"></i> <span class="title"> Notification </span>
+            <i class="icon-arrow"></i> <span class="selected"></span>
+        </a>
+        <ul class="sub-menu">
+            <li>
+                <a th:href="@{/notification/new}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).NEW_MAIL.id)">
+                    <i class="clip-bubble"></i> <span class="title">New </span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/notification/inbox}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).INBOX.id)">
+                    <i class=" clip-archive"></i> <span class="title">Inbox</span>
+                    <!--<span class="badge badge-info"> <span th:if="${notificationUtility != null && notificationUtility.inboxItemCount != null}" th:text="${notificationUtility.inboxItemCount}">Static</span> </span>-->
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/notification/outbox}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).OUTBOX.id)">
+                    <i class="clip-paperplane"></i> <span class="title">Outbox</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/notification/trash}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).THRASH.id)">
+                    <i class="clip-remove "></i> <span class="title">Trash</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- MENU : Biz -->
+    <li>
+        <a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).BIZ.id)">
+            <i class="icon-custom icon-biz"></i> <span class="title">Biz</span>
+            <i class="icon-arrow"></i> <span class="selected"></span>
+        </a>
+        <ul class="sub-menu">
+            <li>
+                <a th:href="@{/part/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).PART.id)">
+                    <i class="icon-custom icon-parts"></i> <span class="title">Part</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/supplier/}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).SUPPLIER.id)">
+                    <i class="icon-custom icon-supplier"></i> <span class="title">Supplier</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/customer/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).CUSTOMER.id)">
+                    <i class="icon-custom icon-customer"></i> <span class="title"> Customer </span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/warehouse/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).CUSTOMER.id)">
+                    <i class="fa fa-university"></i> <span class="title"> Warehouse </span>
+                </a>
+            </li>
+<!--             <li>
+                <a th:href="@{/inventorygroup/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).CUSTOMER.id)">
+                    <i class="icon-custom icon-customer"></i> <span class="title"> Inventory Group </span>
+                </a>
+            </li> -->
+        </ul>
+    </li>
+
+    <!-- MENU : APP -->
+    <li>
+        <a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" >
+            <i class="icon-custom icon-app"></i> <span class="title">App</span>
+            <i class="icon-arrow"></i> <span class="selected"></span>
+        </a>
+        <ul class="sub-menu">
+            <li>
+                <a th:href="@{/app/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL')">
+                    <i class="icon-custom icon-apps"></i> <span class="title">App</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/myapp/}" sec:authorize="hasAnyAuthority('SYSTEM_LEVEL')">
+                    <i class="fa fa-newspaper-o"></i> <span class="title">My App</span>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+
+    <!-- MENU : Setting-->
+	<li>
+		<a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).MENU_PREFIX + T(com.neolith.focus.constants.Menu).SETTINGS.id)">
+			<i class="clip-cog-2"></i> <span class="title">Settings</span>
+			<i class="icon-arrow"></i> <span class="selected"></span>
+		</a>
+		<ul class="sub-menu">
+			<li>
+				<a th:href="@{/userProfile/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).USERS.id)">
+					<i class="clip-user"></i> <span class="title">Users</span>
+				</a>
+			</li>
+			<li>
+				<a th:href="@{/userGroups/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).USER_GROUPS.id)">
+					<i class="clip-users"></i> <span class="title">User Groups</span>
+				</a>
+			</li>
+			<li>
+                <a th:href="@{/business/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL')">
+					<i class="fa fa-building-o"></i> <span class="title">Business</span>
+				</a>
+			</li>
+			<li>
+				<a th:href="@{/cmmssettings/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.neolith.focus.constants.SubMenu).CMMS_SETTINGS.id)">
+					<i class="clip-wrench"></i> <span class="title">CMMS Settings</span>
+				</a>
+			</li>
+		</ul>
+	</li>
+</ul>
+<!-- end: MAIN NAVIGATION MENU -->
+</html>

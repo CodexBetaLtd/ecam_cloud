@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h4 class="modal-title">Status Change Notes</h4>
+	</div>
+	<div class="modal-body">
+	    <form id="wo-status-change-note-add-frm" method="POST">
+	    <input type="hidden" id="woChangeStatus" name="status"> 
+	    <input type="hidden" id="woId" name="id"> 
+	        <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Date </label>
+						<div class="input-group" id="picker-container">
+							<input id="woNoteDate" name="date" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Eg : 08-01-2020" >
+                           	<span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+						</div>
+		            </div>
+		        </div>
+	        </div>
+	        <div class="row">
+		        <div class="col-md-12">
+		            <div class="form-group">
+		                <label class="control-label"> Note <span class="symbol required"></span> </label> 
+		                <textarea id="woNote" name="note" class="form-control" ></textarea>
+		            </div>	        
+		        </div>
+	       </div>
+	    </form>
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm"> Close </button>
+	    <button id="btn-status-change" type="button" class="btn btn-blue btn-sm"><i class="clip-plus-circle-2"></i> Add </button>
+	</div>
+</html>
+

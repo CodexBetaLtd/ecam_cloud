@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.springframework.org/security/tags">
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick='UserSkillLevelHome.closeModal()'>&times;</button>
+	<h4 class="modal-title">Add User Skill Level</h4>
+</div>
+
+<div class="modal-body">
+
+	<!-- start: PAGE -->
+
+	<!-- start: PAGE CONTENT -->
+	<div class="row" style="margin-top: 15px">
+		<div class="col-md-12">
+
+				<div class="panel panel-default">
+					<div class="panel-body">
+
+						<a class="btn btn-default btn-sm active tooltips" id="new" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')"
+							onclick='UserSkillLevelHome.addModal()' data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+						</a> 
+						<a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')"
+							data-original-title="save" onclick='UserSkillLevelHome.saveModal()'> <i class="clip-checkmark-circle-2 btn-save"></i> Save
+						</a> 
+						<a class="btn btn-default btn-sm active tooltips" th:disabled="${userSkillLevel.id} == null ? 'disabled'" id="delete"
+							th:onclick="'UserSkillLevelHome.deleteInsideModal(\''+ ${userSkillLevel.id} +'\')'" data-placement="top" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')"
+							data-original-title="delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
+						</a> 
+						<a class="btn btn-default btn-sm active tooltips" id="cancel" onclick='UserSkillLevelHome.closeModal()'
+							sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-placement="top" data-original-title="back"> 
+							<i class="clip-arrow-left-2 "></i> Cancel
+						</a>
+						
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div th:replace="template/messageview :: message"></div>
+						
+						<form action="#" th:action="@{/userskilllevel/save}" method="post" role="form" th:object="${userSkillLevel}" id="userSkillLevelForm">
+							
+							<input type="hidden" id="id" name="id" th:field="*{id}" /> 
+							<input type="hidden" id="version" name="version" th:field="*{version}" />
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label"> Skill Level<span class="symbol required"></span>
+										</label> 
+										<input type="text" class="form-control" id="skill" name="skill" th:field="*{skill}" />
+									</div>
+								</div>
+								<div class="col-md-6">
+	                                <div class="form-group">
+	                                    <label class="control-label"> Business <span class="symbol required"></span>
+	                                    </label>
+	                                    <select id="userSkillBusinessId" th:field="*{businessId}" class="search-select" style="width: 100%;">
+	                                        <option value="">&nbsp;</option>
+	                                        <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+	                                    </select>
+	                                </div>
+	                            </div>
+							</div>
+							<div class="row">							
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="control-label"> Description<span class="symbol required"></span>
+										</label> 
+										<input type="text"  class="form-control" id="description" name="description" th:field="*{description}" >
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div>
+										<span class="symbol required"></span>Required Fields
+										<hr>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+		</div>
+	</div>
+
+	<!-- end: PAGE CONTENT-->
+</div>
+</html>

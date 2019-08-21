@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+	<div class="row" th:fragment="toolinfo" >
+    	<div class="col-sm-12">
+              <div class="tabbable wrapper">
+                  <ul id="myTab" class="nav nav-tabs tab-bricky list">
+                      <li class="active">
+                          <a href="#general_tab" data-toggle="tab">
+                             General
+                          </a>
+                      </li>
+<!--                     	 <li>
+                          <a href="#location_tab"  data-toggle="tab">
+                              Location
+                          </a>
+                      </li> -->
+                      <li>
+                          <a href="#event_tab"  data-toggle="tab">
+                              Asset Event 
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#meter_reading_tab" data-toggle="tab">
+                              Meter Readings
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#personnels_tab" data-toggle="tab">
+                              Personnel
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#warranties_tab"  data-toggle="tab">
+                              Warranties
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#purchasing_tab"  data-toggle="tab">
+                              Purchasing
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#customer_history_tab"  data-toggle="tab">
+                              Customer History
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#logs_tab"  data-toggle="tab">
+                              Logs
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#file_tab"  data-toggle="tab">
+                              File
+                          </a>
+                      </li>
+                  </ul>
+                  <div class="tab-content">
+                      <div class="tab-pane in active" id="general_tab">
+                          <div th:replace="asset/tab/tool-general-tab :: toolGeneralTabFragment"></div>
+                      </div>
+<!--                        <div class="tab-pane" id="location_tab">
+                          <div th:replace="asset/tab/location-tab :: locationTabFragment"></div>
+                      </div> -->
+                      <div class="tab-pane" id="event_tab">
+                          <div th:replace="asset/tab/asset-event-tab :: assetEventTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="meter_reading_tab">
+                          <div th:replace="asset/tab/meter-reading-tab :: meterReadingTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="personnels_tab">
+                          <div th:replace="asset/tab/personnel-tab :: personnelTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="warranties_tab">
+                          <div th:replace="asset/tab/warranty-tab :: warrantyTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="purchasing_tab">
+                          <div th:replace="asset/tab/purchasing-tab :: purchasingTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="customer_history_tab">
+                          <div th:replace="asset/tab/customer-history-tab :: customerHistoryTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="logs_tab">
+                          <div th:replace="asset/tab/log-tab :: assetLogTableFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="file_tab">
+                          <div th:replace="asset/tab/file-tab :: fileTabFragment"></div>
+                      </div>
+
+                  </div>
+              </div>
+    	</div>
+	</div>
+</html> 

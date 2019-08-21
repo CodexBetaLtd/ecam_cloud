@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+	<div id="message-div" th:fragment="message">
+        <div th:if="${success != null && success.size() > 0 }" th:each="msg : ${success}" class="alert alert-success">
+            <button data-dismiss="alert" class="close">&times;</button>
+            <i class="fa fa-check-circle"></i> <span th:text="${msg}"></span>
+        </div>
+        <div th:if="${error != null && error.size() > 0}" th:each="msg : ${error}" class="alert alert-danger">
+            <button data-dismiss="alert" class="close">&times;</button>
+            <i class="fa fa-times-circle"></i> <span th:text="${msg}"></span>
+    	</div>
+    	<div  th:if="${warning != null && !warning.isEmpty()}">
+           <div id='model' class='modal fade alert-warning' tabindex='-1' data-backdrop='static' data-keyboard='false' style='display: none; width: 420px !important;'>
+               <div class='modal-body'>
+                  <p style="font-size:16px"><i class="fa fa-exclamation-triangle"></i>  <span th:text="${warning}" ></span></p>
+                  <p>  <span th:text="${messageBody}" ></span></p>
+                </div>
+                 <div class='modal-footer'>
+                  <a data-dismiss='modal' style="background-color:#8a6d3b;color:#f6f7f8; width: 73px;" class='btn btn-xs'><i class="fa fa-check-square-o"></i>ok</a> 
+              	</div>
+            </div>
+        </div>
+	</div>
+</html>

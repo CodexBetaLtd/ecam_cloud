@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+	<div th:fragment="generalTabFragment">
+	
+		<div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')" >
+			<div class="col-md-6 col-xs-12"> 
+				<div class="panel panel-default">
+					<div class="form-group" style="margin-top: 20px; margin-left: -20px; text-align: center"> 
+						<label class="checkbox-inline business">
+							<input type="checkbox" class="grey" id="roleSupplier" name="roleSupplier" th:checked=*{roleSupplier} th:field=*{roleSupplier} value="true"> Supplier
+						</label>
+						<label class="checkbox-inline business">
+							<input type="checkbox" class="grey" id="roleCustomer" name="roleCustomer" th:checked=*{roleCustomer} th:field=*{roleCustomer} value="true"> Customer
+						</label>
+					</div> 
+				</div> 
+			</div>
+		</div>
+		<div class="row">
+		    <div class="col-md-6">
+		        <div class="form-group">
+		            <label class="control-label">Phone</label>
+		            <input type="text" placeholder="Insert the Phone" th:field="*{phone}" class="form-control" name="phone">
+		        </div>
+		    </div>
+		    <div class="col-md-6">
+		    	 <div class="form-group">
+		            <label class="control-label">Phone 2</label>
+		            <input type="text" placeholder="Insert the Phone 2" th:field="*{phone2}" class="form-control" name="phone2">
+		        </div>
+		    </div>
+		</div>
+		<div class="row">
+		    <div class="col-md-6">
+		        <div class="form-group">
+		            <label class="control-label">Fax</label>
+		            <input type="text" placeholder="Insert the Fax" th:field="*{fax}" class="form-control" id="fax" name="fax" >
+		        </div>
+		    </div>
+		    <div class="col-md-6">
+		    	 <div class="form-group">
+		            <label class="control-label">Web Site</label>
+		            <input type="text" placeholder="Insert the Web Site" th:field="*{webSite}" class="form-control" name="webSite">
+		        </div>
+		    </div>
+		</div>
+		<div class="row">
+		    <div class="col-md-6">
+		        <div class="form-group">
+		            <label class="control-label">Primary Email</label>
+		            <input type="email" placeholder="Insert the Primary Email" th:field="*{primaryEmail}" class="form-control" id="primaryEmail" name="primaryEmail" >
+		        </div>
+		    </div>
+		    <div class="col-md-6">
+		    	 <div class="form-group">
+		            <label class="control-label">Secondary Email</label>
+		            <input type="email" placeholder="Insert the Secondary Email" th:field="*{secondaryEmail}" class="form-control" id="secondaryEmail" name="secondaryEmail">
+		        </div>
+		    </div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+                    <label for="form-field-select-3">Primary Currency <span class="symbol required"></span> </label>
+                    <select th:field="*{currencyId}" class="search-select" style="width:100%;">
+                        <option value="">&nbsp;</option>
+                        <option th:each="currency : ${currencyList}" th:value="${currency.id}" th:text="${currency.name}" ></option>
+                    </select>
+                </div>			
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+                    <label for="form-field-select-3">Business Classification <span class="symbol required"></span> </label>
+                    <select th:field="*{businessClassficationId}" class="search-select" style="width:100%;">
+                        <option value="">&nbsp;</option>
+                        <option th:each="classification : ${businessClassifications}" th:value="${classification.id}" th:text="${classification.name}" ></option>
+                    </select>
+                </div>			
+			</div>
+		</div>
+		<div class="row">
+			<!-- <div class="col-md-6">
+				<div class="form-group">
+                    <label for="form-field-select-3">Business Type <span class="symbol required"></span> </label>
+                    <select th:field="*{businessTypeId}" class="search-select" style="width:100%;">
+                        <option value="">&nbsp;</option>
+                        <option th:each="type : ${businessTypes}" th:value="${type.id}" th:text="${type.businessTypeDefinitionName}" ></option>
+                    </select>
+                </div>			
+			</div>  -->
+			<div class="col-md-12">
+				<div class="form-group">
+                    <label class="control-label">Notes</label>
+                    <textarea placeholder="Insert the Notes" id="notes" name="notes" class="form-control" th:field="*{notes}"></textarea>
+                </div>			
+			</div>
+		</div>
+	</div>
+	
+</html>

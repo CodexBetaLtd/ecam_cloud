@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+
+<body>
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            <!-- end: MAIN NAVIGATION MENU -->
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+
+        <div class="container">
+
+            <!-- start: PAGE HEADER -->
+            <div class="row" th:replace="inventory/stockHistory/page-header :: pageheader"></div>
+            <!-- end: PAGE HEADER -->
+
+            <!-- start: FORM -->
+            <form role="form" id="frm_stockHistory" th:action="@{/stock/stockAdjustment}" th:object="${stockHistory}"
+                  method="post">
+                <div class="row btn-bar">
+                    <a name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stock/}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_STOCK_ADJUSTMENT_ADD.id)"
+                       data-placement="top" data-original-title="Cancel and Back">
+                        <i class="clip-arrow-left-2 "></i> Cancel
+                    </a>
+                </div>
+
+                <!-- start: PAGE CONTENT -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="clip-stack-2 "></i> Stock History
+                                <div class="panel-tools">
+                                    <a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
+                                    <a class="btn btn-xs btn-link panel-refresh" href="#"> <i class="fa fa-refresh"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="panel-body ">
+                                <div th:replace="template/messageview :: message"></div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                            <table style="width: 100%"
+                                                   class="table table-striped table-bordered table-hover"
+                                                   id="tbl_stock_history_details">
+                                                <thead>
+                                                <tr>
+                                                    <th> #</th>
+                                                    <th> Warehouse</th>
+                                                    <th> Stock No</th>
+                                                    <th> Stock Description</th>
+                                                    <th> Date</th>
+                                                    <th> Least Quantity</th>
+                                                    <th> Moved Quantity</th>
+                                                    <th>Balance</th>
+                                                    <!--    <th> Last Price</th> -->
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr th:each="stockHistory,iter : ${stockHistoryList}">
+                                                    <td><span th:text="${iter.index+1}"></span></td>
+                                                    <td><span th:text="${stockHistory.warehouseName}"></span></td>
+                                                    <td><span th:text="${stockHistory.stockNo}"></span></td>
+                                                    <td><span th:text="${stockHistory.description}"></span></td>
+                                                    <td><span th:text="${stockHistory.date}"></span></td>
+                                                    <td><span th:text="${stockHistory.beforeQuantity}"></span></td>
+                                                    <td><span th:text="${stockHistory.quantity}"></span></td>
+                                                    <td><b> <span th:text="${stockHistory.afterQuantity}"></span> </b>
+                                                    </td>
+                                                    <!-- <td><span th:text="${stockHistory.lastPrice}"></span></td> -->
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: PAGE CONTENT-->
+
+
+            </form>
+            <!-- end: FORM -->
+
+
+        </div>
+    </div>
+    <!-- end: PAGE -->
+</div>
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+<script th:inline="javascript">
+
+    Main.init();
+</script>
+
+</body>
+
+</html>

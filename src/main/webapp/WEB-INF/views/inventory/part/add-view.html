@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/fileinput/fileinput.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/jstree/style.min.css}"/>
+
+<body>
+	<!-- start: HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+				<!-- end: MAIN NAVIGATION MENU -->
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+			<div id="stock-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 10%; margin-top: 10%; height:100%; position: fixed;"></div>
+			<div class="container">
+
+				<!-- start: PAGE HEADER -->
+                <div class="row" th:replace="inventory/part/page-header :: pageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<div class="row btn-bar">
+
+                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/part/add}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_PROJECT_ADD.id)"
+                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_PROJECT_ADD.id)"
+                       onclick="document.getElementById('part_add_btn').click();"> <i class="clip-checkmark-circle-2 btn-save"></i><span class="hidden-xs"> Save</span>
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/part/delete(id=${part.id})}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_PROJECT_ADD.id)"
+                       th:disabled="${part.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/part/}" data-placement="top"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_PROJECT_ADD.id)"
+                       data-original-title="Back"><i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
+					</a>
+
+				</div>
+
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<i class="clip-cube "></i> Part / Supply
+							</div>
+
+							<div class="panel-body">
+								<div th:replace="template/messageview :: message"></div>
+								<form role="form" id="part_add_frm" th:action="@{/part/save} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" th:object="${part}" method="post" enctype="multipart/form-data">
+									<input type="hidden" id="partId" name="id" th:field="*{id}" />
+									<input type="hidden" id="partVersion" name="version" th:field="*{version}"/>
+									<div class="row">
+		                                <div class="col-sm-6">
+	                                		<div class="form-group"> 
+	                                            <div id="kv-avatar-errors" class="center-block" style="display:none"></div>
+	                                            <div class="kv-avatar part">
+	                                                <input id="partImage" name="partImage" type="file" class="file-loading">
+	                                            </div>
+	                                        </div>
+	                                    </div>
+	                                    <div class="col-sm-6">                      
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<label class="control-label"> Business <span class="symbol required"></span>
+														</label>
+														<select th:field="*{businessId}" class="search-select" style="width: 100%;">
+															<option value="">&nbsp;</option>
+															<option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+														</select>
+													</div>
+												</div>
+											</div>											
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<label class="control-label"> Name <span class="symbol required"></span></label>
+														<input type="text" placeholder="Insert the Part Name" th:field="*{name}" class="form-control" id="partName" name="name">
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="form-group">
+														<label class="control-label"> Code <span class="symbol required"></span> </label> 
+														<input type="text" placeholder="Insert the Part Code" th:field="*{code}" class="form-control" id="code" name="code">
+													</div>
+												</div>
+											</div> 
+											<div class="row">
+											<div class="col-md-12">
+									            <div class="form-group">
+								                    <label class="control-label">
+								                         Part Category <span class="symbol required"></span>
+								                    </label>
+								                    <div class="input-group">
+								                        <input type="hidden" th:field="*{partCategoryId}" id="partCategoryId">
+								                        <input type="text" th:field="*{partCategoryName}" readonly class="form-control" placeholder="Select Part Category" id="partCategoryName">                     
+								                    </div>
+									            </div>
+								            </div>
+						            	</div>
+											<div class="row">
+											<div class="col-md-12">
+												<div id="data" class="demo"></div>
+								            </div>
+						            	</div>
+                                    </div>
+                                    </div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label class="control-label"> Description </label>
+												<textarea th:field="*{description}" id="description" placeholder="Insert the Part Description" class="form-control"></textarea>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div>
+												<span class="symbol required"></span> Required Fields
+												<hr>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="tabbable wrapper">
+												<ul id="myTab" class="nav nav-tabs tab-bricky list">
+													<li class="active"><a href="#general_tab" data-toggle="tab"> General </a></li>
+													<li><a href="#stock_tab" data-toggle="tab"> Stock </a></li>
+                                                    <li><a href="#notification_tab" data-toggle="tab"> Notification </a></li>
+                                                    <!--<li><a href="#po_tab" data-toggle="tab"> Open POs </a></li>-->
+													<!--<li><a href="#bom_tab" data-toggle="tab"> BOM </a></li>-->
+                                                    <!--<li><a href="#personnel_tab" data-toggle="tab"> Personnel </a></li>-->
+                                                    <!--<li><a href="#Warranty_tab" data-toggle="tab"> Warranties </a></li>-->
+													<!--<li><a href="#business_tab" data-toggle="tab"> Businesses </a></li>-->
+													<li><a href="#log_tab" data-toggle="tab"> Log </a></li>
+                                                    <li><a href="#stock_ledger_tab" data-toggle="tab"> Stock Ledger </a>
+                                                    </li>
+												</ul>
+												<div class="tab-content">
+													<div class="tab-pane in active" id="general_tab">
+                                                        <div th:replace="inventory/part/tab/general-tab :: generalTabFragment"></div>
+													</div>
+													<div class="tab-pane" id="stock_tab">
+                                                        <div th:replace="inventory/part/tab/stock-tab :: stockTabFragment"></div>
+													</div>
+                                                    <div class="tab-pane" id="notification_tab">
+                                                    	<div th:replace="inventory/part/tab/notification-tab :: notificationTab"></div>
+                                                    </div>
+                                                    <div class="tab-pane" id="stock_ledger_tab">
+                                                        <div th:replace="inventory/part/tab/stock-ledger-tab :: stockLedgerTabFragment"></div>
+                                                    </div>
+                                                    <!--<div class="tab-pane" id="po_tab">-->
+                                                    <!--<div th:replace="inventory/part/tab/po-tab :: poTabFragment"></div>-->
+                                                    <!--</div>-->
+													<!--<div class="tab-pane" id="bom_tab">
+                                                        <div th:replace="inventory/part/tab/bom-tab :: bomTabFragment"></div>
+													</div>-->
+                                                    <!--<div class="tab-pane" id="personnel_tab">-->
+                                                    <!--<div th:replace="inventory/part/tab/personnel-tab :: personnelTabFragment"></div>-->
+                                                    <!--</div>-->
+                                                    <!--<div class="tab-pane" id="Warranty_tab">-->
+                                                    <!--<div th:replace="inventory/part/tab/warranty-tab :: warrantyTabFragment"></div>-->
+                                                    <!--</div>-->
+													<!--<div class="tab-pane" id="business_tab">
+                                                        <div th:replace="inventory/part/tab/business-tab :: businessTabFragment"></div>
+													</div>-->
+													<div class="tab-pane" id="log_tab">
+														<div th:replace="inventory/part/tab/log-tab :: partLogTableFragment"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row" style="visibility: hidden;">
+										<button id="part_add_btn" type="submit"></button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end: PAGE CONTENT-->
+			</div>
+		</div>
+		<!-- end: PAGE -->
+	</div>
+	<!-- end: MAIN CONTAINER -->
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jstree/jstree.min.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/add-view.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/bom-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/warranty-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/business-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/personnel-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/po-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/log-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/stock-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/stock-notification-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/notification-tab.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/asset-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/warranty-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/user-select-modal.js}"></script>
+    <!--<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/business-add-modal.js}"></script>-->
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/stock-add-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/stock-notification-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/brand-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/model-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/part-category-add-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/notification-add-modal.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/business-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/site-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/model-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/brand-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/part-log-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/part-category-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/warehouse-dt.js}"></script>
+
+
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
+
+
+	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+	<script th:inline="javascript">
+
+        var clientErrorList = [];
+        var assetConsumeRefs = [];
+        var warranties = [];
+        var users = [];
+        
+        var stockItems = [[${part.stockDTOs}]];
+        var openPOs = [[${part.openPOs}]];
+        var thymeLeafUserList = [[${part.assetUserDTOs}]];
+        var businessGroupTheamLeafList = [[${businessGroups}]];
+        var thymeLeafWarranties = [[${part.warranties}]];
+        var thymeLeafAssetConsumeRefs = [[${part.assetConsumeRefs}]];
+        var notifications = [[${part.partNotificationDTOs}]];
+        var stockNotifications = [];
+        
+        var partId = [[${part.id}]];  
+
+    </script>
+
+</body> 
+</html>

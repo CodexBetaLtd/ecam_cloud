@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<div th:fragment="backupTabFragment">
+
+	<div class="row">
+	    <div class="col-md-12">
+	        <div class="panel panel-default">
+	            <div class="panel-heading">
+	                <i class="icon-custom icon-apps"></i> Backup
+	            </div>
+	            <div class="panel-body">
+					
+					<form method="POST" th:action="@{/backup/download-backup}" id="data-backup-form">
+                    
+	                    <div class="row">
+	                        <div class="col-md-12">
+	                            <div class="form-group">
+	                                <label class="control-label"> Business </label>
+	                                <select id="businessId" name="businessId" class="search-select" style="width: 100%;">
+	                                    <option value="">&nbsp;</option>
+	                                    <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+	                                </select>
+	                            </div>
+	                            <button type="submit" class="btn btn-xs btn-teal tooltips" id="backup-btn" data-placement="top" data-original-title="Backup"> 
+	                            	<i class='fa fa-download' ></i> Backup
+				                </button>
+	                        </div>
+	                    </div>
+                    
+                    </form>
+                    
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+</div>

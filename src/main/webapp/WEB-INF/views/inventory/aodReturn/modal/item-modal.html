@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"><span th:text="#{aodReturn.tab.item}"></h4>
+</div>
+<div class="modal-body">
+    <form id="frm_return_item">
+        <input type="hidden" id="aodReturnId">
+        <input type="hidden" id="aodReturnItemId">
+        <input type="hidden" id="version">
+        <input type="hidden" id="rowIndex">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="control-label"> <span th:text="#{aodReturn.tab.item.aodItem}"></span><span
+                            class="symbol required"></span> </label><br/>
+                    <div class="input-group">
+                        <input type="hidden" id="aodReturnAodItemId" name="aodReturnAodItemId">
+                        <input type="hidden" id="aodItemQuantity" name="aodItemQuantity">
+                        <input type="text" id="aodReturnAodItemNo" required name="aodReturnAodItemNo"
+                               readonly="readonly">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label"> <span th:text="#{aodReturn.tab.item.returnQty}"></span><span
+                            class="symbol required"></span>
+                    </label><br/>
+                    <input id="returnQuantity" name="returnQuantity" type="text" required
+                           placeholder="Return Quantity" class="form-control numericOnly">
+                </div>
+                <div class="form-group">
+                    <label class="control-label"> <span th:text="#{aodReturn.tab.item.description}"></span>
+                    </label><br/>
+                    <textarea id="returnDescription" placeholder="Please Add Description Here" class="form-control"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <span class="symbol required"></span>Required Fields
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <a type="button" data-dismiss="modal" class="btn btn-sm btn-blue"><span th:text="#{form.btn.close}"></span></a>
+    <a class="btn btn-blue btn-sm active tooltips" id="btnAODReturnItemAdd" data-placement="top"
+       data-original-title="Add"><i
+            class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span>
+    </a>
+</div>
+
+</html>

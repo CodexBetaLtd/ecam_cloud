@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+
+<body>
+
+	<!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+	
+	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: auto; top: 50%; position: fixed;"></div>
+ 	<div id="cmms-setting-add-modal" class="modal fade" tabindex="-1" data-width="760" style="display: none;"></div>
+    
+    <!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+        
+            <div class="navbar-content">
+                <!-- start: SIDEBAR -->
+                <div class="main-navigation navbar-collapse collapse">
+
+                    <!-- start: MAIN MENU TOGGLER BUTTON -->
+                    <div class="navigation-toggler">
+                        <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+                    </div>
+                    <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+                    <!-- start: MAIN NAVIGATION MENU -->
+                    <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+                </div>
+                <!-- end: SIDEBAR -->
+            </div>
+
+            <!-- start: PAGE -->
+            <div class="main-content">               
+
+                <div class="container">
+                    <!-- start: PAGE HEADER -->
+                    <div class="row" th:replace="admin/cmmssetting/page-header :: pageheader"></div>
+                    <!-- end: PAGE HEADER -->
+                    <!-- start: PAGE CONTENT -->
+                    <!-- start: TAB CONTENT -->
+                    <div th:replace="template/messageview :: message"></div>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-sm-12">
+                            <div class="tabbable">
+                                <ul id="myTab" class="nav nav-tabs tab-bricky nav-tabs-padding-top list">
+                                    <li class="active"><a href="#globalSettingsTab" data-toggle="tab"> Global Settings </a></li>
+                                    <li><a href="#businessSettingsTab" data-toggle="tab"> Business Settings </a></li>
+                                    <li><a href="#assetCategoryTab" data-toggle="tab"> Asset category </a></li>                                   
+                                    <li><a href="#siteTab" data-toggle="tab"> Site </a></li>
+                                    <li><a href="#backupTab" data-toggle="tab"> Backup </a></li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane in active" id="globalSettingsTab">
+                                         <div class="panel-body">
+                                            <div class="panel-group accordion-custom accordion-teal" id="accordion">
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                                                                <i class="icon-arrow"></i> Country
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFour" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/country/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseSeven">
+                                                                <i class="icon-arrow"></i> Currency
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseSeven" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/currency/home-view::homeview">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                 <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseFourteen">
+                                                                <i class="icon-arrow"></i> Asset Brand
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFourteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/assetbrands/home-view :: homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseFifteen">
+                                                                <i class="icon-arrow"></i> Asset Model
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFifteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/assetmodels/home-view :: homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseTwo">
+                                                                <i class="icon-arrow"></i> Business Classification
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseTwo" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/businessclassification/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseFive">
+                                                                <i class="icon-arrow"></i> Meter Reading Units
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFive" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/meterreadingunits/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="businessSettingsTab">
+                                        <div class="panel-body">
+                                            <div class="panel-group accordion-custom accordion-teal" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseOne">
+                                                                <i class="icon-arrow"></i> Asset Event Type
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseOne" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/asseteventtype/home-view :: homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseThree">
+                                                                <i class="icon-arrow"></i> Business Type
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseThree" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/bussinestype/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseSix">
+                                                                <i class="icon-arrow"></i> Certification
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseSix" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/certification/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseEight">
+                                                                <i class="icon-arrow"></i> Maintenance Type
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseEight" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/maintenancetype/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseNine">
+                                                                <i class="icon-arrow"></i> Priorities
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseNine" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/priorities/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseTen">
+                                                                <i class="icon-arrow"></i> Account
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseTen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/account/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseEleven">
+                                                                <i class="icon-arrow"></i> Charge Department
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseEleven" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/chargedepartments/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseTwelve">
+                                                                <i class="icon-arrow"></i> User Job Title
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseTwelve" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/userjobtitle/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseThirteen">
+                                                                <i class="icon-arrow"></i> User Skill Level
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseThirteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/userskilllevel/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseSixteen">
+                                                                <i class="icon-arrow"></i> Miscellaneous Expense Type
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseSixteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/miscellaneousexpensetype/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="assetCategoryTab">
+                                        <div th:replace="admin/assetcategory/home-view :: homeview"></div>
+                                    </div>
+                                                                        
+                                    <div class="tab-pane " id="siteTab">
+                                        <div th:replace="admin/cmmssetting/site/user-site-panel :: userSitePanel"></div>
+                                    </div>
+                                    
+                                    <div class="tab-pane " id="backupTab">
+                                        <div th:replace="admin/cmmssetting/backup/backup-tab :: backupTabFragment"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end: TAB CONTENT-->
+            <!-- end: PAGE -->
+	</div>
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/home-view.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/setting.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/site/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/site/modal/site-users-view.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/backup/backup-tab.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/asseteventtype/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/maintenancetype/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/meterreadingunits/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/priorities/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/currency/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/bussinestype/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/country/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/businessclassification/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/account/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/chargedepartments/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/userjobtitle/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/userskilllevel/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/miscellaneousexpensetype/home-view.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/asseteventtype/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/maintenancetype/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/meterreadingunits/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/priorities/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/currency/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/bussinestype/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/country/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/businessclassification/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/account/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/chargedepartments/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/userskilllevel/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/userjobtitle/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/miscellaneousexpensetype/add-view.js}"></script>
+    
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+</body>
+
+</html>

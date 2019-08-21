@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div th:fragment="shippingTabFragment">
+	<div class="row">
+		<div class="col-md-4">
+           <div class="form-group">
+              <label class="control-label">
+              	Supplier <span class="symbol required"></span>
+              </label>
+              <select  id="supplierBusiness" th:field="*{supplierId}"class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+              </select>
+          </div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+              <label class="control-label">
+              	Ship to <span class="symbol required"></span>
+              </label>
+              <select id="shipToLocation" th:field="*{shipToId}" class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="site : ${sites}"
+					th:value="${site.id}" th:text="${site.name}"></option>
+              </select>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+              <label class="control-label">
+              	Bill to <span class="symbol required"></span>
+              </label>
+              <select id="billToLocation" th:field="*{billToId}" class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="site : ${sites}"
+					th:value="${site.id}" th:text="${site.name}"></option>
+              </select>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+           <div class="form-group">
+			<label class="control-label">Supplier Address</label>
+			  <textarea th:field="*{supplierAddress}" class="form-control" ></textarea>
+          </div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Ship Address</label>
+                <textarea th:field="*{shipToAddress}" class="form-control" ></textarea>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Bill Address</label>
+                <textarea th:field="*{billToAddress}" class="form-control" ></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+           <div class="form-group">
+				<label class="control-label">City</label>
+                <input type="text" th:field="*{supplierCity}" class="form-control" >
+          </div>
+		</div>
+			<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">City</label>
+				<input type="text" th:field="*{shippingCity}" class="form-control" >
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">City</label>
+                <input type="text" th:field="*{billingCity}" class="form-control" >
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+                <div class="form-group">
+				<label class="control-label">Province</label>
+                <input th:field="*{supplierProvince}" type="text" class="form-control" >
+          </div>
+		</div>
+			<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Province</label>
+                <input type="text" th:field="*{shippingProvince}" class="form-control" >
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Province</label>
+                <input type="text" th:field="*{billingProvince}"class="form-control" >
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+                <div class="form-group">
+				<label class="control-label">Postal Code</label>
+                <input type="text" th:field="*{supplierPostalCode}" class="form-control" >
+          </div>
+		</div>
+			<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Postal Code</label>
+                <input type="text" th:field="*{shippingPostalCode}" class="form-control" >
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label">Postal Code</label>
+                <input type="text" th:field="*{billingPostalCode}" class="form-control" >
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4">
+		 	<div class="form-group">
+              <label class="control-label">
+              	Country <span class="symbol required"></span>
+              </label>
+              <select id="supplierCountry" th:field="*{supplierCountry}" class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="country : ${countries}"
+					th:value="${country.id}" th:text="${country.name}"></option>
+              </select>
+          </div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+              <label class="control-label">
+              	Country <span class="symbol required"></span>
+              </label>
+              <select  id="shipToCountry" th:field="*{shipToCountry}"class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="country : ${countries}"
+					th:value="${country.id}" th:text="${country.name}"></option>
+              </select>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+              <label class="control-label">
+              	Country <span class="symbol required"></span>
+              </label>
+              <select id="billToCountry" th:field="*{billToCountry}"class="search-select" style="width:100%;">
+				<option value="">&nbsp;</option>
+				<option th:each="country : ${countries}"
+					th:value="${country.id}" th:text="${country.name}"></option>
+              </select>
+			</div>
+		</div>
+	</div>
+</div>
+</html>

@@ -1,0 +1,44 @@
+package com.neolith.focus.service.admin.cmmssettings.certification;
+
+import com.neolith.focus.common.TestCase;
+import com.neolith.focus.dto.admin.CertificationDTO;
+import com.neolith.focus.result.admin.CertificationResult;
+import com.neolith.focus.service.admin.api.CertificationService;
+import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+@Component
+public class CertificationServiceDeleteByIdTestCase extends TestCase{
+	
+
+	@Autowired
+	private CertificationService  certificationService;
+	
+	protected final String RESULT_IS_ERROR = "isError";
+
+	private boolean isError;
+
+	protected void checkActualResults() throws Exception {
+		setActualResult(RESULT_IS_ERROR, isError);
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED ,rollbackFor = Exception.class)
+	protected void executeTest() throws Exception {
+		try {
+			
+			CertificationDTO certificationDTO = CertificationDummyData.getInstance().getDummyDTOCertificationOne();
+
+            CertificationResult expectedId = certificationService.save(certificationDTO);
+            certificationService.delete(expectedId.getDtoEntity().getId());
+
+            Assert.assertNull("Certification is not null.", certificationService.findById(expectedId.getDtoEntity().getId()));
+
+		} catch (Exception e) {
+			isError = true;
+		}
+	}
+
+}

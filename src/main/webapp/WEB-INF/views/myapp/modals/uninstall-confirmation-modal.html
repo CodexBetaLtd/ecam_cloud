@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"> UnSubscribe Confirmation </h4>
+</div>
+
+<div class="modal-body">
+
+    <div class="panel-body">
+    	<div th:if="${ affectedApps != null && affectedApps.size() > 0 }" class="row">
+        	<p> Following Apps are No longer Available If you unsubscribe from app. </p>        	
+        	<div th:each="app : ${affectedApps}" >
+        		<p th:text="${app.name}" ></p>        		
+        	</div>        	
+    	</div>
+    	<div class="row">
+        	<p> Are you sure you want to unsubscribe from App ? </p>
+    	</div>
+    </div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+    <button class="btn btn-blue btn-sm active tooltips" id="btn-app-uninstall-btn" data-placement="top"
+            data-original-title="Proceed">
+        <i class="clip-checkmark-circle-2" style="color: white"></i> Proceed
+    </button>
+</div>
+
+</html> 

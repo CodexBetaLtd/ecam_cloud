@@ -1,0 +1,64 @@
+.title-plugin {
+	font-family: 'Pacifico', cursive;
+	font-size: 80px;
+	color: #019F9A
+}
+
+.block-wrapper {
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.block-sent { 
+	text-align: center;
+	color: #007AFF;
+	background-color: #d9edf7;
+	border: 3px solid #007AFF;
+	padding-top: 30px;
+	width: 120px;
+	height: 120px;
+	margin: 10px
+} 
+
+.block-approved { 
+	text-align: center;
+	color: #019F9A;
+	background-color:#dff0d8;
+	border: 3px solid #019F9A;
+	padding-top: 30px;
+	width: 120px;
+	height: 120px;
+	margin: 10px
+}  
+
+.counter-wrapper{
+	font-weight: 700;
+	margin: 5px 0px 5px 0px;
+	font-size: 30px;
+}
+
+.text-block {
+	font-size: 13px;
+	margin-top: 5px;
+}
+
+.center {
+	text-align: center;
+}
+
+.text-block.title {
+	color: #626363;
+	font-weight: bold;
+}
+
+.lnr-approved, .lnr-sent {
+	font-size: 16px;
+}
+
+.lnr-approved {
+	color: #019F9A
+}
+
+.lnr-sent {
+	color: #007AFF
+}

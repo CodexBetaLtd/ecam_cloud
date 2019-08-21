@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<div class="footer clearfix" th:fragment="footer">
+<div class="row copy-write-img">
+	<img th:src="@{/resources/images/codex.png}" class="footer-img">
+</div>
+   <div class="footer-inner">
+       <script>
+           document.write(new Date().getFullYear())
+       </script> &copy; eCAM by CodexBeta.
+    </div>
+    <div class="footer-items">
+        <span class="go-top"><i class="clip-chevron-up"></i></span>
+    </div>
+</div>

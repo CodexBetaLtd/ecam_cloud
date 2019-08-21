@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Miscellaneous Expense</h4>
+</div>
+
+<div class="modal-body">
+
+	<form id="misc-cost-add-frm">
+	
+	    <input type="hidden" id="miscellaneousExpenseId" name="miscellaneousExpenseId"/>
+	    <input type="hidden" id="miscellaneousExpenseVersion" name="miscellaneousExpenseVersion"/>
+	    <input type="hidden" id="miscellaneousExpenseIndex" name="miscellaneousExpenseIndex"/>	
+	
+	    <div class="row">
+	        <div class="col-md-6" id="misCostTypeHolder">
+	            <div id="miscellaneousTypeDropDownHomeDiv" class="form-group">
+	                <label class="control-label"> Miscellaneous Expense Type </label>
+	                <select id="miscellaneousExpenseType" name="miscellaneousExpenseType" class="search-select" style="width:100%;">
+	                    <option th:each="miscellaneousExpenseType : ${miscellaneousExpenseTypeList}"
+	                            th:value="${miscellaneousExpenseType.id}" th:text="${miscellaneousExpenseType.type}"></option>
+	                </select>
+	            </div>
+	        </div>
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Description <span class="symbol required"></span></label>
+	                <input id="miscellaneousExpenseDescription" name="miscellaneousExpenseDescription" type="text" class="form-control" />
+	            </div>
+	        </div>
+	    </div>
+	    <div class="row">
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label"> Est Quantity <span class="symbol required"></span></label>
+	                <input id="miscellaneousExpenseEstQuantity" name="miscellaneousExpenseEstQuantity" type="text" class="form-control estimateData numericOnly" />
+	            </div>
+	        </div>
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label"> Est Unit Cost <span class="symbol required"></span></label>
+	                <input id="miscellaneousExpenseEstUnitCost" name="miscellaneousExpenseEstUnitCost" type="text" class="form-control estimateData numericOnly" />
+	            </div>
+	        </div>
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label">Est Total Cost </label>
+	                <input id="miscellaneousExpenseEstTotal" name="miscellaneousExpenseEstTotal" type="text" class="form-control" disabled="disabled"/>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="row">
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label"> Actual Quantity <span class="symbol required"></span></label>
+	                <input id="miscellaneousExpenseActualQuantity" name="miscellaneousExpenseActualQuantity" type="text" class="form-control actualData numericOnly" />
+	            </div>
+	        </div>
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label"> Actual Cost <span class="symbol required"></span></label>
+	                <input id="miscellaneousExpenseActualCost" name="miscellaneousExpenseActualCost" type="text" class="form-control actualData numericOnly" />
+	            </div>
+	        </div>
+	        <div class="col-md-4">
+	            <div class="form-group">
+	                <label class="control-label">Actual Total Cost </label>
+	                <input id="miscellaneousExpenseActualTotal" name="miscellaneousExpenseActualTotal" type="text" class="form-control " disabled="disabled"/>
+	            </div>
+	        </div>
+	    </div>
+	    
+	</form>
+    
+</div>
+
+<div class="modal-footer">
+    <div class="container">
+        <button type="button" class="btn btn-sm btn-blue" id="add-misc-cost-btn" >
+            <i class="clip-plus-circle-2"></i> Add
+        </button>
+        <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
+            Close
+        </button>
+    </div>
+</div>
+
+
+</html>

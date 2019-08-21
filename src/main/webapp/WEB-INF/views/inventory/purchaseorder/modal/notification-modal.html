@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+        &times;
+    </button>
+    <h4 class="modal-title"> Notification </h4>
+</div>
+
+<div class="modal-body">
+    <div id="notificationModalSection" class="row">
+        <div class="col-md-12">
+            <input type="hidden" id="notificationId">
+            <input type="hidden" id="notificationVersion">
+            <input type="hidden" id="notificationRowIndex">
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="control-label"> User <span class="symbol required"></span>
+                </label>
+                <select id="notificationAssignedUser" class="search-select" style="width: 100%;">
+                    <option value="">&nbsp;</option>
+                    <option th:each="appUser : ${userList}" th:value="${appUser.id}"
+                            th:text="${appUser.fullName}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+
+            <div class="checkbox">
+                <input id="notifyOnAssignment" type="checkbox" value="" class="grey poNotificationCls">
+                <label>Notify On Assignment</label>
+            </div>
+
+            <div class="checkbox">
+                <input id="notifyOnStatusChange" type="checkbox" class="grey poNotificationCls">
+                <label>Notify On Status Change</label>
+            </div>
+
+            <div class="checkbox">
+                <input id="notifyOnCompletion" type="checkbox" value="" class="grey poNotificationCls">
+                <label>Notify On Completion</label>
+            </div>
+
+            <div class="checkbox">
+                <input id="notifyOnTaskCompleted" type="checkbox" value="" class="grey poNotificationCls">
+                <label>Notify On Task Completed</label>
+            </div>
+
+            <div class="checkbox">
+                <input id="notifyOnOnlineOffline" type="checkbox" value="" class="grey poNotificationCls">
+                <label>Notify On Online Offline</label>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
+        Close
+    </button>
+    <button id="addPONotification" type="button" class="btn btn-sm btn-blue">
+        <i class="clip-plus-circle-2 "></i> Add
+    </button>
+</div>
+
+
+</html>

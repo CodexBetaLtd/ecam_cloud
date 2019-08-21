@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" class="no-js">
+
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+	        &times;
+	    </button>
+	    <h4 class="modal-title">Notification</h4>
+	</div>
+
+	<div class="modal-body">
+	
+	    <div id="stock-notification-add-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+	         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+	        <div class="modal-content"></div>
+	    </div>
+	
+		<form id="stock-notification-add-frm"> 
+	        <div th:replace="inventory/stock/modal/notification-add-modal :: stockNotification"></div>
+	   </form>     
+	</div>
+	
+	<div class="modal-footer">
+	    <button id="add-stock-notification-btn" type="button" class="btn btn-sm btn-blue">
+	        <i class="clip-plus-circle-2 "></i> Add
+	    </button>
+	    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close </button>
+	</div> 
+
+</html>

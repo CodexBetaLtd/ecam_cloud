@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"> Add Meter Reading</h4>
+    </div>
+    <div class="modal-body">
+    
+	    <form id="asset-meter-reading-add-frm">
+	
+	        <input type="hidden" id="meterReadingId">
+	        <input type="hidden" id="meterReadingIndex">
+	        <input type="hidden" id="meterReadingAssetId">
+	        <input type="hidden" id="meterReadingCurrentValueIndex">
+	        <input type="hidden" id="meterReadingCurrentValueId">
+	        <input type="hidden" id="meterReadingCurrentValue">
+	        <input type="hidden" id="meterReadingViewName">
+	        <input type="hidden" id="meterReadingDescription">
+	        <input type="hidden" id="meterReadingVersion">
+	        <input type="hidden" id="meterReadingAvgValue">
+	
+	        <div class="row">
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label">Meter Reading Name <span class="symbol required"></span></label>
+	                    <input type="text" placeholder="Type Name For Meter Reading" class="form-control" id="meterReadingName" name="meterReadingName">
+	                </div>
+	            </div>
+	            <div class="col-md-6">
+	                <div class="form-group">
+	                    <label class="control-label"> Meter Reading Unit <span class="symbol required"></span></label>
+	                    <select id="meterReadingUnitId" name="meterReadingUnitId" class="search-select" style="width: 100%;">
+	                        <option value="">&nbsp;</option>
+	                        <option th:each="meterReadingUnit : ${meterReadingUnits}" th:value="${meterReadingUnit.id}" th:text="${meterReadingUnit.name}+' ('+${meterReadingUnit.symbol}+')'">
+	                        </option>
+	                    </select>
+	                </div>
+	            </div>
+	        </div>
+	        
+	    </form>
+         
+    </div>  
+    
+    <div class="modal-footer">
+    	<button type="button" class="btn btn-blue btn-sm" id="btn-add-meter-reading" > <i class="clip-checkmark-circle-2"></i>Add</button>
+        <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
+    </div>
+
+</html>

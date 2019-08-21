@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"> Purchase Order Item </h4>
+        </div>
+
+        <div class="modal-body">
+
+			<!--<div id="select-pages-open-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>-->
+
+			<input type="hidden" id="itemId">
+			<input type="hidden" id="itemIndex">
+			<input type="hidden" id="itemVersion">
+			<input type="hidden" id="itemRfqItemId">
+			<input type="hidden" id="itemRfqCodes">
+
+			<div class="row">
+               <div class="col-md-6">
+             		<label class="control-label"> Equipment / Tools / Parts / Supplies <span class="symbol required"></span></label><br/>
+	                <div class="input-group">
+						<input type="hidden" id="itemAssetId">
+						<input type="text" id="itemAssetName" readonly class="form-control" placeholder="Select Asset">
+						<span class="input-group-btn">
+							<button class="btn btn-blue" id="asset-select-modal-btn" data-placement="top">
+								<i class="clip-pencil"></i>
+							</button>
+						</span>
+					</div>
+               </div>
+			</div>
+
+			<div class="row">
+				<hr/>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="control-label"> Unit Price <span class="symbol required"></span> </label><br/>
+						<input id="itemUnitPrice" type="text" placeholder="Item Unit Price" class="form-control">
+					</div>
+				</div>
+				<div class="col-md-6">
+                   	<div class="form-group">
+               			<label class="control-label"> Quantity <span class="symbol required"></span> </label><br/>
+                       	<input id="itemQtyOnOrder" type="text" placeholder="Item Quantity" class="form-control" >
+                   </div>
+               </div>
+           </div>
+
+			<div class="row">
+				<div class="col-md-6">
+                   	<div class="form-group">
+						<label class="control-label"> Tax Rate (%) <span class="symbol required"></span> </label><br/>
+						<input id="itemTaxRate" type="text" placeholder="Tax Rate" class="form-control">
+                   </div>
+               </div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label> Required By Date <span class="symbol required"></span> </label>
+						<div class="input-group" id="item-date-picker-container">
+							<input id="itemRequiredByDate" type="text" data-date-format="dd-mm-yyyy"
+								   data-date-viewmode="years" placeholder="Eg : 08-01-2020"
+								   class="form-control date-picker">
+							<span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+						</div>
+					</div>
+				</div>
+           </div>
+
+            <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Account </label>
+		                <select id="itemAccountId" class="search-select" style="width: 100%;">
+		                    <option value="">&nbsp;</option>
+		                    <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.code}"></option>
+		                </select>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Charge Department </label>
+		                <select id="itemChargeDepartmentId" class="search-select" style="width: 100%;">
+		                    <option value="">&nbsp;</option>
+		                    <option th:each="chargeDepartment : ${chargeDepartments}" th:value="${chargeDepartment.id}" th:text="${chargeDepartment.code}"></option>
+		                </select>
+		            </div>
+		        </div>
+		   </div>
+
+			<div class="row">
+				<hr/>
+			</div>
+
+			<div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Ship To Location </label>
+		                <div class="input-group">
+							<input type="hidden" id="itemSiteId">
+							<input type="text" id="itemSiteName" readonly class="form-control" placeholder="Select Site">
+							<span class="input-group-btn">
+								<button class="btn btn-blue" id="site-select-modal-btn" data-placement="top">
+									<i class="clip-pencil"></i>
+								</button>
+							</span>
+						</div>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Associated / Impacted Work Order </label>
+		                <div class="input-group">
+							<input type="hidden" id="itemSourceWorkOrderId">
+							<input type="text" id="itemSourceWorkOrderCode" readonly class="form-control" placeholder="Select Work Order">
+							<span class="input-group-btn">
+								<button class="btn btn-blue" id="wo-select-modal-btn" data-placement="top">
+									<i class="clip-pencil"></i>
+								</button>
+							</span>
+						</div>
+		            </div>
+		        </div>
+		   </div>
+
+			<div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Associated / Impacted Asset </label>
+		                <div class="input-group">
+							<input type="hidden" id="itemSourceAssetId">
+							<input type="text" id="itemSourceAssetName" readonly class="form-control" placeholder="Select the Impacted / Associated Asset">
+							<span class="input-group-btn">
+								<button class="btn btn-blue" id="source-asset-select-modal-btn" data-placement="top">
+									<i class="clip-pencil"></i>
+								</button>
+							</span>
+						</div>
+		            </div>
+		        </div>
+			</div>
+
+		</div>
+	
+	<div class="modal-footer">
+		<button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+		<button type="button" class="btn btn-sm btn-blue" id="btn-add-po-item" data-dismiss="modal">
+			<i class="clip-plus-circle-2 "></i> Add
+		</button>
+	</div>
+	
+</html>

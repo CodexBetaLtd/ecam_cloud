@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml" class="no-js">
+
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h4 class="modal-title">Scheduled Task</h4>
+	</div>
+	
+	<div class="modal-body">
+	
+		<div id="sm-task-add-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog"
+	        tabindex="-1" style="margin-bottom: 0; bottom: auto; top: 50%; position: relative;" data-focus-on="input:first">
+	        <div class="modal-content">
+	
+	        </div>
+	    </div>
+	    
+	    <form id="task-add-frm" >
+	
+		    <input type="hidden" id="stId">
+		    <input type="hidden" id="stVersion">
+		    <input type="hidden" id="stGroupId">
+		    <input type="hidden" id="stIndex">
+		
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Asset <span class="symbol required"></span></label>
+		                <select id="stAssetId" name="stAssetId" class="search-select" style="width: 100%;"></select>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Trigger <span class="symbol required"></span></label>
+		                <select id="stTriggerIndex" name="stTriggerIndex" class="search-select" style="width: 100%;"> </select>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Task Type <span class="symbol required"></span></label>
+		                <select id="stTaskType" name="stTaskType" class="search-select" style="width: 100%;">
+		                    <option th:each="taskType : ${taskTypeList}" th:value="${taskType}" th:text="${taskType.name}"></option>
+		                </select>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Description <span class="symbol required"></span></label>
+		                <input id="stDescription"  name="stDescription" type="text" placeholder="Eg: Labour Task Description" class="form-control">
+		            </div>
+		        </div>
+		    </div>
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Time Estimate (hours) <span class="symbol required"></span></label> 
+		                <input id="stTimeEstimate" name="stTimeEstimate" type="text" placeholder="Eg: 00" class="form-control" >
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Assigned User <span class="symbol required"></span></label>
+		                <div class="input-group">
+		                    <input type="hidden" id="stUserId">
+		                    <input type="text" id="stUserName" name="stUserName" readonly class="form-control" placeholder="Select a User">
+		                </div>
+		            </div>
+		        </div>
+		    </div>  
+	    
+	    </form>     
+	
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" class="btn btn-blue btn-sm" id="add-scheduled-task-btn">
+	        <i class="clip-plus-circle-2"></i> Add
+	    </button>
+	    	    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
+	</div>
+
+
+</html>

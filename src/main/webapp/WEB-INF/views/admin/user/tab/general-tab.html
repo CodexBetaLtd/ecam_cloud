@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="userGeneralTabFragment">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Currency Id </label>
+                <select th:field="*{currencyId}" class="search-select" style="width: 100%;">
+                    <option value="">&nbsp;</option>
+                    <option th:each="currency : ${currencies}" th:value="${currency.id}"
+                            th:text="${currency.name}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Hourly Rate </label>
+                <input type="text" placeholder="Eg:$2" th:field="*{hourlyRate}" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Personal Code </label>
+                <input type="text" placeholder="Eg:Code 123" th:field="*{personalCode}" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+</html>

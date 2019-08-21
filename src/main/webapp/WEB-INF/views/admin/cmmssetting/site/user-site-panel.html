@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js"> 
+	<div class="row" th:fragment="userSitePanel"> 
+	    <div class="col-md-12">
+	        <div class="panel panel-default">
+	            <div class="panel-heading">
+	                <i class="clip-users-2"></i> User Site Groups
+	                <div class="panel-tools">
+	                    <a class="btn btn-xs btn-link panel-refresh" href="#"> <i class="fa fa-refresh"></i> </a>
+	                </div>
+	            </div> 
+	            <div class="panel-body panel-scroll"> 
+	                <div class="col-md-12">
+	                    <table class="table-striped table-condensed table-bordered table-hover table-full-width" style="width: 100%;" id="tbl_userSite_list">
+	                        <thead>
+	                            <tr>
+	                                <th class="first-col"> # </th>
+	                                <th> Site Name </th>
+	                                <th class="hidden-xs last-col"> More </th>
+	                            </tr>
+	                        </thead>
+	                        <tbody> </tbody>
+	                    </table>
+	                </div> 
+	                <!--userSiteModal -->
+	                <div class="col-md-12" th:replace="admin/cmmssetting/site/userSiteModal :: siteModalFragment"></div> 
+	            </div>
+	        </div>
+	    </div> 
+	</div> 
+</html>

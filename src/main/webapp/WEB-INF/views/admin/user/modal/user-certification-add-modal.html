@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+	<div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h4 class="modal-title"> Certification </h4>
+	</div>
+	<div class="modal-body">
+	
+		<form id="certification-add-frm" >
+		
+		    <input type="hidden" id="id" name="id">
+		    <input type="hidden" id="version" name="version">
+		    <input type="hidden" id="userCertificationIndex" name="userCertificationIndex">
+		    
+		    <div class="row">
+		        <div class="col-md-12">
+		            <div class="form-group">
+		                <label class="control-label"> Name <span class="symbol required"></span></label>
+		                <input id="name" name="name" type="text" placeholder="Please Insert a Name" class="form-control" >
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Certification Type <span class="symbol required"></span></label>
+		                <div class="input-group">
+		                    <input type="hidden" id='certificationTypeId' >
+		                    <input type="text" id="certificationTypeName" name="certificationTypeName" readonly class="form-control"  placeholder="Select Certification Type" >
+		                </div>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Certification Level <span class="symbol required"></span></label>
+		                <select id="certificationLevelId" name="certificationLevelId" class="search-select" style="width: 100%;">
+		                    <option value="">&nbsp;</option>
+		                    <option th:each="userCertificationsLevel : ${userCertificationLevels}" th:value="${userCertificationsLevel}" th:text="${userCertificationsLevel.name}">
+		                    </option>
+		                </select>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Valid From <span class="symbol required"></span> </label>
+		                <div class="input-group" id="picker-container">
+		                    <input type="text" id="validFrom" name="validFrom" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Specify a Valid From Date">
+		                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+		                </div>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+		            <div class="form-group">
+		                <label class="control-label"> Valid To <span class="symbol required"></span> </label>
+		                <div class="input-group" id="picker-container">
+		                    <input type="text" id="validTo" name="validTo" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Specify a Valid To Date">
+		                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    
+		    <div class="row">
+		        <div class="col-md-12">
+		            <div class="form-group">
+		                <label class="control-label">Description</label>
+		                <textarea id="description" name="description" placeholder="Please Insert a Description" class="form-control" rows="4"></textarea>
+		            </div>
+		        </div>
+		    </div>
+		    
+			<div class="row">
+				<div class="col-md-12">
+					<div>
+						<span class="symbol required"></span> Required Fields
+					</div>
+				</div>
+			</div>
+		</form>
+			   
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm"> Close</button>
+	    <button type="button" class="btn btn-primary btn-sm" id="add-user-certification-btn" > Add</button>
+	</div>
+
+</html>

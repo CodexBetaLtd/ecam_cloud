@@ -1,0 +1,16 @@
+<html>
+<head>
+
+</head>
+    <body>
+        <h3>Dear Sir/Madam,</h3>
+ 
+        <div>
+            ${rfqCode} RFQ Status changed ${previousstatus} to ${currentstatus}
+            
+        </div>
+        <span>Thank you</span>
+        
+    </body>
+</html>
+</html>

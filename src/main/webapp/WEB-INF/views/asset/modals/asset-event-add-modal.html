@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Asset Event </h4>
+    </div>
+    <div class="modal-body">
+    	
+    	<div id="asset-event-add-modal" class="modal datatable fade" data-backdrop="static" role="dialog"
+         	tabindex="-1" style="margin-bottom: 0; bottom: auto; top: 5%; position: relative;" data-focus-on="input:first">
+	        <div class="modal-content">
+	
+	        </div>
+	    </div>
+
+		<form id="asset_event_add_frm">
+			<div class="panel-body">
+		        <div class="row">
+		            <div class="col-md-6">
+			            <div class="form-group">
+		                    <label class="control-label">
+		                         Asset Event Type <span class="symbol required"></span>
+		                    </label>
+		                    <div class="input-group">
+		                        <input type="hidden" id="assetEventTypeId" name="assetEventTypeId" >
+		                        <input type="text" id="assetEventTypeName" name="assetEventTypeName" readonly class="form-control" placeholder="Select Event Type" >                     
+		                    </div>
+			            </div>
+		            </div>
+		            <div class="col-md-6">
+		                <div class="form-group">
+		                    <label class="control-label"> Description <span class="symbol required"></span></label>
+		                    <input type="text" id="assetEventDescription" name="assetEventDescription" class="form-control" placeholder="Insert the Asset Event Name" >
+		                </div>
+		            </div>
+		        </div>
+	        </div>
+        </form>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-blue btn-sm" id="btn-add-asset-event" ><i class="clip-checkmark-circle-2"></i> Add
+        </button>
+        <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm"> Close</button>
+    </div>
+</html>

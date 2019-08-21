@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header" style="height: 10%;">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Scheduled Maintenance Trigger</h4>
+</div>
+<div class="modal-body" style="height: 80%;">
+    <div id="schedulingnotasset" class="none">
+        <div class="alert alert-danger">
+            <i class="fa fa-times-circle"></i>
+            <span> Please select at least one asset</span>
+        </div>
+    </div>
+    <div id="schedulingasset" class=""> 
+        <input id="triggerId" type="hidden"/>
+        <input id="triggerVersion" type="hidden"/>
+        <input id="triggerIndex" type="hidden"/>
+        <input id="scheduledMaintenanceId" type="hidden"/>
+        <input id="lastTriggeredDate" type="hidden"/> 
+	    <form id="schedule_maintenance_trigger_frm">
+	        <div class="panel panel-default">
+	            <div class="panel-body">
+	                <div class="row">
+	                    <div class="col-md-6">
+		                     <div class="form-group">
+		                        <label class="control-label"> Asset  <span class="symbol required"></span> </label>
+		                        <select id="triggerAssetId" name="triggerAssetId" class="search-select" style="width:100%;"> </select>
+		                    </div>
+	                    </div>
+	                    <div class="col-md-6">
+		                     <div class="form-group">
+		                        <label class="control-label"> Description </label>
+		                        <input type="text" id="scheduleDescription" name="scheduleDescription" class="form-control input-sm" placeholder="Insert Description">
+		                    </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        <div class="panel panel-default">
+	            <div class="panel-body">
+	                <div class="row generate_work_order ">Generate Work Order By</div>
+	                  <div class="row">
+	                    <div class="col-md-12">
+	                        <div class="radio-inline">
+	                            <label>
+	                                <input type="radio" value="TIME_TRIGGER" name="smTriggerType" id="byTimeScheduleTrigger" class="grey" checked="checked">
+	                                Time Schedule Trigger
+	                            </label>
+	                        </div>
+	                        <div class="radio-inline">
+	                            <label>
+	                                <input type="radio" value="METER_READING_TRIGGER" name="smTriggerType" id="byMeterReadingTrigger" class="grey">
+	                                Meter Reading Trigger
+	                            </label>
+	                        </div>
+	                        <div class="radio-inline">
+	                            <label>
+	                                <input type="radio" value="EVENT_TRIGGER" name="smTriggerType" id="byEventTrigger" class="grey">
+	                                Event Trigger
+	                            </label>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-event-trigger:: ByEventTrigger"></div>
+	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-meter-reading-trigger:: ByMeterReadingTrigger"></div>
+	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-time-schedule:: ByTimeSchedule"></div>
+	            </div>
+	        </div> 
+	    </form>
+    </div>
+</div>
+<div class="modal-footer" style="height: 10%;">
+	<button type="button" class="btn btn-primary btn-sm" id="add-trigger-btn"> Add </button>
+    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm btn-blue"> Close</button>
+</div>
+
+</html>

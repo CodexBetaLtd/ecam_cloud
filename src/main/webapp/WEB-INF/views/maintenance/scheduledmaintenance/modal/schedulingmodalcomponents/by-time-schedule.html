@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="row none" id="divByTimeSchedule" th:fragment="ByTimeSchedule">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs tab-bricky">
+            <li class="active"><a href="#howoften_tab" data-toggle="tab">How Often </a></li>
+            <li id="howlong"><a href="#howlong_tab" data-toggle="tab">How Long</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="howoften_tab" role="tab">
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: howOften"></div>
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divHourly"></div>
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divDaily"></div>
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divWeekly"></div>
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divMonthly"></div>
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divYearly"></div>
+  <!--               <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="radio-inline">
+                                <input type="radio" value="true" name="ttScheduleIsFixed" class="grey" checked="checked"
+                                       id="ttScheduleIsFixed"> Fixed
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" value="false" name="ttScheduleIsFixed" class="grey"
+                                       id="ttScheduleIsFloating"> Floating
+                            </label>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="tab-pane" id="howlong_tab" role="tab">
+                <div class="col-md-12 none"
+                     th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/how-often:: divHowlong"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

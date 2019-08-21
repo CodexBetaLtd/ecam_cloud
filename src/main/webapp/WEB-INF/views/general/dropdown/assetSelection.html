@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+
+	<div th:fragment="assetListCheckboxFragment" >
+	    <div class="checkbox" th:each="assetDTO : ${assetDTOList}">
+	        <label>
+	            <!--<input type="checkbox" name ="assignedUserSites" th:value="${assetDTO.id}">  <span th:text="${assetDTO.name}"></span>-->
+	            <input class="grey" type="checkbox" th:field="*{assignedUserSites}" th:value="${assetDTO.id}">  <span th:text="${assetDTO.name}"></span>
+	        </label>
+	    </div>  
+    </div>
+
+	<div th:fragment="facilityFragment" class="container" >
+		<div th:if="${not #lists.isEmpty(facilityList)}">
+			<label class="control-label"> Site/Facility </label>
+			<select id="siteSelector" name="siteId" class="search-siteSelector">
+				<option th:each="facility : ${facilityList}" th:value="${facility.id}" th:text="${facility.name}"></option>
+			</select>
+		</div>
+		<div th:if="${#lists.isEmpty(facilityList)}">
+			<div class="alert alert-warning">
+				<button data-dismiss="alert" class="close">
+					&times;
+				</button>
+				<i class="fa fa-exclamation-triangle"></i>
+				<strong>Warning!</strong> You don't have any remain facility.
+			</div>
+		</div>
+
+	</div>
+
+
+	<!--<script>
+        jQuery(document).ready(function () {
+            $("#siteSelector").select2();
+        });
+	</script>-->
+
+
+
+</html>

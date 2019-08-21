@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+	<div th:fragment="userFragment" >
+		<div class="form-group">
+			<label class="control-label"> To  <span class="symbol required"></span> </label>
+			<br/>
+			<select id="user_selector" name="receivedUserId" class="search-select" style="width:40%;">
+				<option value="">&nbsp;</option>
+				<option th:each="userDTO : ${userList}" th:value="${userDTO.id}" th:text="${userDTO.fullName}"></option>
+			</select>
+		</div>
+    </div>
+</html>
+
+
+
+
+

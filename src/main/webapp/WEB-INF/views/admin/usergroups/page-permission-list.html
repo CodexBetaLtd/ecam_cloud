@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+	<div th:fragment="pagepermissionlist" >
+		 <p>This user group has the following page permissions:</p>
+		 <div class="checkbox" th:each="child, row : ${permissionsList}">
+	        <label>
+	            <input type="checkbox" name="pagePermissions" th:checked="${pagePermissions.contains(child)}" th:value="${child}" value="" class="grey"><span th:text="${child.name}"></span>
+	        </label>
+	     </div>
+	</div>
+
+</html>

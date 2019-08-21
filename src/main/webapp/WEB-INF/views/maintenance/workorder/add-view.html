@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+	  xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
+
+<body>
+
+	<!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+				<!-- end: MAIN NAVIGATION MENU -->
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+        <div id="status">
+        </div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+			
+			<div id="scrolable-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 10%; margin-top: 10%; height:100%; position: fixed;"></div>
+			<div th:replace="general/modal/modal-base :: modalFragment "></div>
+            <div th:replace="general/modal/modal-base :: largeModalFragment "></div>
+			<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+            <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+
+            <div class="container">
+
+				<!-- start: PAGE HEADER -->
+                <div class="row" th:replace="maintenance/workorder/page-header :: pageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<div class="row btn-bar">
+					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/workorder/add}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_WORK_ORDER_ADD.id)"
+					   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2 btn-new"></i> New
+					</a>
+					<a th:disabled="${workOrder.workOrderStatus}==${T(com.neolith.focus.constants.WorkOrderStatus).APPROVED} ? 'disabled' "
+					   class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_WORK_ORDER_ADD.id)"
+					   data-original-title="Save" onclick="document.getElementById('wo_add_btn').click();"> <i
+                       class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs"> Save</span>
+					</a>
+					<a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/workorder/delete(id=${workOrder.id})}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_WORK_ORDER_ADD.id)"
+					   th:disabled="${workOrder.id} == null ||  ? 'disabled'" data-placement="top"
+					   data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+					</a>
+					<a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/workorder/}" 
+					   data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i><span class="hidden-xs">Cancel</span>
+					</a>
+					<a th:disabled="${workOrder.id}==null ? 'disabled'" type="button" class="btn btn-default btn-sm active tooltips"
+						onClick="WorkorderAdd.woApprovedModalView()"
+					   th:if="${workOrder.workOrderStatus}==${T(com.neolith.focus.constants.WorkOrderStatus).OPEN}" id="btn-wo-approved"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_APPROVED_BUTTON_WORK_ORDER_ADD.id)"
+					   data-placement="top" data-original-title="Approve WorkOrder"><i class="fa fa-share-square-o"></i>
+						Approved
+					</a>
+					
+					<a th:disabled="${workOrder.id}==null ? 'disabled'" type="button" class="btn btn-default btn-sm active tooltips"
+					   onClick="WorkorderAdd.woClosedModalView()"
+					   th:if="${workOrder.workOrderStatus}==${T(com.neolith.focus.constants.WorkOrderStatus).APPROVED}" id="btn-wo-closed"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CLOSED_BUTTON_WORK_ORDER_ADD.id)"
+					   data-placement="top" data-original-title="Close WorkOrder"><i class="fa fa-share-square-o"></i>
+						Closed
+					</a> 
+				</div>
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+                                <i class="clip-stack-2 "></i> Work Order - Create
+							</div>
+							<div class="panel-body">
+								<div th:replace="template/messageview :: message"></div>
+								
+                                <form role="form" id="wo_add_frm" th:action="@{/workorder/save}" th:object="${workOrder}" method="post">
+
+                                    <input type="hidden" th:field="*{id}" id="woId"/>
+									<input type="hidden" th:field="*{version}" id="woVersion"/>
+									<input type="hidden" th:field="*{workOrderStatus}"/>
+									<input type="hidden" th:field="*{currentStatusId}"/>
+
+									<div class="row" style="visibility: hidden;">
+										<button id="wo_add_btn" type="submit"></button>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Work Order Status</label>
+												<p class="form-control">
+													<b><span style="font-size: medium;" th:field="*{workOrderStatus}" th:text="${workOrder.workOrderStatus.getName()}"></span></b>
+												</p>
+											</div>
+										</div>
+
+									</div>
+
+                                    <div class="row">
+                                        <div class="col-md-6" >
+					                        <div class="form-group">
+							                    <label class="control-label">
+							                    	Business <span class="symbol required"></span>
+							                    </label>
+							                    <select th:field="*{businessId}" class="search-select" style="width:100%;">
+							                        <option value="">&nbsp;</option>
+							                        <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}" ></option>
+							                    </select>
+							                </div>
+                                        </div>
+										<div class="col-md-6" >
+											<div class="form-group">
+												<label class="control-label"> Site <span class="symbol required"></span>
+												</label>
+												<select id="siteId" th:field="*{siteId}" class="search-select" style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Work Order Code <span class="symbol required"></span>
+												</label>
+												<input type="text" placeholder="Please Type Work Order Code" id="code" class="form-control" th:field="*{code}">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">
+													Maintenance Type <span class="symbol required"></span>
+												</label>
+												<select th:field="*{maintenanceTypeId}" class="search-select" style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="maintenanceType : ${maintenanceTypes}" th:value="${maintenanceType.id}" th:text="${maintenanceType.name}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Project </label>
+												<div class="input-group">
+													<input type="hidden" th:field="*{projectId}">
+													<input type="text" th:field="*{projectName}" readonly class="form-control" placeholder="Select Project">
+												</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Priority <span class="symbol required"></span>
+                                                </label>
+                                                <select th:field="*{priorityId}" class="search-select" style="width: 100%;">
+                                                    <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">                                        
+										<div class="col-md-6">
+											<div class="form-group">
+                                                <label class="control-label"> Start Date </label>
+												<div class="input-group" id="picker-container">
+													<input th:field="*{startDate}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Specify a Start Date">
+                                                    <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+												</div>
+											</div>
+										</div>
+                                    </div>
+									<div class="row">
+										<div class="col-md-12">
+											<div>
+												<span class="symbol required"></span>Required Fields
+												<hr>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="tabbable wrapper">
+												<ul id="myTab" class="nav nav-tabs tab-bricky list">
+													<li class="active">
+                                                        <a href="#asset_tab" data-toggle="tab"> Assets </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#general_tab" data-toggle="tab"> General </a>
+                                                    </li>
+													<li>
+														<a href="#completion_tab" data-toggle="tab"> Completion </a>
+													</li>
+													<li>
+														<a href="#labor_tasks_tab" data-toggle="tab"> Labor Tasks </a>
+													</li>
+													<li>
+														<a href="#parts_tab" data-toggle="tab"> Parts </a>
+													</li>
+													<li>
+                                                        <a href="#meter_readings_tab" data-toggle="tab"> Meter Readings </a>
+													</li>
+													<li>
+														<a href="#misc_costs_tab" data-toggle="tab"> Misc Costs </a>
+													</li>
+													<li>
+                                                        <a href="#notifications_tab" data-toggle="tab"> Notifications </a>
+													</li>
+													<li>
+														<a href="#work_log_tab" data-toggle="tab"> Work Log </a>
+													</li>
+													<li>
+														<a href="#work_note_tab" data-toggle="tab"> Notes </a>
+													</li>
+													<li>
+														<a href="#file_tab" data-toggle="tab"> File </a>
+													</li>
+												</ul>
+												<div class="tab-content">
+												
+                                                    <div class="tab-pane in active" id="asset_tab">
+                                                        <div th:replace="maintenance/workorder/tab/asset-tab :: assetTabFragment"></div>
+                                                    </div>
+                                                    
+                                                    <div class="tab-pane" id="general_tab">
+														<div th:replace="maintenance/workorder/tab/general-tab :: generalTabFragment"></div>
+													</div>
+													
+													<div class="tab-pane" id="completion_tab">
+														<div th:replace="maintenance/workorder/tab/completion-tab :: completetionTabFragment"></div>
+													</div>
+													
+													<div class="tab-pane" id="labor_tasks_tab">
+														<div th:replace="maintenance/workorder/tab/task-tab :: labourTaskTabFragment"></div>
+													</div>
+													
+													<div class="tab-pane" id="parts_tab">
+														<div th:replace="maintenance/workorder/tab/part-tab :: partTabFragment"></div>
+													</div>
+
+                                                    <div class="tab-pane" id="meter_readings_tab">
+														<div th:replace="maintenance/workorder/tab/meter-reading-tab :: meterReadingTabFragment"></div>
+													</div>
+
+													<div class="tab-pane" id="misc_costs_tab">
+														<div th:replace="maintenance/workorder/tab/misc-cost-tab :: miscellaneousTabFragment"></div>
+													</div>
+
+													<div class="tab-pane" id="notifications_tab">
+														<div th:replace="maintenance/workorder/tab/notification-tab :: notificationTab"></div>
+													</div>
+
+													<div class="tab-pane" id="work_log_tab">
+														<div th:replace="maintenance/workorder/tab/work-log-tab :: workOrderLogTableFragment"></div>
+													</div>
+													<div class="tab-pane" id="work_note_tab">
+														<div th:replace="maintenance/workorder/tab/notes-tab :: noteTableFragment"></div>
+													</div>
+													<div class="tab-pane" id="file_tab">
+														<div th:replace="maintenance/workorder/tab/file-tab :: fileTabFragment"></div>
+													</div>
+													
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+								<!-- end: PAGE CONTENT-->
+							</div>
+						</div>
+					</div>
+					<!-- end: PAGE -->
+				</div>
+				<!-- end: MAIN CONTAINER -->
+			</div>
+		</div>
+	</div>
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+    
+
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/add-view.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/part-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/notification-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/task-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/misc-cost-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/meter-reading-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/asset-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/log-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/note-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/tab/file-tab.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-history-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/task-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/task-group-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/part-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/stock-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/meter-reading-add-modal.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/meter-reading-value-add-modal.js}"></script> 
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/miscellaneous-cost-add-modal.js}"></script> 
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/notification-add-modal.js}"></script>    
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/note-add-modal.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/file-add-modal.js}"></script>      
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/status-change-note-add-modal.js}"></script>      
+
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-assets.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-users.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-wo-log.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-projects.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-task-group.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-stock.js}"></script>
+
+	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+    <!-- Inline JavaScript-->
+
+    <script th:inline="javascript">        
+
+    	var tempTasks = [];
+    
+        var workOrderId = [[${workOrder.id}]];
+
+        var parts = [[${workOrder.parts}]];
+        var assets = [[${workOrder.assets}]];
+        var tasks = [[${workOrder.tasks}]];
+        var notifications = [[${workOrder.notifications}]];
+        var miscellaneousExpenses = [[${workOrder.miscellaneousExpenses}]];
+        var meterReadings = [[${workOrder.meterReadings}]]; 
+        var woNoteList = [[${workOrder.workOrderNoteDTOs}]]; 
+        
+        var files = [[${workOrder.files}]];
+        var woMeterReadingValues = [];
+        var locationPath = '';
+        var fileType = '';
+
+    </script>
+
+</body>
+</html>

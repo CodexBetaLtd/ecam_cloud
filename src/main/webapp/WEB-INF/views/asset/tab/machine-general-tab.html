@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+<div th:fragment="machineGeneralTabFragment">
+		 <div class="row">
+             <div class="col-md-6">
+				<div class="form-group">
+	                <label class="control-label"> Customer </label>
+	                <div class="input-group">
+						<input type="hidden" th:field="*{customerId}">
+						<input type="text" th:field="*{customerName}" readonly id="customerName">						
+					</div>
+             	</div>			
+			</div>       	
+        	<div class="col-md-6">
+	            <div class="form-group">
+                    <label class="control-label">
+                         Manufacturer/Brand <span class="symbol required"></span>
+                    </label>
+                    <div class="input-group">
+                        <input type="hidden" th:field="*{brand}">
+                        <input type="text" th:field="*{brandName}" readonly class="form-control" placeholder="Select Brand" id="brandName">                     
+                    </div>
+	            </div>
+            </div>
+        </div>
+		<div class="row">
+            <div class="col-md-6">
+	            <div class="form-group">
+                    <label class="control-label">
+                         Model <span class="symbol required"></span>
+                    </label>
+                    <div class="input-group">
+                        <input type="hidden" th:field="*{model}">
+                        <input type="text" th:field="*{modelName}" readonly class="form-control" placeholder="Select Model" id="modelName">                     
+                    </div>
+	            </div>
+            </div>	   
+            <div class="col-md-6">
+		    	<div class="form-group">
+		            <label class="control-label">Serial No</label>
+		            <input type="text" placeholder="Insert the Serial Number" th:field="*{serialNo}" class="form-control" id="serialNo" name="serialNo">
+		        </div>
+		    </div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="form-group">
+                    <label class="control-label">Notes</label>
+                    <textarea placeholder="Insert the Notes" id="notes" name="notes" class="form-control" th:field="*{notes}"></textarea>
+                </div>			
+			</div>
+		</div>	
+	</div>
+</html>

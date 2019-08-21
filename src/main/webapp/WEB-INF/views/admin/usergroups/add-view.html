@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/resources/style/dataTables.bootstrap.css}">
+
+<body>
+
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
+    
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+        <div class="navbar-content">
+        
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
+            
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i>
+                    <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+                
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+                <!-- end: MAIN NAVIGATION MENU -->
+            </div>
+            <!-- end: SIDEBAR -->
+        </div>
+
+        <!-- start: PAGE -->
+        <div class="main-content">
+            
+            <div class="container">
+                
+                <!-- start: PAGE HEADER -->
+                <div class="row" th:replace="admin/usergroups/page-header :: pageheader"></div>
+                <!-- end: PAGE HEADER -->
+			    
+			    <div class="btn-bar row" >
+	
+					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/userGroups/add}" 
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-placement="top" data-original-title="Add">
+				    	<i class="clip-plus-circle-2  btn-new" ></i> New
+				    </a>
+
+                    <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
+                       	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" onclick="document.getElementById('userGroupAddBtn').click();">
+				       	<i class="clip-checkmark-circle-2 btn-save"></i> Save
+				    </a>
+				    
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/userGroups/delete(id=${userGroup.id})}"
+				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" th:disabled="${userGroup.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete">
+				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
+				    </a>
+				    
+				    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/userGroups/}" data-placement="top">
+				        <i class="clip-arrow-left-2 "></i> Cancel
+				    </a>
+				    
+			    </div>
+                
+                <!-- start: PAGE CONTENT -->
+               	<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+						       <i class="clip-users"></i> User Groups - Create
+						   	</div>
+                            <div class="panel-body">
+					    	
+					    		<div th:replace="template/messageview :: message"></div>
+
+                                <form role="form" id="userGroupAddForm" th:action="@{/userGroups/save}"
+                                      th:object="${userGroup}" method="post">
+								                                        
+					                <input type="hidden" id="id" name="id" th:field="*{id}" />
+					                <input type="hidden" id="version" name="version" th:field="*{version}" />
+					                
+					                <div class="row">
+					                    <div class="col-md-6">
+					                        <div class="form-group">
+					                            <label class="control-label">
+					                                Name <span class="symbol required"></span>
+					                            </label>
+					                            <input type="text" placeholder="Insert the User Group Name" th:field="*{name}" class="form-control" id="name" name="name">
+					                        </div>
+					                    </div>
+					                    <div class="col-md-6">
+					                    	 <div class="form-group">
+					                            <label class="control-label">
+					                                Description
+					                            </label>
+					                            <input type="text" placeholder="Insert the User Group Description" th:field="*{description}" class="form-control" id="description" name="description">
+					                        </div>
+					                    </div>
+					                </div>
+					                <div class="row">
+					                    <div class="col-md-6">
+					                        <div class="form-group">
+							                    <label class="control-label">
+							                    	Business <span class="symbol required"></span>
+							                    </label>
+							                    <select id="businessId" th:field="*{businessId}" class="search-select" style="width:100%;">
+							                        <option value="">&nbsp;</option>
+							                        <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}" ></option>
+							                    </select>
+							                </div>
+                                        </div>
+					                </div>
+					                <div class="row">
+					                    <div class="col-md-12">
+					                        <div>
+					                            <span class="symbol required"></span>Required Fields
+					                            <hr>
+					                        </div>
+					                    </div>
+					                </div>
+					                <div class="row">
+					                	<div class="col-sm-12">
+							                <div class="tabbable wrapper">
+							                    <ul id="myTab" class="nav nav-tabs tab-bricky list">
+							                        <li class="active">
+                                                        <a href="#usersTab" data-toggle="tab"> Users </a>
+							                        </li>
+							                        <li>
+                                                       <a href="#menuPermissionsTab" data-toggle="tab"> Menu Permissions </a>
+							                        </li>
+							                        <li>
+                                                        <a href="#pagePermissionsTab" data-toggle="tab"> Page Permissions </a>
+							                        </li>
+							                        <li>
+                                                        <a href="#apiApplicationsTab" data-toggle="tab"> API Applications </a>
+							                        </li>
+							                        <li>
+                                                        <a href="#apiPermissionsTab" data-toggle="tab"> API Permissions </a>
+							                        </li>
+							                    </ul>
+							                    <div class="tab-content">
+                                                    <div class="tab-pane in active" id="usersTab">
+                                                        <div class="tab-pane" id="userListTab">
+                                                            <div th:replace="admin/usergroups/tab/users-tab :: userlist"></div>
+							                        	</div>   
+							                        </div>
+                                                    <div class="tab-pane" id="menuPermissionsTab">
+                                                        <div th:replace="admin/usergroups/tab/menu-permissions-tab :: menupermission"></div>
+							                        </div>
+                                                    <div class="tab-pane" id="pagePermissionsTab">
+                                                        <div th:replace="admin/usergroups/tab/page-permissions-tab :: pagepermission"></div>
+							                        </div>
+                                                    <div class="tab-pane" id="apiApplicationsTab">
+							                            <p>
+							                               Coming Soon
+							                            </p>
+							                        </div>
+                                                    <div class="tab-pane" id="apiPermissionsTab">
+							                            <p>
+							                               Coming Soon
+							                            </p>
+							                        </div>
+							                    </div>
+							                </div>
+							            </div>
+					                </div>
+					                <div class="row" style="visibility: hidden;">
+                                        <button id="userGroupAddBtn" type="submit"></button>
+					                </div>
+					            </form>	    	
+					 		</div>
+					 	</div>
+					</div>
+				</div>	            	
+                <!-- end: PAGE CONTENT-->
+                </div>
+        </div>
+        <!-- end: PAGE -->
+    </div>
+    <!-- end: MAIN CONTAINER -->
+   
+    <!-- start: FOOTER -->
+   	<div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
+    
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+    <!-- end: MAIN JAVASCRIPTS -->
+    
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/usergroups/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/usergroups/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/usergroups/tab/users-tab.js}"></script>
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+</body>
+
+</html>

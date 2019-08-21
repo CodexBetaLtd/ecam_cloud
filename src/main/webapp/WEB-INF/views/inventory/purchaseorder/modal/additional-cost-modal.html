@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal"
+            aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Additional Cost</h4>
+</div>
+
+<div class="modal-body">
+
+    <input type="hidden" id="additionalCostId">
+    <input type="hidden" id="additionalCostVersion">
+    <input type="hidden" id="additionalCostIndex">
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="control-label"> Name <span class="symbol required"></span> </label>
+                <input type="text" placeholder="Additional Cost Name" id="additionalCostName" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="control-label"> Description <span class="symbol required"></span> </label>
+                <textarea placeholder="Additional Cost Description" class="form-control"
+                          id="additionalCostDescription"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Amount <span class="symbol required"></span>
+                </label>
+                <input type="text" id="additionalCostAmount" placeholder="Additional Cost Amount" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Tax Rate <span class="symbol required"></span> </label>
+                <input type="text" id="additionalCostTaxRate" placeholder="Additional Cost TAX Rate"
+                       class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6" id='divadditionalcosttype'>
+            <div class="form-group">
+                <label class="control-label"> Additional Cost Type <span class="symbol required"></span> </label>
+                <select id="poAdditionalCostTypeId" class="search-select" style="width: 100%; overflow: auto;">
+                <option value="">&nbsp;</option>
+                    <option th:each="poAdditionalCostType : ${poAdditionalCostTypes}"
+                            th:value="${poAdditionalCostType.id}" th:text="${poAdditionalCostType.name}"></option>
+            </select>
+            </div>
+        </div>
+
+        <div class="col-md-6 none" id="divshippingType">
+            <div class="form-group">
+                <label class="control-label"> Shipping Type <span class="symbol required"></span> </label>
+                <select id="shippingTypeId" class="search-select" style="width: 100%; overflow: auto;">
+                    <option value="">&nbsp;</option>
+                    <option th:each="shippingType : ${shippingTypes}" th:value="${shippingType.id}"
+                            th:text="${shippingType.name}"></option>
+                </select>
+            </div>
+
+        </div>
+        <div class="col-md-6 none" id="divoverrideTax">
+            <label class="radio-inline " style="margin-top: 27px !important">
+                <input type="checkbox" id="isOverridePoItemTax" class="grey">Override Tax Amount
+            </label>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue" id="btnAddAdditionalCost"><i
+            class="clip-plus-circle-2 "></i> Add
+    </button>
+</div>
+
+</html>

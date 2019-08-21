@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="purchasingTabFragment">
+
+    <input type="hidden" id="receiptOrderId" th:field="*{assetPurchasingDetail.receiptOrderId}"/>
+    <input type="hidden" id="orderVersion" th:field="*{assetPurchasingDetail.orderVersion}"/>
+    <input type="hidden" id="itemVersion" th:field="*{assetPurchasingDetail.itemVersion}"/>
+
+    <div class="row">
+        <div class="col-md-12" style="padding-top: 15px;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Purchase From <span class="symbol required"></span></label>
+                        <select id="purchasedSupplierId" th:field="*{assetPurchasingDetail.purchasedSupplierId}"
+                                class="search-select" style="width:100%;">
+                            <option th:each="business : ${suppliers}" th:value="${business.id}"
+                                    th:text="${business.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Purchase Currency <span class="symbol required"></span></label>
+                        <select id="purchasedCurrencyId" th:field="*{assetPurchasingDetail.purchasedCurrencyId}"
+                                class="search-select" style="width:100%;">
+                            <option th:each="currency : ${currencies}" th:value="${currency.id}"
+                                    th:text="${currency.name}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Date Ordered </label>
+                        <div class="input-group" id="picker-container">
+                            <input type="text" th:field="*{assetPurchasingDetail.orderedDate}"
+                                   data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+                                   placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                            <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Date Received </label>
+                        <div class="input-group" id="picker-container">
+                            <input th:field="*{assetPurchasingDetail.receivedDate}" type="text"
+                                   data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+                                   placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                            <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Price </label>
+                        <input type="text" th:field="*{assetPurchasingDetail.purchasedPrice}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label"> Date of Expiry </label>
+                        <div class="input-group" id="picker-container">
+                            <input th:field="*{assetPurchasingDetail.expiryDate}" type="text"
+                                   data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+                                   placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                            <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

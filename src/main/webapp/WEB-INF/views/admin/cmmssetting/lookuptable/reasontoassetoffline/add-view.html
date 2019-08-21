@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"   xmlns="http://www.w3.org/1999/xhtml">
+<head  th:include="template/commoncss :: commoncss">
+ <!-- start: Styles REQUIRED FOR Form-->
+<link th:href="@{resources/style/forms/summernote.css}" rel="stylesheet" />
+<!-- end: Styles REQUIRED FOR  Form -->
+
+</head>
+<body>
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
+    
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+        <div class="navbar-content">
+        
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
+            
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i>
+                    <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+                
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+                <!-- end: MAIN NAVIGATION MENU -->
+            </div>
+            <!-- end: SIDEBAR -->
+        </div>
+
+        <!-- start: PAGE -->
+        <div class="main-content">
+            
+            <div class="container">
+                
+                <!-- start: PAGE HEADER -->
+                <div class="row" th:replace="asset/assetCategory/page-header :: pageheader"></div>
+                <!-- end: PAGE HEADER -->
+                
+                <!-- start: PAGE CONTENT -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+						       <i class="clip-users-2"></i> Meter Reading Units- New
+						   	</div>
+					     
+					    	<div class="panel-body">
+					    	<h2><i class="fa fa-pencil-square teal"></i> Create</h2>
+					            <p>
+					                Create Meter Reading Units
+					            </p>
+					            <hr>
+                                <form action="#" th:action="@{/meterreadingunits/save}" method="post" role="form"
+                                      th:object="${meterReadingUnits}" id="meterReadingAddForm">
+					                <input type="hidden" id="id" name="id" th:field="*{id}" />
+					                <input type="hidden" id="version" name="version" th:field="*{version}" />
+					                <div class="row">
+					                    <div class="col-md-4">
+					                        <div class="form-group">
+                                                <label class="control-label"> Name<span class="symbol required"></span>
+                                                </label>
+            	  								<input type="text" placeholder="name"  class="form-control" id="name"  name="name" th:field="*{name}" />
+					                        </div>
+					                    </div>
+					                    <div class="col-md-4">
+					                    	 <div class="form-group">
+                                                 <label class="control-label"> Precision<span
+                                                         class="symbol required"></span> </label>
+								                 <input type="number" placeholder="precision" class="form-control"   id="precision" name="precision"  th:field="*{precision}"/>
+					                        </div>
+					                    </div>
+					                    <div class="col-md-4">
+					                    	 <div class="form-group">
+                                                 <label class="control-label"> symbol<span
+                                                         class="symbol required"></span> </label>
+								                 <input type="text" placeholder="symbol" class="form-control"  id="symbol"  name="symbol" th:field="*{symbol}"/>
+					                        </div>
+					                    </div>
+					                </div>
+					                <div class="row">
+					                    <div class="col-md-12">
+					                        <div>
+					                            <span class="symbol required"></span>Required Fields
+					                            <hr>
+					                        </div>
+					                    </div>
+					                </div>
+					                <div class="row">
+					                    <div class="col-md-8">
+					                    </div>
+					                    <div class="col-md-4">
+                                            <button class="btn btn-yellow btn-block" type="submit"> Save <i
+                                                    class="fa fa-arrow-circle-right"></i></button>
+					                    </div>
+					                </div>
+					            </form>	    	
+					 		</div>
+					 	</div>
+					</div>	
+				</div>
+                <!-- end: PAGE CONTENT-->
+                
+            </div>
+            
+        </div>
+        <!-- end: PAGE -->
+        
+    </div>
+    <!-- end: MAIN CONTAINER -->
+   
+    <!-- start: FOOTER -->
+   	<div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
+    
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+    <!-- end: MAIN JAVASCRIPTS -->
+    
+   
+     <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <!-- end: JAVASCRIPTS REQUIRED FOR FORM -->
+    <script type="text/javascript"
+            th:src="@{/resources/script/app/admin/cmmssetting/meterreadingunits/init.js}"></script>
+    <script type="text/javascript"
+            th:src="@{/resources/script/app/admin/cmmssetting/meterreadingunits/add-view.js}"></script>
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<div th:fragment="siteModalFragment">
+    <div id="siteModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false"
+         style="display: none;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+            <h4 class="modal-title">User Site</h4>
+        </div>
+        <div id="siteModalBody" class="modal-body">
+
+        </div>
+
+        <div class="modal-footer">
+            <div class="container">
+                <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close</button>
+                <button id="saveBtnUserSite" type="button" class="btn btn-sm btn-blue"><i
+                        class="clip-plus-circle-2 btn-new"></i> Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>

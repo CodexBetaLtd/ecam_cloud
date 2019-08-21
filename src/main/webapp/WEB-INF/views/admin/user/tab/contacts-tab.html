@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="userContactsTabFragment">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Email <span class="symbol required"></span> </label> 
+                <input type="email" placeholder="user@email.com" th:field="*{emailAddress}" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Telephone 01 </label>
+                <input type="text" placeholder="+9XXXXXXXXXX" th:field="*{telephone1}" class="form-control">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Telephone 02 </label>
+                <input type="text" placeholder="+9XXXXXXXXXX" th:field="*{telephone2}" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+</html>

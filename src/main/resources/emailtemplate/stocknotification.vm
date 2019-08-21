@@ -1,0 +1,86 @@
+<html>
+    <table style="padding:20px;background-color:#747171" width="100%" cellpadding="0" border="0">
+        <tbody>    
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <table style="min-width:590px;background-color:#F5F5F5;padding:20px" width="590" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td valign="middle">
+                                    <span style="font-size:20px;color:#000;font-weight:bold">
+                                          ${mailTopic}
+                                    </span>
+                                </td>
+                                <td valign="middle" align="right">
+                                    <img src="http://focus.neolithtech.com/img/logo.png" style="padding:0px;margin:0px;height:auto;width:100px">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+    
+    
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <span><font color="#888888">
+                                </font></span><span><font color="#888888">
+                              </font></span>
+                    <table style="min-width:590px;background-color:rgb(255,255,255);padding:20px" width="590" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td style="font-family:Arial,Helvetica,sans-serif;color:#555;font-size:14px" valign="top"><span>
+                                      <span style="font-size:18px;color:#3c6070;font-weight:bold;text-align:left">${itemName}</span>
+									<h3>	
+									<strong></strong>	
+									</h3>	
+									<br>	
+									
+									<p>Item Code: ${itemCode}</p>	
+									<p>Batch No: ${batchNo}</p>	
+									<p>Quantity On Hand : ${qtyOnHand}</p>
+									<p>Min Quantity : ${minQty}</p>
+									
+									                                    <span><br>
+                                      <p>Thank you!</p><span><font color="#888888">
+                                      <div style="color:#999">
+                                          
+                                          <p>The Focus Online Team</p>
+                                      </div>
+                                  </font></span></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table><span></span></td>
+            </tr>
+    
+    
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <table style="min-width:590px;background-color:#F5F5F5;padding:20px" width="590" cellpadding="0" border="0" bgcolor="#875A7B">
+                        <tbody>
+                            <tr>
+                                <td style="color:#000;padding-top:10px;padding-bottom:10px;font-size:12px" valign="middle" align="left">
+                                    Neolithtech (PVT) Ltd.<br>
+                                    <a href="tel:+32%2081%2081%2037%2000" value="+3281813700" target="_blank">+94 11 8181 3700</a>
+                                </td>
+                                <td style="color:#000;padding-top:10px;padding-bottom:10px;font-size:12px" valign="middle" align="right">
+                                    <a href="https://www.odoo.com/help" style="text-decoration:none;color:black" target="_blank">Contact our support</a><br>
+                                    <a href="mailto:info@focus.com" style="text-decoration:none;color:black" target="_blank">info@focus.com</a><br>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    Powered by
+                     <a href="https://www.neolithtech.com" target="_blank">
+                     Neolith
+                    </a>.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</html>

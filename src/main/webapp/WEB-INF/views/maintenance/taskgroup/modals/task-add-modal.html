@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+	<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+        <h4 class="modal-title"> Task </h4>
+    </div>
+
+	<div class="modal-body">           
+		
+		<form id="task-add-frm">
+		
+			<input type="hidden" id="taskId">
+			<input type="hidden" id="taskVersion">
+			<input type="hidden" id="taskIndex">
+	            
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+	                	<label class="control-label"> Name <span class="symbol required"></span> </label>
+	                    <input id="taskName" name="taskName" type="text" placeholder="Eg: Task Name"  class="form-control">
+	                </div>
+	            </div>
+                <div class="col-md-6">
+					<div class="form-group">
+                    	<label class="control-label"> Task Type <span class="symbol required"></span></label>
+                        <select id="taskType" name="taskType" class="search-select" style="width: 100%;">
+                            <option th:each="type : ${taskTypes}" th:value="${type}" th:text="${type.name}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+	            <div class="col-md-6">
+	            	<div class="form-group">
+	                	<label class="control-label"> Estimated Hours <span class="symbol required"></span></label>
+	                    <input id="taskEstimatedHours" name="taskEstimatedHours" type="text" placeholder="Eg: 10Hr" class="form-control">
+	                </div>            	
+	            </div>			
+	        	<div class="col-md-6">
+	          		<div class="form-group">
+	                	<label class="control-label"> Description </label>
+	                    <textarea id="taskDescription" name="taskDescription" placeholder="Eg: Task Description" class="form-control"></textarea>
+	                </div>
+	            </div>
+	        </div>
+        
+        </form>
+
+	</div>	
+
+    <div class="modal-footer">
+    	<div class="container">
+            <button id="add-task-btn" type="button" class="btn btn-sm btn-blue">
+            	<i class="clip-plus-circle-2 btn-new"></i> Add
+            </button>
+            <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close</button>
+        </div>
+    </div>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="userSettingTabFragment">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Is Active </label>
+                    <input type="checkbox" th:field="*{isActive}" class="form-control grey">
+                </div>
+            </div>
+
+            <div class="col-md-4 hidden">
+                <div class="form-group">
+                    <label class="control-label"> is Deleted </label>
+                    <input type="hidden" th:field="*{isDeleted}" class="form-control grey" readonly="readonly">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

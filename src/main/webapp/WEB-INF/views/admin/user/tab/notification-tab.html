@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="userNotificationTabFragment">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Email Notification </label>
+                    <input type="checkbox" th:field="*{emailNotification}" class="form-control grey">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Email System Error </label>
+                    <input type="checkbox" th:field="*{emailSystemError}" class="form-control grey" readonly="readonly">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Welcome Email Sent </label>
+                    <input type="checkbox" th:field="*{welcomeEmailSent}" class="form-control grey">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Internal Mail All Msg </label>
+                    <input type="checkbox" th:field="*{internalMailAllMsg}" class="form-control grey">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label"> Send Mail On Expire </label>
+                    <input type="checkbox" th:field="*{sendMailOnExpire}" class="form-control grey" readonly="readonly">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>
+

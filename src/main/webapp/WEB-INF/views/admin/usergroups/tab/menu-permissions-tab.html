@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+	<div th:fragment="menupermission" >
+		<div class="checkbox" th:each="cBox : ${checkBoxList}">
+	        <label>
+	            <input type="checkbox" name="topmenu" th:field="*{topMenus}" th:value="${cBox.main}" value="" class="grey">Can See '<span th:text="${cBox.main.name}"></span>' Top Menu
+	        </label>
+	        <div class="checkbox" th:each="child : ${cBox.childList}">
+	        	&nbsp;&nbsp;&nbsp;&nbsp;
+		        <label>
+		            <input type="checkbox" name="submenu" th:field="*{subMenus}" th:value="${child.sub}" value="" class="grey">Can See '<span th:text="${child.sub.name}"></span>' Menu Item
+		        </label>
+		    </div>
+	    </div>    
+    </div>
+
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
+
+
+<!-- start: PAGE CONTENT -->
+<div class="col-md-6" th:fragment="homeview">
+	<div class="panel panel-default">
+        <!-- <div class="panel-heading">
+            <i class="clip-users-2"></i>Mete Reading Units
+            <div class="panel-tools">
+                <a class="btn btn-xs btn-link panel-collapse collapses" href="#">
+                </a> <a class="btn btn-xs btn-link panel-refresh" href="#"> <i
+                    class="fa fa-refresh"></i>
+                </a>
+            </div>
+        </div> -->
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-md-12 space20">
+					<a th:href="@{/assetCategory/add}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')">
+						<button class="btn btn-green btn-sm add-row">
+							New <i class="fa fa-plus"></i>
+						</button>
+					</a>
+				</div>
+			</div>
+			<table
+				class="table table-striped table-bordered table-hover table-full-width"
+				id="asset_category_tbl">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Precision</th>
+						<th>symbol</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<!-- end: PAGE CONTENT-->

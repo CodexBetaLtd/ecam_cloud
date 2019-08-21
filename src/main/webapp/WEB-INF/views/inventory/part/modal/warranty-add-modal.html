@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title"> Warranty Certificate </h4>
+        </div>
+
+        <div class="modal-body">
+
+           <input type="hidden" id="warrantyId">
+           <input type="hidden" id="warrantyIndex">
+           <input type="hidden" id="warrantyVersion">
+
+           <div class="row">
+               <div class="col-md-6">
+                   <div class="form-group">
+                       	<label class="control-label"> Warranty Type </label>
+                       	<select id="warrantyType" class="search-select" style="width: 100%;">
+							<option value="">&nbsp;</option>
+							<option th:each="type : ${warrantyTypes}" th:value="${type}" th:text="${type.name}"></option>
+						</select>
+                   </div>
+               </div>
+               <div class="col-md-6">
+                   	<div class="form-group">
+               			<label class="control-label"> Provider </label>
+                       	<select id="warrantyProviderId" class="search-select" style="width: 100%;">
+							<option value="">&nbsp;</option>
+							<option th:each="provider : ${providers}" th:value="${provider.id}" th:text="${provider.name}"></option>
+						</select>
+                   </div>
+               </div>
+           </div>
+
+           <div class="row">
+               <div class="col-md-6">
+                   <div class="form-group">
+                       	<label class="control-label"> Warranty Usage Term Type <span class="symbol required"></span> </label><br/>
+                       	<select id="warrantyUsageTermType" class="search-select" style="width: 100%;">
+							<option value="">&nbsp;</option>
+							<option th:each="type : ${warrantyUsageTermTypes}" th:value="${type}" th:text="${type.name}"></option>
+						</select>
+                   </div>
+               </div>
+               <div class="col-md-6">
+                   <div class="form-group" >
+		                <label> Expiry Date <span class="symbol required"></span> </label>
+		                <div class="input-group" id="warranty-picker-container" >
+		                    <input id="warrantyExpiryDate" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 08-01-2020" class="form-control date-picker" >
+		                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+		                </div>
+		            </div>
+               </div>
+           </div>
+           
+           <div class="row" id="meterReadingDataDiv" >
+           		<div class="col-md-6">
+                   <div class="form-group">
+                       <label class="control-label"> Meter Reading Units <span class="symbol required"></span> </label><br/>
+                    	<select id="warrantyMeterReadingUnitId" class="search-select" style="width: 100%;">
+							<option value="">&nbsp;</option>
+							<option th:each="unit : ${meterReadingUnits}" th:value="${unit.id}" th:text="${unit.name}"></option>
+						</select>
+                   </div>
+               	</div>
+               	<div class="col-md-6">
+                   <div class="form-group">
+                       <label class="control-label"> Meter Reading Value Limit <span class="symbol required"></span> </label><br/>
+                       <input id="warrantyMeterReadingValueLimit" type="text" placeholder="Meter Reading Value Limit" class="form-control" >
+                   </div>
+               	</div>
+           </div>
+
+           <div class="row">
+               <div class="col-md-6">
+                   <div class="form-group">
+                       <label class="control-label"> Certificate Number <span class="symbol required"></span> </label>
+                       <input id="warrantyCertificateNo" type="text" placeholder="Please Type Certificate Number" class="form-control" >
+                   </div>
+               </div>
+               <div class="col-md-6">
+                   <div class="form-group">
+                       <label class="control-label"> Description <span class="symbol required"></span> </label>
+                       <input id="warrantyDescription" type="text" placeholder="Please Type Description" class="form-control" >
+                   </div>
+               </div>
+           </div>
+	</div>
+	
+	<div class="modal-footer">
+	    <button type="button" class="btn btn-sm btn-blue" id="add-warranty-btn" data-dismiss="modal" onclick="TabWarranty.addWarranty()"> Add</button>
+	    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+	</div>
+
+</html>

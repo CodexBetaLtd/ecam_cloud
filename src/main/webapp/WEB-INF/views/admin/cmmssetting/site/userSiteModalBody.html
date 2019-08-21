@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+    <!-- START: facilityFragment -->
+    <div class="row">
+        <div th:replace="general/dropdown/assetSelection:: facilityFragment"></div>
+    </div>
+    <!-- END: facilityFragment -->
+
+    <!-- start: USER GROUP FRAGMENT-->
+    <div class="row">
+        <div th:replace="general/dropdown/userGroupSelection :: userGroupsFragment"></div>
+    </div>
+
+    <!-- end: USER GROUP FRAGMENT-->
+
+</html>

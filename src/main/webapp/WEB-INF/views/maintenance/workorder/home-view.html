@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+
+<body>
+
+	<!-- start: HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+				<!-- end: MAIN NAVIGATION MENU -->
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+
+			<div class="container">
+
+				<!-- start: PAGE HEADER -->
+				<div class="row" th:replace="maintenance/workorder/page-header :: pageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<div class="row btn-bar">
+				
+					<a th:href="@{/workorder/add}" type="button" class="btn btn-default btn-sm active tooltips"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_WORK_ORDER_VIEW.id)"
+                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="save"
+                    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_WORK_ORDER_VIEW.id)"
+                        th:disabled="disabled" data-placement="top" data-original-title="Save"> <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="delete"
+                    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_WORK_ORDER_VIEW.id)"
+                        th:disabled="disabled" data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+					</a> 
+					<a class="btn btn-default btn-sm active tooltips" id="cancel"
+                    	th:disabled="disabled" data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
+					</a>
+
+				</div>
+
+				<!--<div class="row" th:replace="admin/cmmsSetting/site/siteViewModal :: siteViewFragment"></div>-->
+				<!-- end: SITE -->
+
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<i class="clip-stack-2 "></i> Work Order
+								<div class="panel-tools">
+									<a class="btn btn-xs btn-link panel-collapse collapses"
+										href="#"> </a> <a class="btn btn-xs btn-link panel-refresh"
+										href="#"> <i class="fa fa-refresh"></i>
+									</a>
+								</div>
+							</div>
+							<div class="panel-body ">
+								<div th:replace="template/messageview :: message"></div>
+								<table style="width: 100%" class="table table-striped table-bordered table-hover" id="work_order_tbl">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Code</th>
+											<th>Asset</th>
+											<th>Description</th>
+											<th>Business</th>
+											<th class="hidden-xs">More</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end: PAGE CONTENT-->
+			</div>
+		</div>
+		<!-- end: PAGE -->
+	</div>
+	<!-- end: MAIN CONTAINER -->
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/home-view.js}"></script>    
+	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+	<script>
+		jQuery(document).ready(function() {
+			Main.init();
+            WorkOrderHome.init();
+		});
+	</script>
+
+</body>
+
+</html>

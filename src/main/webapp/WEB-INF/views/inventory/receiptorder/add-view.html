@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+
+<body>
+
+	<!-- start: HEADER -->
+	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<!-- end: HEADER -->
+	
+	<!-- start: MAIN CONTAINER -->
+	<div class="main-container">
+		<div class="navbar-content">
+
+			<!-- start: SIDEBAR -->
+			<div class="main-navigation navbar-collapse collapse">
+
+				<!-- start: MAIN MENU TOGGLER BUTTON -->
+				<div class="navigation-toggler">
+					<i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+				</div>
+				<!-- end: MAIN MENU TOGGLER BUTTON -->
+
+				<!-- start: MAIN NAVIGATION MENU -->
+				<ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+				<!-- end: MAIN NAVIGATION MENU -->
+			</div>
+			<!-- end: SIDEBAR -->
+		</div>
+
+		<!-- start: PAGE -->
+		<div class="main-content">
+		
+			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+				<div align='center'>
+                 <div id='model'
+   			 	class='modal fade alert-warning' tabindex='-1' data-backdrop='static' data-keyboard='false' style='display: none; width: 420px !important;'>
+                  	<div class='modal-body'>
+                  	<p style="font-size:16px"><i class="fa fa-exclamation-triangle"></i> Receive</p>
+                  <p>Please Save Receipt order first</p>
+                  	</div>
+                 	<div class='modal-footer'>
+                  <a data-dismiss='modal' style="background-color:#8a6d3b;color:#f6f7f8; 
+					width: 73px;" class='btn btn-xs'><i class="fa fa-check-square-o"></i>
+					 ok</a> 
+              		 </div>
+               </div>
+             </div>
+			<div class="container">
+
+				<!-- start: PAGE HEADER -->
+                <div class="row" th:replace="inventory/receiptorder/page-header :: pageheader"></div>
+				<!-- end: PAGE HEADER -->
+
+				<div class="row btn-bar">
+
+					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/receiptorder/add}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_RECEIPT_ORDER_ADD.id)"
+                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+					</a>
+                    <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
+                       data-original-title="Save"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_RECEIPT_ORDER_ADD.id)"
+                       onclick="document.getElementById('ro_add_btn').click();">
+				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
+				    </a>
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/receiptorder/delete(id=${receiptOrder.id})}"
+                       th:disabled="${receiptOrder.id} == null ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_RECEIPT_ORDER_ADD.id)"
+                       data-placement="top" data-original-title="Delete"> <i
+                            class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+					</a>
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/receiptorder/}" data-placement="top"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_RECEIPT_ORDER_ADD.id)"
+                       data-original-title="Back">
+				       <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
+				    </a>
+				    <span class="visible-xs" style="padding-top: 5px">
+				    	
+				    </span>
+					<a th:if="${receiptOrder.receiptOrderStatus}!=${T(com.neolith.focus.constants.inventory.ReceiptOrderStatus).RECEIVED} "
+					   class="btn btn-default btn-sm active tooltips" id="receiveRO"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_RECEIVE_BUTTON_RECEIPT_ORDER_ADD.id)"
+					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Receive
+					</a>
+					<!-- reject or cancel -->
+                    <a th:disabled="${receiptOrder.id}==null ? 'disabled'"
+					   class="btn btn-default btn-sm active tooltips" id="canceltoDraft"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_RECEIPT_ORDER_CANCEL_BUTTON_RECEIPT_ORDER_ADD.id)"
+					   th:href="@{/receiptorder/statusChange(id=${receiptOrder.id},receiptOrderStatus=${T(com.neolith.focus.constants.inventory.ReceiptOrderStatus).CANCEL})}"
+					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i>Cancel
+                        Receipt Order
+					</a>
+				    
+			    </div>
+                
+                <!-- start: PAGE CONTENT -->
+               <div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<i class="fa fa-building-o"></i> Receipt Order - Create
+							</div>
+
+							<div class="panel-body">
+
+								<div th:replace="template/messageview :: message"></div>
+
+								<form role="form" id="receipt_order_add_frm" th:action="@{/receiptorder/save}" th:object="${receiptOrder}" method="post">
+
+									<div th:replace="general/modal/modal-base :: modalFragment "></div>
+									<div th:replace="general/modal/modal-base :: largeModalFragment "></div>
+									<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+
+									<input type="hidden" id="receiptOrderId" name="id" th:field="*{id}"/>
+									<input type="hidden" id="receiptOrderVersion" name="version" th:field="*{version}"/>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label">Receipt Order Status</label>
+												<p> 
+													<b><span style="font-size: medium;" th:field="*{receiptOrderStatus}" th:text="${receiptOrder.receiptOrderStatus.getName()}"></span></b>
+												</p>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Code</label> 
+												<input type="text" th:field="*{code}" class="form-control">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+								            	<label class="control-label"> Supplier <span class="symbol required"></span></label>
+								              	<select  id="supplierId" th:field="*{supplierId}"class="search-select" style="width:100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+								              	</select>
+								          	</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Date Ordered
+												</label>
+												<div class="input-group" id="ordered-picker-container">
+													<input type="text" th:field="*{dateOrdered}" data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+														placeholder="Eg : 08-01-2020" class="form-control date-picker"> 
+													<span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Date Received
+												</label>
+												<div class="input-group" id="received-picker-container">
+													<input type="text" th:field="*{dateReceived}" data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+														placeholder="Eg : 08-01-2020" class="form-control date-picker"> 
+													<span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div>
+												<span class="symbol required"></span>Required Fields
+												<hr>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="tabbable">
+												<ul id="myTab" class="nav nav-tabs tab-bricky">
+													<li class="active">
+														<a href="#item_tab" data-toggle="tab"> Items </a>
+													</li>
+												</ul>
+												<div class="tab-content">
+													<div class="tab-pane in active" id="item_tab">
+                                                        <div th:replace="inventory/receiptorder/tab/item-tab :: itemTabFragment"></div>
+							                        </div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row" style="visibility: hidden;">
+										<button id="ro_add_btn" type="submit"></button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end: PAGE CONTENT-->
+			</div>
+		</div>
+		<!-- end: PAGE -->
+	</div>
+	<!-- end: MAIN CONTAINER -->
+
+	<!-- start: FOOTER -->
+	<div class="row" th:replace="template/footer :: footer"></div>
+	<!-- end: FOOTER -->
+
+	<!-- start: MAIN JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjs"></div>
+	<!-- end: MAIN JAVASCRIPTS -->
+    
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+
+
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/tab/item-tab.js}"></script>
+	<script type="text/javascript"
+			th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-assets.js}"></script>
+	<script type="text/javascript"
+			th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-stock.js}"></script>
+
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+
+	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+	<script th:inline="javascript">
+
+        var id = [[${receiptOrder.id}]];
+
+        var thymeLeafItems = [[${receiptOrder.items}]];
+        var items = thymeLeafItems;
+
+        var thymeLeafTaxes = [[${receiptOrder.taxDTOs}]];
+        var taxList = thymeLeafTaxes;
+
+        var serialNoList = [];
+
+        var receiptOrderItems = thymeLeafItems;
+
+		/*
+	    $('#receiveRO').on('click', function () {
+			if(id==null){
+				$("#model").modal();
+			}else{
+		        $.ajax({
+                    url: "../receiptorder/statusChange?id=" + id + "&receiptOrderStatus=" + [[${T(com.neolith.focus.constants.inventory.ReceiptOrderStatus).RECEIVED}]], //this is the submit URL
+		            type: 'GET', //or POST
+		          	success: function(data){
+		           	  location.reload();
+		            }
+		        });
+			}
+	    });
+		 */
+
+    </script>
+</body>
+
+</html>

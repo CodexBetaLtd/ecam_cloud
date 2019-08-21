@@ -1,0 +1,90 @@
+ <html>
+    <table style="padding:20px;background-color:#ededed" width="100%" cellpadding="0" border="0">
+        <tbody>    
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <table style="min-width:590px;background-color:#0c1728;padding:20px" width="590" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td valign="middle">
+                                    <span style="font-size:20px;color:#f5f5f5;font-weight:bold"> Account Created </span>
+                                </td>
+                                <td valign="middle" align="right">
+                                    <img src="http://focus.neolithtech.com/img/logo.png" style="padding:0px;margin:0px;height:auto;width:100px">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+    
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <span><font color="#888888"> </font></span><span><font color="#888888"> </font></span>
+                    <table style="min-width:590px;background-color:rgb(255,255,255);padding:20px" width="590" cellpadding="0" border="0">
+                        <tbody>
+                            <tr>
+                                <td style="font-family:Arial,Helvetica,sans-serif;color:#555;font-size:14px" valign="top">
+	                                <span>
+		                                <span style="font-size:18px;color:#3c6070;font-weight:bold;text-align:left">Dear ${fullname},</span> 
+	                                </span>
+	                                <span> 
+	                                	<p> Welcome to FOCUS CMMS. To login just click here <a href="http://ec2-18-219-212-66.us-east-2.compute.amazonaws.com/FOCUS_CMMS" style="color:#555" target="_blank" >Login</a> and then enter your user name and password.</p>
+	                                </span>
+									<span>
+										<div style="margin-top: 30px;border:solid 1px #555;padding:0 20px"> 
+											<p style="font-size:13px;color:#000;text-align:left"> Use the following values when prompted to log in: </p>
+											<p style="font-size:12px;color:#000;font-weight:bold;text-align:left">User Name : <span style="color:#555">${username}</span> </p>
+											<p style="font-size:12px;color:#000;font-weight:bold;text-align:left">Password : <span style="color:#555">${password}</span> </p>
+										</div> 
+									</span> 
+                                    <center>
+                                    	<span> 
+	                                        <p style="margin:50px 0 30px 0">
+	                                        	<a href="http://ec2-18-219-212-66.us-east-2.compute.amazonaws.com/FOCUS_CMMS" style="background-color:#3c6070;padding:12px;text-decoration:none;color:#fff;border-radius:30px;font-size:13px" target="_blank" >CLICK HERE TO LOGIN FOCUS</a>
+	                                        </p>    
+                                        </span>
+                                        <p>
+                                        	<span>
+                                          		<span style="color:#666"></span>Or copy/paste this link in your browser : <br> </span>
+												<a href="http://ec2-18-219-212-66.us-east-2.compute.amazonaws.com/FOCUS_CMMS" target="_blank">http://ec2-18-219-212-66.us-east-2.compute.amazonaws.com/FOCUS_CMMS</a>
+											</span>
+                                        </p>
+                                    </center> 
+									<span> 
+										<p style="color:#888888">The Focus Online Team</p> 
+									</span> 
+									<span>	            
+						            	<p style="margin: 30px 0px -10px 0px;">Any question? Contact us through <a href="http://focus.neolithtech.com/resources/pages/overview" target="_blank"> our support form.</a>.</p>
+						            </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+				</td>
+            </tr> 
+       
+            <tr>
+                <td style="min-width:590px" align="center">
+                    <table style="min-width:590px;background-color:#0c1728;padding:20px" width="590" cellpadding="0" border="0" bgcolor="#875A7B">
+                        <tbody>
+                            <tr>
+                                <td style="color:#fff;padding-top:10px;padding-bottom:10px;font-size:12px" valign="middle" align="left">
+                                    Neolithtech (PVT) Ltd.<br>
+                                    <a style="color:#fff" href="tel:+94%112%768%715" value="+94 112 768 715" target="_blank">+94 112 768 715</a>
+                                </td>
+                                <td style="color:#fff;padding-top:10px;padding-bottom:10px;font-size:12px" valign="middle" align="right">
+                                    <a href="http://focus.neolithtech.com/blog/" style="text-decoration:none;color:white" target="_blank">Contact our support</a><br>
+                                    <a href="mailto:info@focus.com" style="text-decoration:none;color:white" target="_blank">info@focus.com</a><br>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td align="center"> Powered by <a href="https://www.neolithtech.com" target="_blank">Neolith</a>. </td>
+            </tr>
+        </tbody>
+    </table>
+</html>

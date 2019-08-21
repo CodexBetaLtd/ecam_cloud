@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Add Site</h4>
+</div>
+
+<div class="modal-body">
+
+	<form id="site-add-frm">
+	
+		<input type="hidden" id="siteIndex">
+		<input type="hidden" id="siteVersion">
+		
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Site/Facility <span class="symbol required"></span> </label>
+	                <select id="siteId" name="siteId" class="search-select" style="width: 100%;" required="required">
+	                    <option value="">&nbsp;</option>
+	                    <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
+	                </select>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <div class="checkbox" th:each="group : ${userGroups}">
+	                    <label>
+	                        <input th:attr="id='group_' + ${group.id}" type="checkbox" name="userGroupList" th:value="${group.id}" class="grey userGroupCls"> 
+	                        <span th:text="${group.description}"></span>
+	                    </label>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-blue" id="add-site-btn" > Add </button>
+    <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>
+</div>
+</html>

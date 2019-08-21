@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<div th:fragment="generalTabFragment">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Projected Start Date </label>
+                <div class="input-group" id="picker-container">
+                    <input th:field="*{projectedStartDate}" type="text" data-date-format="dd-mm-yyyy"
+                           data-date-viewmode="years"
+                           class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Projected End Date </label>
+                <div class="input-group" id="picker-container">
+                    <input th:field="*{projectedEndDate}" type="text" data-date-format="dd-mm-yyyy"
+                           data-date-viewmode="years"
+                           class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Actual Start Date </label>
+                <div class="input-group" id="picker-container">
+                    <input th:field="*{actualStartDate}" type="text" data-date-format="dd-mm-yyyy"
+                           data-date-viewmode="years"
+                           class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Actual End Date </label>
+                <div class="input-group" id="picker-container">
+                    <input th:field="*{actualEndDate}" type="text" data-date-format="dd-mm-yyyy"
+                           data-date-viewmode="years"
+                           class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>

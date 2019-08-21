@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      class="no-js">
+
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Meter Readings</h4>
+</div>
+
+<div id="meterReadingModalBody" class="modal-body">
+
+	<form id="meter-reading-add-frm">
+
+	    <input type="hidden" id="woMeterReadingVersion">
+	    <input type="hidden" id="woMeterReadingCurrentValue">
+	    <input type="hidden" id="woMeterReadingCurrentValueId">
+	    <input type="hidden" id="woMeterReadingCurrentValueIndex">
+	    <input type="hidden" id="woMeterReadingIndex">
+	
+	    <div class="row">
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Asset <span class="symbol required"></span></label>
+	                <select id="woMeterReadingAssignedAssetId" name="woMeterReadingAssignedAssetId" class="search-select" style="width: 100%;"></select>
+	            </div>
+	        </div>
+	
+	        <div class="col-md-6">
+	            <div class="form-group">
+	                <label class="control-label"> Meter Reading <span class="symbol required"></span></label>
+	                <select id="woMeterReadingId" name="woMeterReadingId" class="search-select" style="width: 100%;">
+	                    <option value="">&nbsp;</option>
+	                    <option th:each="meterReading : ${woMeterReadings}" th:value="${meterReading.meterReadingId}" th:text="${meterReading.meterReadingName}"></option>
+	                </select>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <div class="row">
+	        <div class="col-md-12">
+	            <div class="form-group">
+	                <label class="control-label"> Description </label>
+	                <textarea  placeholder="Eg: Work Order Asset Meter Reading Description" id="woMeterReadingDescription" name="woMeterReadingDescription" class="form-control" rows="5"></textarea>
+	            </div>
+	        </div>
+	    </div>
+    
+    </form>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-blue btn-sm" id="add-meter-reading-btn">
+        <i class="clip-plus-circle-2"></i> Add
+    </button>
+    <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm"> Close</button>
+</div>
+</html>
