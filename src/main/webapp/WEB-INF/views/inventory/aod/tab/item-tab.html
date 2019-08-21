@@ -3,7 +3,7 @@
  
 	<div th:fragment="aodItemTabFragment">
 	    <div class="row btn-bar">
-	        <button th:disabled="${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+	        <button th:disabled="${aod.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
 	                type="button" class="btn btn-blue btn-sm active tooltips" id="btn-aod-item-modal-view" data-toggle="modal" data-placement="top" data-original-title="Add New Item">
 	            <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span> Item
 	        </button>

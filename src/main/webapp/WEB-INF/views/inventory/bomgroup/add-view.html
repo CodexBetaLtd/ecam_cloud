@@ -47,24 +47,24 @@
             <div class="row btn-bar">
 
                 <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/bomgroup/add}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_BOM_GROUP_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_BOM_GROUP_ADD.id)"
                    data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
                    data-original-title="Save"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_BOM_GROUP_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_BOM_GROUP_ADD.id)"
                    onclick="document.getElementById('bom_group_add_btn').click();"> <i
                         class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="delete"
                    th:href="@{/bomgroup/delete(id=${bomGroup.id})}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_BOM_GROUP_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_BOM_GROUP_ADD.id)"
                    th:disabled="${bomGroup.id} == null ? 'disabled'" data-placement="top"
                    data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/bomgroup/}"
                    data-placement="top"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_BOM_GROUP_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_BOM_GROUP_ADD.id)"
                    data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
                 </a>
 

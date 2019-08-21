@@ -6,7 +6,7 @@
     <div class="row">
     	<div class="col-md-12">
 	        <button type="button" class="btn btn-blue btn-sm active tooltips" id="btnAODReturnItemView"
-	                th:disabled="${T(com.neolith.focus.constants.inventory.AODReturnStatus).APPROVED} == ${aodReturn.aodReturnStatus} ? 'disabled'"
+	                th:disabled="${T(com.codex.ecam.constants.inventory.AODReturnStatus).APPROVED} == ${aodReturn.aodReturnStatus} ? 'disabled'"
 	                data-toggle="modal" data-placement="top" data-original-title="Add New Return Item">
 	            <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"/> Item
 	        </button>

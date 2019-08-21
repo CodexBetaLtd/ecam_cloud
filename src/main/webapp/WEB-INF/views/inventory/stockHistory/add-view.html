@@ -49,7 +49,7 @@
                   method="post">
                 <div class="row btn-bar">
                     <a name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stock/}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_STOCK_ADJUSTMENT_ADD.id)"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_STOCK_ADJUSTMENT_ADD.id)"
                        data-placement="top" data-original-title="Cancel and Back">
                         <i class="clip-arrow-left-2 "></i> Cancel
                     </a>

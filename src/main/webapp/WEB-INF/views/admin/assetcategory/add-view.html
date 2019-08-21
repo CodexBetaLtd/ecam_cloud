@@ -3,20 +3,20 @@
 	
 	<div class="row btn-bar" th:fragment="btnFragment">
 		<a class="btn btn-default btn-sm active tooltips" id="new" onclick="AssetCategoryHome.addCategory();" data-placement="top"
-			sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_CATEGORY_ADD.id)"
+			sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_CATEGORY_ADD.id)"
            	data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
 		</a> 
 		<a class="btn btn-default btn-sm active tooltips" id="categorySave" data-placement="top" data-original-title="Save"
-           	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_ASSET_CATEGORY_ADD.id)"
+           	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_ASSET_CATEGORY_ADD.id)"
 		   	onclick="AssetCategoryAdd.saveCategory();"><i class="clip-checkmark-circle-2 btn-save"></i> Save
 		</a> 
 		<a class="btn btn-default btn-sm active tooltips" id="delete"
      		th:disabled="${assetCategory.id} == null ? 'disabled'" th:onclick="'AssetCategoryHome.deleteCategoryFromEditPage(\'' + ${assetCategory.id} + '\');'"
-  			sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_CATEGORY_ADD.id)"
+  			sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_CATEGORY_ADD.id)"
   			data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 		</a> 
 		<a class="btn btn-default btn-sm active tooltips" id="cancel" onclick="AssetCategoryHome.reloadCategory();"
-    		sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_ASSET_CATEGORY_ADD.id)"
+    		sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_ASSET_CATEGORY_ADD.id)"
 			data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i>Cancel
 		</a>
 	</div>

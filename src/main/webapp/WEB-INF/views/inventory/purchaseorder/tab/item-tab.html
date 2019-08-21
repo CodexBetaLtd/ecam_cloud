@@ -8,8 +8,8 @@
                     data-toggle="modal" data-placement="top" data-original-title="Add New Item">
                 <i class="clip-plus-circle-2 "></i> Items
             </button>
-            <button th:if="${purchaseOrder.purchaseOrderstatus == T(com.neolith.focus.constants.PurchaseOrderStatus).DRAFT or 
-            		 purchaseOrder.purchaseOrderstatus == T(com.neolith.focus.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL }" 
+            <button th:if="${purchaseOrder.purchaseOrderstatus == T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT or 
+            		 purchaseOrder.purchaseOrderstatus == T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL }" 
             		type="button" class="btn btn-blue btn-sm active tooltips" id="btn-new-rfq"
                     data-toggle="modal" data-placement="top" data-original-title="Add New RFQ">
                 <i class="clip-plus-circle-2 "></i> Request Quote

@@ -8,8 +8,8 @@
             <li><i class="clip-home-3"></i> <a th:href="@{/dashboard}">Home</a></li>
             <li>Assets</li>
             
-            <li th:if="${type != T(com.neolith.focus.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}" th:class="active">Machine/Tools</li>
-            <li th:if="${type == T(com.neolith.focus.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}" th:class="active">Facility/Locations</li>
+            <li th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}" th:class="active">Machine/Tools</li>
+            <li th:if="${type == T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}" th:class="active">Facility/Locations</li>
 		</ol>
         <!-- end: PAGE TITLE & BREADCRUMB -->
     </div>

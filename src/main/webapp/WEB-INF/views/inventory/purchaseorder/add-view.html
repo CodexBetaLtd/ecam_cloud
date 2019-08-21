@@ -67,64 +67,64 @@
 
 				<div class="row btn-bar">
 					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/purchaseorder/add}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_PURCHASE_ORDER_ADD.id)"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_PURCHASE_ORDER_ADD.id)"
                        data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
 					</a>
 					<a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
 					   data-original-title="Save"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_ADD.id)"
 					   onclick="document.getElementById('po_add_btn').click();">
 				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
 				    </a>
 				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/purchaseorder/delete(id=${purchaseOrder.id})}"
 					   th:disabled="${purchaseOrder.id} == null ? 'disabled'"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_PURCHASE_ORDER_ADD.id)"
 					   data-placement="top" data-original-title="Delete"> <i
 							class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
 					</a>
                     <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/purchaseorder/}" data-placement="top"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
 					   data-original-title="Back">
 				       <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>				       
 				    </a>
 				    <span class="visible-xs" style="padding-top: 5px"></span>
 				     <!-- Draft -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).DRAFT} "
+					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} "
 					   class="btn btn-default btn-sm active tooltips" id="submitForApprovel"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SUBMIT_FOR_APPROVAL_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SUBMIT_FOR_APPROVAL_BUTTON_PURCHASE_ORDER_ADD.id)"
 					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Submit
 						For Approval
 					</a>
 					<!-- Waiting For Approval -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
+					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
 					   class="btn btn-default btn-sm active tooltips" id="approvedQuote"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PURCHASE_ORDER_APPROVED_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.neolith.focus.constants.PurchaseOrderStatus).APPROVED})}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_APPROVED_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).APPROVED})}"
 					   data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i>Approve Purchase
 						Order
 					</a>
 
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
+					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
 					   class="btn btn-default btn-sm active tooltips" id="rejectPO"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PURCHASE_ORDER_REJECT_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.neolith.focus.constants.PurchaseOrderStatus).REJECT})}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_REJECT_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT})}"
 					   data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i> Reject Purchase
 						Order
 					</a>
 
-					<a th:if="${purchaseOrder.purchaseOrderstatus}!=${T(com.neolith.focus.constants.PurchaseOrderStatus).CANCEL}"
-					   th:disabled="${purchaseOrder.id} == null or ${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).DRAFT} ? 'disabled'"
+					<a th:if="${purchaseOrder.purchaseOrderstatus}!=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL}"
+					   th:disabled="${purchaseOrder.id} == null or ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} ? 'disabled'"
 					   class="btn btn-default btn-sm active tooltips" id="cancelPO"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PURCHASE_ORDER_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.neolith.focus.constants.PurchaseOrderStatus).CANCEL})}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL})}"
 					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Cancel
 						Purchase Order
 					</a>	
 						<!-- reject or  cancel -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).CANCEL} OR ${purchaseOrder.purchaseOrderstatus}==${T(com.neolith.focus.constants.PurchaseOrderStatus).REJECT} "
+					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL} OR ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT} "
 					   class="btn btn-default btn-sm active tooltips" id="backtoDraft"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_BACK_TO_DRAFT_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.neolith.focus.constants.PurchaseOrderStatus).DRAFT})}"
+					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_BACK_TO_DRAFT_BUTTON_PURCHASE_ORDER_ADD.id)"
+					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT})}"
 					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Back to
 						draft
 					</a>	    
@@ -341,7 +341,7 @@
                 $("#model").modal();
             } else {
                 $.ajax({
-                    url: "../purchaseorder/statusChange?id=" + id + "&status=" + [[${T(com.neolith.focus.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}]],
+                    url: "../purchaseorder/statusChange?id=" + id + "&status=" + [[${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}]],
                     type: 'GET',
                     success: function (data) {
                         location.reload();

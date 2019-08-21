@@ -65,7 +65,7 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-blue btn-sm active tooltips" id="categorySave" data-placement="top" data-original-title="Save"
-	    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_ASSET_CATEGORY_ADD.id)"
+	    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_ASSET_CATEGORY_ADD.id)"
 	   	onclick="PartCategoryAddModal.saveCategory();" ><i class="clip-checkmark-circle-2"></i> Save
 	</button>
 	<button type="button" data-dismiss="modal" class="btn btn-sm btn-blue">Close</button>

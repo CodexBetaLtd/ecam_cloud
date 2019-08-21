@@ -54,49 +54,49 @@
             <div class="row btn-bar">
 
                 <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/aodReturn/add}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_AOD_RETURN_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_AOD_RETURN_ADD.id)"
                    data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> <span
                         th:text="#{form.btn.new}"></span>
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="saveAODReturn" data-placement="top"
                    data-original-title="Save"
-                   th:disabled="${T(com.neolith.focus.constants.inventory.AODReturnStatus).APPROVED} == ${aodReturn.aodReturnStatus} ? 'disabled'"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_AOD_RETURN_ADD.id)"
+                   th:disabled="${T(com.codex.ecam.constants.inventory.AODReturnStatus).APPROVED} == ${aodReturn.aodReturnStatus} ? 'disabled'"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_AOD_RETURN_ADD.id)"
                 >
                     <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"></span>
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="delete"
                    th:href="@{/aodReturn/delete(id=${aodReturn.id})}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_AOD_RETURN_ADD.id)"
-                   th:disabled="${aodReturn.id} == null or ${aodReturn.aodReturnStatus}==${T(com.neolith.focus.constants.inventory.AODReturnStatus).APPROVED} ? 'disabled'"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_AOD_RETURN_ADD.id)"
+                   th:disabled="${aodReturn.id} == null or ${aodReturn.aodReturnStatus}==${T(com.codex.ecam.constants.inventory.AODReturnStatus).APPROVED} ? 'disabled'"
                    data-placement="top"
                    data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span
                       class="hidden-xs"  th:text="#{form.btn.delete}"></span>
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/aodReturn/}"
                    data-placement="top"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_AOD_RETURN_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_AOD_RETURN_ADD.id)"
                    data-original-title="Back">
                     <i class="clip-arrow-left-2 "></i> <span class="hidden-xs" th:text="#{form.btn.cancel}"></span>
                 </a>
 
 				<span class="visible-xs" style="padding-top: 5px"></span>
                 <!-- Print -->
-                <!--th:if="${aodReturn.aodReturnStatus}==${T(com.neolith.focus.constants.inventory.AODReturnStatus).APPROVED} "-->
+                <!--th:if="${aodReturn.aodReturnStatus}==${T(com.codex.ecam.constants.inventory.AODReturnStatus).APPROVED} "-->
                 <a class="btn btn-default btn-sm active tooltips" id="printReport"
                    th:href="@{/report/aodReturn/aodReturnView(id=${aodReturn.id})}"
                    th:disabled="${aodReturn.id} == null ? 'disabled'"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
                    data-placement="top" data-original-title="Print AOD Return Report">
                     <i class="fa fa-print"></i> Print
                 </a>
 
                 <!-- Approved -->
                 <a name="approveAODReturn" class="btn btn-default btn-sm active tooltips"
-                   th:if="${aodReturn.aodReturnStatus}==${T(com.neolith.focus.constants.inventory.AODReturnStatus).DRAFT} "
+                   th:if="${aodReturn.aodReturnStatus}==${T(com.codex.ecam.constants.inventory.AODReturnStatus).DRAFT} "
                    th:disabled="${aodReturn.id} == null ? 'disabled'"
-                   th:href="@{/aodReturn/statusChange(id=${aodReturn.id},aodReturnStatus=${T(com.neolith.focus.constants.inventory.AODReturnStatus).APPROVED})}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
+                   th:href="@{/aodReturn/statusChange(id=${aodReturn.id},aodReturnStatus=${T(com.codex.ecam.constants.inventory.AODReturnStatus).APPROVED})}"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                    data-placement="top" data-original-title="AOD Approved">
                     <i class="fa fa-share-square-o"></i><span th:text="#{aodReturn.form.btn.approved}"></span>
                 </a>
