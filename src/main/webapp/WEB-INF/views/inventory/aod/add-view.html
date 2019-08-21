@@ -53,22 +53,22 @@
                 <div class="row btn-bar">
 
                     <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/aod/add}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_NEW_BUTTON_AOD_ADD.id)"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i>
                         <span th:text="#{form.btn.new}"> </span>
                     </a>
                     <!-- Save -->
                     <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
                        data-original-title="Save"
-                       th:disabled="${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_SAVE_BUTTON_AOD_ADD.id)">
+                       th:disabled="${aod.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_AOD_ADD.id)">
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
                     </a>
 
                     <!-- Delete -->
                     <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/aod/delete(id=${aod.id})}"
-                       th:disabled="${aod.id} == null or ${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_DELETE_BUTTON_AOD_ADD.id)"
+                       th:disabled="${aod.id} == null or ${aod.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="Delete">
                         <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs" th:text="#{form.btn.delete}"> </span>
                     </a>
@@ -76,7 +76,7 @@
                     <!-- Cancel -->
                     <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/aod/}"
                        data-placement="top"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_CANCEL_BUTTON_AOD_ADD.id)"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_AOD_ADD.id)"
                        data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span
                            class="hidden-xs" th:text="#{form.btn.cancel}"> </span>
                     </a>
@@ -85,16 +85,16 @@
                     <!-- Print -->
                     <a class="btn btn-default btn-sm active tooltips" id="printReport"
                        th:href="@{/report/aod/aodView(id=${aod.id})}" th:disabled="${aod.id} == null ? 'disabled'"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="Print AOD Report"> <i class="fa fa-print"></i> Print
                     </a>
 
                     <!-- Approved -->
                     <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${aod.aodStatus}==${T(com.neolith.focus.constants.inventory.AODStatus).DRAFT} "
+                       th:if="${aod.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).DRAFT} "
                        th:disabled="${aod.id} == null ? 'disabled'"
-                       th:href="@{/aod/statusChange(id=${aod.id},aodStatus=${T(com.neolith.focus.constants.inventory.AODStatus).APPROVED})}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.neolith.focus.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.neolith.focus.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
+                       th:href="@{/aod/statusChange(id=${aod.id},aodStatus=${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED})}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="AOD Approved">
                         <i class="fa fa-share-square-o"></i><span th:text="#{aod.form.btn.apporved}"></span>
                     </a>
