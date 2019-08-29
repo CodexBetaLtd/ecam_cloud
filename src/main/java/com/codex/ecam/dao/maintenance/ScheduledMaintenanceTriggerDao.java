@@ -29,7 +29,7 @@ public interface ScheduledMaintenanceTriggerDao extends FocusDataTableRepository
 	Integer getSMTriggerCountByBusiness( @Param("from") Date fromDate,  @Param("to") Date toDate,  @Param("businessId") Integer businessId);
 
 	@Query("select count(smt) from ScheduledMaintenanceTrigger as smt join smt.ttNextCalenderEvent as nce "
-			+ "join smt.site as site join asset.business as business where nce.scheduledDate >= :from and "
+			+ "join smt.asset as asset join asset.site as site where nce.scheduledDate >= :from and "
 			+ "nce.scheduledDate <= :to and site.id =:siteId")
 	Integer getSMTriggerCountBySite( @Param("from") Date fromDate,  @Param("to") Date toDate,  @Param("siteId") Integer siteId);
 
