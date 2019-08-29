@@ -19,8 +19,18 @@ public interface ScheduledMaintenanceTriggerDao extends FocusDataTableRepository
 	Set<ScheduledMaintenanceTrigger> findCurrentHourTriggers(@Param("startTime") Date startTime, @Param("endTime") Date endTime,
 			@Param("type") SMTriggerType type);
 
-	@Query("SELECT COUNT(smt) FROM ScheduledMaintenanceTrigger AS smt JOIN smt.ttNextCalenderEvent AS nce "
-			+ "WHERE nce.scheduledDate >= :from and nce.scheduledDate <= :to")
+	@Query("select count(smt) from ScheduledMaintenanceTrigger as smt join smt.ttNextCalenderEvent as nce "
+			+ "where nce.scheduledDate >= :from and nce.scheduledDate <= :to")
 	Integer getSMTriggerCount(@Param("from")Date fromDate, @Param("to")Date toDate);
+	
+	@Query("select count(smt) from ScheduledMaintenanceTrigger as smt join smt.ttNextCalenderEvent as nce "
+			+ "join smt.asset as asset join asset.business as business where nce.scheduledDate >= :from and "
+			+ "nce.scheduledDate <= :to and business.id =:businessId")
+	Integer getSMTriggerCountByBusiness( @Param("from") Date fromDate,  @Param("to") Date toDate,  @Param("businessId") Integer businessId);
+
+	@Query("select count(smt) from ScheduledMaintenanceTrigger as smt join smt.ttNextCalenderEvent as nce "
+			+ "join smt.site as site join asset.business as business where nce.scheduledDate >= :from and "
+			+ "nce.scheduledDate <= :to and site.id =:siteId")
+	Integer getSMTriggerCountBySite( @Param("from") Date fromDate,  @Param("to") Date toDate,  @Param("siteId") Integer siteId);
 
 }
