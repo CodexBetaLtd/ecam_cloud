@@ -1,8 +1,5 @@
 var WorkorderComparisonChart = function () {
-    //function to initiate jQRangeSlider
-    //There are plenty of options you can set to control the precise looks of your plot. 
-    //You can control the ticks on the axes, the legend, the graph type, etc.
-    //For more information, please visit http://www.flotcharts.org/
+	
     var runCharts = function () {
 
     	$.ajax({
@@ -75,17 +72,7 @@ var WorkorderComparisonChart = function () {
 		var currentWeek = [ woComparison.currentWeekOpenWo, woComparison.currentWeekClosedWo ]; 
 		var nextWeek = [ woComparison.nextWeekOpenWo, woComparison.nextWeekClosedWo ]; 
 		
-		setChartData(previousWeek, currentWeek, nextWeek);
-//		$.ajax({
-//            type: "GET",
-//            url: 'restapi/dashboard/wo-comparision-chart',
-//            error: function () {
-//                alert("An error occurred.");
-//            },
-//            success: function (data) {  
-//            }
-//        }); 
-		
+		setChartData(previousWeek, currentWeek, nextWeek);		
 	};
 	
 	var setChartData = function(previousWeek, currentWeek, nextWeek) {

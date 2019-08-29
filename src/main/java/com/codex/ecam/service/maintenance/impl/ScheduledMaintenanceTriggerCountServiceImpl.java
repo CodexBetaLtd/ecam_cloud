@@ -1,14 +1,15 @@
 package com.codex.ecam.service.maintenance.impl; 
 
 import java.util.Calendar;
-import java.util.Date; 
+import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;  
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceTriggerDao;
 import com.codex.ecam.dto.dashboard.ScheduledMaintenanceTriggerCountDTO;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerCountService;
+import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.DateUtil; 
 
 @Service
@@ -113,8 +114,16 @@ public class ScheduledMaintenanceTriggerCountServiceImpl implements ScheduledMai
 		return cal;
 	}
 
-	private Integer getWoTaskCount(Date toDate, Date fromDate) {  
-		return smTriggerDao.getSMTriggerCount(fromDate, toDate);
+	private Integer getWoTaskCount(Date toDate, Date fromDate) { 
+		if ( AuthenticationUtil.isAuthUserAdminLevel() ) {
+			return smTriggerDao.getSMTriggerCount(fromDate, toDate);			
+		} else if ( AuthenticationUtil.isAuthUserSystemLevel() ) {
+			return smTriggerDao.getSMTriggerCountByBusiness(fromDate, toDate, AuthenticationUtil.getCurrentUser().getBusiness().getId());
+		} else if(AuthenticationUtil.isAuthUserGeneralLevel()) {
+			return smTriggerDao.getSMTriggerCountBySite(fromDate, toDate, AuthenticationUtil.getCurrentUser().getSite().getId());
+		} else {
+			return 0;
+		}
 	} 
 
 }

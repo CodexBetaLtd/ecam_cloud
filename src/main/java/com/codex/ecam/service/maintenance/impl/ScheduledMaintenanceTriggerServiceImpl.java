@@ -134,7 +134,15 @@ public class ScheduledMaintenanceTriggerServiceImpl implements ScheduledMaintena
 		return (root, query, cb) -> {   
 			Predicate toPredicate = cb.greaterThanOrEqualTo(root.get("ttNextCalenderEvent").get("scheduledDate"), fromDate);  
 			Predicate fromPredicate = cb.lessThanOrEqualTo(root.get("ttNextCalenderEvent").get("scheduledDate"), toDate); 
-			return cb.and( fromPredicate, toPredicate );
+			if ( AuthenticationUtil.isAuthUserSystemLevel() ) {
+				Predicate businessPredicate = cb.equal(root.get("asset").get("business").get("id"), AuthenticationUtil.getCurrentUser().getBusiness().getId()); 
+				return cb.and( fromPredicate, toPredicate, businessPredicate );
+			} else if (AuthenticationUtil.isAuthUserGeneralLevel()) {
+				Predicate sitePredicate = cb.equal(root.get("asset").get("site").get("id"), AuthenticationUtil.getCurrentUser().getSite().getId()); 
+				return cb.and( fromPredicate, toPredicate, sitePredicate );
+			} else {
+				return cb.and( fromPredicate, toPredicate );
+			}			
 		};
 	}
 
