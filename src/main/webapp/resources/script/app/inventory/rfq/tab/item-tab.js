@@ -47,7 +47,7 @@ var TabItem = function () {
         var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../rfq/itemView';
+            var url = '../rfq/item-add-modal-view';
             $modal.load(url, '', function () {
                 $modal.modal();
             });
@@ -139,7 +139,7 @@ var TabItem = function () {
         var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../rfq/itemView';
+            var url = '../rfq/item-add-modal-view';
             $modal.load(url, '', function () {
             	fillItemEditForm(getItemByIndex(itemIndex));
                 $modal.modal();
@@ -220,7 +220,7 @@ var TabItem = function () {
     };
 
     var submitAndGeneratePO = function () {
-        $('#rfq_add_frm').attr('action', "/FOCUS_CMMS/rfq/saveWithPurchaseOrder").submit();
+        $('#rfq_add_frm').attr('action', "/ECAM/rfq/saveWithPurchaseOrder").submit();
     };
 
     var isSelecetedItemsNotInPO = function (checkedValues) {
@@ -239,7 +239,7 @@ var TabItem = function () {
         var $modal = $('#stackable-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../rfq/assetView';
+            var url = '../rfq/asset-select-modal-view';
             $modal.load(url, '', function () {
                 dtRFQItemAsset.initRFQAssetTable();
                 $modal.modal();

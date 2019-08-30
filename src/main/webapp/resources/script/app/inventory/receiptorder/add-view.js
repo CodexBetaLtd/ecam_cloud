@@ -9,8 +9,7 @@ var ReceiptOrderAdd = function () {
 
     var runDatePicker = function () {
         $('.date-picker').datepicker({
-            autoclose: true,
-            container: '#picker-container'
+            autoclose: true
         });
     };
     

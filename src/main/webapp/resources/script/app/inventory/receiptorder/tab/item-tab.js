@@ -237,7 +237,6 @@ var receiptItemTab = function () {
             addItemToList(item);
         },
 
-
         /*********************************************************************
          * Edit Receipt
          *********************************************************************/
@@ -246,7 +245,6 @@ var receiptItemTab = function () {
             editItem(index);
         },
 
-
         /*********************************************************************
          * Remove Receipt
          *********************************************************************/
@@ -254,7 +252,6 @@ var receiptItemTab = function () {
         deleteListItem: function (index) {
             removeItem(index);
         },
-
 
         /*********************************************************************
          * Receipt Item Asset Data
@@ -266,7 +263,6 @@ var receiptItemTab = function () {
             setReceiptItemAsset(id, name);
         },
 
-
         /*********************************************************************
          * Receipt Item Stock Data
          *********************************************************************/
@@ -277,7 +273,6 @@ var receiptItemTab = function () {
             setReceiptItemStock(id, location);
         },
 
-
         /*********************************************************************
          * populate Receipt
          *********************************************************************/
@@ -286,8 +281,7 @@ var receiptItemTab = function () {
         },
         receiptItemView: function () {
             receiptItemView();
-        },
-
+        }
 
     };
 }();

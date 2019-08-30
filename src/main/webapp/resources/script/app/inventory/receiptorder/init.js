@@ -25,15 +25,17 @@ jQuery(document).ready(function () {
         event.preventDefault();
         receiptItemTab.receiptItemView();
     });
+    
     $(document).on('click', '#asset-select-modal-btn', function (event) {
         event.preventDefault();
         receiptItemTab.receiptAssetView();
     });
+    
     $(document).on('click', '#stock-select-modal-btn', function (event) {
         event.preventDefault();
         receiptItemTab.receiptStockView($('#itemAssetId').val());
-
     });
+    
     $(document).on('click', '#btnAddReceiptItem', function (event) {
         event.preventDefault();
         receiptItemTab.addReceiptItem();

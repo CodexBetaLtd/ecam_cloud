@@ -16,7 +16,7 @@ var TabFile = function () {
         var $modal = $('#master-modal-datatable');       
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../rfq/filemodelview';
+            var url = '../rfq/file-add-modal-view';
             $modal.load(url, '', function () {
             	FileAddModal.init();
                 $modal.modal();
