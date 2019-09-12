@@ -1,5 +1,6 @@
 package com.codex.ecam.controller.biz.warehouse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.biz.warehouse.WareHouseDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.service.biz.api.WareHouseService; 
+import com.codex.ecam.service.biz.api.WareHouseService;
+import com.codex.ecam.service.biz.api.WareHouseTreeService; 
 
 @RestController
 @RequestMapping(WarehouseRestController.REQUEST_MAPPING_URL)
@@ -23,11 +25,23 @@ public class WarehouseRestController {
 
 	@Autowired
 	private WareHouseService wearHouseService;
+	
+	@Autowired
+	private WareHouseTreeService wareHouseTreeService;
 
 	@RequestMapping(value = "/tabledata", method = RequestMethod.GET)
 	public DataTablesOutput<WareHouseDTO> warehouseList(@Valid FocusDataTablesInput input) {
 		try {
 			return wearHouseService.findWearHouseByType(input, AssetCategoryType.WAREHOUSE);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	@RequestMapping(value = "/parent-warehouse", method = RequestMethod.GET)
+	public DataTablesOutput<WareHouseDTO> SiteWithWareHouseList(@Valid FocusDataTablesInput input) {
+		try {
+			return wareHouseTreeService.findAllParentFacilities(input);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -41,6 +55,16 @@ public class WarehouseRestController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/childrens", method = RequestMethod.GET)
+	public List<WareHouseDTO> getAllChildAssets(@Valid Integer id) {
+		try {
+ 			return wareHouseTreeService.findAllChildrens(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
 	}
 
 	@RequestMapping(value = "/warehouseWithItemQty", method = RequestMethod.GET)
