@@ -666,4 +666,8 @@ ul.main-navigation-menu > li > ul.sub-menu > li.open > a{
 .project-create-body{
 	overflow:hidden;
 }*/
+.counter-count{
+	text-align: center !important;
+}
+
 

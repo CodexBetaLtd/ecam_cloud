@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1252,6 +1254,39 @@ public class StockServiceImpl implements StockService {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public Integer findMinimumStock() {
+		 return (int) stockDao.count(getAllLoWStockItem());
+	}
+	
+	private Specification<Stock> getAllLoWStockItem(){
+		Specification<Stock> specification;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			specification = (root, query, cb) -> {
+				return getLowStockItemPredicate(root, cb);
+			};
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				Predicate predicate2 = getLowStockItemPredicate(root, cb);
+				return cb.and(predicate, predicate2);
+			};
+		} else {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				Predicate predicate2 = getLowStockItemPredicate( root, cb);
+				return cb.and(predicate, predicate2);
+			};
+			
+		}
+		return specification;
+		
+	}
+	
+	private Predicate getLowStockItemPredicate(Root<Stock> root, CriteriaBuilder cb) {
+		return cb.ge(root.get("minQuantity"), root.get("currentQuantity"));
 	}
 
 }

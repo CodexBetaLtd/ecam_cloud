@@ -10,6 +10,9 @@ public class WorkOrderComparisonChartDataDTO {
 	
 	private Integer nextWeekOpenWo;
 	private Integer nextWeekClosedWo; 
+	
+	private Integer allCompletedWo;
+	private Integer allOnTimeCompletedWo; 
 
 	public Integer getPreviousWeekOpenWo() {
 		return previousWeekOpenWo;
@@ -57,6 +60,22 @@ public class WorkOrderComparisonChartDataDTO {
 
 	public void setNextWeekClosedWo(Integer nextWeekClosedWo) {
 		this.nextWeekClosedWo = nextWeekClosedWo;
+	}
+
+	public Integer getAllCompletedWo() {
+		return allCompletedWo;
+	}
+
+	public void setAllCompletedWo(Integer allCompletedWo) {
+		this.allCompletedWo = allCompletedWo;
+	}
+
+	public Integer getAllOnTimeCompletedWo() {
+		return allOnTimeCompletedWo;
+	}
+
+	public void setAllOnTimeCompletedWo(Integer allOnTimeCompletedWo) {
+		this.allOnTimeCompletedWo = allOnTimeCompletedWo;
 	}
 	
 	

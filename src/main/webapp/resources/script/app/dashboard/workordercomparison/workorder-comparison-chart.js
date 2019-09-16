@@ -68,7 +68,8 @@ var WorkorderComparisonChart = function () {
 	
 	var initWorkOrderComparisonCharts = function(woComparison){ 
 		
-		var previousWeek = [ woComparison.previousWeekOpenWo, woComparison.previousWeekClosedWo ]; 
+		//var previousWeek = [ woComparison.previousWeekOpenWo, woComparison.previousWeekClosedWo ]; 
+		var previousWeek = [ woComparison.allCompletedWo, woComparison.allOnTimeCompletedWo ]; 
 		var currentWeek = [ woComparison.currentWeekOpenWo, woComparison.currentWeekClosedWo ]; 
 		var nextWeek = [ woComparison.nextWeekOpenWo, woComparison.nextWeekClosedWo ]; 
 		
@@ -84,9 +85,10 @@ var WorkorderComparisonChart = function () {
 	var previousWeekChart = function( previousWeek ){
 
 		if (previousWeek[0] < 1 && previousWeek[1] < 1) { 
-			createNoDataDoughnutChart ("previous", [1] , "Previous Week");					
+			createNoDataDoughnutChart ("previous", [1] , "");					
 		} else {
-			createDoughnutChart ("previous", previousWeek , "Previous Week");
+			//createDoughnutChart ("previous", previousWeek , "Previous Week");
+			createDoughnutChartOnTimeCompleted ("previous", previousWeek , "");
 		} 
 	};
 	
@@ -107,6 +109,43 @@ var WorkorderComparisonChart = function () {
 			createDoughnutChart ("next", nextWeek , "Next Week");
 		}
     	 
+	};
+	
+	var createDoughnutChartOnTimeCompleted = function(canvas, data, title){ 
+		
+		var ctx = document.getElementById(canvas); 
+		new Chart(ctx , {
+			type: 'doughnut',
+			data: {
+				datasets: [{
+					data: data,
+					backgroundColor: [
+						'rgb(55,183,243)', 
+						'rgb(203, 75, 75)', 
+						], 
+				}],
+				labels: [
+					'Late/Before', 
+					'On Time', 
+					]
+			},
+			options: {
+				responsive: false,
+				legend: {
+					position: 'top',
+					fullWidth:false,
+				},
+				title: {
+					fontSize: 13,
+					display: true,
+					text: title
+				},
+				animation: {
+					animateScale: true,
+					animateRotate: true
+				}, 
+			}
+		});
 	};
 	
 	var createDoughnutChart = function(canvas, data, title){ 

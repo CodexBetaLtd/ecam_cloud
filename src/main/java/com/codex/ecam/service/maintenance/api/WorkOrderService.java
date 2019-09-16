@@ -34,6 +34,10 @@ public interface WorkOrderService {
 	String workorderFileUpload(MultipartFile file, String refId) throws Exception ;
 
 	DataTablesOutput<WorkOrderDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id) throws Exception;
+	
+	Integer findAllOpenWorkOderCount() throws Exception;
+	
+	Integer findAllHighPriorityWorkOderCount() throws Exception;
 
 
 }
