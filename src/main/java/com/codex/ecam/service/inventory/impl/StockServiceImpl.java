@@ -1289,4 +1289,14 @@ public class StockServiceImpl implements StockService {
 		return cb.ge(root.get("minQuantity"), root.get("currentQuantity"));
 	}
 
+	@Override
+	public DataTablesOutput<StockDTO> findLowStockPartItem(FocusDataTablesInput input) throws Exception {
+		StockPartPropertyMapper.getInstance().generateDataTableInput(input);
+		DataTablesOutput<Stock> domainOut;
+		Specification<Stock> specification = (root, query, cb) ->getLowStockItemPredicate(root,cb);
+		domainOut=stockDao.findAll(input,specification);
+		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+
+	}
+
 }

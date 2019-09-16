@@ -670,4 +670,9 @@ ul.main-navigation-menu > li > ul.sub-menu > li.open > a{
 	text-align: center !important;
 }
 
+#high-priority-workorder-btn,#open-workorder-btn,#low-stock-item-btn{
+	color:white;
+	background-color: gray;
+	border-color: gray;
+}
 

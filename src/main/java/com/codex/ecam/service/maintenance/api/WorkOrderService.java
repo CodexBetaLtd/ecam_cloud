@@ -37,7 +37,12 @@ public interface WorkOrderService {
 	
 	Integer findAllOpenWorkOderCount() throws Exception;
 	
+	DataTablesOutput<WorkOrderDTO> findAllOpenWorkOder(FocusDataTablesInput input) throws Exception;
+	
 	Integer findAllHighPriorityWorkOderCount() throws Exception;
+	
+	DataTablesOutput<WorkOrderDTO> findAllHighPriorityWorkOder(FocusDataTablesInput input) throws Exception;
+
 
 
 }

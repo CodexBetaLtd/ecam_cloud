@@ -20,5 +20,18 @@ public class DashBoardController {
 	public String getEmployeeHistoryWorkOrderTaskView(Model model) {
 		return "dashboard/employeehistory/employee-history-workorder-task-modal";
 	} 
+	
+	@RequestMapping(value = { "/high-priority-workorder-view" }, method = RequestMethod.GET)
+	public String getHighPriorityWorkOrderView(Model model) {
+		return "dashboard/highpriorityworkorder/high-priority-work-order";
+	} 
+	@RequestMapping(value = { "/open-workorder-view" }, method = RequestMethod.GET)
+	public String getOpenWorkOrderView(Model model) {
+		return "dashboard/openworkorder/open-work-order";
+	} 
+	@RequestMapping(value = { "/low-stock-item-view" }, method = RequestMethod.GET)
+	public String getLowStockItemView(Model model) {
+		return "dashboard/lowstockitem/low-stock-item";
+	} 
     
 }

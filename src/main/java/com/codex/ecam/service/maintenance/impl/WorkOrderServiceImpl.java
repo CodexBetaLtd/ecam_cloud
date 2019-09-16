@@ -828,4 +828,22 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		return cb.equal(root.get("priority").get("name"), "Highest");
 	}
 
+	@Override
+	public DataTablesOutput<WorkOrderDTO> findAllOpenWorkOder(FocusDataTablesInput input) throws Exception {
+		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		Specification<WorkOrder> specification = (root, query, cb) -> getOpenWorkOrderPredicate(root,cb);
+		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
+	@Override
+	public DataTablesOutput<WorkOrderDTO> findAllHighPriorityWorkOder(FocusDataTablesInput input) throws Exception {
+		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		Specification<WorkOrder> specification = (root, query, cb) -> getHighPriorityWorkOrderPredicate(root,cb);
+		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
 }

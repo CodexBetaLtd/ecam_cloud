@@ -89,12 +89,14 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/charts/Chart.min.js}"></script>  
     
     <script type="text/javascript" th:src="@{/resources/script/app/dashboard/workordercomparison/workorder-comparison-chart.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/dashboard/highpriorityworkorders/high-priority-work-orders.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/dashboard/openworkorders/open-work-orders.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/dashboard/lowstockitem/low-stock-item.js}"></script>  
 
     <script th:inline="javascript">
     
    	 	var woComparison = [[${woComparison}]];
-   	 	var woCompliton = [[${woComparison}]];
-   	 	
+  	 	
         jQuery(document).ready(function() {
             Main.init();
             Index.init();
