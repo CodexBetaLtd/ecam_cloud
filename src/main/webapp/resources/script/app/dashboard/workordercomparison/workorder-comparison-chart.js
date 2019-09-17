@@ -131,13 +131,17 @@ var WorkorderComparisonChart = function () {
 			},
 			options: {
 				responsive: false,
+				circumference:Math.PI,
+				rotation:Math.PI,
 				legend: {
 					position: 'top',
-					fullWidth:false,
+					fullWidth:true,
+					boxWidth:60,
+					fontSize:16
 				},
 				title: {
 					fontSize: 13,
-					display: true,
+					display: false,
 					text: title
 				},
 				animation: {
