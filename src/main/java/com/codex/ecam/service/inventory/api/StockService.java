@@ -62,7 +62,10 @@ public interface StockService {
 
     DataTablesOutput<StockDTO> findRemainStockPartList(FocusDataTablesInput input);
 
-    DataTablesOutput<StockDTO> findStockPartList(FocusDataTablesInput input) throws Exception;  
+    DataTablesOutput<StockDTO> findStockPartList(FocusDataTablesInput input) throws Exception;
     
+    DataTablesOutput<StockDTO> findLowStockPartItem(FocusDataTablesInput input) throws Exception;  
+    
+    Integer findMinimumStock();
     
 }

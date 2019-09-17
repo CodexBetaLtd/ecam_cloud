@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.codex.ecam.security.api.SecurityContextAccessor;
 import com.codex.ecam.service.dashboard.api.WorkOrderComparisonService;
+import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerCountService;
+import com.codex.ecam.service.maintenance.api.WorkOrderService;
 import com.codex.ecam.util.AuthenticationUtil;
 
 @Controller
@@ -23,6 +25,12 @@ public class HomeController {
 	
 	@Autowired
 	private WorkOrderComparisonService woComparisonService;
+	@Autowired
+	private WorkOrderService workoderService;
+	
+	@Autowired
+	private StockService stockService;
+	
 
 	@RequestMapping(value = { "/session-expire-redirect"}, method = RequestMethod.GET)
 	public String sessionExpiredRedirect() {
@@ -74,6 +82,11 @@ public class HomeController {
 		try {
 			model.addAttribute("scheduleMaintenenceCount", smTriggerCountService.getCount()); 
 			model.addAttribute("woComparison", woComparisonService.getWoComparisonChartData());
+			model.addAttribute("openWorkOrderCount", workoderService.findAllOpenWorkOderCount());
+			model.addAttribute("mttr", 20);
+			model.addAttribute("lowStockItem", stockService.findMinimumStock());
+			model.addAttribute("workOderRequestCount", 71);
+			model.addAttribute("highPriorityWorkOrder", workoderService.findAllHighPriorityWorkOderCount());
 		} catch (Exception e) { 
 			e.printStackTrace();
 		} 

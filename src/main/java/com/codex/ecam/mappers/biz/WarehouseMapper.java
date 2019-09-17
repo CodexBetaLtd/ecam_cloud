@@ -65,6 +65,14 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 			dto.setBusinessId(domain.getBusiness().getId());
 			dto.setBusinessName(domain.getBusiness().getName());
 		}
+		if (domain.getChildCount() != null) {
+			dto.setChildCount(domain.getChildCount());
+		}
+		if(domain.getParentAsset()!=null){
+		dto.setParentAssetId(domain.getParentAsset().getId());
+		dto.setParentAssetName(domain.getParentAsset().getName());
+		}
+		dto.setChildCount(domain.getChildCount());
 
 		setLocation(dto, domain);
         setCommanDTOFields(dto, domain);
@@ -117,6 +125,14 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 		dto.setCode(domain.getCode());
 		dto.setCity(domain.getCity());
 		dto.setDescription(domain.getDescription());
+		if (domain.getChildCount() != null) {
+			dto.setChildCount(domain.getChildCount());
+		}
+		dto.setChildCount(domain.getChildCount());
+		if(domain.getParentAsset()!=null){
+		dto.setParentAssetId(domain.getParentAsset().getId());
+		dto.setParentAssetName(domain.getParentAsset().getName());
+		}
 
         return dto;
     }
@@ -150,6 +166,10 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 		dto.setCode(domain.getCode());
 		dto.setCity(domain.getCity());
 		dto.setDescription(domain.getDescription());
+		if(domain.getParentAsset()!=null){
+			dto.setParentAssetId(domain.getParentAsset().getId());
+			dto.setParentAssetName(domain.getParentAsset().getName());
+		}
 
         return dto;
     }

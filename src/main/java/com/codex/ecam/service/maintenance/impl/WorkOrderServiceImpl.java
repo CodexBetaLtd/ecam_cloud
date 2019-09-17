@@ -764,4 +764,86 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		}
 	}
 
+	@Override
+	public Integer findAllOpenWorkOderCount() throws Exception {
+	return (int) workOrderDao.count(getAllOpenWorkOder());
+	}
+	private Specification<WorkOrder> getAllOpenWorkOder(){
+		Specification<WorkOrder> specification;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			specification = (root, query, cb) -> {
+				return getOpenWorkOrderPredicate(root, cb);
+			};
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				Predicate predicate2 = getOpenWorkOrderPredicate(root, cb);
+				return cb.and(predicate, predicate2);
+			};
+		} else {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				Predicate predicate2 = getOpenWorkOrderPredicate( root, cb);
+				return cb.and(predicate, predicate2);
+			};
+			
+		}
+		return specification;
+		
+	}
+	
+	private Predicate getOpenWorkOrderPredicate(Root<WorkOrder> root, CriteriaBuilder cb) {
+		return cb.equal(root.get("currentStatus").get("workOrderStatus"), WorkOrderStatus.OPEN);
+	}
+
+	public Integer findAllHighPriorityWorkOderCount() throws Exception {
+		 return (int) workOrderDao.count(getAllHighPriorityWorkOder());
+	}
+	
+	private Specification<WorkOrder> getAllHighPriorityWorkOder(){
+		Specification<WorkOrder> specification;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			specification = (root, query, cb) -> {
+				return getHighPriorityWorkOrderPredicate(root, cb);
+			};
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				Predicate predicate2 = getHighPriorityWorkOrderPredicate(root, cb);
+				return cb.and(predicate, predicate2);
+			};
+		} else {
+			specification = (root, query, cb) -> {
+				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				Predicate predicate2 = getHighPriorityWorkOrderPredicate( root, cb);
+				return cb.and(predicate, predicate2);
+			};
+			
+		}
+		return specification;
+		
+	}
+	
+	private Predicate getHighPriorityWorkOrderPredicate(Root<WorkOrder> root, CriteriaBuilder cb) {
+		return cb.equal(root.get("priority").get("name"), "Highest");
+	}
+
+	@Override
+	public DataTablesOutput<WorkOrderDTO> findAllOpenWorkOder(FocusDataTablesInput input) throws Exception {
+		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		Specification<WorkOrder> specification = (root, query, cb) -> getOpenWorkOrderPredicate(root,cb);
+		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
+	@Override
+	public DataTablesOutput<WorkOrderDTO> findAllHighPriorityWorkOder(FocusDataTablesInput input) throws Exception {
+		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		Specification<WorkOrder> specification = (root, query, cb) -> getHighPriorityWorkOrderPredicate(root,cb);
+		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
 }

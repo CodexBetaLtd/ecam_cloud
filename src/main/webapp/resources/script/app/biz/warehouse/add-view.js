@@ -28,6 +28,12 @@ var WearHouseAdd = function () {
     		btnMethod:"WearHouseAdd.assetCategoryView()",
     	});
     };
+    var initParentWarehouseSelect = function(){
+    	$("#parentAssetName").inputClear({
+    		placeholder:"Select a Warehouse",
+    		btnMethod:"WearHouseAdd.parentAssetAddView()",
+    	});
+    };
 	var initParentCategorySelect = function(){
     	$("#parentCategoryName").inputClear({
     		placeholder:"Select a Warehouse Category",
@@ -219,12 +225,23 @@ var WearHouseAdd = function () {
     
     var assetCategoryAddView = function () {
     	var $modal = $('#category-add-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
+    	CustomComponents.ajaxModalLoadingProgressBar();
     	setTimeout(function () {
     		var url = '../warehouse/assetcategoryadd?type='+categoryType;
     		$modal.load(url, '', function (){
     			WarehouseCategoryAddModal.init();
     			WarehouseCategoryDataTable.init();
+    			$modal.modal();
+    		});
+    	}, 1000);
+    };
+    var parentAssetAddView = function () {
+    	var $modal = $('#master-modal-datatable');
+        CustomComponents.ajaxModalLoadingProgressBar();
+    	setTimeout(function () {
+    		var url = '../warehouse/assetview';
+    		$modal.load(url, '', function (){
+    			dtWarehouse.init();
     			$modal.modal();
     		});
     	}, 1000);
@@ -240,6 +257,11 @@ var WearHouseAdd = function () {
     	$('#parentCategoryName').val(name);
     	$('#master-modal-datatable').modal('toggle');
     };
+    var setParentAssetView  = function(id,name){
+    	$('#parentAssetId').val(id);
+    	$('#parentAssetName').val(name);
+    	$('#master-modal-datatable').modal('toggle');
+    };
     
     return {
 
@@ -251,6 +273,7 @@ var WearHouseAdd = function () {
             runBusinessSiteFetch();
             initWarehouseCategorySelect();
             initParentCategorySelect();
+            initParentWarehouseSelect();
           //  initMap();
 
         },
@@ -266,8 +289,14 @@ var WearHouseAdd = function () {
         parentAssetCategoryView(id,name){
         	parentAssetCategoryView(id,name)
         },
+        parentAssetAddView(){
+        	parentAssetAddView()
+        },
         setParentAssetCategoryView(id,name){
         	setParentAssetCategoryView(id,name)
+        },
+        setParentAssetView(id,name){
+        	setParentAssetView(id,name)
         }
 
 

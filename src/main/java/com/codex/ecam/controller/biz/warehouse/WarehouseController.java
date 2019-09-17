@@ -57,9 +57,14 @@ public class WarehouseController {
 	}
 
 	@RequestMapping(value = "/assetcategoryview", method = RequestMethod.GET)
-	public  String parentAssetSelectView(Model model,AssetCategoryType type){
+	public  String parentAssetCategorySelectView(Model model,AssetCategoryType type){
 		model.addAttribute("type", type);
 		return "biz/warehouse/modal/category/category-select-modal";
+	}
+	
+	@RequestMapping(value = "/assetview", method = RequestMethod.GET)
+	public  String parentAssetSelectView(Model model){
+		return "biz/warehouse/modal/warehouse-select-modal";
 	}
 
 	@RequestMapping(value = "/assetcategoryadd", method = RequestMethod.GET)

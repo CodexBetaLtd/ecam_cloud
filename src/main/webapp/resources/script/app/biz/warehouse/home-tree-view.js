@@ -1,4 +1,4 @@
-﻿ var FacilityTreeView = function () {
+﻿var WareHouseTreeView = function () {
 	
 	//
 	// Pipelining function for DataTables. To be used to the `ajax` option of DataTables
@@ -116,17 +116,17 @@
 	    } );
 	} );
 	
-    var initAssetTreeView = function () {
+    var initWareHouseTreeView = function () {
     	
-    	$('#asset_tbl').dataTable().fnDestroy();
+    	$('#wearhouse_tbl').dataTable().fnDestroy();
     	
-        var oTable = $('#asset_tbl').DataTable({
+        var oTable = $('#wearhouse_tbl').DataTable({
         	responsive: true,
         	destroy:true,
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
-            	url: "../../restapi/asset/parent-facilities",
+            	url: "../restapi/wearhouse/parent-warehouse",
             	pages: 5
             } ), 
             "treeGrid": {
@@ -147,7 +147,7 @@
             	data: 'name', 
             	render: function ( data, type, row, meta )  { 
             		if (row.childCount > 0) {    
-            			return '<a class="parent" href="../../restapi/asset/childrens?id=' + row.id +'"></a><span><i class="fa fa-caret-right node-expand"></i> </span>' + data;
+            			return '<a class="parent" href="../restapi/wearhouse/childrens?id=' + row.id +'"></a><span><i class="fa fa-caret-right node-expand"></i> </span>' + data;
             		}
             		return '<span class="not-parent">-'+ data +'</span>';
             	},
@@ -158,17 +158,18 @@
      			data : 'code',
      			responsivePriority: 2   
      		},{
-     			data : 'assetCategoryName',
+     			data : 'name',
      			responsivePriority: 2   
      		},{
-     			data : 'customerName',
+     			data : 'description',
      			responsivePriority: 2   
      		}],
             aoColumnDefs: [{
-            	targets: 5, //index of column starting from 0
+            	targets: 4, //index of column starting from 0
             	data: "id", //this name should exist in your JSON response
                 render: function ( data, type, full, meta ) {
-                	return ButtonUtil.getHomeBtnWithURL("../asset/facility", data);
+                	console.log(data)
+                	return ButtonUtil.getHomeBtnWithURL("../warehouse", data);
                 }
             }],
             oLanguage: {
@@ -194,10 +195,10 @@
             searching: false,
             
         });
-        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search"); 
-        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small"); 
-        $('#asset_tbl_wrapper .dataTables_length select').select2(); 
-        $('#asset_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#wearhouse_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search"); 
+        $('#wearhouse_tbl_wrapper .dataTables_length select').addClass("m-wrap small"); 
+        $('#wearhouse_tbl_wrapper .dataTables_length select').select2(); 
+        $('#wearhouse_tbl_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
@@ -206,7 +207,7 @@
     
     return { 
         init: function () {
-        	initAssetTreeView(); 
+        	initWareHouseTreeView(); 
         }	
     };
 }();

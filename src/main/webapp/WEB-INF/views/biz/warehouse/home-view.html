@@ -7,6 +7,7 @@
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.treeGrid.min.css}" /> 
 
 <body>
 
@@ -79,15 +80,16 @@
 							<div class="panel-heading">
                                 <i class="fa fa-university"></i> Ware House
 						       <div class="panel-tools">
-						           <a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
-						           <a class="btn btn-xs btn-link panel-refresh" href="#"> <i class="fa fa-refresh"></i> </a>
+						       		<a class="btn btn-xs btn-link panel-datatable" href="#"> <i class="fa fa-table"></i> </a>
+						           	<a class="btn btn-xs btn-link panel-treeview" href="#"> <i class="fa fa-sitemap"></i> </a>
+						           	<a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
+						           	<a class="btn btn-xs btn-link panel-refresh" href="#"> <i class="fa fa-refresh"></i> </a>
 						       </div>
 						   	</div>
 					     
 					    	<div class="panel-body">
 					    		
 					    		<div th:replace="template/messageview :: message"></div>
-					    					                  
 			                	<table class="table table-striped table-bordered table-hover table-full-width" id="wearhouse_tbl">
 				                    <thead>
 				                        <tr>
@@ -132,16 +134,14 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
+    
+<div th:include="template/commonjs :: commonjstables"></div>
     <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/home-tree-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/init-home.js}"></script>
+    
     <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-
-    <script>
-        jQuery(document).ready(function() {
-            Main.init();
-            WearHouseHome.init();
-        });
-    </script>
 
 </body>
 

@@ -1,9 +1,12 @@
 package com.codex.ecam.dto.biz.warehouse;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.BaseDTO;
+import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.LocationDTO;
 
 public class WareHouseDTO extends BaseDTO {
@@ -19,6 +22,7 @@ public class WareHouseDTO extends BaseDTO {
 	private String code;
 	private String description;
 	private Integer parentAssetId;
+	private String parentAssetName;
 
 	private String location;
 
@@ -35,6 +39,10 @@ public class WareHouseDTO extends BaseDTO {
 	private String province;
 	private String postalCode;
 	private Integer countryId;
+	
+	private List<AssetDTO> children = new ArrayList<>();
+	
+	private Integer childCount;
 
 	private BigDecimal itemQty = new BigDecimal(50);
 
@@ -201,6 +209,25 @@ public class WareHouseDTO extends BaseDTO {
 	public void setLocationDTO(LocationDTO locationDTO) {
 		this.locationDTO = locationDTO;
 	}
+	public List<AssetDTO> getChildren() {
+		return children;
+	}
+	public void setChildren(List<AssetDTO> children) {
+		this.children = children;
+	}
+	public Integer getChildCount() {
+		return childCount;
+	}
+	public void setChildCount(Integer childCount) {
+		this.childCount = childCount;
+	}
+	public String getParentAssetName() {
+		return parentAssetName;
+	}
+	public void setParentAssetName(String parentAssetName) {
+		this.parentAssetName = parentAssetName;
+	}
+
 
 	
 
