@@ -33,6 +33,7 @@ import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQItemDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQNotificationDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQRepDTO;
+import com.codex.ecam.dto.inventory.rfq.RFQStatusChangeDTO;
 import com.codex.ecam.mappers.purchasing.RFQFileMapper;
 import com.codex.ecam.mappers.purchasing.RFQItemMapper;
 import com.codex.ecam.mappers.purchasing.RFQMapper;
@@ -45,6 +46,7 @@ import com.codex.ecam.model.inventory.rfq.RFQ;
 import com.codex.ecam.model.inventory.rfq.RFQFile;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.model.inventory.rfq.RFQNotification;
+import com.codex.ecam.model.inventory.rfq.RFQStausChangeLog;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.purchasing.RFQResult;
@@ -168,6 +170,7 @@ public class RFQServiceImpl implements RFQService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveOrUpdate(RFQResult result) throws Exception {
 		try {
+			setRFQStatusChange(result);
 			RFQMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 			setRFQData(result);
 			rfqDao.save(result.getDomainEntity());
@@ -220,6 +223,7 @@ public class RFQServiceImpl implements RFQService {
 		setItems(result);
 		setRFQFiles(result);
 		setRFQNotification(result);
+		
 		//genaratePDF(result,request,response);
 	}
 	
@@ -246,6 +250,16 @@ public class RFQServiceImpl implements RFQService {
 //
 //	}
 	
+	private void setRFQStatusChange(RFQResult result){
+		RFQStatus previousStatus=result.getDomainEntity().getRfqStatus();
+		RFQStatus currentStatus=result.getDtoEntity().getRfqStatus();
+		if(!previousStatus.equals(currentStatus)){
+			RFQStausChangeLog changeLog=new RFQStausChangeLog();
+			changeLog.setRfqStatus(currentStatus);
+			changeLog.setRfq(result.getDomainEntity());
+			result.getDomainEntity().getRfqStausChangeLogs().add(changeLog);
+		}
+	}
 
 	private void setRFQFiles(RFQResult result) throws Exception {
 		Set<RFQFile> rfqFiles = new HashSet<>();
@@ -410,6 +424,7 @@ public class RFQServiceImpl implements RFQService {
 					result.addToMessageList("RFQ Status Changes as DRAFT.");		
 				}
 			}
+
 			 result=update(rfqdto);
 			 sendStatusChangeMail(result,rfqPreviousStatus);
 			return result;

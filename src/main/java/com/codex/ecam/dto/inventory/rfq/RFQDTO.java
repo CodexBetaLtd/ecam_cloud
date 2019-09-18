@@ -49,7 +49,8 @@ public class RFQDTO extends BaseDTO {
     
     private List<RFQItemDTO> items = new ArrayList<>();
     private List<RFQFileDTO> rfqFileDTOs = new ArrayList<>();
-	private List<RFQNotificationDTO> notificationDTOs = new ArrayList<>();
+    private List<RFQNotificationDTO> notificationDTOs = new ArrayList<>();
+	private List<RFQStatusChangeDTO> rfqStatusChangeDTOs = new ArrayList<>();
 	
 	public Integer getId() {
 		return id;
@@ -255,6 +256,14 @@ public class RFQDTO extends BaseDTO {
 	public void setNotificationDTOs(List<RFQNotificationDTO> notificationDTOs) {
 		this.notificationDTOs = notificationDTOs;
 	}
+	public List<RFQStatusChangeDTO> getRfqStatusChangeDTOs() {
+		return rfqStatusChangeDTOs;
+	}
+	public void setRfqStatusChangeDTOs(List<RFQStatusChangeDTO> rfqStatusChangeDTOs) {
+		this.rfqStatusChangeDTOs = rfqStatusChangeDTOs;
+	}
+	
+	
     
    
 }

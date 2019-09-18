@@ -1,11 +1,16 @@
 package com.codex.ecam.mappers.purchasing;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
+import com.codex.ecam.dto.inventory.rfq.RFQStatusChangeDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.rfq.RFQ;
 import com.codex.ecam.model.inventory.rfq.RFQFile;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
+import com.codex.ecam.model.inventory.rfq.RFQStausChangeLog;
 
 public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
@@ -70,6 +75,7 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
 		setRFQItems(domain, dto);
 		setRFQFile(domain, dto);
+		setStatusChangeLog(domain, dto);
 
 		return dto;
 	}
@@ -80,6 +86,21 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 			dto.getItems().add(RFQItemMapper.getInstance().domainToDto(item));
 		}
 
+	}
+	
+	private void setStatusChangeLog(RFQ domain, RFQDTO dto){
+		if (domain.getRfqStausChangeLogs().size() > 0) {
+			for (RFQStausChangeLog changeLog :domain.getRfqStausChangeLogs()) {
+			RFQStatusChangeDTO changeDTO=new RFQStatusChangeDTO();
+			changeDTO.setChangeUserName(changeLog.getCreatedUser().getFullName());
+			changeDTO.setStatusChangeDate(changeLog.getCreatedDate());
+			changeDTO.setStatusName(changeLog.getRfqStatus().getName());
+			changeDTO.setId(changeLog.getId());
+			dto.getRfqStatusChangeDTOs().add(changeDTO);
+			}
+			//Collections.sort(dto.getRfqStatusChangeDTOs());
+			
+		}
 	}
 	
 	private void setRFQFile(RFQ domain, RFQDTO dto) throws Exception {

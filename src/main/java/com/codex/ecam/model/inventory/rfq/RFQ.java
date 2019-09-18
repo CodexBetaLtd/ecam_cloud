@@ -136,6 +136,9 @@ public class RFQ extends BaseModel {
 	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<RFQNotification> rfqNotifications;
 	
+	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<RFQStausChangeLog> rfqStausChangeLogs;
+	
 
 	public Integer getId() {
 		return id;
@@ -391,6 +394,14 @@ public class RFQ extends BaseModel {
 
 	public void setRfqNotifications(Set<RFQNotification> rfqNotifications) {
 		this.rfqNotifications = rfqNotifications;
+	}
+
+	public Set<RFQStausChangeLog> getRfqStausChangeLogs() {
+		return rfqStausChangeLogs;
+	}
+
+	public void setRfqStausChangeLogs(Set<RFQStausChangeLog> rfqStausChangeLogs) {
+		this.rfqStausChangeLogs = rfqStausChangeLogs;
 	}
 
 	
