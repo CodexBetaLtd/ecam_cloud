@@ -1,7 +1,7 @@
 var SupplierBusinessAdd = function () {
 
     var initDropDownBusiness = function () {
-        $("#virtualBusinessOwnerId").select2({
+        $("#businessId").select2({
             placeholder: "Please Specify the Business",
             allowClear: true
         });

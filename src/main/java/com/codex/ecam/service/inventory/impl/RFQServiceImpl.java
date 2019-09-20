@@ -25,6 +25,7 @@ import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderItemDao;
 import com.codex.ecam.dao.inventory.RFQDao;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
@@ -74,6 +75,9 @@ public class RFQServiceImpl implements RFQService {
 	
 	@Autowired
 	private CountryDao countryDao;
+	
+	@Autowired
+	private SupplierDao supplierDao;
 	
 	@Autowired
 	private PurchaseOrderItemDao purchaseOrderItemDao;
@@ -216,7 +220,7 @@ public class RFQServiceImpl implements RFQService {
 	private void setRFQData(RFQResult result) throws Exception {
 		setBusiness(result);
 		setSite(result);
-		setSupplierBusiness(result);
+		setSupplier(result);
 		setSupplierCountry(result);
 		setShipToFacility(result);
 		setShipToCountry(result);
@@ -347,9 +351,9 @@ public class RFQServiceImpl implements RFQService {
 		}
 	}
 
-	private void setSupplierBusiness(RFQResult result) {
+	private void setSupplier(RFQResult result) {
 		if (result.getDtoEntity() != null && result.getDtoEntity().getSupplierId() != null) {
-			result.getDomainEntity().setSupplierBusiness(businessDao.findOne(result.getDtoEntity().getSupplierId()));
+			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getSupplierId()));
 		}
 	}
 

@@ -1,8 +1,5 @@
 package com.codex.ecam.mappers.purchasing;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQStatusChangeDTO;
@@ -50,9 +47,9 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 		dto.setShippingPostalCode(domain.getShippingPostalCode());
 		dto.setShippingProvince(domain.getSupplierProvince());
 		
-		if ( domain.getSupplierBusiness() != null) {
-			dto.setSupplierId(domain.getSupplierBusiness().getId());
-			dto.setSupplierName(domain.getSupplierBusiness().getName());
+		if ( domain.getSupplier() != null) {
+			dto.setSupplierId(domain.getSupplier().getId());
+			dto.setSupplierName(domain.getSupplier().getName());
 		}
 		if ( domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
@@ -158,9 +155,9 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 		dto.setId(domain.getId());
 		dto.setCode(domain.getCode());		
 		dto.setStatusName(domain.getRfqStatus().getName());
-		if ( domain.getSupplierBusiness() != null) {
-			dto.setSupplierId(domain.getSupplierBusiness().getId());
-			dto.setSupplierName(domain.getSupplierBusiness().getName());
+		if ( domain.getSupplier() != null) {
+			dto.setSupplierId(domain.getSupplier().getId());
+			dto.setSupplierName(domain.getSupplier().getName());
 		}
         return dto;
     }

@@ -22,6 +22,7 @@ import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.supplier.Supplier;
 
 @Entity
 @Table(name = "tbl_rfq")
@@ -63,9 +64,9 @@ public class RFQ extends BaseModel {
 	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
 	private Business business;
 
-	@JoinColumn(name = "asset_business_supplier_id")
-	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business supplierBusiness;
+	@JoinColumn(name = "supplier_id")
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.LAZY)
+	private Supplier supplier;
 
 	@Column(name = "bill_to_address")
 	private String billingAddress;
@@ -364,12 +365,13 @@ public class RFQ extends BaseModel {
 		this.business = business;
 	}
 
-	public Business getSupplierBusiness() {
-		return supplierBusiness;
+
+	public Supplier getSupplier() {
+		return supplier;
 	}
 
-	public void setSupplierBusiness(Business supplierBusiness) {
-		this.supplierBusiness = supplierBusiness;
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 	public List<RFQItem> getRfqItems() {

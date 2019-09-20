@@ -11,7 +11,7 @@
               </label>
               <select id="supplierId" th:field="*{supplierId}"class="search-select" style="width:100%;">
 				<option value="">&nbsp;</option>
-				<option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+				<option th:each="supplier : ${suppliers}" th:value="${supplier.id}" th:text="${supplier.name}"></option>
               </select>
           </div>
 		</div>
