@@ -102,7 +102,7 @@ var TabItem = function () {
 
     var poItemView = function () {
         if ($('#supplierBusiness').val() != null && $('#supplierBusiness').val() > 0) {
-            var $modal = $('#master-modal');
+            var $modal = $('#common-modal');
             CustomComponents.ajaxModalLoadingProgressBar();
             setTimeout(function () {
                 var url = '../purchaseorder/itemView';
@@ -188,7 +188,7 @@ var TabItem = function () {
      * Purchase Order Item Edit
      **********************************************************************/
     var editItem = function (itemIndex) {
-        var $modal = $('#master-modal');
+        var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../purchaseorder/itemView';

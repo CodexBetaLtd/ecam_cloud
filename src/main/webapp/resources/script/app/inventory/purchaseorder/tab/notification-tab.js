@@ -126,7 +126,7 @@ var poNotification = function () {
     };
 
     var getNotificationModal = function () {
-        var $modal = $('#master-modal');
+        var $modal = $('#common-modal');
         //$('body').modalmanager('loading');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {

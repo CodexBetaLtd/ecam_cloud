@@ -84,7 +84,7 @@ var ItemAddModal = function () {
         $("#itemAccountId").select2({
             placeholder: "Select a Account",
             allowClear: true,
-            dropdownParent: $("#item-add-modal")
+            dropdownParent: $("#common-modal")
         });
     };
     
@@ -92,7 +92,7 @@ var ItemAddModal = function () {
         $("#itemChargeDepartmentId").select2({
             placeholder: "Select a Charge Department",
             allowClear: true,
-            dropdownParent: $("#item-add-modal")
+            dropdownParent: $("#common-modal")
         });
     };
     

@@ -1,9 +1,25 @@
 package com.codex.ecam.model.inventory.purchaseOrder;
 
-import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.codex.ecam.constants.BillingTerm;
 import com.codex.ecam.constants.PurchaseOrderStatus;
+import com.codex.ecam.listeners.inventory.purchaseorder.PurchaseOrderChangeLogListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.admin.Currency;
@@ -13,11 +29,9 @@ import com.codex.ecam.model.maintenance.Account;
 import com.codex.ecam.model.maintenance.ChargeDepartment;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 
-import java.util.Date;
-import java.util.List;
-
 @Entity
 @Table(name = "tbl_purchase_order")
+@EntityListeners( { PurchaseOrderChangeLogListener.class } )
 public class PurchaseOrder extends BaseModel {
 
 	private static final long serialVersionUID = 3167763864035252289L;
@@ -164,6 +178,12 @@ public class PurchaseOrder extends BaseModel {
 
 	@OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private List<PurchaseOrderNotification> purchaseOrderNotifications ;
+	
+	@OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private List<PurchaseOrderChangeLog> purchaseOrderChangeLogs ;
+	
+	@OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private List<PurchaseOrderFile> purchaseOrderFiles ;
 
 
 
@@ -516,4 +536,21 @@ public class PurchaseOrder extends BaseModel {
 		this.purchaseOrderDiscussions = purchaseOrderDiscussions;
 	}
 
+	public List<PurchaseOrderChangeLog> getPurchaseOrderChangeLogs() {
+		return purchaseOrderChangeLogs;
+	}
+
+	public void setPurchaseOrderChangeLogs(List<PurchaseOrderChangeLog> purchaseOrderChangeLogs) {
+		this.purchaseOrderChangeLogs = purchaseOrderChangeLogs;
+	}
+
+	public List<PurchaseOrderFile> getPurchaseOrderFiles() {
+		return purchaseOrderFiles;
+	}
+
+	public void setPurchaseOrderFiles(List<PurchaseOrderFile> purchaseOrderFiles) {
+		this.purchaseOrderFiles = purchaseOrderFiles;
+	}
+
+	
 }

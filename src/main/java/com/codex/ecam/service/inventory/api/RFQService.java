@@ -33,5 +33,6 @@ public interface RFQService {
 	String rfqFileUpload(MultipartFile file,String refId) throws Exception;
 
 	void rfqFileDownload(Integer id,HttpServletResponse response) throws Exception;
+	void rfqFileDelete(Integer id) throws Exception;
 
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.RFQStatus;
+import com.codex.ecam.listeners.inventory.rfq.RFQLogListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.asset.Asset;
@@ -26,6 +28,7 @@ import com.codex.ecam.model.biz.supplier.Supplier;
 
 @Entity
 @Table(name = "tbl_rfq")
+@EntityListeners( { RFQLogListener.class } )
 public class RFQ extends BaseModel {
 
 	private static final long serialVersionUID = 3167763864035252289L;
@@ -138,7 +141,7 @@ public class RFQ extends BaseModel {
 	private Set<RFQNotification> rfqNotifications;
 	
 	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-	private Set<RFQStausChangeLog> rfqStausChangeLogs;
+	private Set<RFQChangeLog> rfqStausChangeLogs;
 	
 
 	public Integer getId() {
@@ -398,13 +401,15 @@ public class RFQ extends BaseModel {
 		this.rfqNotifications = rfqNotifications;
 	}
 
-	public Set<RFQStausChangeLog> getRfqStausChangeLogs() {
+	public Set<RFQChangeLog> getRfqStausChangeLogs() {
 		return rfqStausChangeLogs;
 	}
 
-	public void setRfqStausChangeLogs(Set<RFQStausChangeLog> rfqStausChangeLogs) {
+	public void setRfqStausChangeLogs(Set<RFQChangeLog> rfqStausChangeLogs) {
 		this.rfqStausChangeLogs = rfqStausChangeLogs;
 	}
+
+
 
 	
 	

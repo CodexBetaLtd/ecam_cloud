@@ -6,6 +6,12 @@ var PurchaseOrderAdd = function () {
 			allowClear: true
 		});
 	};
+	var runBusinessSelect = function () {
+		$("#businessId").select2({
+			placeholder: "Select a Business",
+			allowClear: true
+		});
+	};
 
     var runBillToLocationSelect = function () {
         $("#shipToLocation").select2({
@@ -194,6 +200,7 @@ var PurchaseOrderAdd = function () {
             runDatePicker();
             runSendUsingSelect();
             runAdditionalCostTypeSelect();
+            runBusinessSelect();
         }
     };
 }();

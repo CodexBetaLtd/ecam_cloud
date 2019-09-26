@@ -1,10 +1,14 @@
 package com.codex.ecam.mappers.purchasing;
 
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderChangeLogDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderAdditionalCost;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderChangeLog;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderDiscussion;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 
 public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOrderDTO> {
@@ -52,6 +56,9 @@ public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOr
 			dto.setSupplierId(domain.getSupplier().getId());
 			dto.setSupplierName(domain.getSupplier().getName());
 		}
+		if ( domain.getBusiness() != null ) {
+			dto.setBusinessId(domain.getBusiness().getId());
+		}
 		
 		if ( domain.getShipToFacility() != null ) {
 			dto.setShipToId(domain.getShipToFacility().getId());
@@ -95,8 +102,40 @@ public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOr
 		setAdditionalCost(domain,dto);
 		setPurchaseOrderItem(domain, dto);
 		setDiscussion(domain,dto);
+		setDiscussion(domain,dto);
+		setChangeLog(domain,dto);
+		setPurchaseOrderFile(domain,dto);
 		
 		return dto;
+	}
+	private void setChangeLog(PurchaseOrder domain, PurchaseOrderDTO dto){
+		for(PurchaseOrderChangeLog changeLog:domain.getPurchaseOrderChangeLogs()){
+			PurchaseOrderChangeLogDTO logDTO=new PurchaseOrderChangeLogDTO();
+			logDTO.setChangeUserName(changeLog.getCreatedUser().getFullName());
+			logDTO.setStatusChangeDate(changeLog.getCreatedDate());
+			if(changeLog.getStatus()!=null){
+				logDTO.setStatusName(changeLog.getStatus().getName());
+
+			}
+			logDTO.setDescription(changeLog.getDescription());
+			dto.getPurchaseOrderChangeLogDTOs().add(logDTO);
+		}
+	}
+	
+	private void setPurchaseOrderFile(PurchaseOrder domain, PurchaseOrderDTO dto) throws Exception {
+		if (domain.getPurchaseOrderFiles().size() > 0) {
+			for (PurchaseOrderFile purchaseOrderFile :domain.getPurchaseOrderFiles()) {
+				PurchaseOrderFileDTO purchaseOrderFileDTO=new PurchaseOrderFileDTO();
+				purchaseOrderFileDTO.setId(purchaseOrderFile.getId());
+				purchaseOrderFileDTO.setItemDescription(purchaseOrderFile.getItemDescription());
+				purchaseOrderFileDTO.setVersion(purchaseOrderFile.getVersion());
+				purchaseOrderFileDTO.setFileLocation(purchaseOrderFile.getFileLocation());
+				purchaseOrderFileDTO.setFileType(purchaseOrderFile.getFileType());
+				purchaseOrderFileDTO.setFileDate(purchaseOrderFile.getFileDate());
+				dto.getPurchaseOrderFileDTOs().add(purchaseOrderFileDTO);
+
+			}
+		}
 	}
 	
 	private void setPurchaseOrderItem(PurchaseOrder domain, PurchaseOrderDTO dto) throws Exception {

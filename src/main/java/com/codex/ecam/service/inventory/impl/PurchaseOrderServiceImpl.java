@@ -1,39 +1,63 @@
 package com.codex.ecam.service.inventory.impl;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.PurchaseOrderAdditionalCostType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.ShippingType;
-import com.codex.ecam.dao.admin.*;
+import com.codex.ecam.dao.admin.AccountDao;
+import com.codex.ecam.dao.admin.ChargeDepartmentDao;
+import com.codex.ecam.dao.admin.CountryDao;
+import com.codex.ecam.dao.admin.CurrencyDao;
+import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderDao;
 import com.codex.ecam.dao.inventory.RFQItemDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
-import com.codex.ecam.dto.inventory.purchaseOrder.*;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderAdditionalCostDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDiscussionDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderNotificationDTO;
+import com.codex.ecam.mappers.purchasing.PurchaseOrderFileMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderMapper;
-import com.codex.ecam.model.inventory.purchaseOrder.*;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderAdditionalCost;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderDiscussion;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItemRFQItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderNotification;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.FileDownloadUtil;
+import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.VelocityEmailSender;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -70,6 +94,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	Environment environment;
 
 	@Override
 	public DataTablesOutput<PurchaseOrderDTO> findAll(FocusDataTablesInput input) throws Exception {
@@ -158,6 +185,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		setItems(result);
 		setDiscussion(result);
 		setNotification(result);
+		setPurchaseOrderFiles(result);
 
 	}
 
@@ -353,6 +381,30 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
     }
 
+	private void setPurchaseOrderFiles(PurchaseOrderResult result) throws Exception {
+		List<PurchaseOrderFile> purchaseOrderFiles = new ArrayList<PurchaseOrderFile>();
+
+		if ( (result.getDtoEntity().getPurchaseOrderFileDTOs() != null) && (result.getDtoEntity().getPurchaseOrderFileDTOs().size() > 0) ) {
+
+			List<PurchaseOrderFile> currentPurchaseOrderFiles = result.getDomainEntity().getPurchaseOrderFiles();
+
+			for (PurchaseOrderFileDTO purchaseOrderFileDTO : result.getDtoEntity().getPurchaseOrderFileDTOs()) {
+				PurchaseOrderFile purchaseOrderFile;
+
+				if (purchaseOrderFileDTO.getId() != null) {
+					purchaseOrderFile = currentPurchaseOrderFiles.stream().filter((x) -> x.getId().equals(purchaseOrderFileDTO.getId())).findAny().orElseGet(PurchaseOrderFile :: new);
+				} else {
+					purchaseOrderFile = new PurchaseOrderFile();
+				}
+
+				PurchaseOrderFileMapper.getInstance().dtoToDomain(purchaseOrderFileDTO, purchaseOrderFile);
+				purchaseOrderFile.setPurchaseOrder(result.getDomainEntity());
+
+				purchaseOrderFiles.add(purchaseOrderFile);
+			}
+		}
+		result.getDomainEntity().setPurchaseOrderFiles(purchaseOrderFiles);
+	}
     private void setDiscussion(PurchaseOrderResult result) {
         List<PurchaseOrderDiscussion> purchaseOrderDiscussions = new ArrayList<PurchaseOrderDiscussion>();
 		for (PurchaseOrderDiscussionDTO purchaseOrderDiscussionDTO : result.getDtoEntity().getDiscussionDTOs()) {
@@ -433,7 +485,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			purchaseOrderDTO.setPurchaseOrderstatus(status);
 			PurchaseOrderStatus currentStatus=purchaseOrderDTO.getPurchaseOrderstatus();
 			update(purchaseOrderDTO);
-			sendstatusEmail(preStaus,currentStatus);
+			//sendstatusEmail(preStaus,currentStatus);
 
             return purchaseOrderDTO;
         } catch (Exception e) {
@@ -485,6 +537,46 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		}
 		dto.setItems(items);
 		return dto;
+	}
+
+	@Override
+	public void purchaseOrderFileDownload(Integer id, HttpServletResponse response) throws IOException {
+		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+		if (id != null) {
+			PurchaseOrderFile file = purchaseOrderDao.findByFileId(id);
+			String externalFilePath = uploadLocation + file.getFileLocation();
+			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
+		}		
+	}
+
+	@Override
+	public String purchaseOrderFileUpload(MultipartFile fileData, String refId) {
+		String uploadFolder = environment.getProperty("upload.purchaseorder.file.folder");
+		String uploadLocation = environment.getProperty("upload.location");
+		try {
+			return FileUploadUtil.createFile(fileData, refId, uploadFolder, uploadLocation);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	@Override
+	public void purchaseOrderFileDelete(Integer id) {
+         
+		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+
+		PurchaseOrderFile pofile = purchaseOrderDao.findByFileId(id);
+		String externalFilePath = uploadLocation + pofile.getFileLocation();
+		File file = new File(externalFilePath);
+        if(file.delete()) 
+        { 
+            System.out.println("File deleted successfully"); 
+        } 
+        else
+        { 
+            System.out.println("Failed to delete the file"); 
+        } 
 	}
 
 

@@ -8,19 +8,22 @@
                 <thead>
                 <tr>
                     <th> #</th>
-                    <th> Status</th>
-                    <th> User</th>
                     <th class='hidden-xs'> Date</th>
+                    <th> User</th>
+                    <th> Description</th>                    
+                    <th> Status</th>
+                    
+                    
                 </tr>
                 </thead>
                 <tbody th:if="${not #lists.isEmpty(rfq.rfqStatusChangeDTOs)}">
                 <tr th:each="rfqStatusChangeDTO,iter : ${rfq.rfqStatusChangeDTOs}">
                     <td><span th:text="${iter.index+1}"></span></td>
-                    <td><span th:text="${rfqStatusChangeDTO.statusName}"></span></td>
+                     <td><b> <span th:text="${#dates.format(rfqStatusChangeDTO.statusChangeDate,'yyyy-MM-dd HH:mm:ss')}"></span> </b></td>
                     <td><span th:text="${rfqStatusChangeDTO.changeUserName}"></span></td>
-                    <td><b> <span th:text="${#dates.format(rfqStatusChangeDTO.statusChangeDate,'dd-MM-yyyy')}"></span> </b>
-                    </td>
-                </tr>
+                  	 <td><span th:text="${rfqStatusChangeDTO.description}"></span></td>
+                    <td><span th:text="${rfqStatusChangeDTO.statusName}"></span></td>
+                   </tr>
                 </tbody>
             	<tbody th:if="${#lists.isEmpty(rfq.rfqStatusChangeDTOs)}">
                 <tr>

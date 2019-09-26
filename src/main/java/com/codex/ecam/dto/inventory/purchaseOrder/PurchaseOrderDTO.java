@@ -50,7 +50,9 @@ public class PurchaseOrderDTO extends BaseDTO {
 	private List<PurchaseOrderAdditionalCostDTO> additionalCostDTOs = new ArrayList<>();
 	private List<PurchaseOrderItemDTO> items = new ArrayList<>();
 	private List<PurchaseOrderDiscussionDTO> discussionDTOs = new ArrayList<>();
-    private List<PurchaseOrderNotificationDTO> notificationDTOs = new ArrayList<>();
+	private List<PurchaseOrderNotificationDTO> notificationDTOs = new ArrayList<>();
+	private List<PurchaseOrderChangeLogDTO> purchaseOrderChangeLogDTOs = new ArrayList<>();
+    private List<PurchaseOrderFileDTO> purchaseOrderFileDTOs = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -339,4 +341,22 @@ public class PurchaseOrderDTO extends BaseDTO {
     public void setNotificationDTOs(List<PurchaseOrderNotificationDTO> notificationDTOs) {
         this.notificationDTOs = notificationDTOs;
     }
+
+	public List<PurchaseOrderChangeLogDTO> getPurchaseOrderChangeLogDTOs() {
+		return purchaseOrderChangeLogDTOs;
+	}
+
+	public void setPurchaseOrderChangeLogDTOs(List<PurchaseOrderChangeLogDTO> purchaseOrderChangeLogDTOs) {
+		this.purchaseOrderChangeLogDTOs = purchaseOrderChangeLogDTOs;
+	}
+
+	public List<PurchaseOrderFileDTO> getPurchaseOrderFileDTOs() {
+		return purchaseOrderFileDTOs;
+	}
+
+	public void setPurchaseOrderFileDTOs(List<PurchaseOrderFileDTO> purchaseOrderFileDTOs) {
+		this.purchaseOrderFileDTOs = purchaseOrderFileDTOs;
+	}
+    
+    
 }

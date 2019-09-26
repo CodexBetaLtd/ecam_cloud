@@ -68,10 +68,18 @@ var TabFile = function () {
     };
     
     var deleteFile = function (index) {
+    	remoteFileDelete(files[index].id);
     	files.splice(index, 1);
     	initFileTable();
     };
     
+    var remoteFileDelete=function(fileId){
+       	$.ajax({
+            type: "GET",
+            url: "delete-file?fileRefId=" + fileId
+        });
+
+    }
     return {   	
     	init: function () {
     		initButtons();

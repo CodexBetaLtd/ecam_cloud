@@ -175,6 +175,10 @@ public class RFQController {
 		rfqService.rfqFileDownload(id,response);
 	}
 	
+	@RequestMapping(value = "/delete-file", method = RequestMethod.GET)
+	public void deleteFile(Model model,@RequestParam("fileRefId")Integer refId) throws Exception {
+		rfqService.rfqFileDelete(refId);
+	}
 	@RequestMapping(value = "/addfrompo", method = RequestMethod.GET)
 	public String generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("poItemIds") final String poItemIds) {
 		try {

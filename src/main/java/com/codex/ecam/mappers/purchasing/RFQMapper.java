@@ -1,13 +1,13 @@
 package com.codex.ecam.mappers.purchasing;
 
+import com.codex.ecam.dto.inventory.rfq.RFQChangeLogDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
-import com.codex.ecam.dto.inventory.rfq.RFQStatusChangeDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.rfq.RFQ;
+import com.codex.ecam.model.inventory.rfq.RFQChangeLog;
 import com.codex.ecam.model.inventory.rfq.RFQFile;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
-import com.codex.ecam.model.inventory.rfq.RFQStausChangeLog;
 
 public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
@@ -87,11 +87,14 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 	
 	private void setStatusChangeLog(RFQ domain, RFQDTO dto){
 		if (domain.getRfqStausChangeLogs().size() > 0) {
-			for (RFQStausChangeLog changeLog :domain.getRfqStausChangeLogs()) {
-			RFQStatusChangeDTO changeDTO=new RFQStatusChangeDTO();
+			for (RFQChangeLog changeLog :domain.getRfqStausChangeLogs()) {
+			RFQChangeLogDTO changeDTO=new RFQChangeLogDTO();
 			changeDTO.setChangeUserName(changeLog.getCreatedUser().getFullName());
 			changeDTO.setStatusChangeDate(changeLog.getCreatedDate());
+			changeDTO.setDescription(changeLog.getDescription());
+			if(changeLog.getRfqStatus()!=null){
 			changeDTO.setStatusName(changeLog.getRfqStatus().getName());
+			}
 			changeDTO.setId(changeLog.getId());
 			dto.getRfqStatusChangeDTOs().add(changeDTO);
 			}

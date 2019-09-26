@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
 
     Main.init();
-
+    TabFile.init();
     PurchaseOrderAdd.init();
 
     /*********************************************************************
