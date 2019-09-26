@@ -6,6 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.*;
@@ -17,6 +20,9 @@ import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping(PurchaseOrderController.REQUEST_MAPPING_URL)
@@ -92,6 +98,10 @@ public class PurchaseOrderController {
 		return "inventory/purchaseorder/modal/discussion-modal";
 	}
 
+	@RequestMapping(value = "/file-add-modal-view", method = RequestMethod.GET)
+	public String getFileAddView(Model model) {
+		return "inventory/purchaseorder/modal/file-add-modal";
+	}
 
 	/*********************************************************************
 	 * CRUD Ops
@@ -182,6 +192,25 @@ public class PurchaseOrderController {
 		setCommonData(model, purchaseOrder);
 		return "inventory/purchaseorder/add-view";
 	}
+	
+	@RequestMapping(value = "/download-file", method = RequestMethod.GET)
+	public void  downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
+		purchaseOrderService.purchaseOrderFileDownload(id,response);
+	}
+	
+	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
+	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData, @RequestParam("fileRefId")String refId) throws Exception {
+		List<String> list = new ArrayList<String>();
+		list.add(fileData.getContentType());
+		list.add(purchaseOrderService.purchaseOrderFileUpload(fileData,refId));
+		return list;
+	}
+	
+	@RequestMapping(value = "/delete-file", method = RequestMethod.GET)
+	public void deleteFile(Model model,@RequestParam("fileRefId")Integer refId) throws Exception {
+		purchaseOrderService.purchaseOrderFileDelete(refId);
+	}
+
 
 	private void setCommonData(Model model, PurchaseOrderDTO purchaseOrder) throws Exception {
 		model.addAttribute("purchaseOrder", purchaseOrder);

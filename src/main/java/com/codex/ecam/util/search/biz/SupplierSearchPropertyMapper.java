@@ -21,10 +21,7 @@ public class SupplierSearchPropertyMapper extends BaseSearchPropertyMapper {
 
 		switch (tableColumn) {
 		
-		case "virtualBusinessOwnerName" :
-			addColumns("businessVirtual.business.name");
-			break;
-			
+		
 		default:
 			break;
 

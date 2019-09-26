@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+	<meta th:name="_csrf" th:content="${_csrf.token}"/>
+	<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">File </h4>
+    </div>
+    <div class="modal-body">
+		<form id="file_add_frm">
+	        <div class="row">
+	            <div class="col-md-12">
+	                <div class="form-group">
+	                    <label class="control-label"> Description <span class="symbol required"></span></label>
+	                    <textarea id="fileDescription" name="fileDescription" class="form-control" placeholder="Insert the File Description" ></textarea>
+	                </div>
+	            </div>
+	        </div>
+        </form>
+        <span id="dropZoneText" class="required"style="display: none; color:#a94442">Please Upload a file</span>
+         <form class="dropzone" th:action="@{/purchaseorder/upload-file} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" id="uploadedFile" method="post" enctype="multipart/form-data">
+  
+         </form>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-blue">Close</button>
+        <button type="button" class="btn btn-blue" id="btn-add-file" ><i class="clip-checkmark-circle-2"></i>Add
+        </button>
+    </div>
+</html>

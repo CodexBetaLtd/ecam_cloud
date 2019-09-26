@@ -29,6 +29,8 @@ public interface SupplierService {
     List<SupplierDTO> findAllVirtualSupplierList();
 
     List<SupplierDTO> findAllOriginalSupplierList();
+    
+    List<SupplierDTO> findAllSupplierByUserLevel();
 
 }
 

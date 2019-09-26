@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="statusChangeTabFragment">
+
+    <div class="row">
+        <div class="col-md-12" style="padding-top: 15px;">
+            <table class="table table-striped table-bordered table-hover table-full-width" style="width:100%;">
+                <thead>
+                <tr>
+                    <th> #</th>
+                    <th class='hidden-xs'> Date</th>
+                    <th> User</th>
+                    <th> Description</th>                    
+                    <th> Status</th>
+                    
+                    
+                </tr>
+                </thead>
+                <tbody th:if="${not #lists.isEmpty(rfq.rfqStatusChangeDTOs)}">
+                <tr th:each="rfqStatusChangeDTO,iter : ${rfq.rfqStatusChangeDTOs}">
+                    <td><span th:text="${iter.index+1}"></span></td>
+                     <td><b> <span th:text="${#dates.format(rfqStatusChangeDTO.statusChangeDate,'yyyy-MM-dd HH:mm:ss')}"></span> </b></td>
+                    <td><span th:text="${rfqStatusChangeDTO.changeUserName}"></span></td>
+                  	 <td><span th:text="${rfqStatusChangeDTO.description}"></span></td>
+                    <td><span th:text="${rfqStatusChangeDTO.statusName}"></span></td>
+                   </tr>
+                </tbody>
+            	<tbody th:if="${#lists.isEmpty(rfq.rfqStatusChangeDTOs)}">
+                <tr>
+                    <td colspan="9" style="text-align:center;"><i>Table Data Not Found.</i></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

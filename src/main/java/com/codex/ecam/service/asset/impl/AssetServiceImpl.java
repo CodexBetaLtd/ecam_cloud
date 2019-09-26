@@ -172,7 +172,7 @@ public class AssetServiceImpl implements AssetService {
 					assetDTO.getAssetPurchasingDetail().setOrderVersion(item.getReceiptOrder().getVersion());
 					if (item.getReceiptOrder().getSupplier() != null) {
 						assetDTO.getAssetPurchasingDetail()
-								.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
+							.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
 					}
 					if (item.getReceiptOrder().getCurrency() != null) {
 						assetDTO.getAssetPurchasingDetail()

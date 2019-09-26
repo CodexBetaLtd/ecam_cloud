@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,13 +19,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.RFQStatus;
+import com.codex.ecam.listeners.inventory.rfq.RFQLogListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.supplier.Supplier;
 
 @Entity
 @Table(name = "tbl_rfq")
+@EntityListeners( { RFQLogListener.class } )
 public class RFQ extends BaseModel {
 
 	private static final long serialVersionUID = 3167763864035252289L;
@@ -63,9 +67,9 @@ public class RFQ extends BaseModel {
 	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
 	private Business business;
 
-	@JoinColumn(name = "asset_business_supplier_id")
-	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business supplierBusiness;
+	@JoinColumn(name = "supplier_id")
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.LAZY)
+	private Supplier supplier;
 
 	@Column(name = "bill_to_address")
 	private String billingAddress;
@@ -135,6 +139,9 @@ public class RFQ extends BaseModel {
 	
 	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<RFQNotification> rfqNotifications;
+	
+	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<RFQChangeLog> rfqStausChangeLogs;
 	
 
 	public Integer getId() {
@@ -361,12 +368,13 @@ public class RFQ extends BaseModel {
 		this.business = business;
 	}
 
-	public Business getSupplierBusiness() {
-		return supplierBusiness;
+
+	public Supplier getSupplier() {
+		return supplier;
 	}
 
-	public void setSupplierBusiness(Business supplierBusiness) {
-		this.supplierBusiness = supplierBusiness;
+	public void setSupplier(Supplier supplier) {
+		this.supplier = supplier;
 	}
 
 	public List<RFQItem> getRfqItems() {
@@ -392,6 +400,16 @@ public class RFQ extends BaseModel {
 	public void setRfqNotifications(Set<RFQNotification> rfqNotifications) {
 		this.rfqNotifications = rfqNotifications;
 	}
+
+	public Set<RFQChangeLog> getRfqStausChangeLogs() {
+		return rfqStausChangeLogs;
+	}
+
+	public void setRfqStausChangeLogs(Set<RFQChangeLog> rfqStausChangeLogs) {
+		this.rfqStausChangeLogs = rfqStausChangeLogs;
+	}
+
+
 
 	
 	

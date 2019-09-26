@@ -39,7 +39,10 @@ public class SupplierDTO extends BaseDTO {
     private String city;
     private String province;
     private String postalCode;
+    private String countryName;
     private Integer countryId;
+    private Integer businessId;
+    private String businessName;
     private List<SupplierContactDTO> supplierContactDTOs = new ArrayList<>();
 
 
@@ -242,4 +245,31 @@ public class SupplierDTO extends BaseDTO {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public Integer getBusinessId() {
+		return businessId;
+	}
+
+	public void setBusinessId(Integer businessId) {
+		this.businessId = businessId;
+	}
+
+	public String getBusinessName() {
+		return businessName;
+	}
+
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+	
+	
+    
 }

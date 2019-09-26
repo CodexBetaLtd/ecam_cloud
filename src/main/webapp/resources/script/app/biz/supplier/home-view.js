@@ -122,7 +122,7 @@
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/supplier/virtualSupplierList",
+                url: "../restapi/supplier/tabledata",
                 pages: 5
             }),
             columns: [{
@@ -134,7 +134,7 @@
             },
             {data: 'name'},
                 {data: 'code'},
-                {data : 'virtualBusinessOwnerName'}],
+                {data : 'businessName'}],
             aoColumnDefs: [{
                 targets: 4,//index of column starting from 0
                 data: "id", //this name should exist in your JSON response

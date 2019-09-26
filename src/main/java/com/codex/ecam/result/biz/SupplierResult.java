@@ -1,12 +1,12 @@
 package com.codex.ecam.result.biz;
 
 import com.codex.ecam.dto.biz.supplier.SupplierDTO;
-import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.supplier.Supplier;
 import com.codex.ecam.result.BaseResult;
 
-public class SupplierResult extends BaseResult<Business, SupplierDTO> {
+public class SupplierResult extends BaseResult<Supplier, SupplierDTO> {
 
-    public SupplierResult(Business domain, SupplierDTO dto) {
+    public SupplierResult(Supplier domain, SupplierDTO dto) {
         super(domain, dto);
     }
 

@@ -1,5 +1,12 @@
 package com.codex.ecam.service.biz.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.CurrencyDao;
-import com.codex.ecam.dao.biz.BusinessClassificationDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.BusinessVirtualDao;
 import com.codex.ecam.dao.biz.SupplierDao;
@@ -24,17 +30,12 @@ import com.codex.ecam.mappers.admin.SupplierMapper;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.biz.business.BusinessVirtual;
+import com.codex.ecam.model.biz.supplier.Supplier;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.biz.SupplierResult;
 import com.codex.ecam.service.biz.api.SupplierService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.search.biz.SupplierSearchPropertyMapper;
-
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 
 @Service
@@ -47,9 +48,6 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Autowired
 	private BusinessVirtualDao businessVirtualDao;
-
-	@Autowired
-	private BusinessClassificationDao businessClassificationDao;
 
 	@Autowired
 	private CurrencyDao currencyDao;
@@ -68,7 +66,7 @@ public class SupplierServiceImpl implements SupplierService {
 		}
 	}
 
-	private Business getEntityById(Integer id) throws SupplierException {
+	private Supplier getEntityById(Integer id) throws SupplierException {
 		try {
 			return supplierDao.findOne(id);
 		} catch (Exception e) {
@@ -117,7 +115,7 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public SupplierResult save(SupplierDTO dto) {
-		SupplierResult result = new SupplierResult(new Business(), dto);
+		SupplierResult result = new SupplierResult(new Supplier(), dto);
 		try {
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
@@ -193,6 +191,7 @@ public class SupplierServiceImpl implements SupplierService {
 		setCurrency(result);
 		setBusinessClassification(result);
 		setCountry(result);
+		setBusiness(result);
 	}
 
 	private void setCountry(SupplierResult result) {
@@ -203,16 +202,21 @@ public class SupplierServiceImpl implements SupplierService {
 
 	private void setRoleSupplier(SupplierResult result) {
 		if (result.getDomainEntity().getId() == null) {
-			result.getDomainEntity().setRoleSupplier(Boolean.TRUE);
+			//result.getDomainEntity().setRoleSupplier(Boolean.TRUE);
 		}
 	}
 
 	private void setVirtualBusiness(SupplierResult result) {
 		if (result.getDomainEntity().getId() == null) {
-			result.getDomainEntity().setVirtualBusiness(Boolean.TRUE);
+		//	result.getDomainEntity().setVirtualBusiness(Boolean.TRUE);
 		}
 	}
 
+	private void setBusiness(SupplierResult result) {
+		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
+		}
+	}
 	private void setBusinessVirtual(SupplierResult result) {
 		if (result.getDtoEntity().getVirtualBusinessOwnerId() != null) {
 			//			Business businessOwner = AuthenticationUtil.getLoginUserBusiness();
@@ -223,13 +227,13 @@ public class SupplierServiceImpl implements SupplierService {
 				businessVirtual.setVirtualBusinesses(new HashSet<>());
 				businessVirtual.setBusiness(businessOwner);
 			}
-			result.getDomainEntity().setBusinessVirtual(businessVirtual);
+			//result.getDomainEntity().setBusinessVirtual(businessVirtual);
 		}
 	}
 
 	private void setBusinessClassification(SupplierResult result) throws BusinessClassificationException {
 		if ((result.getDtoEntity().getBusinessClassificationId() != null) && (result.getDtoEntity().getBusinessClassificationId() > 0)) {
-			result.getDomainEntity().setBusinessClassification(businessClassificationDao.findOne(result.getDtoEntity().getBusinessClassificationId()));
+			//result.getDomainEntity().setBusinessClassification(businessClassificationDao.findOne(result.getDtoEntity().getBusinessClassificationId()));
 		}
 	}
 
@@ -262,7 +266,7 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public DataTablesOutput<SupplierDTO> findAllByLevel(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<Business> domainOut = null;
+		DataTablesOutput<Supplier> domainOut = null;
 		SupplierSearchPropertyMapper.getInstance().generateDataTableInput(input);
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = supplierDao.findAll(input);
@@ -278,7 +282,7 @@ public class SupplierServiceImpl implements SupplierService {
 	@Override
 	public List<SupplierDTO> findAllVirtualSupplierList() {
 		try {
-			List<Business> list = supplierDao.findAll(specAdminLevelVirtualSupplier());
+			List<Supplier> list = supplierDao.findAll(specAdminLevelVirtualSupplier());
 			return SupplierMapper.getInstance().domainToDTOList(list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -286,13 +290,13 @@ public class SupplierServiceImpl implements SupplierService {
 		}
 	}
 
-	private Specification<Business> getSystemUserBusinessSpecification(Integer businessId) {
-		Specification<Business> specification = (root, query, cb) -> cb.equal(root.get("id"), businessId);
+	private Specification<Supplier> getSystemUserBusinessSpecification(Integer businessId) {
+		Specification<Supplier> specification = (root, query, cb) -> cb.equal(root.get("id"), businessId);
 		return specification;
 	}
 
-	private Specification<Business> getGeneralUserBusinessSpecification(Integer id) {
-		Specification<Business> specification = (root, query, cb) -> {
+	private Specification<Supplier> getGeneralUserBusinessSpecification(Integer id) {
+		Specification<Supplier> specification = (root, query, cb) -> {
 			Join<Business, Asset> joinAssetBusiness = root.joinList("assets");
 			return cb.equal(joinAssetBusiness.get("id"), id);
 		};
@@ -303,7 +307,7 @@ public class SupplierServiceImpl implements SupplierService {
 	public DataTablesOutput<SupplierDTO> findAllVirtualSupplier(FocusDataTablesInput input) throws Exception {
 		try {
 			SupplierSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			DataTablesOutput<Business> domainOut = null;
+			DataTablesOutput<Supplier> domainOut = null;
 			if (AuthenticationUtil.isAuthUserAdminLevel()) {
 				domainOut = supplierDao.findAll(input,specAdminLevelVirtualSupplier());
 			} else {
@@ -320,7 +324,7 @@ public class SupplierServiceImpl implements SupplierService {
 	@Override
 	public List<SupplierDTO> findAllOriginalSupplierList() {
 		try {
-			List<Business> list = supplierDao.findAll(specOriginalSupplier());
+			List<Supplier> list = supplierDao.findAll(specOriginalSupplier());
 			return SupplierMapper.getInstance().domainToDTOList(list);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -328,8 +332,8 @@ public class SupplierServiceImpl implements SupplierService {
 		}
 	}
 
-	private Specification<Business> specSystmeLevelVirtualSupplier() {
-		Specification<Business> spec = (root, query, cb) -> {
+	private Specification<Supplier> specSystmeLevelVirtualSupplier() {
+		Specification<Supplier> spec = (root, query, cb) -> {
 			Join<Business, BusinessVirtual> joinvirtualBusiness = root.join("businessVirtual");
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
@@ -340,8 +344,8 @@ public class SupplierServiceImpl implements SupplierService {
 		return spec;
 	}
 	
-	private Specification<Business> specAdminLevelVirtualSupplier() {
-		Specification<Business> spec = (root, query, cb) -> {
+	private Specification<Supplier> specAdminLevelVirtualSupplier() {
+		Specification<Supplier> spec = (root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
 			predicates.add(cb.equal(root.get("roleSupplier"), Boolean.TRUE));
@@ -353,7 +357,7 @@ public class SupplierServiceImpl implements SupplierService {
 	@Override
 	public DataTablesOutput<SupplierDTO> findAllOriginalSupplier(FocusDataTablesInput input) throws Exception {
 		try {
-			DataTablesOutput<Business> domainOut = supplierDao.findAll(input, specOriginalSupplier());
+			DataTablesOutput<Supplier> domainOut = supplierDao.findAll(input, specOriginalSupplier());
 			return SupplierMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -362,13 +366,33 @@ public class SupplierServiceImpl implements SupplierService {
 		}
 	}
 
-	private Specification<Business> specOriginalSupplier() {
-		Specification<Business> spec = (root, query, cb) -> {
+	private Specification<Supplier> specOriginalSupplier() {
+		Specification<Supplier> spec = (root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.FALSE));
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 		return spec;
+	}
+
+	@Override
+	public List<SupplierDTO> findAllSupplierByUserLevel() {
+		Iterable<Supplier> suppliers = null;
+	if (AuthenticationUtil.isAuthUserAdminLevel()) {
+		suppliers = supplierDao.findAll();
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			suppliers = supplierDao.findAll( getSystemUserBusinessSpecification(AuthenticationUtil.getLoginUserBusiness().getId()));
+		} else {
+			suppliers = supplierDao.findAll(getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
+		}
+		List<SupplierDTO> supplierDTOs = null;
+		try {
+			supplierDTOs = SupplierMapper.getInstance().domainToDTOList(suppliers);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return supplierDTOs;
 	}
 
 }

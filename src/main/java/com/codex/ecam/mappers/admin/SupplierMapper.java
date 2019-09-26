@@ -3,10 +3,10 @@ package com.codex.ecam.mappers.admin;
 import com.codex.ecam.dto.biz.supplier.SupplierDTO;
 import com.codex.ecam.exception.admin.SupplierException;
 import com.codex.ecam.mappers.GenericMapper;
-import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.supplier.Supplier;
 
 
-public class SupplierMapper extends GenericMapper<Business, SupplierDTO> {
+public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 
 	private static SupplierMapper instance = null;
 
@@ -21,7 +21,7 @@ public class SupplierMapper extends GenericMapper<Business, SupplierDTO> {
 	}
 
 	@Override
-	public SupplierDTO domainToDto(Business domain) throws Exception {
+	public SupplierDTO domainToDto(Supplier domain) throws Exception {
 		SupplierDTO dto = new SupplierDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
@@ -41,22 +41,14 @@ public class SupplierMapper extends GenericMapper<Business, SupplierDTO> {
 		if (domain.getCountry() != null) {
 			dto.setCountryId(domain.getCountry().getId());
 		}
-
-		if (domain.getBusinessClassification() != null) {
-			dto.setBusinessClassificationId(domain.getBusinessClassification().getId());
-			dto.setBusinessClassificationName(domain.getBusinessClassification().getName());
+		if (domain.getBusiness() != null) {
+			dto.setBusinessId(domain.getBusiness().getId());
 		}
+
 		if (domain.getCurrency() != null) {
 			dto.setCurrencyId(domain.getCurrency().getId());
 			dto.setCurrencyName(domain.getCurrency().getName());
 			dto.setCurrencySymbol(domain.getCurrency().getSymbol());
-		}
-		if (domain.getVirtualBusiness() != null) {
-			dto.setVirtualBusinessId(domain.getBusinessVirtual().getId());
-			if (domain.getBusinessVirtual().getBusiness() != null) {
-				dto.setVirtualBusinessOwnerId(domain.getBusinessVirtual().getBusiness().getId());
-				dto.setVirtualBusinessOwnerName(domain.getBusinessVirtual().getBusiness().getName());
-			}
 		}
 
 		setCommanDTOFields(dto, domain);
@@ -65,7 +57,7 @@ public class SupplierMapper extends GenericMapper<Business, SupplierDTO> {
 	}
 
 	@Override
-	public void dtoToDomain(SupplierDTO dto, Business domain) throws SupplierException {
+	public void dtoToDomain(SupplierDTO dto, Supplier domain) throws SupplierException {
 		domain.setId(dto.getId());
 		domain.setName(dto.getName());
 		domain.setCode(dto.getCode());
@@ -85,15 +77,16 @@ public class SupplierMapper extends GenericMapper<Business, SupplierDTO> {
 	}
 
 	@Override
-	public SupplierDTO domainToDtoForDataTable(Business domain) throws SupplierException {
+	public SupplierDTO domainToDtoForDataTable(Supplier domain) throws SupplierException {
 		SupplierDTO dto = new SupplierDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
-		
-		if (domain.getBusinessVirtual() != null) {
-			dto.setVirtualBusinessOwnerName(domain.getBusinessVirtual().getBusiness().getName());
+		if(domain.getBusiness()!=null){
+			dto.setBusinessName(domain.getBusiness().getName());
 		}
+		
+
 		return dto;
 	}
 

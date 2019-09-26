@@ -30,6 +30,7 @@ import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
+import com.codex.ecam.service.biz.api.SupplierService;
 import com.codex.ecam.service.inventory.api.RFQService;
 
 @Controller
@@ -55,6 +56,9 @@ public class RFQController {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private SupplierService supplierService;
 
 	@Autowired
 	private ChargeDepartmentService chargeDeparmentService;
@@ -171,6 +175,10 @@ public class RFQController {
 		rfqService.rfqFileDownload(id,response);
 	}
 	
+	@RequestMapping(value = "/delete-file", method = RequestMethod.GET)
+	public void deleteFile(Model model,@RequestParam("fileRefId")Integer refId) throws Exception {
+		rfqService.rfqFileDelete(refId);
+	}
 	@RequestMapping(value = "/addfrompo", method = RequestMethod.GET)
 	public String generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("poItemIds") final String poItemIds) {
 		try {
@@ -186,6 +194,7 @@ public class RFQController {
 	private void setCommonData(Model model, RFQDTO rfq) throws Exception {
 		model.addAttribute("rfq", rfq);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 		model.addAttribute("sites", assetService.findAllSiteByLevel());
 		model.addAttribute("countries", countryService.findAll());
 		model.addAttribute("currencies", currencyService.findAll());
@@ -204,6 +213,7 @@ public class RFQController {
 			dto = rfqService.saveWithPurchaseOrder(rfq);
 			model.addAttribute("purchaseOrder", dto);
 			model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+			model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 			model.addAttribute("sites", assetService.findAllSiteByLevel());
 			model.addAttribute("accounts", accountService.findAll());
 			model.addAttribute("chargeDepartments", chargeDeparmentService.findAll());

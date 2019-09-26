@@ -22,6 +22,7 @@ import com.codex.ecam.model.admin.Currency;
 import com.codex.ecam.model.admin.User;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.supplier.Supplier;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 
 @Entity
@@ -45,8 +46,8 @@ public class ReceiptOrder extends BaseModel {
 	private Asset site;
 
 	@JoinColumn(name = "supplier_id")
-	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business supplier;
+	@ManyToOne(targetEntity = Supplier.class, fetch = FetchType.LAZY)
+	private Supplier supplier;
 
 	//Todo: Is this Used ??
 	@JoinColumn(name = "purchase_order_id")
@@ -100,11 +101,13 @@ public class ReceiptOrder extends BaseModel {
 		this.site = site;
 	}
 
-	public Business getSupplier() {
+
+
+	public Supplier getSupplier() {
 		return supplier;
 	}
 
-	public void setSupplier(Business supplier) {
+	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
 	}
 

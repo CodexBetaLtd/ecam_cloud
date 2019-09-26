@@ -10,6 +10,8 @@ public class SupplierContactDTO extends BaseDTO {
     private String department;
     private String name;
     private String email;
+    private String telephone;
+    private String designation;
 
 
     public Integer getId() {
@@ -51,4 +53,22 @@ public class SupplierContactDTO extends BaseDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
+    
+    
 }

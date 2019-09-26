@@ -7,7 +7,7 @@ var poDiscussionTab = function () {
             var htmlRow =
                 "<tr id='poDiscussionRow_" + row + "' >" +
                 "<td>" + (row + 1) + "</td>" +
-                "<td>" + poDiscussion.comment + "</td>" +
+                "<td>" + poDiscussion.comment+ "</td>" +
                 "<td> <div class='hidden-sm hidden-xs'> " +
                 "<button type='button' id='" + row + "' class='btn btn-xs btn-bricky tooltips btnDeleteDiscussion' data-placement='top' data-original-title='Remove' >" +
                 "<i class='fa fa-times fa fa-white' ></i></button></div> " +
@@ -34,13 +34,14 @@ var poDiscussionTab = function () {
     };
 
     var getDiscussionView = function () {
-        var $modal = $('#master-modal');
+        var $modal = $('#common-modal');
         //    $('body').modalmanager('loading');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../purchaseorder/poDiscussionView';
             $modal.load(url, '', function () {
                 $modal.modal();
+                DiscussionAddModal.init();
             });
         }, 100);
     };
@@ -49,7 +50,8 @@ var poDiscussionTab = function () {
         var discussionObj = {};
         discussionObj['id'] = '';
         discussionObj['userId'] = '';
-        discussionObj['comment'] = $("#poDiscussionComment").val();
+        discussionObj['comment'] = CKEDITOR.instances['poDiscussionComment'].getData();
+        console.log(CKEDITOR.instances['poDiscussionComment'].getData())
         purchaseOrderDiscussions.push(discussionObj);
     };
 

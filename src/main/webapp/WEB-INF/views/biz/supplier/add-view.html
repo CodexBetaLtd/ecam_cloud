@@ -82,7 +82,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label"> Business <span class="symbol required"></span> </label>
-                                            <select th:field="*{virtualBusinessOwnerId}" class="search-select" style="width: 100%;">
+                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
                                                 <option value="">&nbsp;</option>
                                                 <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
                                             </select>

@@ -36,7 +36,7 @@ var additionalCostAddModal = function () {
 var tabAdditionalCost = function () {
 
     var getAdditionalCostModalView = function () {
-        var $modal = $('#master-modal');
+        var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         // $('body').modalmanager('loading');
         setTimeout(function () {
@@ -53,7 +53,7 @@ var tabAdditionalCost = function () {
     var editAdditionalCost = function (index) {
         console.log('index ' + index);
 
-        var $modal = $('#master-modal');
+        var $modal = $('#common-modal');
         // $('body').modalmanager('loading');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
@@ -137,8 +137,6 @@ var tabAdditionalCost = function () {
 
 
     var addAdditionalCostToList = function (additionalCost) {
-        console.log('1111');
-        console.log(additionalCost);
         var additionalCostObj = {}
         initVariables(additionalCostObj);
         if (additionalCost.additionalCostIndex != null && additionalCost.additionalCostIndex != "" && additionalCost.additionalCostIndex >= 0) {

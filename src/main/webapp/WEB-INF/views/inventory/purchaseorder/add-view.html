@@ -9,6 +9,8 @@
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
+
 
 <body>
 
@@ -38,7 +40,7 @@
 
 		<!-- start: PAGE -->
 		<div class="main-content">
-		
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
 			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
             <div th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
 
@@ -91,6 +93,8 @@
 				     <!-- Draft -->
 					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} "
 					   class="btn btn-default btn-sm active tooltips" id="submitForApprovel"
+					   th:disabled="${purchaseOrder.id} == null ? 'disabled'"
+					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL})}"
 					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SUBMIT_FOR_APPROVAL_BUTTON_PURCHASE_ORDER_ADD.id)"
 					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Submit
 						For Approval
@@ -192,6 +196,17 @@
 											</div>
 										</div>
 									</div>
+                                <div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label"> Business <span class="symbol required"></span> </label>
+                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
 
 									<div class="row">
 										<div class="col-md-12">
@@ -220,7 +235,7 @@
 													<li><a href="#notifications_tab" data-toggle="tab">
 														Notifications </a></li>
 													<li><a href="#files_tab" data-toggle="tab"> Files </a></li>
-													<li><a href="#activity_log_tab" data-toggle="tab"> Activity Log </a>
+													<li><a href="#change_log_tab" data-toggle="tab"> Activity Log </a>
 													</li>
 												</ul>
 												<div class="tab-content">
@@ -242,8 +257,11 @@
 													<div class="tab-pane" id="notifications_tab">
                                                         <div th:replace="inventory/purchaseorder/tab/notification-tab :: notificationTab "></div>
 													</div>
-													<div class="tab-pane" id="activity_log_tab">
-                                                        Coming Soon (activity log)
+													<div class="tab-pane" id="files_tab">
+                                                        <div th:replace="inventory/purchaseorder/tab/file-tab :: fileTabFragment "></div>
+													</div>
+													<div class="tab-pane" id="change_log_tab">
+                                                        <div th:replace="inventory/purchaseorder/tab/status-change-tab :: statusChangeTabFragment "></div>
 													</div>
 												</div>
 											</div>
@@ -286,7 +304,12 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-
+    <script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
+     <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+         <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script> 
+     
+    
     <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/init.js}"></script>
@@ -297,14 +320,18 @@
             th:src="@{/resources/script/app/inventory/purchaseorder/tab/notification-tab.js}"></script>
     <script type="text/javascript"
             th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
+  	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
+            
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
-    <script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/discussion-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/file-add-modal.js}"></script>
 
 	<script type="text/javascript"
             th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
 	<script type="text/javascript"
             th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-workorders.js}"></script>
+            
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 	<script th:inline="javascript">
@@ -321,7 +348,7 @@
         var purchaseOrderNotifications = thymeLeafPurchaseOrderNotifications;
         var purchaseOrderDiscussions = thymeLeafDiscussions;
         var purchaseOrderAdditionalCosts = thymeLeafAdditionalCosts;
-
+        var files = [[${purchaseOrder.purchaseOrderFileDTOs}]];
 
         var isOverridePoItemTax = false;
 	    var totalTax = 0;
@@ -336,7 +363,7 @@
         //	    };
 
         //Todo: Need Check this
-        $(document).on('click', '#submitForApprovel', function () {
+/*         $(document).on('click', '#submitForApprovel', function () {
             if (id == null) {
                 $("#model").modal();
             } else {
@@ -348,7 +375,7 @@
                     }
                 });
             }
-        });
+        }); */
 
 
 	</script>

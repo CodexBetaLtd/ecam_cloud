@@ -45,9 +45,9 @@ public class RFQReportMapper extends GenericReportMapper<RFQ, RFQRepDTO> {
 		dto.setShippingPostalCode(domain.getShippingPostalCode());
 		dto.setShippingProvince(domain.getSupplierProvince());
 		
-		if ( domain.getSupplierBusiness() != null) {
-			dto.setSupplierId(domain.getSupplierBusiness().getId());
-			dto.setSupplierName(domain.getSupplierBusiness().getName());
+		if ( domain.getSupplier() != null) {
+			dto.setSupplierId(domain.getSupplier().getId());
+			dto.setSupplierName(domain.getSupplier().getName());
 		}
 		if ( domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
@@ -161,9 +161,9 @@ public class RFQReportMapper extends GenericReportMapper<RFQ, RFQRepDTO> {
 		dto.setId(domain.getId());
 		dto.setCode(domain.getCode());		
 		dto.setStatusName(domain.getRfqStatus().getName());
-		if ( domain.getSupplierBusiness() != null) {
-			dto.setSupplierId(domain.getSupplierBusiness().getId());
-			dto.setSupplierName(domain.getSupplierBusiness().getName());
+		if ( domain.getSupplier() != null) {
+			dto.setSupplierId(domain.getSupplier().getId());
+			dto.setSupplierName(domain.getSupplier().getName());
 		}
         return dto;
     }
@@ -194,10 +194,10 @@ public class RFQReportMapper extends GenericReportMapper<RFQ, RFQRepDTO> {
 		dto.setShippingPostalCode(domain.getShippingPostalCode());
 		dto.setShippingProvince(domain.getSupplierProvince());
 		
-		if ( domain.getSupplierBusiness() != null) {
-			dto.setSupplierId(domain.getSupplierBusiness().getId());
-			dto.setSupplierName(domain.getSupplierBusiness().getName());
-			dto.setSupplierEmail(domain.getSupplierBusiness().getPrimaryEmail());
+		if ( domain.getSupplier() != null) {
+			dto.setSupplierId(domain.getSupplier().getId());
+			dto.setSupplierName(domain.getSupplier().getName());
+			dto.setSupplierEmail(domain.getSupplier().getPrimaryEmail());
 		}
 		if ( domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());

@@ -25,6 +25,7 @@ import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderItemDao;
 import com.codex.ecam.dao.inventory.RFQDao;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
@@ -72,6 +73,9 @@ public class RFQServiceImpl implements RFQService {
 	
 	@Autowired
 	private CountryDao countryDao;
+	
+	@Autowired
+	private SupplierDao supplierDao;
 	
 	@Autowired
 	private PurchaseOrderItemDao purchaseOrderItemDao;
@@ -168,6 +172,7 @@ public class RFQServiceImpl implements RFQService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveOrUpdate(RFQResult result) throws Exception {
 		try {
+			//setRFQStatusChange(result);
 			RFQMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 			setRFQData(result);
 			rfqDao.save(result.getDomainEntity());
@@ -213,13 +218,14 @@ public class RFQServiceImpl implements RFQService {
 	private void setRFQData(RFQResult result) throws Exception {
 		setBusiness(result);
 		setSite(result);
-		setSupplierBusiness(result);
+		setSupplier(result);
 		setSupplierCountry(result);
 		setShipToFacility(result);
 		setShipToCountry(result);
 		setItems(result);
 		setRFQFiles(result);
 		setRFQNotification(result);
+		
 		//genaratePDF(result,request,response);
 	}
 	
@@ -246,7 +252,6 @@ public class RFQServiceImpl implements RFQService {
 //
 //	}
 	
-
 	private void setRFQFiles(RFQResult result) throws Exception {
 		Set<RFQFile> rfqFiles = new HashSet<>();
 
@@ -333,9 +338,9 @@ public class RFQServiceImpl implements RFQService {
 		}
 	}
 
-	private void setSupplierBusiness(RFQResult result) {
+	private void setSupplier(RFQResult result) {
 		if (result.getDtoEntity() != null && result.getDtoEntity().getSupplierId() != null) {
-			result.getDomainEntity().setSupplierBusiness(businessDao.findOne(result.getDtoEntity().getSupplierId()));
+			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getSupplierId()));
 		}
 	}
 
@@ -410,6 +415,7 @@ public class RFQServiceImpl implements RFQService {
 					result.addToMessageList("RFQ Status Changes as DRAFT.");		
 				}
 			}
+
 			 result=update(rfqdto);
 			 sendStatusChangeMail(result,rfqPreviousStatus);
 			return result;
@@ -491,6 +497,24 @@ public class RFQServiceImpl implements RFQService {
 			String externalFilePath = uploadLocation + file.getFileLocation();
 			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
 		}
+		
+	}
+
+	@Override
+	public void rfqFileDelete(Integer id) throws Exception {
+		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+
+		RFQFile rfqFile = rfqDao.findByFileId(id);
+		String externalFilePath = uploadLocation + rfqFile.getFileLocation();
+		File file = new File(externalFilePath);
+        if(file.delete()) 
+        { 
+            System.out.println("File deleted successfully"); 
+        } 
+        else
+        { 
+            System.out.println("Failed to delete the file"); 
+        }
 		
 	}
 

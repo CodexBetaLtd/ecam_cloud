@@ -5,11 +5,15 @@
     <div class="row">
         <div class="col-md-12">
             <button type="button" class="btn btn-blue btn-sm active tooltips" id="btnRFQItemView" data-toggle="modal"
-                    data-placement="top" data-original-title="Add New Item" >
+                    data-placement="top" data-original-title="Add New Item" 
+                    th:disabled="${rfq.rfqStatus}!=${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
+                    >
                 <i class="clip-plus-circle-2 "></i> Items
             </button>
             <button type="button" class="btn btn-blue btn-sm active tooltips" id="btn-new-po" data-toggle="modal" 
-            	data-placement="top" data-original-title="Generate Purchase Order" >
+            	data-placement="top" data-original-title="Generate Purchase Order" 
+            	th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).CONFIRM}"
+            	>
                 <i class="clip-plus-circle-2 "></i> Generate PO
             </button>
         </div>
