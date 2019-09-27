@@ -60,7 +60,7 @@ var AssetAdd = function () {
 	
 	var initCustomerSelect = function () {
         $("#customerName").inputClear({
-            placeholder: "Select A Customer",
+            placeholder: "Select A Owner",
             btnMethod: "AssetAdd.selectCustomerModal()",
         });
     };
