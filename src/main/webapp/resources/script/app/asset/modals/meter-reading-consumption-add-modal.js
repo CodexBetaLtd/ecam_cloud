@@ -33,15 +33,23 @@ var MeterReadingConsumptionAddModal = function () {
             ignore: "",
             rules: {
             	consumptionVariable: {
-                    required: true
+                    required: true,
+                    maxlength:1
                 },
                 consumptionValue: {
-                    required: true
+                    required: true,
+                    number:true
                 }
             },
             messages: {
-            	consumptionVariable: "Please Specify Varible Name",
-            	consumptionValue: "Please Insert Consumption Value"
+            	consumptionVariable:{ 
+                    required: "Please Specify Varible Name",
+                    maxlength:"Maximum limit exceed"	
+            	},
+            	consumptionValue: {
+                    required: "Please Insert Consumption Value",
+                    number:"Please Insert Numeric Value"
+            	}
             },
             invalidHandler: function (event, validator) { //display error alert on form submit
                 successHandler.hide();
@@ -66,9 +74,10 @@ var MeterReadingConsumptionAddModal = function () {
         });
     };
     
+    let scope = {}
+   
     
     var resetConsumptionTable= function () {
-
         if (meterReadingConsumptionList.length > 0) {
             var row, meterReadingConsumption;
             $("#meter-reading-consumption-tbl > tbody").html("");
@@ -88,6 +97,7 @@ var MeterReadingConsumptionAddModal = function () {
                 "</tr>";
             $('#meter-reading-consumption-tbl > tbody:last-child').append(html);
             $('#formula').prop('readonly', false);
+            getValueList();
             checkParamId();
             $("consumptionList").val(meterReadingConsumptionList) ;
             }
@@ -97,7 +107,8 @@ var MeterReadingConsumptionAddModal = function () {
         }
        
 
-    };    var meterReadingConsumptionList=[];
+    };    
+    var meterReadingConsumptionList=[];
 
 
     var addMeterReadingConsumption=function(){
@@ -127,23 +138,26 @@ var MeterReadingConsumptionAddModal = function () {
 
     }
     var removeMeterReadingConsumption=function(index){
-    	var entry=$("#formula").val();
         for (var i = 0; i < meterReadingConsumptionList.length; i++) {
             if (meterReadingConsumptionList[i].index == index) {
             	if(!entry.includes(meterReadingConsumptionList[i].variable)){
                 	meterReadingConsumptionList.splice(i, 1);
             	}else{
-            		alert("Please remove varible from formula varible definition remove")
+            		alert("Please remove variable from formula before variable definition remove")
             	}
             }
         }
         resetConsumptionTable();
     }
-    let scope = {}
-    var checkParamId=function(){
-    	var entry=$("#formula").val();
-    	getValueList();
-    	var value=math.evaluate(entry, scope);
+
+    var checkParamId=function(){   
+        var entry=$("#formula").val();
+        var value=0;
+    	//if(!charcterNotDefined()){
+    		value=math.evaluate(entry, scope);
+    	//}else{
+    		//alert("Not defined variable included in formula")
+    	//} 	
     	$("#value").val(value)
     }
     
@@ -151,6 +165,28 @@ var MeterReadingConsumptionAddModal = function () {
         for(var i=0;i<meterReadingConsumptionList.length;i++){
         	scope[meterReadingConsumptionList[i].variable]=meterReadingConsumptionList[i].value
         }
+    }
+    
+    function charcterNotDefined(){
+        var entry=$("#formula").val();
+    	for(var i=0;i<entry.length;i++){
+    		if(isLetter(entry.charAt(i))){
+    			if(!getInVariable(entry.charAt(i))){ 				
+    				return true;
+    			}
+    		}
+    	}
+    }
+    function getInVariable(name){
+        for(var i=0;i<meterReadingConsumptionList.length;i++){
+        	if(meterReadingConsumptionList[i].variable==name){
+        		return true;
+        	}
+        }
+    }
+    
+    function isLetter(c) {
+    	  return c.toLowerCase() != c.toUpperCase();
     }
     
    return {
@@ -175,7 +211,11 @@ var MeterReadingConsumptionAddModal = function () {
         },
         removeMeterReadingConsumption:function(index){
         	removeMeterReadingConsumption(index);
+        },
+        resetConsumptionTable:function(){
+        	resetConsumptionTable();
         }
-    };
+        
+   };
 
 }();

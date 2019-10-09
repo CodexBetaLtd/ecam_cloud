@@ -37,9 +37,9 @@ var TabMeterReading = function () {
 		$('#btn-new-meter-reading-consumption').on('click', function () {			
 			TabMeterReading.addAssetMeterReadingConsumptionModal();			
 	    });	
-	    $( "#formula" ).focusout(function() {
-	    	MeterReadingConsumptionAddModal.checkParamId();
-	    })
+		$( "#formula" ).focusout(function() {
+			MeterReadingConsumptionAddModal.checkParamId();
+		})
 	};
 
 	var initCheckBoxes = function () {
@@ -102,6 +102,7 @@ var TabMeterReading = function () {
     			$modal.modal();
     			initMeterReadingValueAddValidator();
     			initMeterReadingValueAddButton();
+    			MeterReadingConsumptionAddModal.resetConsumptionTable();
     		});
     	}, 1000);
     };
