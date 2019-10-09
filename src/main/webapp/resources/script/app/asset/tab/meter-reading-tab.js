@@ -10,6 +10,7 @@ var TabMeterReading = function () {
 	        $('#addMeterReadingModal').removeData();
 	    });
 
+		
 	    $('#meterReadingHistorybtn').on('click', function () {
 	        var $modal = $('#common-modal');
 	        CustomComponents.ajaxModalLoadingProgressBar();
@@ -21,6 +22,8 @@ var TabMeterReading = function () {
 	            });
 	        }, 1000);
 	    });
+	    
+
 		
 	};
 	
@@ -30,8 +33,22 @@ var TabMeterReading = function () {
 			TabMeterReading.addAssetMeterReadingValue();
 	    });
 		
+		
+		$('#btn-new-meter-reading-consumption').on('click', function () {			
+			TabMeterReading.addAssetMeterReadingConsumptionModal();			
+	    });	
+	    $( "#formula" ).focusout(function() {
+	    	MeterReadingConsumptionAddModal.checkParamId();
+	    })
 	};
 
+	var initCheckBoxes = function () {
+        $('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
+            checkboxClass: 'icheckbox_minimal-grey',
+            radioClass: 'iradio_minimal-grey',
+            increaseArea: '10%', // optional
+        });
+    };
     var addAssetMeterReadingModal = function () {
         var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
@@ -74,16 +91,29 @@ var TabMeterReading = function () {
     };
 
     var addAssetMeterReadingValueModal = function (meterReadingIndex, meterReadingName) {
-        var $modal = $('#master-modal-datatable');
+    	var $modal = $('#master-modal-datatable');
+    	CustomComponents.ajaxModalLoadingProgressBar();
+    	setTimeout(function () {
+    		var url = '../../asset/assetmeterreadingvaluemodelview';
+    		$modal.load(url, '', function () {
+    			$('#valueMeterReadingIndex').val(meterReadingIndex);
+    			$('#valueMeterReadingName').val(meterReadingName);
+    			$('#value').val(0);
+    			$modal.modal();
+    			initMeterReadingValueAddValidator();
+    			initMeterReadingValueAddButton();
+    		});
+    	}, 1000);
+    };
+    
+    var addAssetMeterReadingConsumptionModal = function () {
+        var $modal = $('#meter-reading-consumption-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../../asset/assetmeterreadingvaluemodelview';
+            var url = '../../asset/assetmeterreadingconsumptionmodelview';
             $modal.load(url, '', function () {
-                $('#valueMeterReadingIndex').val(meterReadingIndex);
-                $('#valueMeterReadingName').val(meterReadingName);
                 $modal.modal();
-                initMeterReadingValueAddValidator();
-                initMeterReadingValueAddButton();
+                MeterReadingConsumptionAddModal.init();
             });
         }, 1000);
     };
@@ -160,6 +190,7 @@ var TabMeterReading = function () {
         assetMeterReading['meterReadingDescription'] = $('#meterReadingDescription').val();
         assetMeterReading['meterReadingAvgValue'] = $('#meterReadingAvgValue').val();
         assetMeterReading['version'] = $('#meterReadingVersion').val();
+        assetMeterReading['isMultipleMeterReading'] = $("#isMultipleMeterReading").prop("checked");
 
         addAssetMeterReadingToList(assetMeterReading);
 
@@ -180,6 +211,8 @@ var TabMeterReading = function () {
         $('#meterReadingDescription').val(assetMeterReading['meterReadingDescription']);
         $('#meterReadingAvgValue').val(assetMeterReading['meterReadingAvgValue']);
         $('#meterReadingVersion').val(assetMeterReading['version']);
+        $('#isMultipleMeterReading').val(assetMeterReading['isMultipleMeterReading']);
+        $( "#isMultipleMeterReading" ).prop( "checked", assetMeterReading['isMultipleMeterReading'] );
     };
 
     var resetAssetMeterReadingHtmlTable = function () {
@@ -190,6 +223,7 @@ var TabMeterReading = function () {
 
             for (row = 0; row < assetMeterReadings.length; row++) {
                 assetMeterReading = assetMeterReadings[row];
+                var isMultipleMeterReading = assetMeterReading.isMultipleMeterReading == true ? 'checked' : '';
                 var html = "<tr id='row_" + row + "' >" +
                     "<input id='assetMeterReadings" + row + ".meterReadingId' name='assetMeterReadings[" + row + "].meterReadingId' value='" + assetMeterReading.meterReadingId + "' type='hidden'>" +
                     "<input id='assetMeterReadings" + row + ".meterReadingIndex' name='assetMeterReadings[" + row + "].meterReadingIndex' value='" + assetMeterReading.meterReadingIndex + "' type='hidden' >" +
@@ -208,6 +242,11 @@ var TabMeterReading = function () {
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingName + "</span></td>" +
                     "<td>" + assetMeterReading.meterReadingCurrentValue + "</td>" +
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingUnitName + "</span></td>" +
+                    "<td>" +
+                    "<div class='checkbox-center'>" +
+                    "<input id='isMultipleMeterReading" + row + "' name='assetMeterReadings[" + row + "].isMultipleMeterReading'  type='checkbox' " + isMultipleMeterReading + " class='grey'>" +
+                    "</div>" +
+                    "</td>"+
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingAvgValue + "</span></td>" +
                     "<td class='center'>" +
                     "<div class='visible-md visible-lg hidden-sm hidden-xs'>" +
@@ -222,7 +261,7 @@ var TabMeterReading = function () {
             }
         } else {
 
-            $("#asset_meter_reading_tbl > tbody").html("<tr><td colspan='5' align='center'>Please Add Asset Meter Reading for the Asset.</td></tr>");
+            $("#asset_meter_reading_tbl > tbody").html("<tr><td colspan='6' align='center'>Please Add Asset Meter Reading for the Asset.</td></tr>");
         }
 
     };
@@ -261,6 +300,7 @@ var TabMeterReading = function () {
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'meterReadingDescription', assetMeterReading.meterReadingDescription);
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'meterReadingAvgValue', assetMeterReading.meterReadingAvgValue);
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'version', assetMeterReading.version);
+    	CustomValidation.validateFieldNull(assetMeterReadingObj, 'isMultipleMeterReading', assetMeterReading.isMultipleMeterReading);
 
     };
 
@@ -302,16 +342,27 @@ var TabMeterReading = function () {
             assetMeterReadingValue['assetMeterReadingIndex'] = $('#valueMeterReadingIndex').val();
             assetMeterReadingValue['assetMeterReadingName'] = $('#valueMeterReadingName').val();
             assetMeterReadingValue['assetMeterReadingValue'] = $('#value').val();
+            assetMeterReadingValue['meterReadingConsumptionFunction'] = $('#formula').val();
 
             var time = new Date();
             assetMeterReadingValue['assetMeterReadingValueAddedDate'] = time.getTime();
             assetMeterReadingValue['assetMeterReadingValueAddedDateStr'] = moment(time).format('YYYY-MM-DD hh:mm:ss A');
-
+            assetMeterReadingValue['valueConsumptionDTO'] = []
+            addMeterReadingConunsumption(assetMeterReadingValue);
             addAssetMeterReadingValueToList(assetMeterReadingValue);
             
             $('#master-modal-datatable').modal("toggle")
     	}        
     };
+    var addMeterReadingConunsumption=function(assetMeterReadingValue){
+    	var lenght=$("#meter-reading-consumption-tbl > tbody > tr").length;
+    	for(var i=0;i<lenght;i++){
+    		var meterReadingConsumption={};
+    		meterReadingConsumption['variable'] = $('#meterReadingConsumptionList_'+i+'_variable').val();
+    		meterReadingConsumption['value'] = $('#meterReadingConsumptionList_'+i+'_value').val();
+    		assetMeterReadingValue['valueConsumptionDTO'].push(meterReadingConsumption);
+    	}
+    }
 
     var addAssetMeterReadingValueToList = function (assetMeterReadingValue) {
 
@@ -321,6 +372,7 @@ var TabMeterReading = function () {
         	CustomValidation.validateFieldNull(assetMeterReadingValue, 'assetMeterReadingValueIndex', assetMeterReadingValues.length);
         }
         assetMeterReadingValues.push(assetMeterReadingValue);
+        
         updateAssetMeterReading(assetMeterReadingValue);
         resetAssetMeterReadingValues();
     };
@@ -335,17 +387,35 @@ var TabMeterReading = function () {
     var resetAssetMeterReadingValues = function () {
         if (assetMeterReadingValues.length > 0) {
             var row, assetMeterReadingValue;
-            $('#asset-meter-readings-value-div').html("");
+           $('#asset-meter-readings-value-div').html("");
             for (row = 0; row < assetMeterReadingValues.length; row++) {
                 assetMeterReadingValue = assetMeterReadingValues[row];
                 var html = "<input id='assetMeterReadingValues" + row + ".assetMeterReadingIndex' name='assetMeterReadingValues[" + row + "].assetMeterReadingIndex' value='" + assetMeterReadingValue.assetMeterReadingIndex + "' type='hidden'>" +
                     "<input id='assetMeterReadingValues" + row + ".assetMeterReadingValue' name='assetMeterReadingValues[" + row + "].assetMeterReadingValue' value='" + assetMeterReadingValue.assetMeterReadingValue + "' type='hidden' >" +
                     "<input id='assetMeterReadingValues" + row + ".assetMeterReadingValueAddedDate' name='assetMeterReadingValues[" + row + "].assetMeterReadingValueAddedDate' value='" + assetMeterReadingValue.assetMeterReadingValueAddedDate + "' type='hidden' >" +
-                    "<input id='assetMeterReadingValues" + row + ".assetMeterReadingValueIndex' name='assetMeterReadingValues[" + row + "].assetMeterReadingValueIndex' value='" + assetMeterReadingValue.assetMeterReadingValueIndex + "' type='hidden' >";
+                    "<input id='assetMeterReadingValues" + row + ".assetMeterReadingValueIndex' name='assetMeterReadingValues[" + row + "].assetMeterReadingValueIndex' value='" + assetMeterReadingValue.assetMeterReadingValueIndex + "' type='hidden' >"+
+                    "<input id='assetMeterReadingValues" + row + ".meterReadingConsumptionFunction' name='assetMeterReadingValues[" + row + "].meterReadingConsumptionFunction' value='" + assetMeterReadingValue.meterReadingConsumptionFunction + "' type='hidden' >";
+               
                 $('#asset-meter-readings-value-div').append(html);
+                resetMeterReadingConsumption(assetMeterReadingValue,row)
             }
         }
     };
+    
+    var resetMeterReadingConsumption=function(assetMeterReadingValue,valueIndex){
+        if (assetMeterReadingValue.valueConsumptionDTO.length > 0) {
+            var row, assetMeterReadingCosumption;
+            
+            for (row = 0; row <assetMeterReadingValue.valueConsumptionDTO.length; row++) {
+            	assetMeterReadingCosumption = assetMeterReadingValue.valueConsumptionDTO[row];
+                var html = "<input id='assetMeterReadingValues"+valueIndex+"valueConsumptionDTO" + row + "variable' name='assetMeterReadingValues[" + valueIndex + "].valueConsumptionDTO["+row+"].variable' value='" + assetMeterReadingCosumption.variable + "' type='hidden'>" +
+                "<input id='assetMeterReadingValues"+valueIndex+"valueConsumptionDTO" + row + "value' name='assetMeterReadingValues[" + valueIndex + "].valueConsumptionDTO["+row+"].value' value='" + assetMeterReadingCosumption.value + "' type='hidden'>";
+                $('#asset-meter-readings-value-div').append(html);
+
+            }
+
+        }
+    }
    
     var getAssetMeterReadingByIndex = function (meterReadingIndex) {
         for (var i = 0; i < assetMeterReadings.length; i++) {
@@ -360,6 +430,7 @@ var TabMeterReading = function () {
     	init: function () {
     		initAssetMeterReadings();
     		initButtons();
+    		initCheckBoxes();
     	},
 
         /***********************************************************************
@@ -405,7 +476,10 @@ var TabMeterReading = function () {
         },
 
         assetMeterReadingHistoryModal: function (meterReadingId) {
-            assetMeterReadingHistoryModal(meterReadingId);
+        	assetMeterReadingHistoryModal(meterReadingId);
+        },
+        addAssetMeterReadingConsumptionModal: function () {
+        	addAssetMeterReadingConsumptionModal();
         }
     };
 

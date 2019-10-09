@@ -1299,4 +1299,19 @@ public class StockServiceImpl implements StockService {
 
 	}
 
+	@Override
+	public StockDTO createNewStock(Integer partId) {
+		StockDTO dto=new StockDTO();
+		Asset asset=assetDao.findOne(partId);
+		dto.setPartId(asset.getId());
+		dto.setPartName(asset.getName());
+		dto.setPartCode(asset.getCode());
+		if(AuthenticationUtil.isAuthUserSystemLevel()){
+			dto.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
+		}
+		return dto;
+	}
+	
+	
+
 }

@@ -54,6 +54,9 @@ public class AssetMeterReading extends BaseModel {
 
 	@Column(name = "avg_meter_reading_value")
 	private Double avgMeterReadingValue;
+	
+	@Column(name = "is_multipel_meter_reading")
+	private Boolean isMultipleMeterReading;
 
 	@OneToMany(mappedBy = "assetMeterReading", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReadingValue> assetMeterReadingValues;
@@ -133,6 +136,14 @@ public class AssetMeterReading extends BaseModel {
 
 	public void setAssetMeterReadingValues(Set<AssetMeterReadingValue> assetMeterReadingValues) {
 		updateCollection("assetMeterReadingValues", assetMeterReadingValues);
+	}
+
+	public Boolean getIsMultipleMeterReading() {
+		return isMultipleMeterReading;
+	}
+
+	public void setIsMultipleMeterReading(Boolean isMultipleMeterReading) {
+		this.isMultipleMeterReading = isMultipleMeterReading;
 	}
 
 }

@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.asset.AssetDao;
+import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
@@ -41,6 +43,12 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Autowired
 	private StockDao stockDao;
+	
+	@Autowired
+	private SupplierDao supplierDao;
+	
+	@Autowired
+	private BusinessDao businessDao;
 
 	@Autowired
 	private VelocityEmailSender velocityEmailService;
@@ -115,12 +123,18 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	private void setReceiptOrderData(ReceiptOrderResult result) throws Exception {
 		setSupplier(result);
+		setBusiness(result);
 		setItems(result);
 	}
 
 	private void setSupplier(ReceiptOrderResult result) throws Exception {
 		if ( (result.getDtoEntity().getSupplierId() != null) && (result.getDtoEntity().getSupplierId() > 0) ) {
-			//			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getSupplierId()));
+			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getSupplierId()));
+		}
+	}
+	private void setBusiness(ReceiptOrderResult result) throws Exception {
+		if ( (result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0) ) {
+				result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 

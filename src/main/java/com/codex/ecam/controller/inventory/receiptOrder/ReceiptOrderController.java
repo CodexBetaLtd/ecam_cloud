@@ -13,6 +13,7 @@ import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.biz.api.BusinessService;
+import com.codex.ecam.service.biz.api.SupplierService;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class ReceiptOrderController {
 
     @Autowired
     private BusinessService businessService;
+    
+    @Autowired
+    private SupplierService supplierService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(Model model) {
@@ -145,6 +149,7 @@ public class ReceiptOrderController {
     private void setCommonData(Model model, ReceiptOrderDTO receiptOrder) {
         model.addAttribute("receiptOrder", receiptOrder);
         model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+        model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
     }
 
 }

@@ -3,9 +3,17 @@ var MeterReadingAddModal = function () {
 	var initButtons = function () {		
 		$('#btn-add-meter-reading').on('click', function () {
 			MeterReadingAddModal.addAssetMeterReading();			
-	    });			
+	    });	
+
+
 	};
-	
+	var initCheckBoxes = function () {
+        $('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
+            checkboxClass: 'icheckbox_minimal-grey',
+            radioClass: 'iradio_minimal-grey',
+            increaseArea: '10%', // optional
+        });
+    };
 	var addAssetMeterReading = function() {		
 		if ( $('#asset-meter-reading-add-frm').valid() ) {
 			TabMeterReading.addAssetMeterReading();	
@@ -74,18 +82,18 @@ var MeterReadingAddModal = function () {
             }
         });
     };
-
     return {
 
         init: function () {
         	initButtons();
         	runMeterReadingUnitSelect();
         	initValidator();
+        	initCheckBoxes()
         },
         
         addAssetMeterReading: function () {
         	addAssetMeterReading();
-        }
+        },
     };
 
 }();

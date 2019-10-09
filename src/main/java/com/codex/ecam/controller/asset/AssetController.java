@@ -245,6 +245,10 @@ public class AssetController {
 	public String getAssetMeterReadingValueAddView(Model model) {
 		return "asset/modals/meter-reading-value-add-modal";
 	}
+	@RequestMapping(value = "/assetmeterreadingconsumptionmodelview", method = RequestMethod.GET)
+	public String getAssetMeterReadingConsumtionAddView(Model model) {
+		return "asset/modals/meter-reading-consumption-add-modal";
+	}
 
 	@RequestMapping(value = "/asseteventhistorymodelview", method = RequestMethod.GET)
 	public String getAssetEventHistoryView(Model model) {

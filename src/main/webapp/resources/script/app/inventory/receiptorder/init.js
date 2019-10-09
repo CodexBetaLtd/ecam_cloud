@@ -3,11 +3,11 @@ jQuery(document).ready(function () {
     Main.init();
 
     ReceiptOrderAdd.init();
-
-    for (var i = 0; i < thymeLeafItems.length; i++) {
-        receiptItemTab.addItemToList(thymeLeafItems[i])
-    }
-    ;
+    receiptItemTab.populateReceiptItem();
+//    for (var i = 0; i < thymeLeafItems.length; i++) {
+//        receiptItemTab.addItemToList(thymeLeafItems[i])
+//    }
+//    ;
 
 
     /*********************************************************************

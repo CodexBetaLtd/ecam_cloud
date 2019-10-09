@@ -33,6 +33,9 @@ public class ReceiptOrderMapper extends GenericMapper<ReceiptOrder, ReceiptOrder
 			dto.setSupplierId(domain.getSupplier().getId());
 			dto.setSupplierName(domain.getSupplier().getName());
 		}
+		if ( domain.getBusiness() != null ) {
+			dto.setBusinessId(domain.getBusiness().getId());
+		}
 		
 		dto.setVersion(domain.getVersion());
 		dto.setIsDeleted(domain.getIsDeleted());
@@ -71,6 +74,9 @@ public class ReceiptOrderMapper extends GenericMapper<ReceiptOrder, ReceiptOrder
 		if ( domain.getSupplier() != null ) {
 			dto.setSupplierId(domain.getSupplier().getId());
 			dto.setSupplierName(domain.getSupplier().getName());
+		}
+		if ( domain.getBusiness() != null ) {
+			dto.setBusinessId(domain.getBusiness().getId());
 		}
         return dto;
     }

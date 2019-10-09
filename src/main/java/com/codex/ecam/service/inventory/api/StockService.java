@@ -68,4 +68,6 @@ public interface StockService {
     
     Integer findMinimumStock();
     
+     StockDTO createNewStock(Integer partId);
+    
 }

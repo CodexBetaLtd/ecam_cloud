@@ -205,6 +205,18 @@ public class StockController {
 		}
 		return "redirect:/stock/index";
 	}
+	
+	@RequestMapping(value = "/createstock", method = RequestMethod.GET)
+	public String editFormFormReciptOrder(Integer partId, Model model, RedirectAttributes ra) {
+		try {
+			StockDTO dto = stockService.createNewStock(partId);
+			setCommonData(model, dto);
+			return "inventory/stock/add-view";
+		} catch (Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
+			return "redirect:/stock/index";
+		}
+	}
 
     private void setCommonData(Model model, StockDTO stock) {
         model.addAttribute("stock", stock);
