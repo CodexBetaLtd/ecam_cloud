@@ -1,7 +1,9 @@
 package com.codex.ecam.model.asset;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -11,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -39,6 +42,12 @@ public class AssetMeterReadingValue extends BaseModel {
 
 	@Column(name = "added_date")
 	private Date addedDate;
+	
+	@Column(name = "function_string")
+	private String functionString;
+	
+	@OneToMany(mappedBy = "assetMeterReadingValue", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private List<AssetMeterReadingValueConsumption> assetMeterReadingValueConsumptions;
 
 	public Integer getId() {
 		return id;
@@ -72,4 +81,24 @@ public class AssetMeterReadingValue extends BaseModel {
 		this.addedDate = addedDate;
 	}
 
+	public String getFunctionString() {
+		return functionString;
+	}
+
+	public void setFunctionString(String functionString) {
+		this.functionString = functionString;
+	}
+
+	public List<AssetMeterReadingValueConsumption> getAssetMeterReadingValueConsumptions() {
+		return assetMeterReadingValueConsumptions;
+	}
+
+	public void setAssetMeterReadingValueConsumptions(
+			List<AssetMeterReadingValueConsumption> assetMeterReadingValueConsumptions) {
+		this.assetMeterReadingValueConsumptions = assetMeterReadingValueConsumptions;
+	}
+
+
+
+	
 }

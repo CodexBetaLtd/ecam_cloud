@@ -26,7 +26,6 @@ var receiptItemTab = function () {
                     "<td>" + item.itemUnitPrice + "</span></td>" +
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "receiptItemTab") + "</td>" +
                     "</tr>";
-
                 $('#item-tbl > tbody:last-child').append(html);
             }
         } else {
@@ -36,12 +35,13 @@ var receiptItemTab = function () {
 
     var receiptItemView = function () {
         if ($('#supplierId').val() != null && $('#supplierId').val() > 0) {
-            var $modal = $('#master-modal');
+            var $modal = $('#common-modal');
             CustomComponents.ajaxModalLoadingProgressBar();
             setTimeout(function () {
                 var url = '../receiptorder/receiptItemView';
                 $modal.load(url, '', function () {
                     $modal.modal();
+                    ItemAddModal.init();
                 });
             }, 1000);
         } else {
@@ -54,10 +54,10 @@ var receiptItemTab = function () {
      * Add Receipt
      *********************************************************************/
     var addReceiptItem = function () {
+    	
         var item = {};
         item['itemId'] = $('#itemId').val();
         item['itemIndex'] = $('#itemIndex').val();
-
         item['itemAssetId'] = $('#itemAssetId').val();
         item['itemAssetName'] = $('#itemAssetName').val();
         item['itemStockId'] = $('#itemStockId').val();
@@ -65,38 +65,36 @@ var receiptItemTab = function () {
         item['itemQtyReceived'] = $('#itemQtyReceived').val();
         item['itemUnitPrice'] = $('#itemUnitPrice').val();
         item['itemDescription'] = $('#itemDescription').val();
-        addItemToList(item);
+        item['version'] = $('#itemVersion').val();
+        items.push(item)
     };
 
-    var addItemToList = function (item) {
-
-        var itemObj = {}
-        if (item.itemIndex != null && item.itemIndex != "" && item.itemIndex >= 0) {
-            itemObj = getItemByIndex(item.itemIndex);
-            setCommonDataToItemObj(item, itemObj);
+    var addItemToList = function (obj) {
+        if (($(obj).closest(".modal").find("#itemIndex")).val() != null && ($(obj).closest(".modal").find("#itemIndex")).val() != "") {
+        	updateItem(items[$(obj).closest(".modal").find("#itemIndex").val()], obj);
         } else {
-            if (items.length == 0) {
-                itemObj['itemIndex'] = 0;
-            } else {
-                validateFieldNull(itemObj, 'itemIndex', items.length);
-            }
-            setCommonDataToItemObj(item, itemObj);
-            items.push(itemObj);
+        	addReceiptItem();        
         }
+        populateReceiptItem();
+        $('#common-modal').modal('hide');
+    };
+    
+    
+
+    var updateItem = function (item, obj) {
+    	item['itemId'] = CustomComponents.nullValueReplace($("#itemId").val());
+    	item['itemAssetId'] = CustomComponents.nullValueReplace($("#itemAssetId").val());
+    	item['itemAssetName'] = $("#itemAssetName").val();
+    	item['itemStockId'] = $("#itemStockId").val();
+    	item['itemStockName'] = CustomComponents.nullValueReplace($("#itemStockName").val());
+    	item['itemQtyReceived'] = CustomComponents.nullValueReplace($("#itemQtyReceived").val());
+    	item['itemUnitPrice'] = CustomComponents.nullValueReplace($("#itemUnitPrice").val());
+    	item['itemDescription'] = CustomComponents.nullValueReplace($("#itemDescription").val());
+    	item['description'] = CustomComponents.nullValueReplace($("#description").val());
+    	item['version'] = CustomComponents.nullValueReplace($("#itemVersion").val());
+    	item['itemIndex'] = CustomComponents.nullValueReplace($("#itemIndex").val());
     };
 
-    var setCommonDataToItemObj = function (updatedItemObj, itemObj) {
-        validateFieldNull(itemObj, 'itemId', updatedItemObj.itemId);
-        validateFieldNull(itemObj, 'itemAssetId', updatedItemObj.itemAssetId);
-        validateFieldNull(itemObj, 'itemAssetName', updatedItemObj.itemAssetName);
-        validateFieldNull(itemObj, 'itemStockId', updatedItemObj.itemStockId);
-        validateFieldNull(itemObj, 'itemStockName', updatedItemObj.itemStockName);
-        validateFieldNull(itemObj, 'itemQtyReceived', updatedItemObj.itemQtyReceived);
-        validateFieldNull(itemObj, 'itemUnitPrice', updatedItemObj.itemUnitPrice);
-        validateFieldNull(itemObj, 'itemDescription', updatedItemObj.itemDescription);
-
-        validateFieldNull(itemObj, 'version', updatedItemObj.version);
-    };
 
 
     /*********************************************************************
@@ -104,28 +102,31 @@ var receiptItemTab = function () {
      *********************************************************************/
 
     var editItem = function (itemIndex) {
-        var $modal = $('#item-add-modal');
+        var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../receiptorder/receiptItemView';
             $modal.load(url, '', function () {
-                fillItemEditForm(getItemByIndex(itemIndex));
+                fillItemEditForm(getItemByIndex(itemIndex),itemIndex);
                 $modal.modal();
+                ItemAddModal.init();
+                createLinkForStok(getItemByIndex(itemIndex).itemAssetId)
             });
         }, 1000);
     };
 
     var getItemByIndex = function (itemIndex) {
         for (var i = 0; i < items.length; i++) {
-            if (items[i].itemIndex == itemIndex) {
+            if (i== itemIndex) {
                 return items[i];
             }
         }
     };
 
-    var fillItemEditForm = function (item) {
+    var fillItemEditForm = function (item,itemIndex) {
+    	
         $('#itemId').val(item['itemId']);
-        $('#itemIndex').val(item['itemIndex']);
+        $('#itemIndex').val(itemIndex);
 
         $('#itemAssetId').val(item['itemAssetId']);
         $('#itemAssetName').val(item['itemAssetName']);
@@ -134,7 +135,6 @@ var receiptItemTab = function () {
         $('#itemQtyReceived').val(item['itemQtyReceived']);
         $('#itemUnitPrice').val(item['itemUnitPrice']);
         $('#itemDescription').val(item['itemDescription']);
-
         $('#itemVersion').val(item['version']);
     };
 
@@ -144,11 +144,10 @@ var receiptItemTab = function () {
      *********************************************************************/
 
     var removeItem = function (itemIndex) {
-        for (var i = 0; i < items.length; i++) {
-            if (items[i].itemIndex == itemIndex) {
+        for (var i = 0; i < items.length; i++) {      
+            if (i== itemIndex) {
                 items.splice(i, 1);
-                updateIndexes();
-                resetItemHtmlTable();
+                populateReceiptItem();
                 break;
             }
         }
@@ -195,23 +194,40 @@ var receiptItemTab = function () {
     var setReceiptItemAsset = function (id, name) {
         $('#itemAssetId').val(id);
         $('#itemAssetName').val(name);
+        createLinkForStok(id);
+    	$('#stackable-modal').modal('toggle');
+
     };
 
+    var createLinkForStok=function(id){
+    	$( "#createStock" ).empty();
+       	var thelink = $('<a>',{
+        	    text: 'Create New Stock',
+        	    href: '../stock/createstock?partId='+id,
+        	    target:'_blank'
+        	}).appendTo('#createStock');
+    }
+    
 
     /*********************************************************************
      * Receipt Item Stock Data
      *********************************************************************/
-    var receiptStockView = function (partId) {
-        getReceiptStockView("asset_tbl", "../restapi/stock/stockByPart", "receiptItemTab.setReceiptItemStock", partId);
+    var receiptStockView = function () {
+    	partId=$("#itemAssetId").val();
+    	if(partId!=null && partId!='' ){
+            getReceiptStockView("stock_tbl", "../restapi/stock/stockByPart", "receiptItemTab.setReceiptItemStock", partId);
+    	}else{
+    		alert("Please select part first")
+    	}
     };
 
-    var getReceiptStockView = function (tableId, url, method, partId) {
+    var getReceiptStockView = function (tableId, URL, method, partId) {
         var $modal = $('#stackable-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../receiptorder/receiptStockView';
             $modal.load(url, '', function () {
-                dtReceiptStock.getStockDataTable(tableId, url, method, partId);
+                dtReceiptStock.getStockDataTable(tableId, URL, method, partId);
                 $modal.modal();
             });
         }, 1000);
@@ -220,7 +236,7 @@ var receiptItemTab = function () {
     var setReceiptItemStock = function (id, location) {
         $('#itemStockId').val(id);
         $('#itemStockName').val(location);
-        $('#select-pages-open-modal').modal('toggle');
+        $('#stackable-modal').modal('toggle');
     };
 
 
@@ -233,8 +249,8 @@ var receiptItemTab = function () {
             addReceiptItem();
         },
 
-        addItemToList: function (item) {
-            addItemToList(item);
+        addItemToList: function (obj) {
+            addItemToList(obj);
         },
 
         /*********************************************************************

@@ -98,6 +98,7 @@ var dtReceiptStock = function () {
     });
 
     var getStockDataTable = function (tableId, url, method, partId) {
+    	console.log(tableId)
         var oTable = $('#' + tableId).dataTable({
             processing: true,
             serverSide: true,
@@ -161,11 +162,14 @@ var dtReceiptStock = function () {
 
 
     var tblButton = function (rowData, tableId, URL, method) {
-        return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
+        return ButtonUtil.getCommonBtnSelect(method, rowData.id, rowData.stockNo);
+
+     ///   return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.stockNo + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
     };
 
     return {
         getStockDataTable: function (tableId, url, method, partId) {
+        	console.log(url)
             getStockDataTable(tableId, url, method, partId);
         },
     };

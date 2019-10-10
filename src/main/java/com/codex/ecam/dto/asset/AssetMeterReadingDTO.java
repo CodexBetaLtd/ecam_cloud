@@ -18,6 +18,8 @@ public class AssetMeterReadingDTO extends BaseDTO {
 
 	private Double meterReadingCurrentValue;
 	private Double meterReadingAvgValue = 0.00;
+	
+	private Boolean isMultipleMeterReading = Boolean.FALSE;
 
 	public String getMeterReadingName() {
 		return meterReadingName;
@@ -115,4 +117,13 @@ public class AssetMeterReadingDTO extends BaseDTO {
 		this.meterReadingAvgValue = meterReadingAvgValue;
 	}
 
+	public Boolean getIsMultipleMeterReading() {
+		return isMultipleMeterReading;
+	}
+
+	public void setIsMultipleMeterReading(Boolean isMultipleMeterReading) {
+		this.isMultipleMeterReading = isMultipleMeterReading;
+	}
+
+	
 }

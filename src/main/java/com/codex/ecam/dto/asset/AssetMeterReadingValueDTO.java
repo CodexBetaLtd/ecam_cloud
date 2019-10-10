@@ -1,5 +1,8 @@
 package com.codex.ecam.dto.asset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.codex.ecam.dto.BaseDTO;
 
 public class AssetMeterReadingValueDTO extends BaseDTO {
@@ -13,6 +16,10 @@ public class AssetMeterReadingValueDTO extends BaseDTO {
     private Long assetMeterReadingValueAddedDate;
     private String assetMeterReadingValueAddedDateStr;
     private String unit;
+    
+    private String meterReadingConsumptionFunction;
+    
+    private List<AssetMeterReadingValueConsumptionDTO> valueConsumptionDTO=new ArrayList<>();
 
     public Integer getAssetMeterReadingId() {
         return assetMeterReadingId;
@@ -86,4 +93,21 @@ public class AssetMeterReadingValueDTO extends BaseDTO {
         this.assetMeterReadingValueIndex = assetMeterReadingValueIndex;
     }
 
+	public String getMeterReadingConsumptionFunction() {
+		return meterReadingConsumptionFunction;
+	}
+
+	public void setMeterReadingConsumptionFunction(String meterReadingConsumptionFunction) {
+		this.meterReadingConsumptionFunction = meterReadingConsumptionFunction;
+	}
+
+	public List<AssetMeterReadingValueConsumptionDTO> getValueConsumptionDTO() {
+		return valueConsumptionDTO;
+	}
+
+	public void setValueConsumptionDTO(List<AssetMeterReadingValueConsumptionDTO> valueConsumptionDTO) {
+		this.valueConsumptionDTO = valueConsumptionDTO;
+	}
+
+    
 }

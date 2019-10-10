@@ -71,6 +71,8 @@ var TriggerAddModal = function () {
         $('#trigger-modal .date-picker').datepicker({
             autoclose: true,
             orientation:"auto top",
+            startDate: '-0m',
+            
             container: '#picker-container'
         });
     };

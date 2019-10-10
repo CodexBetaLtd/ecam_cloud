@@ -167,7 +167,9 @@ var dtReceiptAsset = function () {
 
 
     var tblButton = function (rowData, tableId, URL, method) {
-        return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
+        return ButtonUtil.getCommonBtnSelect(method, rowData.id, rowData.name);
+
+   //     return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
         // return "<a id='link" + data.id + "' onclick='TabItem.setRFQItemAsset(this,\"" + data.id + "\",\"" + data.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</a>";
     };
 

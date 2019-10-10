@@ -773,16 +773,32 @@ public class AssetServiceImpl implements AssetService {
 			AssetMeterReadingValueMapper.getInstance().dtoToDomain(assetMeterReadingValueDto, meterReadingValue);
 
 			meterReadingValue.setAssetMeterReading(domain);
+			meterReadingValue.setFunctionString(assetMeterReadingValueDto.getMeterReadingConsumptionFunction());
 
 			if (dto.getMeterReadingCurrentValueIndex()
 					.equals(assetMeterReadingValueDto.getAssetMeterReadingValueIndex())) {
 				domain.setCurrentAssetMeterReadingValue(meterReadingValue);
 			}
-
+			updateAssetMeterReadingConsumption(assetMeterReadingValueDto,meterReadingValue);
 			assetMeterReadingValues.add(meterReadingValue);
 		}
 	}
 
+	
+	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,AssetMeterReadingValue meterReadingValue) throws Exception {
+		List<AssetMeterReadingValueConsumption> valueConsumptions = new ArrayList<>() ;
+	for(AssetMeterReadingValueConsumptionDTO assetMeterReadingValueConsumptionDTO:meterReadingValueDTO.getValueConsumptionDTO()){
+			
+			AssetMeterReadingValueConsumption consumption= new AssetMeterReadingValueConsumption();
+			
+			consumption.setVariableName(assetMeterReadingValueConsumptionDTO.getVariable());
+			consumption.setIsDeleted(Boolean.FALSE);
+			consumption.setValue(assetMeterReadingValueConsumptionDTO.getValue());
+			consumption.setAssetMeterReadingValue(meterReadingValue);
+			valueConsumptions.add(consumption);
+		}
+	meterReadingValue.setAssetMeterReadingValueConsumptions(valueConsumptions);
+	}
 	private List<AssetMeterReadingValueDTO> getMeterReadingValuesByMeterReading(AssetResult result,
 			AssetMeterReadingDTO assetMeterReadingDTO) {
 		List<AssetMeterReadingValueDTO> assetMeterReadingValueDtos = new ArrayList<>();

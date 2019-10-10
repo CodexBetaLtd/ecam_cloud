@@ -29,6 +29,7 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 		dto.setMeterReadingAssetId(domain.getAsset().getId());
 		dto.setMeterReadingDescription(domain.getDescription());
 		dto.setMeterReadingAvgValue(domain.getAvgMeterReadingValue());
+		dto.setIsMultipleMeterReading(domain.getIsMultipleMeterReading());
 
 		setMeterReadingValues(domain, dto);
 
@@ -51,7 +52,7 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 		domain.setId(dto.getMeterReadingId());
 		domain.setMeterReadingName(dto.getMeterReadingName());
 		domain.setDescription(dto.getMeterReadingDescription());
-
+		domain.setIsMultipleMeterReading(dto.getIsMultipleMeterReading());
 		setCommanDomainFields(dto, domain);
 	}
 

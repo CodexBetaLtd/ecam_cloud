@@ -6,6 +6,12 @@ var ReceiptOrderAdd = function () {
 			allowClear: true
 		});
 	};
+	var runBusinessSelect = function () {
+		$("#businessId").select2({
+			placeholder: "Select a Business",
+			allowClear: true
+		});
+	};
 
     var runDatePicker = function () {
         $('.date-picker').datepicker({
@@ -77,6 +83,7 @@ var ReceiptOrderAdd = function () {
         init: function () {
             runValidator();
             runSupplierBusinessSelect();
+            runBusinessSelect();
             runDatePicker();
         }
     };

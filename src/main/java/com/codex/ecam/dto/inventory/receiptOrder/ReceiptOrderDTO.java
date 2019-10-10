@@ -11,6 +11,7 @@ public class ReceiptOrderDTO extends BaseDTO {
 
 	private Integer id;
 	private Integer supplierId;
+	private Integer businessId;
 	private Date dateOrdered;
 	private Date dateReceived;
 	private String statusName;
@@ -84,4 +85,12 @@ public class ReceiptOrderDTO extends BaseDTO {
     public void setTaxDTOs(List<ReceiptOrderTaxDTO> taxDTOs) {
         this.taxDTOs = taxDTOs;
     }
+	public Integer getBusinessId() {
+		return businessId;
+	}
+	public void setBusinessId(Integer businessId) {
+		this.businessId = businessId;
+	}
+    
+    
 }
