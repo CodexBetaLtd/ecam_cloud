@@ -20,6 +20,7 @@ import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.result.admin.UserGroupResult;
 import com.codex.ecam.service.admin.api.UserGroupPageService;
 import com.codex.ecam.service.admin.api.UserGroupService;
+import com.codex.ecam.service.app.api.AppService;
 import com.codex.ecam.service.biz.api.BusinessService;
 
 @Controller
@@ -36,6 +37,9 @@ public class UserGroupController {
 
 	@Autowired
 	private BusinessService businessService;
+	
+	@Autowired
+	private AppService appService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
@@ -107,11 +111,12 @@ public class UserGroupController {
 		return "admin/usergroups/add-view";
 	}
 
-	private void setCommonData(Model model, UserGroupDTO userGroup) {
+	private void setCommonData(Model model, UserGroupDTO userGroup) throws Exception {
 		model.addAttribute("checkBoxList", userGroupService.getMenuPermissions());
 		model.addAttribute("pageList", userGroupService.findPageListByBusiness());
 		model.addAttribute("userGroup", userGroup);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+		model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
 	}
 
 }

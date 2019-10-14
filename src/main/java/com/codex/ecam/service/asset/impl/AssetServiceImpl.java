@@ -1,5 +1,21 @@
 package com.codex.ecam.service.asset.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,7 +29,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
-import com.codex.ecam.dao.admin.*;
+import com.codex.ecam.dao.admin.AssetBrandDao;
+import com.codex.ecam.dao.admin.AssetEventTypeDao;
+import com.codex.ecam.dao.admin.AssetModelDao;
+import com.codex.ecam.dao.admin.CountryDao;
+import com.codex.ecam.dao.admin.CurrencyDao;
+import com.codex.ecam.dao.admin.MeterReadingUnitDao;
+import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.asset.AssetMeterReadingDao;
@@ -23,12 +45,37 @@ import com.codex.ecam.dao.inventory.BOMGroupDao;
 import com.codex.ecam.dao.inventory.BOMGroupPartDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
-import com.codex.ecam.dto.asset.*;
+import com.codex.ecam.dto.asset.AssetDTO;
+import com.codex.ecam.dto.asset.AssetEventDTO;
+import com.codex.ecam.dto.asset.AssetEventTypeAssetDTO;
+import com.codex.ecam.dto.asset.AssetFileDTO;
+import com.codex.ecam.dto.asset.AssetMeterReadingConsumptionValueDTO;
+import com.codex.ecam.dto.asset.AssetMeterReadingConsumptionVariableDTO;
+import com.codex.ecam.dto.asset.AssetMeterReadingDTO;
+import com.codex.ecam.dto.asset.AssetMeterReadingValueDTO;
+import com.codex.ecam.dto.asset.AssetPurchasingDTO;
+import com.codex.ecam.dto.asset.AssetUserDTO;
 import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
-import com.codex.ecam.mappers.asset.*;
+import com.codex.ecam.mappers.asset.AssetEventMapper;
+import com.codex.ecam.mappers.asset.AssetEventTypeAssetMapper;
+import com.codex.ecam.mappers.asset.AssetFileMapper;
+import com.codex.ecam.mappers.asset.AssetMapper;
+import com.codex.ecam.mappers.asset.AssetMeterReadingMapper;
+import com.codex.ecam.mappers.asset.AssetMeterReadingValueMapper;
+import com.codex.ecam.mappers.asset.AssetUserMapper;
 import com.codex.ecam.mappers.inventory.AssetConsumingReferenceMapper;
 import com.codex.ecam.model.admin.MeterReadingUnit;
-import com.codex.ecam.model.asset.*;
+import com.codex.ecam.model.asset.Asset;
+import com.codex.ecam.model.asset.AssetBusiness;
+import com.codex.ecam.model.asset.AssetConsumingReference;
+import com.codex.ecam.model.asset.AssetEvent;
+import com.codex.ecam.model.asset.AssetEventTypeAsset;
+import com.codex.ecam.model.asset.AssetFile;
+import com.codex.ecam.model.asset.AssetMeterReading;
+import com.codex.ecam.model.asset.AssetMeterReadingFormulaValue;
+import com.codex.ecam.model.asset.AssetMeterReadingFormulaVariable;
+import com.codex.ecam.model.asset.AssetMeterReadingValue;
+import com.codex.ecam.model.asset.AssetUser;
 import com.codex.ecam.model.inventory.bom.BOMGroup;
 import com.codex.ecam.model.inventory.bom.BOMGroupPart;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
@@ -41,15 +88,6 @@ import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
-
-import javax.persistence.criteria.Predicate;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AssetServiceImpl implements AssetService {
@@ -710,10 +748,32 @@ public class AssetServiceImpl implements AssetService {
 						result.getDomainEntity());
 				updateAverageMeterReadingValue(assetMeterReading);
 				assetMeterReadings.add(assetMeterReading);
+				setMeterReadingConsumptionVariable(assetsMeterReadingDTO,assetMeterReading);
 			}
 		}
 
 		result.getDomainEntity().setAssetMeterReadings(assetMeterReadings);
+	}
+	
+	
+	private void setMeterReadingConsumptionVariable(AssetMeterReadingDTO assetsMeterReadingDTO,AssetMeterReading assetMeterReading){
+		Set<AssetMeterReadingFormulaVariable> assetMeterReadingConsumptionVariables = new HashSet<AssetMeterReadingFormulaVariable>();
+		for (AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO:assetsMeterReadingDTO.getConsumptionVariableDTO()) {
+			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable=new AssetMeterReadingFormulaVariable();
+			assetMeterReadingConsumptionVariable.setVariableName(consumptionVariableDTO.getVariable());
+			assetMeterReadingConsumptionVariable.setAssetMeterReading(assetMeterReading);
+			assetMeterReadingConsumptionVariable.setIsDeleted(Boolean.FALSE);
+			assetMeterReadingConsumptionVariables.add(assetMeterReadingConsumptionVariable);
+		}
+		assetMeterReading.setFormulaVariables(assetMeterReadingConsumptionVariables);
+	}
+	
+	private Boolean isAlphabeticalCharacters(char charct){
+		Boolean alphabeticalCharacters=Boolean.FALSE;
+//		if(charct.toLowerCase()==charct.toUpperCase()){
+//			alphabeticalCharacters=Boolean.TRUE;
+//		}
+		return alphabeticalCharacters;
 	}
 
 	@Override
@@ -786,18 +846,22 @@ public class AssetServiceImpl implements AssetService {
 
 	
 	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,AssetMeterReadingValue meterReadingValue) throws Exception {
-		List<AssetMeterReadingValueConsumption> valueConsumptions = new ArrayList<>() ;
-	for(AssetMeterReadingValueConsumptionDTO assetMeterReadingValueConsumptionDTO:meterReadingValueDTO.getValueConsumptionDTO()){
+		List<AssetMeterReadingFormulaValue> valueConsumptions = new ArrayList<>() ;
+	for(AssetMeterReadingConsumptionValueDTO assetMeterReadingValueConsumptionDTO:meterReadingValueDTO.getValueConsumptionDTO()){
 			
-			AssetMeterReadingValueConsumption consumption= new AssetMeterReadingValueConsumption();
-			
-			consumption.setVariableName(assetMeterReadingValueConsumptionDTO.getVariable());
+		AssetMeterReadingFormulaValue consumption= new AssetMeterReadingFormulaValue();
+/*			for(AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable:meterReadingValue.getAssetMeterReading().getAssetMeterReadingValues()){
+				if(assetMeterReadingConsumptionVariable.getVariableName().equals(assetMeterReadingValueConsumptionDTO.getVariable())){
+					consumption.setAssetMeterReadingConsumptionVariable(assetMeterReadingConsumptionVariable);
+
+				}
+			}*/
 			consumption.setIsDeleted(Boolean.FALSE);
 			consumption.setValue(assetMeterReadingValueConsumptionDTO.getValue());
 			consumption.setAssetMeterReadingValue(meterReadingValue);
 			valueConsumptions.add(consumption);
 		}
-	meterReadingValue.setAssetMeterReadingValueConsumptions(valueConsumptions);
+	meterReadingValue.setAssetMeterReadingFormulaValues(valueConsumptions);
 	}
 	private List<AssetMeterReadingValueDTO> getMeterReadingValuesByMeterReading(AssetResult result,
 			AssetMeterReadingDTO assetMeterReadingDTO) {

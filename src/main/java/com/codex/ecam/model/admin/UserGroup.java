@@ -47,6 +47,9 @@ public class UserGroup extends BaseModel implements Serializable {
 
 	@OneToMany( mappedBy = "userGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<UserGroupPage> pageList = new HashSet<UserGroupPage>();
+	
+	@OneToMany( mappedBy = "userGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<UserGroupWiget> wigetList = new HashSet<UserGroupWiget>();
 
 	public Integer getId() {
 		return id;
@@ -86,6 +89,16 @@ public class UserGroup extends BaseModel implements Serializable {
 
 	public void setPageList(Set<UserGroupPage> pageList) {
 		updateCollection("pageList", pageList);
+	}
+	
+	
+
+	public Set<UserGroupWiget> getWigetList() {
+		return wigetList;
+	}
+
+	public void setWigetList(Set<UserGroupWiget> wigetList) {
+		updateCollection("wigetList", wigetList);
 	}
 
 	public Business getBusiness() {

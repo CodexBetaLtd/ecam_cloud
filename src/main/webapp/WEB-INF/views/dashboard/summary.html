@@ -4,7 +4,8 @@
 
 <div th:fragment="summary">
 	<div class="row" style="margin-top: 15px;">
-		<div class="col-md-6">
+	<div th:each="businessWiget,iStat : ${businessWigets}">
+		<div class="col-md-6" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).ASSET_WIGET}" >
 			<div class="panel panel-default">
 				<div class="panel-body ">
 					<div
@@ -12,7 +13,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-6">
+		</div>
+		<div th:each="businessWiget,iStat : ${businessWigets}">
+		<div class="col-md-6" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).MAINTAINACE_WIGET}" >
 			<div class="panel panel-default">
 				<div class="panel-body ">
 					<div
@@ -20,9 +23,11 @@
 				</div>
 			</div>
 		</div>
+		</div>
 	</div>
 	<div class="row">
-		<div class="col-sm-12 col-md-6 center">
+	<div th:each="businessWiget,iStat : ${businessWigets}">
+		<div class="col-sm-12 col-md-6 center" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).MAINTAINACE_WIGET}" >
 			<div class="panel panel-default" style="height: 56vh;">
 				<div class="panel-body ">
 						<div class="section-header">
@@ -34,9 +39,11 @@
 				</div>
 			</div>
 		</div>
+		</div>
 		<div class="">
 		<div class="row">
-			<div class="col-sm-12 col-md-2 center">
+		<div th:each="businessWiget,iStat : ${businessWigets}">
+			<div class="col-sm-12 col-md-2 center" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).INVENTORY_WIGET}" >
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<div class="section-header">
@@ -49,7 +56,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12 col-md-2 center">
+			</div>
+			<div th:each="businessWiget,iStat : ${businessWigets}">
+			<div class="col-sm-12 col-md-2 center" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).NOTIFICATION_WIGET}">
 				<div class="panel panel-default">
 					<div class="panel-body">
 						<div class="section-header">
@@ -63,7 +72,9 @@
 					
 				</div>
 			</div>
-						<div class="col-sm-12 col-md-2 center ">
+			</div>
+			<div th:each="businessWiget,iStat : ${businessWigets}">
+						<div class="col-sm-12 col-md-2 center " th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).BIZ_WIGET}">
 				<div class="panel panel-default ">
 					<div class="panel-body">
 						<div class="section-header">
@@ -75,7 +86,9 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-12 col-md-2 center">
+			</div>
+			<div th:each="businessWiget,iStat : ${businessWigets}">
+			<div class="col-sm-12 col-md-2 center" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).BIZ_WIGET}">
 				<div class="panel panel-default">
 					<div class="panel-body ">
 						<div class="section-header">
@@ -86,7 +99,9 @@
 					</div>
 				</div>
 			</div>
-						<div class="col-sm-12 col-md-2 center">
+			</div>
+			<div th:each="businessWiget,iStat : ${businessWigets}">
+						<div class="col-sm-12 col-md-2 center" th:if="${businessWiget.widget}==${T(com.codex.ecam.constants.Widgets).SETTINGS_WIGET}">
 				<div class="panel panel-default">
 					<div class="panel-body ">
 						<div class="section-header">
@@ -100,7 +115,7 @@
 
 
 			</div>
-
+</div>
 		</div>
 	</div>
 </div>

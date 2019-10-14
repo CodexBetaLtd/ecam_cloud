@@ -39,6 +39,9 @@ public class App extends BaseModel {
 
 	@OneToMany(mappedBy = "app", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<RelatedApp> relatedApps;
+	
+	@OneToMany(mappedBy = "app", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<AppWiget> appWigets;
 
 	public Integer getId() {
 		return id;
@@ -79,5 +82,15 @@ public class App extends BaseModel {
 	public void setRelatedApps(Set<RelatedApp> relatedApps) {
 		updateCollection("relatedApps", relatedApps);
 	}
+
+	public Set<AppWiget> getAppWigets() {
+		return appWigets;
+	}
+
+	public void setAppWigets(Set<AppWiget> appWigets) {
+		updateCollection("appWigets", appWigets);
+	}
+	
+	
 
 }

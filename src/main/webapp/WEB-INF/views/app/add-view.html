@@ -121,6 +121,7 @@
                                             <ul id="myTab" class="nav nav-tabs tab-bricky">
                                                 <li class="active"><a href="#menu_tab" data-toggle="tab"> Menus </a></li>
                                                 <li><a href="#app_tab" data-toggle="tab"> Apps </a></li>
+                                                <li><a href="#wiget_tab" data-toggle="tab"> Wigets </a></li>
                                             </ul>
                                             <div class="tab-content">
                                                 <div class="tab-pane in active" id="menu_tab">
@@ -128,6 +129,9 @@
                                                 </div>
                                                 <div class="tab-pane in" id="app_tab">
                                                     <div th:replace="app/tab/related-app-tab :: relatedAppTabFragment"></div>
+                                                </div>
+                                                <div class="tab-pane in" id="wiget_tab">
+                                                    <div th:replace="app/tab/wiget-tab :: appWigetTabFragment"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -178,9 +182,11 @@
 
 <script type="text/javascript" th:src="@{/resources/script/app/app/tab/app-menu-tab.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/app/tab/related-app-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/app/tab/wiget-tab.js}"></script>
 
 <script type="text/javascript" th:src="@{/resources/script/app/app/modals/menu-select-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/app/modals/app-select-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/app/modals/wiget-select-modal.js}"></script>
 
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
@@ -189,6 +195,7 @@
 <script th:inline="javascript">
     var appMenus = [[${app.appMenus}]];
     var relatedApps = [[${app.relatedApps}]];
+    var appWigets = [[${app.appWigets}]];
 </script>
 
 </body>

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codex.ecam.dto.app.AppDTO;
 import com.codex.ecam.dto.app.MenuDTO;
+import com.codex.ecam.dto.app.WigetDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.app.api.AppService;
 
@@ -35,8 +36,18 @@ public class AppRestController {
 
     @RequestMapping(value = "/menus", method = RequestMethod.GET)
     public List<MenuDTO> getMenus() {
+    	try {
+    		return appService.findAllMenus();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return null;
+    }
+    
+    @RequestMapping(value = "/wigets", method = RequestMethod.GET)
+    public List<WigetDTO> getWigets() {
         try {
-            return appService.findAllMenus();
+            return appService.findAllWigets();
         } catch (Exception e) {
             e.printStackTrace();
         }

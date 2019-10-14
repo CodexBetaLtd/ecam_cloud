@@ -58,8 +58,14 @@ public class AssetMeterReading extends BaseModel {
 	@Column(name = "is_multipel_meter_reading")
 	private Boolean isMultipleMeterReading;
 
+	@Column(name = "consumption_formula")
+	private String consumptionFormula;
+	
 	@OneToMany(mappedBy = "assetMeterReading", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReadingValue> assetMeterReadingValues;
+	
+	@OneToMany(mappedBy = "assetMeterReading", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<AssetMeterReadingFormulaVariable> formulaVariables;
 
 	@OneToMany(mappedBy = "assetMeterReading", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<WorkOrderMeterReading> workOrderMeterReadings;
@@ -146,4 +152,23 @@ public class AssetMeterReading extends BaseModel {
 		this.isMultipleMeterReading = isMultipleMeterReading;
 	}
 
+
+
+	public Set<AssetMeterReadingFormulaVariable> getFormulaVariables() {
+		return formulaVariables;
+	}
+
+	public void setFormulaVariables(Set<AssetMeterReadingFormulaVariable> formulaVariables) {
+		updateCollection("formulaVariables", formulaVariables);
+	}
+
+	public String getConsumptionFormula() {
+		return consumptionFormula;
+	}
+
+	public void setConsumptionFormula(String consumptionFormula) {
+		this.consumptionFormula = consumptionFormula;
+	}
+
+	
 }

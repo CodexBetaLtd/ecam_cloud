@@ -14,6 +14,7 @@ public class AppDTO extends BaseDTO {
 
 	private List<AppMenuDTO> appMenus = new ArrayList<>();
 	private List<RelatedAppDTO> relatedApps = new ArrayList<>();
+	private List<AppWigetDTO> appWigets = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -55,4 +56,13 @@ public class AppDTO extends BaseDTO {
 		this.relatedApps = relatedApps;
 	}
 
+	public List<AppWigetDTO> getAppWigets() {
+		return appWigets;
+	}
+
+	public void setAppWigets(List<AppWigetDTO> appWigets) {
+		this.appWigets = appWigets;
+	}
+
+	
 }

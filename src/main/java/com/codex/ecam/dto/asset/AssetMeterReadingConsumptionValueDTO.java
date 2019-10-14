@@ -2,7 +2,7 @@ package com.codex.ecam.dto.asset;
 
 import com.codex.ecam.dto.BaseDTO;
 
-public class AssetMeterReadingValueConsumptionDTO extends BaseDTO {
+public class AssetMeterReadingConsumptionValueDTO extends BaseDTO {
 
     private Integer assetMeterReadingValueId;
     private String variable;
@@ -14,17 +14,17 @@ public class AssetMeterReadingValueConsumptionDTO extends BaseDTO {
 	public void setAssetMeterReadingValueId(Integer assetMeterReadingValueId) {
 		this.assetMeterReadingValueId = assetMeterReadingValueId;
 	}
-	public String getVariable() {
-		return variable;
-	}
-	public void setVariable(String variable) {
-		this.variable = variable;
-	}
 	public Double getValue() {
 		return value;
 	}
 	public void setValue(Double value) {
 		this.value = value;
+	}
+	public String getVariable() {
+		return variable;
+	}
+	public void setVariable(String variable) {
+		this.variable = variable;
 	}
     
 

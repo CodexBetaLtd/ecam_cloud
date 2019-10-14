@@ -7,6 +7,7 @@ import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.PagePermission;
 import com.codex.ecam.constants.SubMenu;
+import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.admin.UserGroup;
@@ -14,6 +15,7 @@ import com.codex.ecam.model.admin.UserGroupMenu;
 import com.codex.ecam.model.admin.UserGroupMenuSubMenu;
 import com.codex.ecam.model.admin.UserGroupPage;
 import com.codex.ecam.model.admin.UserGroupPagePermission;
+import com.codex.ecam.model.admin.UserGroupWiget;
 
 public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
 
@@ -65,10 +67,16 @@ public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
 			dto.setTopMenus(topMenus);
 			dto.setSubMenus(subMenus);
 		}
-
+		setWigetList(domain,dto);
 		return dto;
 	}
-
+	private void setWigetList(UserGroup domain,UserGroupDTO dto){
+		List<Widgets> widgets=new ArrayList<>();
+		for (UserGroupWiget wiget : domain.getWigetList()) {
+			widgets.add(wiget.getWidgets());
+		}
+		dto.setWigets(widgets);
+	}
 	@Override
 	public void dtoToDomain(UserGroupDTO dto, UserGroup domain) throws Exception {
 
@@ -98,6 +106,8 @@ public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
 			}
 		}
 	}
+	
+
 
 	private void addSubMenuToUserGroup(UserGroupDTO dto, UserGroupMenu groupMenu, Menu menu) {
 		UserGroupMenuSubMenu menuSubMenu;
@@ -124,6 +134,8 @@ public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
 		groupMenu.setIsDeleted(false);
 		return groupMenu;
 	}
+	
+	
 
 	private void addPagePermissionToUserGroup(UserGroupDTO dto, UserGroupPage groupPage, Page page) {
 		UserGroupPagePermission groupPagePermission;

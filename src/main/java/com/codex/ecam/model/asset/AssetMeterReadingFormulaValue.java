@@ -13,22 +13,23 @@ import javax.persistence.Table;
 
 import com.codex.ecam.model.BaseModel;
 @Entity
-@Table(name = "tbl_asset_meter_reading_consumption")
-public class AssetMeterReadingValueConsumption extends BaseModel {
+@Table(name = "tbl_asset_meter_reading_formula_value")
+public class AssetMeterReadingFormulaValue extends BaseModel {
 	private static final long serialVersionUID = 3466843752790052309L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "tbl_asset_meter_reading_consumption_s")
-	@SequenceGenerator(name = "tbl_asset_meter_reading_consumption_s", sequenceName = "tbl_asset_meter_reading_consumption_s", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "tbl_asset_meter_reading_formula_value_s")
+	@SequenceGenerator(name = "tbl_asset_meter_reading_formula_value_s", sequenceName = "tbl_asset_meter_reading_formula_value_s", allocationSize = 1)
 	@Column(name = "id")
 	private Integer id;
 
 	@JoinColumn(name = "meter_reading_value_id")
 	@ManyToOne(targetEntity = AssetMeterReadingValue.class, fetch = FetchType.LAZY)
 	private AssetMeterReadingValue assetMeterReadingValue;
-
-	@Column(name = "variable_name")
-	private String variableName;
+	
+	@JoinColumn(name = "meter_reading_formula_variable_id")
+	@ManyToOne(targetEntity = AssetMeterReadingFormulaVariable.class, fetch = FetchType.LAZY)
+	private AssetMeterReadingFormulaVariable assetMeterReadingFormulaVariable;
 	
 	@Column(name = "value")
 	private Double value;
@@ -49,13 +50,6 @@ public class AssetMeterReadingValueConsumption extends BaseModel {
 		this.assetMeterReadingValue = assetMeterReadingValue;
 	}
 
-	public String getVariableName() {
-		return variableName;
-	}
-
-	public void setVariableName(String variableName) {
-		this.variableName = variableName;
-	}
 
 	public Double getValue() {
 		return value;
@@ -64,7 +58,16 @@ public class AssetMeterReadingValueConsumption extends BaseModel {
 	public void setValue(Double value) {
 		this.value = value;
 	}
-    
+
+	public AssetMeterReadingFormulaVariable getAssetMeterReadingFormulaVariable() {
+		return assetMeterReadingFormulaVariable;
+	}
+
+	public void setAssetMeterReadingFormulaVariable(AssetMeterReadingFormulaVariable assetMeterReadingFormulaVariable) {
+		this.assetMeterReadingFormulaVariable = assetMeterReadingFormulaVariable;
+	}
+
+
     
 
 

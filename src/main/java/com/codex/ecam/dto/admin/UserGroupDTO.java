@@ -6,6 +6,7 @@ import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.PagePermission;
 import com.codex.ecam.constants.SubMenu;
+import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dto.BaseDTO;
 
 public class UserGroupDTO extends BaseDTO {
@@ -20,6 +21,7 @@ public class UserGroupDTO extends BaseDTO {
 	private List<Menu> topMenus;
 	private List<SubMenu> subMenus;
 	private List<PagePermission> pagePermissions;
+	private List<Widgets> wigets;
 	
 	private Page page; 
 
@@ -77,5 +79,12 @@ public class UserGroupDTO extends BaseDTO {
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
 	}
+	public List<Widgets> getWigets() {
+		return wigets;
+	}
+	public void setWigets(List<Widgets> wigets) {
+		this.wigets = wigets;
+	}
 
+	
 }

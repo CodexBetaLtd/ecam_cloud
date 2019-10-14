@@ -4,6 +4,7 @@ jQuery(document).ready(function () {
     AppAdd.init();
     AppMenuTab.init();
     RelatedAppTab.init();
+    AppWigetTab.init();
 
     $.fn.modalmanager.defaults.resize = true;
     $.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner =
