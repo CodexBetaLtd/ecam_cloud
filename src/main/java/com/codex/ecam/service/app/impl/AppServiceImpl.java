@@ -425,13 +425,16 @@ public class AppServiceImpl implements AppService {
 	}
 
 	private void removeApp(Integer appId, Business business) {
-		Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream()
-				.filter((x) -> x.getApp().getId() == appId).findAny();
-		if (optionalBusinessApp.isPresent()) {
-			removeRelatedApps(business, optionalBusinessApp.get());
-			businessAppDao.delete(optionalBusinessApp.get());
-			logger.info("Uninstall App : " + optionalBusinessApp.get().getApp().getName() + " Successfully");
+		if(business.getBusinessApps().size()>0){
+			Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream()
+					.filter((x) -> x.getApp().getId() == appId).findAny();
+			if (optionalBusinessApp.isPresent()) {
+				removeRelatedApps(business, optionalBusinessApp.get());
+				businessAppDao.delete(optionalBusinessApp.get());
+				logger.info("Uninstall App : " + optionalBusinessApp.get().getApp().getName() + " Successfully");
+			}
 		}
+
 	}
 
 	private void removeRelatedApps(Business business, BusinessApp businessApp) {

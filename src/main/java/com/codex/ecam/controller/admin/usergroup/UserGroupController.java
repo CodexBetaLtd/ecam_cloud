@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.Page;
-import com.codex.ecam.constants.PagePermission;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.result.admin.UserGroupResult;
@@ -89,7 +88,7 @@ public class UserGroupController {
 
 	@RequestMapping(value = "/pagepermission", method = RequestMethod.GET)
 	public String showPagePermissionList(Model model, @RequestParam(name = "page") Page page, @RequestParam(name = "userGroupId", required = false ) Integer userGroupId) {
-		model.addAttribute("permissionsList", PagePermission.getPagePermissionsByPage(page));
+		model.addAttribute("permissionsList", userGroupPageService.findPagePermissionByUserLevel(page));
 		model.addAttribute("pagePermissions", userGroupPageService.findPagePermissionByUserGroupAndPage(page, userGroupId));
 
 		return "admin/usergroups/page-permission-list";

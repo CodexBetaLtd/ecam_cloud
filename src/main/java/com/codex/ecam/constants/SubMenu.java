@@ -45,7 +45,9 @@ public enum SubMenu {
 
 	USER_PROFILE(30, Menu.SETTINGS, "User Profile"),
 	
-	WEARHOUSE(31, Menu.BIZ, "Warehouse");
+	WEARHOUSE(31, Menu.BIZ, "Warehouse"),
+	
+	WIDGET(32, Menu.DASHBOARD, "Dashboard");
 
 
 	private Integer id;

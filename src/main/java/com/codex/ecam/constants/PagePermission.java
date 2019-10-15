@@ -269,7 +269,14 @@ public enum PagePermission {
 	HAS_SAVE_BUTTON_WEARHOUSE_ADD(212, Page.WEARHOUSE_ADD, "Has 'Save' Button On The 'Wear Housee Add' Page"),
 	HAS_NEW_BUTTON_WEARHOUSE_ADD(213, Page.WEARHOUSE_ADD, "Has 'New' Button On The 'Warehouse Add' Page"),
 	HAS_DELETE_BUTTON_WEARHOUSE_ADD(214, Page.WEARHOUSE_ADD, "Has 'Delete' Button On The 'Warehouse Add' Page"),
-	HAS_CANCEL_BUTTON_WEARHOUSE_ADD(215, Page.WEARHOUSE_ADD, "Has 'Cancel' Button On The 'Warehouse Add' Page");
+	HAS_CANCEL_BUTTON_WEARHOUSE_ADD(215, Page.WEARHOUSE_ADD, "Has 'Cancel' Button On The 'Warehouse Add' Page"),
+	
+	HAS_ASSET_WIGET(216, Page.DASHBOARD_VIEW, "Has 'Asset' Widget On The 'Dashboard' "),
+	HAS_MAINTAINACE_WIGET(217, Page.DASHBOARD_VIEW, "Has 'Maintainace' Widget On The 'Dashboard'"),
+	HAS_INVENTORY_WIGET(218, Page.DASHBOARD_VIEW, "Has 'Inventory' Widget On The 'Dashboard'"),
+	HAS_NOTIFICATION_WIGET(219, Page.DASHBOARD_VIEW, "Has 'Notification' Widget On The 'Dashboard'"),
+	HAS_BIZ_WIGET(220, Page.DASHBOARD_VIEW, "Has 'Maintainace' Widget On The 'Dashboard'"),
+	HAS_SETTINGS_WIGET(221, Page.DASHBOARD_VIEW, "Has 'Settings' Widget On The 'Dashboard'");
 
 	
 	private Integer id;
