@@ -275,7 +275,7 @@ public enum PagePermission {
 	HAS_MAINTAINACE_WIGET(217, Page.DASHBOARD_VIEW, "Has 'Maintainace' Widget On The 'Dashboard'"),
 	HAS_INVENTORY_WIGET(218, Page.DASHBOARD_VIEW, "Has 'Inventory' Widget On The 'Dashboard'"),
 	HAS_NOTIFICATION_WIGET(219, Page.DASHBOARD_VIEW, "Has 'Notification' Widget On The 'Dashboard'"),
-	HAS_BIZ_WIGET(220, Page.DASHBOARD_VIEW, "Has 'Maintainace' Widget On The 'Dashboard'"),
+	HAS_BIZ_WIGET(220, Page.DASHBOARD_VIEW, "Has 'Biz' Widget On The 'Dashboard'"),
 	HAS_SETTINGS_WIGET(221, Page.DASHBOARD_VIEW, "Has 'Settings' Widget On The 'Dashboard'");
 
 	
