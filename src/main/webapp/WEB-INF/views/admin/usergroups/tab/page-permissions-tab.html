@@ -1,18 +1,16 @@
 <!DOCTYPE html>
-<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
-	<div th:fragment="pagepermission">
-		<div>
-		    <label for="form-field-select-3">
-		        Page
-		    </label>
-		    <select id="page" name="page" class="search-select" style="width:40%;">
-		        <option value="">&nbsp;</option>
-		        <option th:each="page : ${pageList}" th:value="${page}" th:text="${page.name}"></option>
-		    </select>
-		</div>
-		<hr>
-        <div id="pagePermissionBlock">
-		
-		</div>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" class="no-js">
+<div th:fragment="pagepermission">
+	<div>
+		<label for="form-field-select-3"> Page </label> <select id="page"
+			name="page" class="search-select" style="width: 40%;">
+			<option value="">&nbsp;</option>
+			<option th:each="page : ${pageList}" th:value="${page}"
+				th:text="${page.name}"></option>
+		</select>
 	</div>
+	<hr>
+	<div id="pagePermissionBlock"></div>
+</div>
 </html>

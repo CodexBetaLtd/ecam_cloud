@@ -74,7 +74,12 @@ public enum Page {
 	STOCK_ADJUSTMENT_VIEW(49, SubMenu.STOCK_ADJUSTMENT, "Stock View Page"),
 	
 	WEARHOUSE_ADD(50,SubMenu.WEARHOUSE, "Warehouse Add Page"),
-	WEARHOUSE_VIEW(51, SubMenu.WEARHOUSE,"Warehouse View Page");
+	WEARHOUSE_VIEW(51, SubMenu.WEARHOUSE,"Warehouse View Page"),
+	
+	DASHBOARD_VIEW(52, SubMenu.WIDGET,"Dashboard View"),
+	
+	MRN_ADD(53,SubMenu.MRN, "MRN Add Page"),
+	MRN_VIEW(54, SubMenu.MRN,"MRN View Page");
 
 	private Integer id;
 	private String name;
@@ -129,6 +134,7 @@ public enum Page {
 //		list.add(USER_PROFILE_VIEW);
 		list.add(APP_ADD);
 		list.add(APP_VIEW);
+		list.add(DASHBOARD_VIEW);
 //		list.add(AOD_ADD);
 //		list.add(AOD_VIEW);
 //		list.add(AOD_RETURN_ADD);

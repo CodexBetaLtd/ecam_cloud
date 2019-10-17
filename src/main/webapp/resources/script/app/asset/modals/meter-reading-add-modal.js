@@ -13,6 +13,17 @@ var MeterReadingAddModal = function () {
             radioClass: 'iradio_minimal-grey',
             increaseArea: '10%', // optional
         });
+        
+  
+        $('#isMultipleMeterReading').on('ifChecked', function(event){
+        	$('#formula').prop('readonly', false);
+        });
+        $('#isMultipleMeterReading').on('ifUnchecked', function(event){
+        	$('#formula').val("");
+        	$('#formula').prop('readonly', true);
+        });
+        
+
     };
 	var addAssetMeterReading = function() {		
 		if ( $('#asset-meter-reading-add-frm').valid() ) {

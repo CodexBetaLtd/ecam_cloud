@@ -47,7 +47,7 @@ public class AssetMeterReadingValue extends BaseModel {
 	private String functionString;
 	
 	@OneToMany(mappedBy = "assetMeterReadingValue", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-	private List<AssetMeterReadingValueConsumption> assetMeterReadingValueConsumptions;
+	private List<AssetMeterReadingFormulaValue> assetMeterReadingFormulaValues;
 
 	public Integer getId() {
 		return id;
@@ -89,13 +89,12 @@ public class AssetMeterReadingValue extends BaseModel {
 		this.functionString = functionString;
 	}
 
-	public List<AssetMeterReadingValueConsumption> getAssetMeterReadingValueConsumptions() {
-		return assetMeterReadingValueConsumptions;
+	public List<AssetMeterReadingFormulaValue> getAssetMeterReadingFormulaValues() {
+		return assetMeterReadingFormulaValues;
 	}
 
-	public void setAssetMeterReadingValueConsumptions(
-			List<AssetMeterReadingValueConsumption> assetMeterReadingValueConsumptions) {
-		this.assetMeterReadingValueConsumptions = assetMeterReadingValueConsumptions;
+	public void setAssetMeterReadingFormulaValues(List<AssetMeterReadingFormulaValue> assetMeterReadingFormulaValues) {
+		this.assetMeterReadingFormulaValues = assetMeterReadingFormulaValues;
 	}
 
 

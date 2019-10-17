@@ -6,6 +6,7 @@ import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.app.AppDTO;
 import com.codex.ecam.dto.app.MenuDTO;
+import com.codex.ecam.dto.app.WigetDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.app.AppResult;
 
@@ -20,6 +21,7 @@ public interface AppService {
 	DataTablesOutput<AppDTO> findAll(FocusDataTablesInput input) throws Exception;
 
 	List<MenuDTO> findAllMenus();
+	List<WigetDTO> findAllWigets();
 
 	Boolean isAppInstalled(Integer appId);
 
@@ -32,5 +34,6 @@ public interface AppService {
 	List<AppDTO> findAffectedApps(Integer appId);
 
 	List<AppDTO> findAllApps() throws Exception;
+	List<WigetDTO> findAllWigetByUserLevel() throws Exception;
 
 }

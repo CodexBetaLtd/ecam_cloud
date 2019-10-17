@@ -116,6 +116,11 @@
                 </a>
             </li>
             <li>
+                <a th:href="@{/mrn/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).MRN.id)">
+                    <i class="icon-custom icon-aod"></i> <span class="title">MRN</span>
+                </a>
+            </li>
+            <li>
                 <a th:href="@{/aodReturn/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD_RETURN.id)">
                     <i class="icon-custom icon-aod-return"></i> <span class="title">AOD Return</span>
                 </a>

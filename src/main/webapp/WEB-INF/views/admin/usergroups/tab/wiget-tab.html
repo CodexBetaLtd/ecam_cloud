@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+	<div th:fragment="wiget" >
+		<div class="checkbox" th:each="cBox : ${businessWigets}">
+	        <label>
+	            <input type="checkbox" name="wigets" th:field="*{wigets}" th:value="${cBox.widget}" value="" class="grey">Can See '<span th:text="${cBox.name}"></span>'
+	        </label>
+	    </div>    
+    </div>
+
+	
+</html>

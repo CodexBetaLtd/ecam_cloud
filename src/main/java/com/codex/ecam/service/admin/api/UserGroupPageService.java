@@ -8,5 +8,6 @@ import com.codex.ecam.constants.PagePermission;
 public interface UserGroupPageService {
 
 	List<PagePermission> findPagePermissionByUserGroupAndPage(Page page, Integer userGroupId);
+	List<PagePermission> findPagePermissionByUserLevel(Page page);
 
 }

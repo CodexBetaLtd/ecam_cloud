@@ -86,6 +86,7 @@ var MeterReadingConsumptionAddModal = function () {
                 var html = "<tr id='consumption_row_" + row + "' >" +
                 "<input id='meterReadingConsumptionList_" + row + "_variable'  value='" + meterReadingConsumption.variable + "' type='hidden' >" +
                 "<input id='meterReadingConsumptionList_" + row + "_value'  value='" + meterReadingConsumption.value + "' type='hidden' >" +
+                "<input id='meterReadingConsumptionList_" + row + "_meterReadingIndex'  value='" + meterReadingConsumption.meterReadingIndex + "' type='hidden' >" +
                 "<td><span>" + ( row + 1 ) + "</span></td>" +
                 "<td>" +meterReadingConsumption.variable+"</td>"+
                 "<td>" +meterReadingConsumption.value+"</td>"+
@@ -96,7 +97,7 @@ var MeterReadingConsumptionAddModal = function () {
                 "</td>" +
                 "</tr>";
             $('#meter-reading-consumption-tbl > tbody:last-child').append(html);
-            $('#formula').prop('readonly', false);
+            initScope();
             getValueList();
             checkParamId();
             $("consumptionList").val(meterReadingConsumptionList) ;
@@ -118,6 +119,7 @@ var MeterReadingConsumptionAddModal = function () {
 			  version:$('#cosumptionVersion').val(),
 			  variable:$('#consumptionVariable').val(),
 			  value:$('#consumptionValue').val(),
+			  meterReadingIndex:$('#meterReadingIndex').val(),
 	  }
 	  if(checkVariableDuplicate(meterReadingConsumption)){
 		  meterReadingConsumptionList.push(meterReadingConsumption);
@@ -138,27 +140,36 @@ var MeterReadingConsumptionAddModal = function () {
 
     }
     var removeMeterReadingConsumption=function(index){
+        var entry=$("#formula").val();
         for (var i = 0; i < meterReadingConsumptionList.length; i++) {
             if (meterReadingConsumptionList[i].index == index) {
-            	if(!entry.includes(meterReadingConsumptionList[i].variable)){
+            	meterReadingConsumptionList.splice(i, 1);
+
+     /*       	if(!entry.includes(meterReadingConsumptionList[i].variable)){
                 	meterReadingConsumptionList.splice(i, 1);
             	}else{
             		alert("Please remove variable from formula before variable definition remove")
-            	}
+            	}*/
             }
+
         }
         resetConsumptionTable();
     }
 
     var checkParamId=function(){   
         var entry=$("#formula").val();
-        var value=0;
-    	//if(!charcterNotDefined()){
-    		value=math.evaluate(entry, scope);
-    	//}else{
-    		//alert("Not defined variable included in formula")
-    	//} 	
+        var value=0;      
+   		value=math.evaluate(entry, scope);	
     	$("#value").val(value)
+    }
+    
+    var initScope=function(){
+    	   var entry=$("#formula").val();
+        for(var i=0;i<entry.length;i++){
+        	if(isLetter(entry.charAt(i))){
+        	scope[entry.charAt(i)]=0
+        	}
+        }
     }
     
     var getValueList=function(){

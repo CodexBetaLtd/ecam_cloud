@@ -46,6 +46,11 @@ public class AppController {
 	public String appSelectView(Model model) {
 		return "app/modals/app-select-modal";
 	}
+	
+	@RequestMapping(value = "/wiget-select-view", method = RequestMethod.GET)
+	public String wigetSelectView(Model model) {
+		return "app/modals/wiget-select-modal";
+	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String addForm(Model model, RedirectAttributes ra) {

@@ -3,6 +3,7 @@ package com.codex.ecam.model.biz.business;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -52,7 +53,10 @@ public class BusinessApp extends BaseModel {
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name="related_app_id", referencedColumnName="app_id", updatable=false, insertable=false)
 	private Set<RelatedApp> affectedApps;
-
+	
+	@OneToMany(mappedBy = "businessApp", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<BusinessWiget> businessWigets;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -108,5 +112,15 @@ public class BusinessApp extends BaseModel {
 	public void setAffectedApps(Set<RelatedApp> affectedApps) {
 		updateCollection("affectedApps", affectedApps);
 	}
+
+	public Set<BusinessWiget> getBusinessWigets() {
+		return businessWigets;
+	}
+
+	public void setBusinessWigets(Set<BusinessWiget> businessWigets) {
+		updateCollection("businessWigets", businessWigets);
+	}
+	
+	
 
 }

@@ -4,10 +4,12 @@ import java.util.Set;
 
 import com.codex.ecam.dto.app.AppDTO;
 import com.codex.ecam.dto.app.AppMenuDTO;
+import com.codex.ecam.dto.app.AppWigetDTO;
 import com.codex.ecam.dto.app.RelatedAppDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.app.App;
 import com.codex.ecam.model.app.AppMenu;
+import com.codex.ecam.model.app.AppWiget;
 import com.codex.ecam.model.app.RelatedApp;
 
 public class AppMapper extends GenericMapper<App, AppDTO> {
@@ -33,6 +35,7 @@ public class AppMapper extends GenericMapper<App, AppDTO> {
 
 		setAppMenus(dto, domain);
 		setRelatedApps(dto, domain);
+		setAppWigets(dto, domain);
 
 		setCommanDTOFields(dto, domain);
 		return dto;
@@ -60,6 +63,16 @@ public class AppMapper extends GenericMapper<App, AppDTO> {
 			for (AppMenu appMenu : domain.getAppMenus()) {
 				AppMenuDTO appMenuDto = AppMenuMapper.getInstance().domainToDto(appMenu);
 				dto.getAppMenus().add(appMenuDto);
+			}
+		}
+	}
+	
+	private void setAppWigets(AppDTO dto, App domain) throws Exception {
+		Set<AppWiget> appWigets = domain.getAppWigets();
+		if ((appWigets != null) && (appWigets.size() > 0)) {
+			for (AppWiget appWiget : domain.getAppWigets()) {
+				AppWigetDTO appWigetDTO = AppWigetMapper.getInstance().domainToDto(appWiget);
+				dto.getAppWigets().add(appWigetDTO);
 			}
 		}
 	}

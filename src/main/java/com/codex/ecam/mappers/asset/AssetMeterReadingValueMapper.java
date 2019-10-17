@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.codex.ecam.dto.asset.AssetMeterReadingValueConsumptionDTO;
+import com.codex.ecam.dto.asset.AssetMeterReadingConsumptionValueDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingValueDTO;
 import com.codex.ecam.mappers.GenericMapper;
+import com.codex.ecam.model.asset.AssetMeterReadingFormulaValue;
 import com.codex.ecam.model.asset.AssetMeterReadingValue;
-import com.codex.ecam.model.asset.AssetMeterReadingValueConsumption;
 
 public class AssetMeterReadingValueMapper extends GenericMapper<AssetMeterReadingValue, AssetMeterReadingValueDTO> {
 
@@ -44,11 +44,11 @@ public class AssetMeterReadingValueMapper extends GenericMapper<AssetMeterReadin
 	}
 
 	private void setMeterReadingConsumption(AssetMeterReadingValueDTO dto, AssetMeterReadingValue domain){
-		List<AssetMeterReadingValueConsumptionDTO> valueConsumptionDTO=new ArrayList<>();
-		if(domain.getAssetMeterReadingValueConsumptions().size()>0){
-			for(AssetMeterReadingValueConsumption consumption:domain.getAssetMeterReadingValueConsumptions()){
-				AssetMeterReadingValueConsumptionDTO consumptionDTO=new AssetMeterReadingValueConsumptionDTO();
-				consumptionDTO.setVariable(consumption.getVariableName());
+		List<AssetMeterReadingConsumptionValueDTO> valueConsumptionDTO=new ArrayList<>();
+		if(domain.getAssetMeterReadingFormulaValues().size()>0){
+			for(AssetMeterReadingFormulaValue consumption:domain.getAssetMeterReadingFormulaValues()){
+				AssetMeterReadingConsumptionValueDTO consumptionDTO=new AssetMeterReadingConsumptionValueDTO();
+				//consumptionDTO.setVariable(consumption.getVariableName());
 				consumptionDTO.setValue(consumption.getValue());
 				consumptionDTO.setAssetMeterReadingValueId(domain.getId());
 				valueConsumptionDTO.add(consumptionDTO);

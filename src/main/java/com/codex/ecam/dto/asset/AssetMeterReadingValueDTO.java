@@ -19,7 +19,7 @@ public class AssetMeterReadingValueDTO extends BaseDTO {
     
     private String meterReadingConsumptionFunction;
     
-    private List<AssetMeterReadingValueConsumptionDTO> valueConsumptionDTO=new ArrayList<>();
+    private List<AssetMeterReadingConsumptionValueDTO> valueConsumptionDTO=new ArrayList<>();
 
     public Integer getAssetMeterReadingId() {
         return assetMeterReadingId;
@@ -101,11 +101,11 @@ public class AssetMeterReadingValueDTO extends BaseDTO {
 		this.meterReadingConsumptionFunction = meterReadingConsumptionFunction;
 	}
 
-	public List<AssetMeterReadingValueConsumptionDTO> getValueConsumptionDTO() {
+	public List<AssetMeterReadingConsumptionValueDTO> getValueConsumptionDTO() {
 		return valueConsumptionDTO;
 	}
 
-	public void setValueConsumptionDTO(List<AssetMeterReadingValueConsumptionDTO> valueConsumptionDTO) {
+	public void setValueConsumptionDTO(List<AssetMeterReadingConsumptionValueDTO> valueConsumptionDTO) {
 		this.valueConsumptionDTO = valueConsumptionDTO;
 	}
 

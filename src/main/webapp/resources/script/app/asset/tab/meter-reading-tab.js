@@ -23,6 +23,7 @@ var TabMeterReading = function () {
 	        }, 1000);
 	    });
 	    
+	    
 
 		
 	};
@@ -31,8 +32,7 @@ var TabMeterReading = function () {
 		
 		$('#btn-add-meter-reading-value').on('click', function () {
 			TabMeterReading.addAssetMeterReadingValue();
-	    });
-		
+	    });	
 		
 		$('#btn-new-meter-reading-consumption').on('click', function () {			
 			TabMeterReading.addAssetMeterReadingConsumptionModal();			
@@ -40,6 +40,7 @@ var TabMeterReading = function () {
 		$( "#formula" ).focusout(function() {
 			MeterReadingConsumptionAddModal.checkParamId();
 		})
+		
 	};
 
 	var initCheckBoxes = function () {
@@ -90,7 +91,7 @@ var TabMeterReading = function () {
         }
     };
 
-    var addAssetMeterReadingValueModal = function (meterReadingIndex, meterReadingName) {
+    var addAssetMeterReadingValueModal = function (meterReadingIndex,meterReadingName,consumptionFormula,isMultipelMeterReading) {
     	var $modal = $('#master-modal-datatable');
     	CustomComponents.ajaxModalLoadingProgressBar();
     	setTimeout(function () {
@@ -98,7 +99,11 @@ var TabMeterReading = function () {
     		$modal.load(url, '', function () {
     			$('#valueMeterReadingIndex').val(meterReadingIndex);
     			$('#valueMeterReadingName').val(meterReadingName);
-    			$('#value').val(0);
+    			
+    			if(isMultipelMeterReading){
+    				$('#formula').val(consumptionFormula);
+    			}
+    			//$('#value').val(0);
     			$modal.modal();
     			initMeterReadingValueAddValidator();
     			initMeterReadingValueAddButton();
@@ -192,12 +197,15 @@ var TabMeterReading = function () {
         assetMeterReading['meterReadingAvgValue'] = $('#meterReadingAvgValue').val();
         assetMeterReading['version'] = $('#meterReadingVersion').val();
         assetMeterReading['isMultipleMeterReading'] = $("#isMultipleMeterReading").prop("checked");
-
+        assetMeterReading['consumptionFormula'] = $("#formula").val();
+        assetMeterReading['meterReadingConsumptionValues'] = "";
+        charcterNotDefined(assetMeterReading);
         addAssetMeterReadingToList(assetMeterReading);
-
         resetAssetMeterReadingHtmlTable();
         $('#master-modal-datatable').modal('toggle');
     };
+    
+   // var 
 
     var fillAssetMeterReadingEditForm = function (assetMeterReading) {
         $('#meterReadingId').val(assetMeterReading['meterReadingId']);
@@ -212,16 +220,41 @@ var TabMeterReading = function () {
         $('#meterReadingDescription').val(assetMeterReading['meterReadingDescription']);
         $('#meterReadingAvgValue').val(assetMeterReading['meterReadingAvgValue']);
         $('#meterReadingVersion').val(assetMeterReading['version']);
-        $('#isMultipleMeterReading').val(assetMeterReading['isMultipleMeterReading']);
-        $( "#isMultipleMeterReading" ).prop( "checked", assetMeterReading['isMultipleMeterReading'] );
+        $('#isMultipleMeterReading').prop('checked',assetMeterReading['isMultipleMeterReading']);
+        $( "#formula" ).val(assetMeterReading['consumptionFormula'] );
     };
 
+    function charcterNotDefined(assetMeterReading){
+    	var consumptionFormula=assetMeterReading['consumptionFormula'];
+    	var variablels=[]
+  	
+    	for(var i=0;i<consumptionFormula.length;i++){
+    		if(isLetter(consumptionFormula.charAt(i))){
+    			for(var j=0;j<variablels.length;j++){
+    				if(consumptionFormula.charAt(i)!=variablels[j].name){
+            	    	var variable={
+            	    			index:i,
+            	    			name:consumptionFormula.charAt(i),
+            	    	}
+            	    	variablels.push(variable);
+    				}
+
+    			}
+
+    		}
+    	}
+    	assetMeterReading['consumptionVariableDTO']=variablels;
+    }
+    function isLetter(c) {
+      	  return c.toLowerCase() != c.toUpperCase();
+  }
+    
+ 
     var resetAssetMeterReadingHtmlTable = function () {
 
         if (assetMeterReadings.length > 0) {
             var row, assetMeterReading;
             $("#asset_meter_reading_tbl > tbody").html("");
-
             for (row = 0; row < assetMeterReadings.length; row++) {
                 assetMeterReading = assetMeterReadings[row];
                 var isMultipleMeterReading = assetMeterReading.isMultipleMeterReading == true ? 'checked' : '';
@@ -239,21 +272,24 @@ var TabMeterReading = function () {
                     "<input id='assetMeterReadings" + row + ".meterReadingCurrentValue' name='assetMeterReadings[" + row + "].meterReadingCurrentValue' value='" + assetMeterReading.meterReadingCurrentValue + "' type='hidden' >" +
                     "<input id='assetMeterReadings" + row + ".meterReadingAvgValue' name='assetMeterReadings[" + row + "].meterReadingAvgValue' value='" + assetMeterReading.meterReadingAvgValue + "' type='hidden' >" +
                     "<input id='assetMeterReadings" + row + ".version' name='assetMeterReadings[" + row + "].version' value='" + assetMeterReading.version + "' type='hidden' >" +
+                    "<input id='assetMeterReadings" + row + ".consumptionFormula' name='assetMeterReadings[" + row + "].consumptionFormula' value='" + assetMeterReading.consumptionFormula + "' type='hidden' >" +
+                  setMeterReadingValriableToList(row,assetMeterReading)+
                     "<td><span>" + ( row + 1 ) + "</span></td>" +
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingName + "</span></td>" +
                     "<td>" + assetMeterReading.meterReadingCurrentValue + "</td>" +
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingUnitName + "</span></td>" +
                     "<td>" +
                     "<div class='checkbox-center'>" +
-                    "<input id='isMultipleMeterReading" + row + "' name='assetMeterReadings[" + row + "].isMultipleMeterReading'  type='checkbox' " + isMultipleMeterReading + " class='grey'>" +
+                    "<input id='isMultipleMeterReading" + row + "' name='assetMeterReadings[" + row + "].isMultipleMeterReading'  type='checkbox' " + isMultipleMeterReading + " class='grey' readonly>" +
                     "</div>" +
                     "</td>"+
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingAvgValue + "</span></td>" +
+                    "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingConsumptionValues + "</span></td>" +
                     "<td class='center'>" +
                     "<div class='visible-md visible-lg hidden-sm hidden-xs'>" +
                     ButtonUtil.getCommonBtnEdit("TabMeterReading.editAssetMeterReadingModal",  assetMeterReading.meterReadingIndex) +
                 	ButtonUtil.getCommonBtnHistory("TabMeterReading.assetMeterReadingHistoryModal",  assetMeterReading.meterReadingId) +
-                    "<a onclick='TabMeterReading.addAssetMeterReadingValueModal(" + assetMeterReading.meterReadingIndex + ",\"" + assetMeterReading.meterReadingName + "\");' class='btn btn-xs btn-blue tooltips' data-placement='top' data-original-title='Add Value' >" +
+                    "<a onclick='TabMeterReading.addAssetMeterReadingValueModal(" + assetMeterReading.meterReadingIndex + ",\"" + assetMeterReading.meterReadingName +  "\",\"" + assetMeterReading.consumptionFormula +"\",\""+isMultipleMeterReading+"\");' class='btn btn-xs btn-blue tooltips' data-placement='top' data-original-title='Add Value' >" +
                     "<i class='clip-plus-circle-2' ></i></a>\n\n" +
                     ButtonUtil.getCommonBtnDelete("TabMeterReading.removeAssetMeterReading", assetMeterReading.meterReadingIndex) +
                     "</div></td></tr>";
@@ -266,6 +302,20 @@ var TabMeterReading = function () {
         }
 
     };
+    
+    
+    var setMeterReadingValriableToList=function(index,assetMeterReading){
+    	var html="";
+    	var consumptionVariables=assetMeterReading['consumptionVariableDTO'];
+        if (consumptionVariables.length > 0) {
+            var row, consumptionVariable;
+            for (row = 0; row < consumptionVariables.length; row++) {
+            	consumptionVariable = consumptionVariables[row];
+                 html = html+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"assetMeterReadingIndex' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].variable' value='" + consumptionVariable.name + "' type='hidden'>"
+            }
+        }
+        return html;
+    }
 
     var addAssetMeterReadingToList = function (assetMeterReading) {
 
@@ -302,6 +352,9 @@ var TabMeterReading = function () {
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'meterReadingAvgValue', assetMeterReading.meterReadingAvgValue);
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'version', assetMeterReading.version);
     	CustomValidation.validateFieldNull(assetMeterReadingObj, 'isMultipleMeterReading', assetMeterReading.isMultipleMeterReading);
+    	CustomValidation.validateFieldNull(assetMeterReadingObj, 'consumptionFormula', assetMeterReading.consumptionFormula);
+    	CustomValidation.validateFieldNull(assetMeterReadingObj, 'consumptionVariableDTO', assetMeterReading.consumptionVariableDTO);
+    	CustomValidation.validateFieldNull(assetMeterReadingObj, 'meterReadingConsumptionValues', assetMeterReading.meterReadingConsumptionValues);
 
     };
 
@@ -425,6 +478,7 @@ var TabMeterReading = function () {
             }
         }
     };
+    
 
     return {
     	
@@ -472,8 +526,8 @@ var TabMeterReading = function () {
             editAssetMeterReadingModal(meterReadingIndex);
         },
 
-        addAssetMeterReadingValueModal: function (meterReadingIndex, meterReadingName) {
-            addAssetMeterReadingValueModal(meterReadingIndex, meterReadingName);
+        addAssetMeterReadingValueModal: function (meterReadingIndex, meterReadingName,consumptionFormula,isMultipelMeterReading) {
+            addAssetMeterReadingValueModal(meterReadingIndex, meterReadingName,consumptionFormula,isMultipelMeterReading);
         },
 
         assetMeterReadingHistoryModal: function (meterReadingId) {

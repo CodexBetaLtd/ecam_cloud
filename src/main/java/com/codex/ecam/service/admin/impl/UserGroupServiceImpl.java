@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.SubMenu;
+import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dao.admin.UserGroupDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dto.admin.UserGroupDTO;
@@ -24,6 +26,7 @@ import com.codex.ecam.mappers.admin.UserGroupMapper;
 import com.codex.ecam.model.admin.UserGroup;
 import com.codex.ecam.model.admin.UserGroupMenu;
 import com.codex.ecam.model.admin.UserGroupPage;
+import com.codex.ecam.model.admin.UserGroupWiget;
 import com.codex.ecam.model.app.AppMenu;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.biz.business.BusinessApp;
@@ -118,8 +121,38 @@ public class UserGroupServiceImpl implements UserGroupService {
 		removeMenuAndPagePermissions(result);
 		UserGroupMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setBusiness(result);
+		setWigetList(result);
 		userGroupDao.save(result.getDomainEntity());
 		result.updateDtoIdAndVersion();
+	}
+	
+	
+	private void setWigetList(UserGroupResult result){
+		Set<UserGroupWiget> groupWigets = new HashSet<>();
+
+		if ((result.getDtoEntity().getWigets() != null)
+				&& (result.getDtoEntity().getWigets().size() > 0)) {
+
+			Set<UserGroupWiget> currentUserGroupWiget = result.getDomainEntity().getWigetList();
+
+			for (Widgets widgets : result.getDtoEntity().getWigets()) {
+				UserGroupWiget groupWiget;
+
+				if (widgets.getId() != null) {
+					groupWiget = currentUserGroupWiget.stream().filter((x) -> x.getId().equals(widgets.getId()))
+							.findAny().orElseGet(UserGroupWiget::new);
+				} else {
+					groupWiget = new UserGroupWiget();
+				}
+
+				//AssetFileMapper.getInstance().dtoToDomain(assetFileDTO, assetFile);
+				groupWiget.setUserGroup(result.getDomainEntity());
+				groupWiget.setWidgets(widgets);
+
+				groupWigets.add(groupWiget);
+			}
+		}
+		result.getDomainEntity().setWigetList(groupWigets);
 	}
 
 	private void removeMenuAndPagePermissions(UserGroupResult result) {

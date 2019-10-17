@@ -9,7 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -17,21 +17,27 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.Menu;
+import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dao.app.AppDao;
 import com.codex.ecam.dao.app.BusinessAppDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dto.app.AppDTO;
 import com.codex.ecam.dto.app.AppMenuDTO;
+import com.codex.ecam.dto.app.AppWigetDTO;
 import com.codex.ecam.dto.app.MenuDTO;
 import com.codex.ecam.dto.app.RelatedAppDTO;
+import com.codex.ecam.dto.app.WigetDTO;
 import com.codex.ecam.mappers.app.AppMapper;
 import com.codex.ecam.mappers.app.AppMenuMapper;
+import com.codex.ecam.mappers.app.AppWigetMapper;
 import com.codex.ecam.mappers.app.RelatedAppMapper;
 import com.codex.ecam.model.app.App;
 import com.codex.ecam.model.app.AppMenu;
+import com.codex.ecam.model.app.AppWiget;
 import com.codex.ecam.model.app.RelatedApp;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.biz.business.BusinessApp;
+import com.codex.ecam.model.biz.business.BusinessWiget;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.app.AppResult;
 import com.codex.ecam.service.app.api.AppService;
@@ -132,15 +138,16 @@ public class AppServiceImpl implements AppService {
 		}
 	}
 
-	private void setAppData (AppResult result) throws Exception{
+	private void setAppData(AppResult result) throws Exception {
 		setAppMenus(result);
 		setRelatedApps(result);
+		setAppWigets(result);
 	}
 
 	private void setRelatedApps(AppResult result) throws Exception {
 		Set<RelatedApp> relatedApps = new HashSet<>();
 
-		if ( (result.getDtoEntity().getRelatedApps() != null) && (result.getDtoEntity().getRelatedApps().size() > 0) ) {
+		if ((result.getDtoEntity().getRelatedApps() != null) && (result.getDtoEntity().getRelatedApps().size() > 0)) {
 
 			RelatedApp relatedApp;
 
@@ -149,7 +156,8 @@ public class AppServiceImpl implements AppService {
 				Set<RelatedApp> currentRelatedApps = result.getDomainEntity().getRelatedApps();
 
 				if ((currentRelatedApps != null) && (currentRelatedApps.size() > 0)) {
-					Optional<RelatedApp> optionalRelatedApps = currentRelatedApps.stream().filter((x) -> x.getRelatedApp().getId().equals(relatedAppDto.getRelatedAppId())).findAny();
+					Optional<RelatedApp> optionalRelatedApps = currentRelatedApps.stream()
+							.filter((x) -> x.getRelatedApp().getId().equals(relatedAppDto.getRelatedAppId())).findAny();
 					if (optionalRelatedApps.isPresent()) {
 						relatedApp = optionalRelatedApps.get();
 					} else {
@@ -178,7 +186,8 @@ public class AppServiceImpl implements AppService {
 				Set<AppMenu> currentAppMenus = result.getDomainEntity().getAppMenus();
 
 				if ((currentAppMenus != null) && (currentAppMenus.size() > 0)) {
-					Optional<AppMenu> optionalMenus = currentAppMenus.stream().filter((x) -> x.getMenu().getId().equals(appMenuDto.getMenuId())).findAny();
+					Optional<AppMenu> optionalMenus = currentAppMenus.stream()
+							.filter((x) -> x.getMenu().getId().equals(appMenuDto.getMenuId())).findAny();
 					if (optionalMenus.isPresent()) {
 						appMenu = optionalMenus.get();
 					} else {
@@ -195,9 +204,44 @@ public class AppServiceImpl implements AppService {
 		result.getDomainEntity().setAppMenus(appMenus);
 	}
 
+	private void setAppWigets(AppResult result) throws Exception {
+		Set<AppWiget> appWigets = new HashSet<>();
+
+		if ((result.getDtoEntity().getAppWigets() != null) && (result.getDtoEntity().getAppWigets().size() > 0)) {
+
+			AppWiget appWiget;
+
+			for (AppWigetDTO appWigetDTO : result.getDtoEntity().getAppWigets()) {
+
+				Set<AppWiget> currentAppWigets = result.getDomainEntity().getAppWigets();
+
+				if ((currentAppWigets != null) && (currentAppWigets.size() > 0)) {
+					Optional<AppWiget> optionalWigets = currentAppWigets.stream()
+							.filter((x) -> x.getWidgets().getId().equals(appWigetDTO.getWigetId())).findAny();
+					if (optionalWigets.isPresent()) {
+						appWiget = optionalWigets.get();
+					} else {
+						appWiget = new AppWiget();
+					}
+				} else {
+					appWiget = new AppWiget();
+				}
+				createAppWiget(appWiget, appWigetDTO, result.getDomainEntity());
+				appWigets.add(appWiget);
+			}
+		}
+
+		result.getDomainEntity().setAppWigets(appWigets);
+	}
+
 	private void createAppMenu(AppMenu appMenu, AppMenuDTO appMenuDto, App domain) throws Exception {
 		AppMenuMapper.getInstance().dtoToDomain(appMenuDto, appMenu);
 		appMenu.setApp(domain);
+	}
+
+	private void createAppWiget(AppWiget appWiget, AppWigetDTO appWigetDTO, App domain) throws Exception {
+		AppWigetMapper.getInstance().dtoToDomain(appWigetDTO, appWiget);
+		appWiget.setApp(domain);
 	}
 
 	private void createRelatedApp(RelatedApp relatedApp, RelatedAppDTO relatedAppDto, App domain) throws Exception {
@@ -212,6 +256,11 @@ public class AppServiceImpl implements AppService {
 		return createMenuDTOList(list);
 	}
 
+	public List<WigetDTO> findAllWigets() {
+		List<Widgets> list = Widgets.getWigetList();
+		return createWigetDTOList(list);
+	}
+
 	private List<MenuDTO> createMenuDTOList(List<Menu> list) {
 		List<MenuDTO> dtoList = new ArrayList<>();
 		MenuDTO dto;
@@ -219,6 +268,20 @@ public class AppServiceImpl implements AppService {
 			dto = new MenuDTO();
 			dto.setId(menu.getId());
 			dto.setName(menu.getName());
+			dtoList.add(dto);
+		}
+
+		return dtoList;
+	}
+
+	private List<WigetDTO> createWigetDTOList(List<Widgets> list) {
+		List<WigetDTO> dtoList = new ArrayList<>();
+		WigetDTO dto;
+		for (Widgets widget : list) {
+			dto = new WigetDTO();
+			dto.setId(widget.getId());
+			dto.setName(widget.getName());
+			dto.setWidget(widget);
 			dtoList.add(dto);
 		}
 
@@ -269,14 +332,16 @@ public class AppServiceImpl implements AppService {
 	}
 
 	private void addAffectedAppsToList(Integer appId, List<AppDTO> apps) throws Exception {
-		BusinessApp bApp = businessAppDao.findByAppIdAndBusinessId(appId, AuthenticationUtil.getLoginUserBusiness().getId());
+		BusinessApp bApp = businessAppDao.findByAppIdAndBusinessId(appId,
+				AuthenticationUtil.getLoginUserBusiness().getId());
 		Business business = bApp.getBusiness();
 
 		Set<RelatedApp> affectedApps = bApp.getAffectedApps();
 
-		if ( (bApp != null) && ((affectedApps != null) && (affectedApps.size() > 0)) ) {
-			for ( RelatedApp rApp : affectedApps ) {
-				Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream().filter((x) -> x.getApp().getId().equals(rApp.getApp().getId())).findAny();
+		if ((bApp != null) && ((affectedApps != null) && (affectedApps.size() > 0))) {
+			for (RelatedApp rApp : affectedApps) {
+				Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream()
+						.filter((x) -> x.getApp().getId().equals(rApp.getApp().getId())).findAny();
 				if (optionalBusinessApp.isPresent()) {
 					AppDTO dto = AppMapper.getInstance().domainToDtoForDataTable(optionalBusinessApp.get().getApp());
 					apps.add(dto);
@@ -297,7 +362,7 @@ public class AppServiceImpl implements AppService {
 	}
 
 	private void addApp(Integer appId, Business business) {
-		if ( isAppAlreadyNotInstalled(appId, business) ) {
+		if (isAppAlreadyNotInstalled(appId, business)) {
 			App app = appDao.findOne(appId);
 			installRelatedApps(business, app);
 			BusinessApp bApp = createBusinessApp(business, app);
@@ -307,7 +372,7 @@ public class AppServiceImpl implements AppService {
 	}
 
 	private void installRelatedApps(Business business, App app) {
-		for ( RelatedApp rApp : app.getRelatedApps() ) {
+		for (RelatedApp rApp : app.getRelatedApps()) {
 			addApp(rApp.getRelatedApp().getId(), business);
 		}
 	}
@@ -319,13 +384,27 @@ public class AppServiceImpl implements AppService {
 		bApp.setNoExpiry(true);
 		bApp.setExpiryDate(null);
 		bApp.setIsDeleted(false);
-
+		createBusinessAppWigets(bApp);
 		return bApp;
+	}
+
+	private void createBusinessAppWigets(BusinessApp bApp) {
+		List<AppWiget> wigets = appDao.findAllWigetByApp(bApp.getApp().getId());
+		Set<BusinessWiget> businessWigets = new HashSet<>();
+		for (AppWiget wiget : wigets) {
+			BusinessWiget businessWiget = new BusinessWiget();
+			businessWiget.setAppWiget(wiget);
+			businessWiget.setBusinessApp(bApp);
+			businessWiget.setIsDeleted(Boolean.FALSE);
+			businessWigets.add(businessWiget);
+		}
+		bApp.setBusinessWigets(businessWigets);
 	}
 
 	private boolean isAppAlreadyNotInstalled(Integer appId, Business business) {
 		if ((business.getBusinessApps() != null) && (business.getBusinessApps().size() > 0)) {
-			Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream().filter((x) -> x.getApp().getId() == appId).findAny();
+			Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream()
+					.filter((x) -> x.getApp().getId() == appId).findAny();
 			if (optionalBusinessApp.isPresent()) {
 				return false;
 			}
@@ -346,17 +425,21 @@ public class AppServiceImpl implements AppService {
 	}
 
 	private void removeApp(Integer appId, Business business) {
-		Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream().filter((x) -> x.getApp().getId() == appId).findAny();
-		if (optionalBusinessApp.isPresent()) {
-			removeRelatedApps(business, optionalBusinessApp.get());
-			businessAppDao.delete(optionalBusinessApp.get());
-			logger.info("Uninstall App : " + optionalBusinessApp.get().getApp().getName() + " Successfully");
+		if(business.getBusinessApps().size()>0){
+			Optional<BusinessApp> optionalBusinessApp = business.getBusinessApps().stream()
+					.filter((x) -> x.getApp().getId() == appId).findAny();
+			if (optionalBusinessApp.isPresent()) {
+				removeRelatedApps(business, optionalBusinessApp.get());
+				businessAppDao.delete(optionalBusinessApp.get());
+				logger.info("Uninstall App : " + optionalBusinessApp.get().getApp().getName() + " Successfully");
+			}
 		}
+
 	}
 
 	private void removeRelatedApps(Business business, BusinessApp businessApp) {
 		if ((businessApp.getAffectedApps() != null) && (businessApp.getAffectedApps().size() > 0)) {
-			for ( RelatedApp app : businessApp.getAffectedApps()) {
+			for (RelatedApp app : businessApp.getAffectedApps()) {
 				removeApp(app.getApp().getId(), business);
 			}
 		}
@@ -366,6 +449,28 @@ public class AppServiceImpl implements AppService {
 	public List<AppDTO> findAllApps() throws Exception {
 		List<App> apps = appDao.findAllApps();
 		return AppMapper.getInstance().domainToDTOList(apps);
+	}
+
+	@Override
+	public List<WigetDTO> findAllWigetByUserLevel() throws Exception {
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			return findAllWigets();
+		} else {
+			return getWigetList(
+					businessAppDao.findByWigetBusinessId(AuthenticationUtil.getLoginUserBusiness().getId()));
+		}
+	}
+
+	private List<WigetDTO> getWigetList(List<BusinessWiget> businessWigets) {
+		List<WigetDTO> wigetDTOs = new ArrayList<>();
+		for (BusinessWiget wiget : businessWigets) {
+			WigetDTO dto = new WigetDTO();
+			dto.setId(wiget.getAppWiget().getWidgets().getId());
+			dto.setName(wiget.getAppWiget().getWidgets().getName());
+			dto.setWidget(wiget.getAppWiget().getWidgets());
+			wigetDTOs.add(dto);
+		}
+		return wigetDTOs;
 	}
 
 }

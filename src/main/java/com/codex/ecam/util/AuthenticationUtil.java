@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.codex.ecam.constants.SubMenu;
 import com.codex.ecam.constants.UserLevel;
+import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.mappers.asset.AssetMapper;
 import com.codex.ecam.model.admin.User;
@@ -26,6 +27,7 @@ import com.codex.ecam.model.admin.UserSiteGroup;
 import com.codex.ecam.model.app.AppMenu;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.biz.business.BusinessApp;
+import com.codex.ecam.model.biz.business.BusinessWiget;
 import com.codex.ecam.security.CurrentUser;
 
 public class AuthenticationUtil {
@@ -35,7 +37,7 @@ public class AuthenticationUtil {
 	public final static String SUB_MENU_PREFIX = "SUB_MENU_";
 
 	public final static String MENU_PREFIX = "MENU_";
-
+	
 	public static User TRIGGER_USER = null;
 
 	public static CurrentUser getCurrentUser() {
@@ -74,7 +76,8 @@ public class AuthenticationUtil {
 				for (SubMenu subMenu : SubMenu.getSubMenuByMenu(aMenu.getMenu())) {
 					authorities.add( new SimpleGrantedAuthority(SUB_MENU_PREFIX + subMenu.getId()) );
 				}
-			}
+			}			
+			setBusinessuserWigetPermision(bApp,authorities);
 		}
 		replaceCurrentAuthorities(authorities);
 	}
@@ -99,6 +102,12 @@ public class AuthenticationUtil {
 		replaceCurrentAuthorities(authorities);
 	}
 
+
+	private static void setBusinessuserWigetPermision(BusinessApp bApp,Set<GrantedAuthority> authorities){
+		for(BusinessWiget businessWiget:bApp.getBusinessWigets()){
+				authorities.add( new SimpleGrantedAuthority(Widgets.getWigetById(businessWiget.getAppWiget().getWidgets().getId()).toString()) );
+		}
+	}
 	public static Boolean isAuthUserAdminLevel() {
 		return getAuthenticatedUser().getUserLevel().equals(UserLevel.ADMIN_LEVEL);
 	}

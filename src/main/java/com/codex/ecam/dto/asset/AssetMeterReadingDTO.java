@@ -1,5 +1,8 @@
 package com.codex.ecam.dto.asset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.codex.ecam.dto.BaseDTO;
 
 public class AssetMeterReadingDTO extends BaseDTO {
@@ -20,6 +23,11 @@ public class AssetMeterReadingDTO extends BaseDTO {
 	private Double meterReadingAvgValue = 0.00;
 	
 	private Boolean isMultipleMeterReading = Boolean.FALSE;
+	
+	private String consumptionFormula;
+	private String meterReadingConsumptionValues;
+	
+	private List<AssetMeterReadingConsumptionVariableDTO> consumptionVariableDTO=new ArrayList<>();
 
 	public String getMeterReadingName() {
 		return meterReadingName;
@@ -123,6 +131,30 @@ public class AssetMeterReadingDTO extends BaseDTO {
 
 	public void setIsMultipleMeterReading(Boolean isMultipleMeterReading) {
 		this.isMultipleMeterReading = isMultipleMeterReading;
+	}
+
+	public String getConsumptionFormula() {
+		return consumptionFormula;
+	}
+
+	public void setConsumptionFormula(String consumptionFormula) {
+		this.consumptionFormula = consumptionFormula;
+	}
+
+	public List<AssetMeterReadingConsumptionVariableDTO> getConsumptionVariableDTO() {
+		return consumptionVariableDTO;
+	}
+
+	public void setConsumptionVariableDTO(List<AssetMeterReadingConsumptionVariableDTO> consumptionVariableDTO) {
+		this.consumptionVariableDTO = consumptionVariableDTO;
+	}
+
+	public String getMeterReadingConsumptionValues() {
+		return meterReadingConsumptionValues;
+	}
+
+	public void setMeterReadingConsumptionValues(String meterReadingConsumptionValues) {
+		this.meterReadingConsumptionValues = meterReadingConsumptionValues;
 	}
 
 	
