@@ -47,7 +47,9 @@ public enum SubMenu {
 	
 	WEARHOUSE(31, Menu.BIZ, "Warehouse"),
 	
-	WIDGET(32, Menu.DASHBOARD, "Dashboard");
+	WIDGET(32, Menu.DASHBOARD, "Dashboard"),
+	
+	MRN(32, Menu.INVENTORY, "MRN");
 
 
 	private Integer id;

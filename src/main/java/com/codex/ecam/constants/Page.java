@@ -76,7 +76,10 @@ public enum Page {
 	WEARHOUSE_ADD(50,SubMenu.WEARHOUSE, "Warehouse Add Page"),
 	WEARHOUSE_VIEW(51, SubMenu.WEARHOUSE,"Warehouse View Page"),
 	
-	DASHBOARD_VIEW(52, SubMenu.WIDGET,"Dashboard View");
+	DASHBOARD_VIEW(52, SubMenu.WIDGET,"Dashboard View"),
+	
+	MRN_ADD(53,SubMenu.MRN, "MRN Add Page"),
+	MRN_VIEW(54, SubMenu.MRN,"MRN View Page");
 
 	private Integer id;
 	private String name;
