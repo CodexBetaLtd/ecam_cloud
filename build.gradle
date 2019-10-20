@@ -11,6 +11,7 @@ buildscript {
 
 apply plugin: "java"
 apply plugin: "eclipse"
+apply plugin: 'idea'
 apply plugin: "war"
 apply plugin: "com.bmuschko.tomcat"
 apply plugin: "nebula.provided-base"

@@ -481,9 +481,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseOrderDTO purchaseOrderDTO;
         try {
 			purchaseOrderDTO = findById(id);
-			PurchaseOrderStatus preStaus=purchaseOrderDTO.getPurchaseOrderstatus();
+//			PurchaseOrderStatus preStaus=purchaseOrderDTO.getPurchaseOrderstatus();
 			purchaseOrderDTO.setPurchaseOrderstatus(status);
-			PurchaseOrderStatus currentStatus=purchaseOrderDTO.getPurchaseOrderstatus();
+//			PurchaseOrderStatus currentStatus=purchaseOrderDTO.getPurchaseOrderstatus();
 			update(purchaseOrderDTO);
 			//sendstatusEmail(preStaus,currentStatus);
 

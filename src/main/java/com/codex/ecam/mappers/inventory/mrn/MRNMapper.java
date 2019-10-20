@@ -2,7 +2,6 @@ package com.codex.ecam.mappers.inventory.mrn;
 
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.mappers.GenericMapper;
-import com.codex.ecam.mappers.inventory.aod.AODItemMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
 
 public class MRNMapper extends GenericMapper<MRN, MRNDTO> {
@@ -21,7 +20,8 @@ public class MRNMapper extends GenericMapper<MRN, MRNDTO> {
     @Override
     public MRNDTO domainToDto(MRN domain) throws Exception {
     	MRNDTO dto = new MRNDTO();
-/*        dto.setId(domain.getId());
+    	/*      
+    	dto.setId(domain.getId());
         dto.setVersion(domain.getVersion());
         dto.setMrnNo(domain.getMrnNo()); 
         dto.setDate(domain.getDate());

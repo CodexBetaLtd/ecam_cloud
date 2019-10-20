@@ -376,22 +376,22 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
-	public List<SupplierDTO> findAllSupplierByUserLevel() {
-		Iterable<Supplier> suppliers = null;
-	if (AuthenticationUtil.isAuthUserAdminLevel()) {
-		suppliers = supplierDao.findAll();
-		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			suppliers = supplierDao.findAll( getSystemUserBusinessSpecification(AuthenticationUtil.getLoginUserBusiness().getId()));
-		} else {
-			suppliers = supplierDao.findAll(getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
-		}
+	public List<SupplierDTO> findAllSupplierByUserLevel() {		
 		List<SupplierDTO> supplierDTOs = null;
 		try {
+			Iterable<Supplier> suppliers = null;
+			if (AuthenticationUtil.isAuthUserAdminLevel()) {
+				suppliers = supplierDao.findAll();
+			} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+				suppliers = supplierDao.findAll( getSystemUserBusinessSpecification(AuthenticationUtil.getLoginUserBusiness().getId()));
+			} else {
+				suppliers = supplierDao.findAll(getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
+			}			
 			supplierDTOs = SupplierMapper.getInstance().domainToDTOList(suppliers);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return supplierDTOs;
 	}
 

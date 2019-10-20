@@ -49,7 +49,6 @@ public class Supplier extends BaseModel {
 	@Column(name="code")
 	private String code;
 
-
 	@Column(name="fax")
 	private String fax;
 
@@ -237,9 +236,5 @@ public class Supplier extends BaseModel {
 	public void setWebSite(String webSite) {
 		this.webSite = webSite;
 	}
-
-
-
-
 
 }
