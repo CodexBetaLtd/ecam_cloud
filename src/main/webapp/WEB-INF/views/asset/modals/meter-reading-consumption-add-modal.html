@@ -3,15 +3,15 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title">Meter Reading Consumption</h4>
+    <h4 class="modal-title">Meter Reading Variable</h4>
 </div>
 <div class="modal-body">
 
-	<form id="meter-reading-consumption-add-frm">
+	<form id="meter-reading-consumption-variable-add-frm">
 
-	    <input type="hidden" id="cosumptionId">
-	    <input type="hidden" id="cosumption_index">
-	    <input type="hidden" id="cosumptionVersion">
+	    <input type="hidden" id="variableId">
+	    <input type="hidden" id="variableIndex">
+	    <input type="hidden" id="variableVersion">
 	    <input type="hidden" id="meter_reading_value_id">
 	
 	    <div class="row">
@@ -22,17 +22,21 @@
 	            </div>
 	        </div>
 	        <div class="col-md-6">
-	            <div class="form-group">
-	                <label class="control-label">Consumption Value</label>
-	                <input id="consumptionValue" name="consumptionValue" type="text" placeholder="Please Insert the Value" class="form-control" >
-	            </div>
+	                <div class="form-group">
+	                    <label class="control-label"> Meter Reading Unit <span class="symbol required"></span></label>
+	                    <select id="meterReadingUnitIdForConsumption" name="meterReadingUnitIdForConsumption" class="search-select" style="width: 100%;">
+	                        <option value="">&nbsp;</option>
+	                        <option th:each="meterReadingUnit : ${meterReadingUnits}" th:value="${meterReadingUnit.id}" th:text="${meterReadingUnit.symbol}">
+	                        </option>
+	                    </select>
+	                </div>
 	        </div>
 	    </div>
     </form>
 </div>
 <div class="modal-footer">
     <button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
-    <button type="button" class="btn btn-blue btn-sm" id="btn-add-meter-reading-consumption" > <i class="clip-checkmark-circle-2"></i> Add
+    <button type="button" class="btn btn-blue btn-sm" id="btn-add-meter-reading-consumption-variable" > <i class="clip-checkmark-circle-2"></i> Add
     </button>
 </div>
 

@@ -33,6 +33,9 @@ public class AssetMeterReadingFormulaValue extends BaseModel {
 	
 	@Column(name = "value")
 	private Double value;
+	
+	@Column(name = "meter_reading_index")
+	private Integer meterReadingIndex;
 
 	public Integer getId() {
 		return id;
@@ -65,6 +68,14 @@ public class AssetMeterReadingFormulaValue extends BaseModel {
 
 	public void setAssetMeterReadingFormulaVariable(AssetMeterReadingFormulaVariable assetMeterReadingFormulaVariable) {
 		this.assetMeterReadingFormulaVariable = assetMeterReadingFormulaVariable;
+	}
+
+	public Integer getMeterReadingIndex() {
+		return meterReadingIndex;
+	}
+
+	public void setMeterReadingIndex(Integer meterReadingIndex) {
+		this.meterReadingIndex = meterReadingIndex;
 	}
 
 

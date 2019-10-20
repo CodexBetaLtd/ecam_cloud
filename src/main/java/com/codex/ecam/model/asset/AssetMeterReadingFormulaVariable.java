@@ -12,6 +12,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.codex.ecam.model.BaseModel;
+import com.codex.ecam.model.admin.MeterReadingUnit;
 @Entity
 @Table(name = "tbl_asset_meter_reading_formula_variable")
 public class AssetMeterReadingFormulaVariable extends BaseModel {
@@ -26,6 +27,10 @@ public class AssetMeterReadingFormulaVariable extends BaseModel {
 	@JoinColumn(name = "meter_reading_id")
 	@ManyToOne(targetEntity = AssetMeterReading.class, fetch = FetchType.LAZY)
 	private AssetMeterReading assetMeterReading;
+	
+	@JoinColumn(name = "meter_reading_unit_id")
+	@ManyToOne(targetEntity = MeterReadingUnit.class, fetch = FetchType.LAZY)
+	private MeterReadingUnit meterReadingUnit;
 
 	@Column(name = "variable_name")
 	private String variableName;
@@ -53,6 +58,14 @@ public class AssetMeterReadingFormulaVariable extends BaseModel {
 
 	public void setVariableName(String variableName) {
 		this.variableName = variableName;
+	}
+
+	public MeterReadingUnit getMeterReadingUnit() {
+		return meterReadingUnit;
+	}
+
+	public void setMeterReadingUnit(MeterReadingUnit meterReadingUnit) {
+		this.meterReadingUnit = meterReadingUnit;
 	}
 
 

@@ -28,7 +28,10 @@ var TabMeterReading = function () {
 		
 	};
 	
+	let scope = {} //define scope for evaluate equation
+	
 	var initMeterReadingValueAddButton = function () {
+		initScope();
 		
 		$('#btn-add-meter-reading-value').on('click', function () {
 			TabMeterReading.addAssetMeterReadingValue();
@@ -37,11 +40,14 @@ var TabMeterReading = function () {
 		$('#btn-new-meter-reading-consumption').on('click', function () {			
 			TabMeterReading.addAssetMeterReadingConsumptionModal();			
 	    });	
-		$( "#formula" ).focusout(function() {
-			MeterReadingConsumptionAddModal.checkParamId();
+		
+		$( ".evaluate" ).focusout(function() {
+			getValueList(this)
+			checkParamId();			
 		})
 		
 	};
+	 
 
 	var initCheckBoxes = function () {
         $('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
@@ -70,6 +76,7 @@ var TabMeterReading = function () {
             $modal.load(url, '', function () {
                 fillAssetMeterReadingEditForm(getAssetMeterReadingByIndex(meterReadingIndex));
                 MeterReadingAddModal.init();
+                MeterReadingConsumptionVariableAddModal.loadMeterReadingVariable(getAssetMeterReadingByIndex(meterReadingIndex).consumptionVariableDTO)
                 $modal.modal();
             });
         }, 1000);
@@ -85,6 +92,7 @@ var TabMeterReading = function () {
                 var url = '../../asset/assetmeterreadinghistorymodelview';
                 $modal.load(url, '', function () {
                     MeterReadingHistoryModel.init(meterReadingId, "../../restapi/assetmeterreadingvalue/historybymeterreading/");
+                    MeterReadingConsumptionVariableAddModal.resetVariableTable();
                     $modal.modal();
                 });
             }, 1000);
@@ -102,16 +110,44 @@ var TabMeterReading = function () {
     			
     			if(isMultipelMeterReading){
     				$('#formula').val(consumptionFormula);
+    				setMeterReadingVariableList(meterReadingIndex)
     			}
     			//$('#value').val(0);
     			$modal.modal();
     			initMeterReadingValueAddValidator();
     			initMeterReadingValueAddButton();
-    			MeterReadingConsumptionAddModal.resetConsumptionTable();
+    			//MeterReadingConsumptionAddModal.resetConsumptionTable();
     		});
     	}, 1000);
     };
-    
+    var setMeterReadingVariableList=function(meterReadingIndex){
+    	var meterReadingVariableList=assetMeterReadings[meterReadingIndex].consumptionVariableDTO;
+    	if (meterReadingVariableList.length > 0) {
+			var row, meterReadingVariable;
+			$("#meter-reading-consumption-value-tbl> tbody").html("");
+			for (row = 0; row < meterReadingVariableList.length; row++) {
+				meterReadingVariable = meterReadingVariableList[row];
+				var html = "<tr id='consumption_row_"+row+ "' >"
+				+ "<input id='meterReadingVariableList_"+ row+ "__variableId'  value='"+ meterReadingVariable.variableId+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitName'  value='"+ meterReadingVariable.meteReadingUnitName+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitId'  value='"+ meterReadingVariable.meteReadingUnitId+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_variableName'  value='"+ meterReadingVariable.variable+ "' type='hidden' >"
+						+ "<td>"
+						+ meterReadingVariable.variable 
+						+ "</td>"
+						+ "<td>"
+						+ "<input id='meterReadingVariableList_"+ row+ "_variableValue' class='evaluate' value='' type='text' >"
+						+ "</td>"
+						+ "</tr>";
+				$('#meter-reading-consumption-value-tbl > tbody:last-child')
+						.append(html);
+			}
+		} else {
+			$("#meter-reading-consumption-value-tbl > tbody")
+					.html(
+							"<tr><td colspan='6' align='center'>Please Add Asset Meter Reading for the Consumption.</td></tr>");
+		}
+    }
     var addAssetMeterReadingConsumptionModal = function () {
         var $modal = $('#meter-reading-consumption-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
@@ -199,13 +235,26 @@ var TabMeterReading = function () {
         assetMeterReading['isMultipleMeterReading'] = $("#isMultipleMeterReading").prop("checked");
         assetMeterReading['consumptionFormula'] = $("#formula").val();
         assetMeterReading['meterReadingConsumptionValues'] = "";
-        charcterNotDefined(assetMeterReading);
+        assetMeterReading['consumptionVariableDTO'] = [];
+        addMeterReadingConunsumptionVariables(assetMeterReading);
         addAssetMeterReadingToList(assetMeterReading);
         resetAssetMeterReadingHtmlTable();
         $('#master-modal-datatable').modal('toggle');
     };
     
-   // var 
+    
+    var addMeterReadingConunsumptionVariables=function(assetMeterReading){
+    	var lenght=$("#meter-reading-variable-tbl > tbody > tr").length;
+    	for(var i=0;i<lenght;i++){
+    		var meterReadingConsumptionVariable={};
+    		meterReadingConsumptionVariable['id'] = $('#meterReadingVariableList_'+i+'_id').val();
+    		meterReadingConsumptionVariable['variable'] = $('#meterReadingVariableList_'+i+'_variableName').val();
+    		meterReadingConsumptionVariable['version'] = $('#meterReadingVariableList_'+i+'_version').val();
+    		meterReadingConsumptionVariable['meteReadingUnitName'] = $('#meterReadingVariableList_'+i+'_meteReadingUnitName').val();
+    		meterReadingConsumptionVariable['meteReadingUnitId'] = $('#meterReadingVariableList_'+i+'_meteReadingUnitId').val();
+    		assetMeterReading['consumptionVariableDTO'].push(meterReadingConsumptionVariable);
+    	}
+    }
 
     var fillAssetMeterReadingEditForm = function (assetMeterReading) {
         $('#meterReadingId').val(assetMeterReading['meterReadingId']);
@@ -307,11 +356,15 @@ var TabMeterReading = function () {
     var setMeterReadingValriableToList=function(index,assetMeterReading){
     	var html="";
     	var consumptionVariables=assetMeterReading['consumptionVariableDTO'];
+    	console.log(consumptionVariables)
         if (consumptionVariables.length > 0) {
             var row, consumptionVariable;
             for (row = 0; row < consumptionVariables.length; row++) {
             	consumptionVariable = consumptionVariables[row];
-                 html = html+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"assetMeterReadingIndex' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].variable' value='" + consumptionVariable.name + "' type='hidden'>"
+            	html = html+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"variable' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].variable' value='" + consumptionVariable.variable + "' type='hidden'>"
+            	+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"meteReadingUnitId' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].meteReadingUnitId' value='" + consumptionVariable.meteReadingUnitId + "' type='hidden'>"
+            	+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"version' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].version' value='" + consumptionVariable.version + "' type='hidden'>"
+                +"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"id' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].id' value='" + consumptionVariable.id + "' type='hidden'>"
             }
         }
         return html;
@@ -409,11 +462,11 @@ var TabMeterReading = function () {
     	}        
     };
     var addMeterReadingConunsumption=function(assetMeterReadingValue){
-    	var lenght=$("#meter-reading-consumption-tbl > tbody > tr").length;
+    	var lenght=$("#meter-reading-consumption-value-tbl > tbody > tr").length;
     	for(var i=0;i<lenght;i++){
     		var meterReadingConsumption={};
-    		meterReadingConsumption['variable'] = $('#meterReadingConsumptionList_'+i+'_variable').val();
-    		meterReadingConsumption['value'] = $('#meterReadingConsumptionList_'+i+'_value').val();
+    		meterReadingConsumption['variable'] = $('#meterReadingVariableList_'+i+'_variableName').val();
+    		meterReadingConsumption['value'] = $('#meterReadingVariableList_'+i+'_variableValue').val();
     		assetMeterReadingValue['valueConsumptionDTO'].push(meterReadingConsumption);
     	}
     }
@@ -471,6 +524,26 @@ var TabMeterReading = function () {
         }
     }
    
+    
+    var checkParamId=function(){   
+        var entry=$("#formula").val();
+        var value=0; 
+   		value=math.evaluate(entry, scope);
+    	$("#value").val(value)
+    }
+    
+    var initScope=function(){
+    	   var entry=$("#formula").val();
+        for(var i=0;i<entry.length;i++){
+        	if(isLetter(entry.charAt(i))){
+        	scope[entry.charAt(i)]=0
+        	}
+        }
+    }
+    
+    var getValueList=function(obj){
+    	scope[obj.parentNode.previousSibling.childNodes[0].data]=obj.value
+    }
     var getAssetMeterReadingByIndex = function (meterReadingIndex) {
         for (var i = 0; i < assetMeterReadings.length; i++) {
             if (assetMeterReadings[i].meterReadingIndex == meterReadingIndex) {

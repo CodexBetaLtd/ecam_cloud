@@ -47,6 +47,13 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 			for (AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable : domain.getFormulaVariables()) {
 				AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO=new AssetMeterReadingConsumptionVariableDTO();
 				consumptionVariableDTO.setVariable(assetMeterReadingConsumptionVariable.getVariableName());
+				consumptionVariableDTO.setId(assetMeterReadingConsumptionVariable.getId());
+				consumptionVariableDTO.setVersion(assetMeterReadingConsumptionVariable.getVersion());
+				if(assetMeterReadingConsumptionVariable.getMeterReadingUnit()!=null){
+					consumptionVariableDTO.setMeteReadingUnitId(assetMeterReadingConsumptionVariable.getMeterReadingUnit().getId());
+					consumptionVariableDTO.setMeteReadingUnitName(assetMeterReadingConsumptionVariable.getMeterReadingUnit().getSymbol());
+				}
+
 				dto.getConsumptionVariableDTO().add(consumptionVariableDTO);
 			}
 		}

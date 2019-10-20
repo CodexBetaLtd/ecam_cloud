@@ -1,19 +1,28 @@
-var MeterReadingConsumptionAddModal = function () {
+var MeterReadingConsumptionVariableAddModal = function () {
 	
 	var initButtons = function () {		
-		$('#btn-add-meter-reading-consumption').on('click', function () {
-			MeterReadingConsumptionAddModal.addAssetMeterReadingConsumption();			
+		$('#btn-add-meter-reading-consumption-variable').on('click', function () {
+			MeterReadingConsumptionVariableAddModal.addAssetMeterReadingConsumption();			
 	    });	
 	};	
-	
+	var runMeterReadingUnitSelect = function() {
+
+		$("#meterReadingUnitIdForConsumption").select2({
+			placeholder : "Select a Meter Reading Unit",
+			allowClear : true,
+			dropdownParent : $("#meter-reading-consumption-variable-modal")
+		});
+	};
 	var addAssetMeterReadingConsumption = function() {		
-		if ( $('#meter-reading-consumption-add-frm').valid() ) {
-			MeterReadingConsumptionAddModal.addMeterReadingConsumption();	
+		if ( $('#meter-reading-consumption-variable-add-frm').valid() ) {
+			MeterReadingConsumptionVariableAddModal.addMeterReadingConsumption();	
 		}		
-	};	
+	};
+	
+
     
     var initValidator = function () {
-        var form = $('#meter-reading-consumption-add-frm');
+        var form = $('#meter-reading-consumption-variable-add-frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
         form.validate({
@@ -36,9 +45,8 @@ var MeterReadingConsumptionAddModal = function () {
                     required: true,
                     maxlength:1
                 },
-                consumptionValue: {
+                meterReadingUnitIdForConsumption: {
                     required: true,
-                    number:true
                 }
             },
             messages: {
@@ -46,10 +54,9 @@ var MeterReadingConsumptionAddModal = function () {
                     required: "Please Specify Varible Name",
                     maxlength:"Maximum limit exceed"	
             	},
-            	consumptionValue: {
-                    required: "Please Insert Consumption Value",
-                    number:"Please Insert Numeric Value"
-            	}
+            	meterReadingUnitIdForConsumption:  "Please Insert Meter Reading Unit",
+        
+            	
             },
             invalidHandler: function (event, validator) { //display error alert on form submit
                 successHandler.hide();
@@ -75,85 +82,79 @@ var MeterReadingConsumptionAddModal = function () {
     };
     
     let scope = {}
-   
     
-    var resetConsumptionTable= function () {
-        if (meterReadingConsumptionList.length > 0) {
-            var row, meterReadingConsumption;
-            $("#meter-reading-consumption-tbl > tbody").html("");
-            for (row = 0; row < meterReadingConsumptionList.length; row++) {
-            	meterReadingConsumption = meterReadingConsumptionList[row];
-                var html = "<tr id='consumption_row_" + row + "' >" +
-                "<input id='meterReadingConsumptionList_" + row + "_variable'  value='" + meterReadingConsumption.variable + "' type='hidden' >" +
-                "<input id='meterReadingConsumptionList_" + row + "_value'  value='" + meterReadingConsumption.value + "' type='hidden' >" +
-                "<input id='meterReadingConsumptionList_" + row + "_meterReadingIndex'  value='" + meterReadingConsumption.meterReadingIndex + "' type='hidden' >" +
-                "<td><span>" + ( row + 1 ) + "</span></td>" +
-                "<td>" +meterReadingConsumption.variable+"</td>"+
-                "<td>" +meterReadingConsumption.value+"</td>"+
-                "<td>" +
-	                "<div class='visible-md visible-lg hidden-sm hidden-xs'>" +
-	                	ButtonUtil.getCommonBtnDelete("MeterReadingConsumptionAddModal.removeMeterReadingConsumption", row) +
-	                "</div>" +
-                "</td>" +
-                "</tr>";
-            $('#meter-reading-consumption-tbl > tbody:last-child').append(html);
-            initScope();
-            getValueList();
-            checkParamId();
-            $("consumptionList").val(meterReadingConsumptionList) ;
-            }
-        } else {
-        	$('#formula').prop('readonly', true);
-            $("#meter-reading-consumption-tbl  > tbody").html("<tr><td colspan='6' align='center'>Please Add Asset Meter Reading for the Consumption.</td></tr>");
-        }
-       
+	var meterReadingVariableList = [];
+	var resetVariableTable = function() {
+		if (meterReadingVariableList.length > 0) {
+			var row, meterReadingVariable;
+			$("#meter-reading-variable-tbl > tbody").html("");
+			for (row = 0; row < meterReadingVariableList.length; row++) {
+				meterReadingVariable = meterReadingVariableList[row];
+				var html = "<tr id='consumption_row_"+ row+ "' >"+ "<input id='meterReadingVariableList_"+ row+ "_variableName'  value='"+ meterReadingVariable.variable
+						+ "' type='hidden' >"+ "<input id='meterReadingVariableList_"+ row+ "_version'  value='"+ meterReadingVariable.version+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitName'  value='"+ meterReadingVariable.meteReadingUnitName+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitId'  value='"+ meterReadingVariable.meteReadingUnitId+ "' type='hidden' >"
+						+ "<input id='meterReadingVariableList_"+ row+ "_id'  value='"+ meterReadingVariable.id+ "' type='hidden' >"
+						+ "<td><span>"+ (row + 1)+ "</span></td>"
+						+ "<td>"+ meterReadingVariable.variable+ "</td>"
+						+ "<td>"+ meterReadingVariable.meteReadingUnitName+ "</td>"
+						+ "<td>"
+						+ "<div class='visible-md visible-lg hidden-sm hidden-xs'>"
+						+ ButtonUtil.getCommonBtnDelete("MeterReadingConsumptionVariableAddModal.removeMeterReadingConsumptionVariable",row) 
+						+"</div>" 
+						+ "</td>"
+						+ "</tr>";
+				$('#meter-reading-variable-tbl > tbody:last-child').append(html);
+			}
+		} else {
+			$("#meter-reading-variable-tbl  > tbody")
+					.html(
+							"<tr><td colspan='6' align='center'>Please Define Variable for Meter reading.</td></tr>");
+		}
 
-    };    
-    var meterReadingConsumptionList=[];
-
-
+	};
+	
     var addMeterReadingConsumption=function(){
-	  var meterReadingConsumption={
-			  id:$('#cosumptionId').val(),
-			  index:meterReadingConsumptionList.length,
-			  version:$('#cosumptionVersion').val(),
-			  variable:$('#consumptionVariable').val(),
-			  value:$('#consumptionValue').val(),
-			  meterReadingIndex:$('#meterReadingIndex').val(),
-	  }
-	  if(checkVariableDuplicate(meterReadingConsumption)){
-		  meterReadingConsumptionList.push(meterReadingConsumption);
-		  $('#meter-reading-consumption-modal').modal("toggle")
-		  resetConsumptionTable();  
-	  }else{
-		  alert("Variable Name Already Assinged");
-	  }
+		var meterVariable = {
+				id : $('#variableId').val(),
+				index : meterReadingVariableList.length,
+				version : $('#variableVersion').val(),
+				variable : $('#consumptionVariable').val(),
+				meteReadingUnitId : $('#meterReadingUnitIdForConsumption').val(),
+				meteReadingUnitName : $('#meterReadingUnitIdForConsumption option:selected').text()
+			}
+		
+		if(!isVariableAlreadyDefined(meterVariable)){
+			meterReadingVariableList.push(meterVariable);
+			 $('#meter-reading-consumption-variable-modal').modal('toggle');
+			resetVariableTable()
+		}else{
+			alert("Variable Already defined")
+		}
+    }
+    
+    var loadMeterReadingVariable=function(variables){
+    	meterReadingVariableList=variables;
+    	resetVariableTable();
+    }
+    
+    var isVariableAlreadyDefined=function(consumptionVariable){
+        for (var i = 0; i < meterReadingVariableList.length; i++) {
+        	if(consumptionVariable.variable==meterReadingVariableList[i].variable){
+            	return true;
+        	}
+        }
+    	return false;
 
     }
-    var checkVariableDuplicate=function(meterReadingConsumption){
-        for (var i = 0; i < meterReadingConsumptionList.length; i++) {
-            if (meterReadingConsumptionList[i].variable == meterReadingConsumption.variable) {
-            	return false;
-            }
+
+    var removeMeterReadingConsumptionVariable=function(index){
+        for (var i = 0; i < meterReadingVariableList.length; i++) {
+        	if(index==i){
+            	meterReadingVariableList.splice(i, 1);
+        	}
         }
-    	return true;
-
-    }
-    var removeMeterReadingConsumption=function(index){
-        var entry=$("#formula").val();
-        for (var i = 0; i < meterReadingConsumptionList.length; i++) {
-            if (meterReadingConsumptionList[i].index == index) {
-            	meterReadingConsumptionList.splice(i, 1);
-
-     /*       	if(!entry.includes(meterReadingConsumptionList[i].variable)){
-                	meterReadingConsumptionList.splice(i, 1);
-            	}else{
-            		alert("Please remove variable from formula before variable definition remove")
-            	}*/
-            }
-
-        }
-        resetConsumptionTable();
+        resetVariableTable();
     }
 
     var checkParamId=function(){   
@@ -205,7 +206,8 @@ var MeterReadingConsumptionAddModal = function () {
         init: function () {
         	initButtons();
         	initValidator();
-        	resetConsumptionTable();
+        	runMeterReadingUnitSelect();
+        	resetVariableTable();
         },
         
         addAssetMeterReading: function () {
@@ -220,11 +222,17 @@ var MeterReadingConsumptionAddModal = function () {
         checkParamId:function(){
         	checkParamId();
         },
-        removeMeterReadingConsumption:function(index){
-        	removeMeterReadingConsumption(index);
+        removeMeterReadingConsumptionVariable:function(index){
+        	removeMeterReadingConsumptionVariable(index);
         },
         resetConsumptionTable:function(){
         	resetConsumptionTable();
+        },
+        resetVariableTable:function(){
+        	resetVariableTable()
+        },
+        loadMeterReadingVariable:function(variables){
+        	loadMeterReadingVariable(variables)
         }
         
    };
