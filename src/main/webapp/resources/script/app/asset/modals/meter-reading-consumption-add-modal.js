@@ -25,6 +25,9 @@ var MeterReadingConsumptionVariableAddModal = function () {
         var form = $('#meter-reading-consumption-variable-add-frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
+        jQuery.validator.addMethod("alphanumeric", function(value, element) {
+            return this.optional(element) || /^\w+$/i.test(value);
+        }, "Letters, numbers, and underscores only please");
         form.validate({
             errorElement: "span", // contain the error msg in a span tag
             errorClass: 'help-block',
@@ -43,7 +46,7 @@ var MeterReadingConsumptionVariableAddModal = function () {
             rules: {
             	consumptionVariable: {
                     required: true,
-                    maxlength:1
+                    alphanumeric:true
                 },
                 meterReadingUnitIdForConsumption: {
                     required: true,
@@ -52,7 +55,7 @@ var MeterReadingConsumptionVariableAddModal = function () {
             messages: {
             	consumptionVariable:{ 
                     required: "Please Specify Varible Name",
-                    maxlength:"Maximum limit exceed"	
+                    alphanumeric:"Please enter alphanumeric chanters only"	
             	},
             	meterReadingUnitIdForConsumption:  "Please Insert Meter Reading Unit",
         
@@ -156,6 +159,14 @@ var MeterReadingConsumptionVariableAddModal = function () {
         }
         resetVariableTable();
     }
+    
+    var removeMeterReadingAllConsumptionVariable=function(){
+        for (var i = 0; i < meterReadingVariableList.length; i++) {
+            	meterReadingVariableList.splice(i, 1);
+        }
+        resetVariableTable();
+    }
+
 
     var checkParamId=function(){   
         var entry=$("#formula").val();
@@ -233,6 +244,9 @@ var MeterReadingConsumptionVariableAddModal = function () {
         },
         loadMeterReadingVariable:function(variables){
         	loadMeterReadingVariable(variables)
+        },
+        removeMeterReadingAllConsumptionVariable:function(){
+        	removeMeterReadingAllConsumptionVariable();
         }
         
    };

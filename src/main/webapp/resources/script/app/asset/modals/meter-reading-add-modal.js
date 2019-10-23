@@ -21,13 +21,16 @@ var MeterReadingAddModal = function() {
 		$('#isMultipleMeterReading').on('ifChecked', function(event) {
 			$('#formula').prop('readonly', false);
 			$("#btn-new-meter-reading-consumption-variable").attr("disabled", false);
+			$(".multipleReading").show();
 		});
 		
 		$('#isMultipleMeterReading').on('ifUnchecked', function(event) {
 			$('#formula').val("");
 			$('#formula').prop('readonly', true);
 			$("#btn-new-meter-reading-consumption-variable").attr("disabled", true);
-			
+			var variables=[];
+			MeterReadingConsumptionVariableAddModal.loadMeterReadingVariable(variables);
+			$(".multipleReading").hide();
 
 		});
 
@@ -158,6 +161,8 @@ var MeterReadingAddModal = function() {
 			runMeterReadingUnitSelect();
 			initValidator();
 			initCheckBoxes()
+			$(".multipleReading").hide();
+
 		},
 
 		addAssetMeterReading : function() {

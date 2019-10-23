@@ -31,7 +31,7 @@ var TabMeterReading = function () {
 	let scope = {} //define scope for evaluate equation
 	
 	var initMeterReadingValueAddButton = function () {
-		initScope();
+		initFormulaScope();
 		
 		$('#btn-add-meter-reading-value').on('click', function () {
 			TabMeterReading.addAssetMeterReadingValue();
@@ -43,7 +43,7 @@ var TabMeterReading = function () {
 		
 		$( ".evaluate" ).focusout(function() {
 			getValueList(this)
-			checkParamId();			
+			evaluateFormulaString();			
 		})
 		
 	};
@@ -107,9 +107,10 @@ var TabMeterReading = function () {
     		$modal.load(url, '', function () {
     			$('#valueMeterReadingIndex').val(meterReadingIndex);
     			$('#valueMeterReadingName').val(meterReadingName);
-    			
+    			$('.multipleReading').hide();
     			if(isMultipelMeterReading){
     				$('#formula').val(consumptionFormula);
+    				$('.multipleReading').show();
     				setMeterReadingVariableList(meterReadingIndex)
     			}
     			//$('#value').val(0);
@@ -132,9 +133,7 @@ var TabMeterReading = function () {
 						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitName'  value='"+ meterReadingVariable.meteReadingUnitName+ "' type='hidden' >"
 						+ "<input id='meterReadingVariableList_"+ row+ "_meteReadingUnitId'  value='"+ meterReadingVariable.meteReadingUnitId+ "' type='hidden' >"
 						+ "<input id='meterReadingVariableList_"+ row+ "_variableName'  value='"+ meterReadingVariable.variable+ "' type='hidden' >"
-						+ "<td>"
-						+ meterReadingVariable.variable 
-						+ "</td>"
+						+ "<td>"+ meterReadingVariable.variable + "</td>"
 						+ "<td>"
 						+ "<input id='meterReadingVariableList_"+ row+ "_variableValue' class='evaluate' value='' type='text' >"
 						+ "</td>"
@@ -249,6 +248,7 @@ var TabMeterReading = function () {
     		var meterReadingConsumptionVariable={};
     		meterReadingConsumptionVariable['id'] = $('#meterReadingVariableList_'+i+'_id').val();
     		meterReadingConsumptionVariable['variable'] = $('#meterReadingVariableList_'+i+'_variableName').val();
+    		meterReadingConsumptionVariable['description'] = $('#meterReadingVariableList_'+i+'_description').val();
     		meterReadingConsumptionVariable['version'] = $('#meterReadingVariableList_'+i+'_version').val();
     		meterReadingConsumptionVariable['meteReadingUnitName'] = $('#meterReadingVariableList_'+i+'_meteReadingUnitName').val();
     		meterReadingConsumptionVariable['meteReadingUnitId'] = $('#meterReadingVariableList_'+i+'_meteReadingUnitId').val();
@@ -273,31 +273,7 @@ var TabMeterReading = function () {
         $( "#formula" ).val(assetMeterReading['consumptionFormula'] );
     };
 
-    function charcterNotDefined(assetMeterReading){
-    	var consumptionFormula=assetMeterReading['consumptionFormula'];
-    	var variablels=[]
-  	
-    	for(var i=0;i<consumptionFormula.length;i++){
-    		if(isLetter(consumptionFormula.charAt(i))){
-    			for(var j=0;j<variablels.length;j++){
-    				if(consumptionFormula.charAt(i)!=variablels[j].name){
-            	    	var variable={
-            	    			index:i,
-            	    			name:consumptionFormula.charAt(i),
-            	    	}
-            	    	variablels.push(variable);
-    				}
 
-    			}
-
-    		}
-    	}
-    	assetMeterReading['consumptionVariableDTO']=variablels;
-    }
-    function isLetter(c) {
-      	  return c.toLowerCase() != c.toUpperCase();
-  }
-    
  
     var resetAssetMeterReadingHtmlTable = function () {
 
@@ -333,7 +309,6 @@ var TabMeterReading = function () {
                     "</div>" +
                     "</td>"+
                     "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingAvgValue + "</span></td>" +
-                    "<td class='hidden-xs'><span>" + assetMeterReading.meterReadingConsumptionValues + "</span></td>" +
                     "<td class='center'>" +
                     "<div class='visible-md visible-lg hidden-sm hidden-xs'>" +
                     ButtonUtil.getCommonBtnEdit("TabMeterReading.editAssetMeterReadingModal",  assetMeterReading.meterReadingIndex) +
@@ -356,12 +331,12 @@ var TabMeterReading = function () {
     var setMeterReadingValriableToList=function(index,assetMeterReading){
     	var html="";
     	var consumptionVariables=assetMeterReading['consumptionVariableDTO'];
-    	console.log(consumptionVariables)
         if (consumptionVariables.length > 0) {
             var row, consumptionVariable;
             for (row = 0; row < consumptionVariables.length; row++) {
             	consumptionVariable = consumptionVariables[row];
-            	html = html+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"variable' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].variable' value='" + consumptionVariable.variable + "' type='hidden'>"
+            	html = html
+            	+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"variable' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].variable' value='" + consumptionVariable.variable + "' type='hidden'>"
             	+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"meteReadingUnitId' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].meteReadingUnitId' value='" + consumptionVariable.meteReadingUnitId + "' type='hidden'>"
             	+"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"version' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].version' value='" + consumptionVariable.version + "' type='hidden'>"
                 +"<input id='assetMeterReadings" + index + "consumptionVariable"+row+"id' name='assetMeterReadings[" + index + "].consumptionVariableDTO["+row+"].id' value='" + consumptionVariable.id + "' type='hidden'>"
@@ -525,25 +500,34 @@ var TabMeterReading = function () {
     }
    
     
-    var checkParamId=function(){   
+    var evaluateFormulaString=function(){   
         var entry=$("#formula").val();
         var value=0; 
    		value=math.evaluate(entry, scope);
     	$("#value").val(value)
     }
     
-    var initScope=function(){
-    	   var entry=$("#formula").val();
-        for(var i=0;i<entry.length;i++){
-        	if(isLetter(entry.charAt(i))){
-        	scope[entry.charAt(i)]=0
-        	}
-        }
-    }
+    var initFormulaScope=function(){
+   		var variablels=getVariableList();
+         for(var i=0;i<variablels.length;i++){
+        	scope[variablels[i]]=0
+         }
+	}
+    
     
     var getValueList=function(obj){
     	scope[obj.parentNode.previousSibling.childNodes[0].data]=obj.value
     }
+    
+    var getVariableList=function(){
+ 	   var formula=$("#formula").val();
+ 	   if(formula!=null && formula!=undefined && formula!=""){
+ 		  return formula.match(/[^+/*()-]+/g).filter(
+ 	    		    function(x) { return !/^{.+?}$/.test(x) })
+ 	   }
+    	return []
+    }
+    
     var getAssetMeterReadingByIndex = function (meterReadingIndex) {
         for (var i = 0; i < assetMeterReadings.length; i++) {
             if (assetMeterReadings[i].meterReadingIndex == meterReadingIndex) {
