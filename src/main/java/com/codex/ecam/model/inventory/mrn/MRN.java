@@ -16,12 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.constants.inventory.MRNStatus;
+import com.codex.ecam.constants.inventory.MRNType;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.User;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.customer.Customer;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 
 @Entity
@@ -44,12 +45,12 @@ public class MRN extends BaseModel {
     @ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
     private Asset site;
 
-    @Column(name = "aod_type_id")
-    private AODType aodType;
+    @Column(name = "mrn_type_id")
+    private MRNType mrnType;
 
     @JoinColumn(name = "customer_id")
     @ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-    private Business customer;
+    private Customer customer;
     
     @JoinColumn(name = "requested_by", nullable = true)
     @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
@@ -83,16 +84,17 @@ public class MRN extends BaseModel {
         this.id = id;
     }
 
-    public AODType getAodType() {
-        return aodType;
-    }
-
-    public void setAodType(AODType aodType) {
-        this.aodType = aodType;
-    }
 
 
-    public MRNStatus getMrnStatus() {
+    public MRNType getMrnType() {
+		return mrnType;
+	}
+
+	public void setMrnType(MRNType mrnType) {
+		this.mrnType = mrnType;
+	}
+
+	public MRNStatus getMrnStatus() {
 		return mrnStatus;
 	}
 
@@ -165,12 +167,14 @@ public class MRN extends BaseModel {
 		this.workOrder = workOrder;
 	}
 
-	public Business getCustomer() {
+	public Customer getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(Business customer) {
+	public void setCustomer(Customer customer) {
 		this.customer = customer;
-	} 
+	}
+
+
 
 }

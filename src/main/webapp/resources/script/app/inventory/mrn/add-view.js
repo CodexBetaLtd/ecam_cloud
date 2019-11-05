@@ -79,7 +79,7 @@ var MRNAdd = function () {
                     required: true
                 },
                 mrnCustomerName: {
-                    required: true
+                   // required: true
                 },
                 jobNo: {
                     required: true

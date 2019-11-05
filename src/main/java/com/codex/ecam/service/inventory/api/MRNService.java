@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
-import com.codex.ecam.constants.inventory.AODStatus;
+import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
@@ -23,7 +23,7 @@ public interface MRNService {
 
     MRNResult findById(Integer id) throws Exception;
 
-    MRNResult statusChange(Integer id, AODStatus status);
+    MRNResult statusChange(Integer id, MRNStatus status);
 
     List<MRNDTO> findAll();
 

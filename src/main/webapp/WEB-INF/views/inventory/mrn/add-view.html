@@ -59,7 +59,7 @@
                     </a>
                     <!-- Save -->
                     <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
-                       data-original-title="Save"
+                       data-original-title="Save"   onclick="document.getElementById('btn_mrn_submit').click();"
                        th:disabled="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_MRN_ADD.id)">
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
@@ -90,14 +90,21 @@
                     </a> -->
 
                     <!-- Approved -->
- <!--                    <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).DRAFT} "
+                    <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
+                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).DRAFT} "
                        th:disabled="${mrn.id} == null ? 'disabled'"
-                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED})}"
+                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.MRNStatus).REQUETED})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
-                       data-placement="top" data-original-title="AOD Approved">
+                       data-placement="top" data-original-title="MRN Requested">
+                        <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.requested}"></span>
+                    </a> 
+                    <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
+                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).REQUETED} "
+                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED})}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="MRN Approved">
                         <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.apporved}"></span>
-                    </a> -->
+                    </a> 
 
                 </div>
 
@@ -106,7 +113,7 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-sticky-note-o"></i> <span th:text="#{mrn.homeView.title}"> </span>
+                                <i class="fa fa-list-alt"></i> <span th:text="#{mrn.homeView.title}"> </span>
                             </div>
                             <div class="panel-body">
                                 <div th:replace="template/messageview :: message"></div>
@@ -118,7 +125,10 @@
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label class="control-label"><span th:text="#{mrn.status}"></span></label>
-                                            <input type="text" th:field="*{mrnStatus}" class="form-control bold" readonly="readonly"/>
+												<p> 
+												<input type="hidden" th:field="*{mrnStatus}">
+													<b><span style="font-size: medium;" th:text="${mrn.mrnStatus.getName()}"></span></b>
+												</p>
                                         </div>
                                     </div>
                                 </div>
@@ -151,10 +161,10 @@
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.customerName}"> </span><span class="symbol required"></span></label>
+                                            <label class="control-label"> <span th:text="#{mrn.date}"> </span> </label>
                                             <div class="input-group">
-                                                <input type="hidden" id="mrnCustomerId" th:field="*{mrnCustomerId}">
-                                                <input type="text" id="mrnCustomerName" name=" mrnCustomerName" readonly th:field="*{mrnCustomerName}">
+                                                <input th:field="*{date}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker">
+                                                <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
                                             </div>
                                         </div>
                                     </div>
@@ -171,17 +181,6 @@
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.date}"> </span> </label>
-                                            <div class="input-group">
-                                                <input th:field="*{date}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker">
-                                                <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 col-sm-12">
-                                        <div class="form-group">
                                             <label class="control-label"> <span th:text="#{mrn.mrnType}"> </span> <span class="symbol required"></span> </label>
                                             <select th:field="*{mrnType}" id="mrnTypeId" class="search-select" style="width: 100%;">
                                                 <option value="">&nbsp;</option>
@@ -189,6 +188,10 @@
                                             </select>
                                         </div>
                                     </div>
+
+                                </div>
+                                <div class="row">
+
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label class="control-label"> Work Order No </label>

@@ -88,7 +88,7 @@ var MRNItemAddModal = function () {
     
     var initValidator = function () {
 
-        var form = $('#frm_aod_item');
+        var form = $('#frm_mrn_item');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
 
@@ -112,35 +112,23 @@ var MRNItemAddModal = function () {
             },
             ignore: "",
             rules: {
-                aodItemPartName: {
-                    required: true
-                },
-                itemStockBatchNo: {
+            	itemPartName: {
                     required: true
                 },
                 itemQuantity: {
                     required: true,
                     number: true,
-                    greaterThanGRNQuantity: [],
-                    remote: {
-                        url: "../validate/stock/onhandqty",
-                        type: "GET",
-                        data: {
-                            itemStockId: function () {
-                                return $('#itemStockId').val()
-                            }
-                        }
-                    }
+                    greaterThanGRNQuantity: []
+
                 }
             },
 
             messages: {
-                aodItemPartName: "Please Select a Part for AOD Item.",
-                itemStockBatchNo: "Please Select a Stock.",
+            	itemPartName: "Please Select a Part for MRN Item.",
                 itemQuantity: {
                     required: "Please Insert Item Quantity.",
-                    greaterThanGRNQuantity: "0 is not valid for AOD Item Qunatity.",
-                    remote: "Not Available Quantity in Stock."
+                    greaterThanGRNQuantity: "0 is not valid for MRN Item Qunatity.",
+                    number: "Please Insert numeric value only"
                 }
             },
             invalidHandler: function (event, validator) { //display error alert on form submit
@@ -175,7 +163,7 @@ var MRNItemAddModal = function () {
         	var aodItem = mrnItemObj(); 
             if (!isItemAlreadyAdd(aodItem)) { 
             	MRNItemTab.addItemToList(aodItem);  
-                $('#'+ this.modalName).modal('toggle');  
+               $('#'+ this.modalName).modal('toggle');  
                 
             } else {
                 alert('Item already Added. Please change it');
@@ -188,28 +176,22 @@ var MRNItemAddModal = function () {
     	
     	mrnItems['index'] = CustomValidation.nullValueReplace($("#itemIndex").val());
 		mrnItems['id'] = CustomValidation.nullValueReplace($("#itemId").val());
-		mrnItems['stockId'] = CustomValidation.nullValueReplace($("#itemStockId").val());
-        mrnItems['stockBatchNo'] = CustomValidation.nullValueReplace($("#itemStockBatchNo").val());
         mrnItems['partId'] = CustomValidation.nullValueReplace($("#itemPartId").val());
         mrnItems['partName'] = CustomValidation.nullValueReplace($("#itemPartName").val());
     	mrnItems['partCode'] = CustomValidation.nullValueReplace($("#aodItemPartCode").val());
-    	mrnItems['warehouseId'] = CustomValidation.nullValueReplace($("#itemStockWarehouseId").val());
-		mrnItems['warehouseName'] = CustomValidation.nullValueReplace($("#itemStockWarehouseName").val()); 
 		mrnItems['description'] = CustomValidation.nullValueReplace($("#itemDescription").val());
 		mrnItems['itemQuantity'] = CustomValidation.nullValueReplace($("#itemQuantity").val()); 
-		mrnItems['remainingQuantity'] = CustomValidation.nullValueReplace($("#itemStockOnHandQty").text()); 
 		mrnItems['version'] = CustomValidation.nullValueReplace($("#itemVersion").val()); 
 		
 		return mrnItems;
 	};
 
     var isItemAlreadyAdd = function (item) {
+    	console.log(item)
         for (var i = 0; i < mrnItemList.length; i++) {
             if (mrnItemList[i].index != item.index) {
                 if (item.partId == mrnItemList[i].partId) {
-                    if (item.stockId == mrnItemList[i].stockId) {
                         return true;
-                    }
                 }
             }
         }

@@ -21,7 +21,29 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
     @Override
     public MRNItemDTO domainToDto(MRNItem domain) throws Exception {
     	MRNItemDTO dto = new MRNItemDTO();
-
+    	dto.setId(domain.getId());
+        dto.setVersion(domain.getVersion());
+        dto.setItemQuantity(domain.getQuantity());
+        dto.setItemReturnQuantity(domain.getReturnQuantity());
+        dto.setDescription(domain.getDescription());
+        dto.setItemCost(domain.getItemCost()); 
+        
+        if (domain.getPart() != null && domain.getPart().getId() != null) {
+            dto.setPartId(domain.getPart().getId());
+            dto.setPartName(domain.getPart().getName());
+        }
+/*        if (domain.getWarehouse() != null && domain.getWarehouse().getId() != null) {
+            dto.setWarehouseId(domain.getWarehouse().getId());
+            dto.setWarehouseName(domain.getWarehouse().getName());
+        }*/
+        
+/*        if (domain.getStock() != null && domain.getStock().getId() != null) {
+            dto.setStockId(domain.getStock().getId());
+            dto.setStockBatchNo(domain.getStock().getBatchNo());
+            dto.setRemainingQuantity(domain.getStock().getCurrentQuantity());
+        }*/
+        
+        dto.setIsDeleted(domain.getIsDeleted());
         return dto;
     }
 
@@ -29,6 +51,11 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
     public void dtoToDomain(MRNItemDTO dto, MRNItem domain) throws Exception {
         domain.setId(dto.getId());
         domain.setIsDeleted(dto.getIsDeleted());
+        domain.setVersion(dto.getVersion());
+        domain.setQuantity(dto.getItemQuantity());
+        domain.setReturnQuantity(dto.getItemReturnQuantity());
+        domain.setDescription(dto.getDescription());
+        domain.setItemCost(dto.getItemCost());
     }
 
 

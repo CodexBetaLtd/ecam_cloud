@@ -20,7 +20,7 @@ public class MRNMapper extends GenericMapper<MRN, MRNDTO> {
     @Override
     public MRNDTO domainToDto(MRN domain) throws Exception {
     	MRNDTO dto = new MRNDTO();
-    	/*      
+  
     	dto.setId(domain.getId());
         dto.setVersion(domain.getVersion());
         dto.setMrnNo(domain.getMrnNo()); 
@@ -42,37 +42,39 @@ public class MRNMapper extends GenericMapper<MRN, MRNDTO> {
             dto.setStatusName(domain.getMrnStatus().getName());
             dto.setMrnStatus(domain.getMrnStatus());
         }
-        if (domain.getAodType() != null && domain.getAodType().getId() != null) {
-            dto.setAodTypeId(domain.getAodType().getId());
-            dto.setAodTypeName(domain.getAodType().getName());
-            dto.setAodType(domain.getAodType());
+        if (domain.getMrnType() != null && domain.getMrnType().getId() != null) {
+            dto.setMrnType(domain.getMrnType());
+          //  dto.setAodTypeName(domain.getMrnType().getName());
+           // dto.setAodType(domain.getMrnType());
         }
-        if (domain.getCustomer() != null && domain.getCustomer().getId() != null) {
-            dto.setAodCustomerId(domain.getCustomer().getId());
-            dto.setAodCustomerName(domain.getCustomer().getName());
-        }
+
         if (domain.getRequestedBy() != null && domain.getRequestedBy().getId() != null) {
             dto.setRequestedUserId(domain.getRequestedBy().getId());
             dto.setRequestedUserName(domain.getRequestedBy().getFullName());
         }
-        if (domain.getAodItemList() != null && domain.getAodItemList().size() > 0) {
-            dto.setAodItemList(AODItemMapper.getInstance().domainToDTOList(domain.getAodItemList()));
+        if (domain.getMrnItems() != null && domain.getMrnItems().size() > 0) {
+            dto.setMrnItemDTOs(MRNItemMapper.getInstance().domainToDTOList(domain.getMrnItems()));
         } 
-        if (domain.getAodType() != null) {
-            dto.setMrnType(domain.getAodType());
+        if (domain.getMrnType() != null) {
+            dto.setMrnType(domain.getMrnType());
         }
         
         if (domain.getWorkOrder() != null && domain.getWorkOrder().getId() != null) {
             dto.setWoNo(domain.getWorkOrder().getCode());
             dto.setWoId(domain.getWorkOrder().getId());
-        }*/
+        }
+
         setCommanDTOFields(dto, domain);
         return dto;
     }
 
     @Override
     public void dtoToDomain(MRNDTO dto, MRN domain) throws Exception {
-
+    	domain.setMrnNo(dto.getMrnNo());
+    	domain.setMrnStatus(dto.getMrnStatus());
+    	domain.setCustomerContactPerson(dto.getMrnContactPerson());
+    	domain.setMrnType(dto.getMrnType());
+    	domain.setDate(dto.getDate());
         setCommanDomainFields(dto, domain);
     }
 
@@ -80,8 +82,12 @@ public class MRNMapper extends GenericMapper<MRN, MRNDTO> {
     public MRNDTO domainToDtoForDataTable(MRN domain) throws Exception {
     	
     	MRNDTO dto = new MRNDTO();
-
-        
+    	dto.setId(domain.getId());
+        dto.setVersion(domain.getVersion());
+        dto.setMrnNo(domain.getMrnNo());
+        dto.setMrnStatus(domain.getMrnStatus());
+        dto.setMrnType(domain.getMrnType());
+        dto.setDate(domain.getDate());
         return dto;
     }
 

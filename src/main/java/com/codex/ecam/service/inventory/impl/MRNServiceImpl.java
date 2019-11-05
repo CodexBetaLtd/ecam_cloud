@@ -6,17 +6,19 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codex.ecam.constants.inventory.AODStatus;
 import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.biz.CustomerDao;
 import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
@@ -45,6 +47,13 @@ public class MRNServiceImpl implements MRNService {
 	
 	@Autowired
 	private WorkOrderDao workOrderDao;
+	
+	@Autowired
+	private CustomerDao customerDao;
+	
+	@Autowired
+	private StockDao stockDao;
+	
 	@Override
 	public MRNResult newMRN() {
 		// TODO Auto-generated method stub
@@ -107,7 +116,7 @@ public class MRNServiceImpl implements MRNService {
 	
 	private void setMRNCustomer(MRNResult result) {
 		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMrnCustomerId() != null)) {
-			result.getDomainEntity().setCustomer(businessDao.findOne(result.getDtoEntity().getMrnCustomerId()));
+			result.getDomainEntity().setCustomer(customerDao.findOne(result.getDtoEntity().getMrnCustomerId()));
 		}
 	}
 
@@ -162,11 +171,28 @@ public class MRNServiceImpl implements MRNService {
 					aodItem = new MRNItem();
 				}
 				
-			//	createMRNItem(result, aodItemDTO, aodItem);
+			createMRNItem(result, aodItemDTO, aodItem);
 				aodItems.add(aodItem);
 			}
 		}
 		result.getDomainEntity().setMrnItems(aodItems);
+	}
+	
+	private void createMRNItem(MRNResult result, MRNItemDTO aodItemDTO, MRNItem aodItem) {
+		
+		if (aodItemDTO.getPartId() != null) {
+			aodItem.setPart(assetDao.findOne(aodItemDTO.getPartId()));
+		}
+		if ((aodItemDTO.getStockId() != null) && (aodItemDTO.getStockId() > 0)) {
+			//aodItem.setStock(stockDao.findOne(aodItemDTO.getStockId()));
+		}
+		if ((aodItemDTO.getWarehouseId() != null) && (aodItemDTO.getWarehouseId() > 0)) {
+		//	aodItem.setWarehouse(assetDao.findOne(aodItemDTO.getWarehouseId()));
+		}
+		
+		aodItem.setMrn(result.getDomainEntity()); 
+		aodItem.setQuantity(aodItemDTO.getItemQuantity());
+		aodItem.setDescription(aodItemDTO.getDescription());
 	}
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private MRN findEntityById(Integer id) throws Exception {
@@ -199,13 +225,39 @@ public class MRNServiceImpl implements MRNService {
 
 	@Override
 	public MRNResult findById(Integer id) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		MRNResult result = new MRNResult(null, null);
+		try {
+			result.setDtoEntity(findDTOById(id));
+			result.setResultStatusSuccess();
+			result.addToMessageList("MRN Found.");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToMessageList("Error Occurred! MRN NOT Found.".concat(ex.getMessage()));
+		}
+		return result;
 	}
 
-	public MRNResult statusChange(Integer id, MRNStatus status) {
-		// TODO Auto-generated method stub
-		return null;
+	public MRNResult statusChange(Integer id, MRNStatus status)  {
+		MRNResult result = new MRNResult(null, null);
+		try {
+			MRNDTO dto=findDTOById(id);
+			dto.setMrnStatus(status);
+			MRN domain = findEntityById(dto.getId());
+			String  previousStatus=domain.getMrnStatus().getName();
+			result.setDtoEntity(dto);
+			result.setDomainEntity(domain);
+			saveOrUpdate(result);
+			result.addToMessageList("MRN Status Updated Successfully. "+previousStatus+" --> "+ status.getName());
+		} catch (ObjectOptimisticLockingFailureException ex) {
+			result.setResultStatusError();
+			result.addToErrorList("MRN Already updated. Please Reload MRN.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(e.getMessage());
+		}
+		return result;
 	}
 
 	@Override
@@ -216,8 +268,21 @@ public class MRNServiceImpl implements MRNService {
 
 	@Override
 	public DataTablesOutput<MRNDTO> findAll(FocusDataTablesInput input) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		//AODPropertyMapper.getInstance().generateDataTableInput(input);
+		DataTablesOutput<MRN> domainOut;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			domainOut = mrnDao.findAll(input);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			Specification<MRN> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			domainOut = mrnDao.findAll(input, specification);
+		} else {
+			Specification<MRN> specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()) );
+			domainOut = mrnDao.findAll(input, specification);
+		}
+		DataTablesOutput<MRNDTO> out = MRNMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
 	}
 
 	@Override
@@ -226,11 +291,7 @@ public class MRNServiceImpl implements MRNService {
 		return null;
 	}
 
-	@Override
-	public MRNResult statusChange(Integer id, AODStatus status) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
 
 
 

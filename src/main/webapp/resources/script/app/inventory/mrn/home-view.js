@@ -120,7 +120,7 @@ var MRNHome = function () {
             "processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline({
-                url: "../restapi/aod/tabledata",
+                url: "../restapi/mrn/tabledata",
                 pages: 5
             }),
             columns: [

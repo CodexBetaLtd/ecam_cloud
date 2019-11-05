@@ -15,7 +15,6 @@ import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.constants.inventory.MRNType;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
-import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -129,7 +128,7 @@ public class MRNController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			AODResult result = aodService.delete(id);
+			MRNResult result = mrnService.delete(id);
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				ra.addFlashAttribute("error", result.getErrorList());
 			} else {
@@ -143,10 +142,10 @@ public class MRNController {
 	}  
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
-	public String aodStatusChange(Integer id, MRNStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {
-		AODResult result = null;
+	public String mrnStatusChange(Integer id, MRNStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {
+		MRNResult result = null;
 		if ((id != null) && (id > 0)) { 
-		//	result = mrnService.statusChange(id, mrnStatus); 
+		result = mrnService.statusChange(id, mrnStatus); 
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				model.addAttribute("error", result.getErrorList());
 			} else {
