@@ -27,6 +27,7 @@ public interface AODService {
     AODResult findById(Integer id) throws Exception;
 
     AODResult statusChange(Integer id, AODStatus status);
+    AODResult generateAodFromMrn(String ids, Integer mrnId);
 
 
     AODRepDTO findAODRepById(Integer id) throws Exception;

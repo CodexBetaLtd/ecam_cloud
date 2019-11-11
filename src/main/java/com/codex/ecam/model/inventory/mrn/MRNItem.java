@@ -44,6 +44,9 @@ public class MRNItem extends BaseModel {
 
     @Column(name = "return_quantity")
     private BigDecimal returnQuantity;
+    
+    @Column(name = "approved_quantity")
+    private BigDecimal approvedQuantity;
 
     @Column(name = "description")
     private String description;
@@ -115,6 +118,14 @@ public class MRNItem extends BaseModel {
 
 	public void setMrn(MRN mrn) {
 		this.mrn = mrn;
+	}
+
+	public BigDecimal getApprovedQuantity() {
+		return approvedQuantity;
+	}
+
+	public void setApprovedQuantity(BigDecimal approvedQuantity) {
+		this.approvedQuantity = approvedQuantity;
 	}
 
 

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codex.ecam.dto.inventory.aod.AODItemDTO;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
+import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.inventory.api.MRNService;
 
@@ -32,10 +32,20 @@ public class MRNRestController {
         return null;
     }
 
-    @RequestMapping(value = "/getAODItemDataTable", method = RequestMethod.GET)
-    public DataTablesOutput<AODItemDTO> getAODItemDataTable(@Valid FocusDataTablesInput input, @Valid Integer id) {
+    @RequestMapping(value = "/approvedmrn", method = RequestMethod.GET)
+    public DataTablesOutput<MRNDTO> getApprovedMRNDataTable(@Valid FocusDataTablesInput input) {
+    	try {
+    		return mrnService.findAllApprovedMRN(input);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return null;
+    }
+    
+    @RequestMapping(value = "/mrnitem", method = RequestMethod.GET)
+    public DataTablesOutput<MRNItemDTO> getMRNItemDataTable(@Valid FocusDataTablesInput input,@Valid Integer mrnId) {
         try {
-           // return aodService.findAll(input, id);
+           return mrnService.getMRNItemDataTable(input,mrnId);
         } catch (Exception e) {
             e.printStackTrace();
         }

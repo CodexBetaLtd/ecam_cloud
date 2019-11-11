@@ -46,13 +46,13 @@
         <div class="container">
 
             <!-- start: PAGE HEADER -->
-            <div class="row" th:replace="inventory/mrn/page-header :: pageheader"></div>
+            <div class="row" th:replace="inventory/mrnReturn/page-header :: pageheader"></div>
             <!-- end: PAGE HEADER -->
-            <form role="form" id="frm_mrn" th:action="@{/mrn/save}" th:object="${mrn}" method="post">
+            <form role="form" id="frm_mrn_return" th:action="@{/mrnReturn/save}" th:object="${mrnReturn}" method="post">
 
                 <div class="row btn-bar">
 
-                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/mrn/add}"
+                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/mrnReturn/add}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_MRN_ADD.id)"
                        data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i>
                         <span th:text="#{form.btn.new}"> </span>
@@ -60,21 +60,21 @@
                     <!-- Save -->
                     <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
                        data-original-title="Save"   onclick="document.getElementById('btn_mrn_submit').click();"
-                       th:disabled="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED} ? 'disabled'"
+                       th:disabled="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_MRN_ADD.id)">
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
                     </a>
 
                     <!-- Delete -->
-                    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/mrn/delete(id=${mrn.id})}"
-                       th:disabled="${mrn.id} == null or ${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED} ? 'disabled'"
+                    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/mrnReturn/delete(id=${mrnReturn.id})}"
+                       th:disabled="${mrnReturn.id} == null or ${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_MRN_ADD.id)"
                        data-placement="top" data-original-title="Delete">
                         <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs" th:text="#{form.btn.delete}"> </span>
                     </a>
 
                     <!-- Cancel -->
-                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/mrn/}"
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/mrnReturn/}"
                        data-placement="top"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_MRN_ADD.id)"
                        data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span
@@ -91,26 +91,19 @@
 
                     <!-- Approved -->
                     <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).DRAFT} "
-                       th:disabled="${mrn.id} == null ? 'disabled'"
-                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.MRNStatus).REQUETED})}"
+                       th:if="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).DRAFT} "
+                       th:disabled="${mrnReturn.id} == null ? 'disabled'"
+                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnRetunStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="MRN Requested">
                         <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.requested}"></span>
                     </a> 
                     <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).REQUETED} "
-                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED})}"
+                       th:if="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED} "
+                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnRetunStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="MRN Approved">
                         <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.apporved}"></span>
-                    </a> 
-                    <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrn.mrnStatus}==${T(com.codex.ecam.constants.inventory.MRNStatus).REQUETED} "
-                       th:href="@{/mrn/statusChange(id=${mrn.id},mrnStatus=${T(com.codex.ecam.constants.inventory.MRNStatus).REJECTED})}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
-                       data-placement="top" data-original-title="MRN Rejected">
-                        <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.rejected}"></span>
                     </a> 
 
                 </div>
@@ -120,7 +113,7 @@
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <i class="fa fa-list-alt"></i> <span th:text="#{mrn.homeView.title}"> </span>
+                                <i class="fa fa-list-alt"></i> <span th:text="#{mrnReturn.homeView.title}"> </span>
                             </div>
                             <div class="panel-body">
                                 <div th:replace="template/messageview :: message"></div>
@@ -133,8 +126,8 @@
                                         <div class="form-group">
                                             <label class="control-label"><span th:text="#{mrn.status}"></span></label>
 												<p> 
-												<input type="hidden" th:field="*{mrnStatus}">
-													<b><span style="font-size: medium;" th:text="${mrn.mrnStatus.getName()}"></span></b>
+												<input type="hidden" th:field="*{mrnRetunStatus}">
+													<b><span style="font-size: medium;" th:text="${mrnReturn.mrnRetunStatus.getName()}"></span></b>
 												</p>
                                         </div>
                                     </div>
@@ -162,13 +155,13 @@
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.mrnNo}"> </span> <span class="symbol required"></span> </label>
-                                            <input type="text" placeholder="Insert the Name" th:field="*{mrnNo}" class="form-control" id="mrnNo" >
-                                        </div>
-                                    </div>
+                                            <label class="control-label"> <span th:text="#{mrnReturn.mrnReturnNo}"> </span> <span class="symbol required"></span> </label>
+                                                <input type="text" id="mrnReturnNo" class="form-control" th:field="*{mrnReturnNo}">
+                                            </div>
+                                   </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.date}"> </span> </label>
+                                            <label class="control-label"> <span th:text="#{mrnReturn.date}"> </span> </label>
                                             <div class="input-group">
                                                 <input th:field="*{date}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker">
                                                 <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
@@ -177,37 +170,25 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                   <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"><span th:text="#{mrnReturn.mrnNo}"> </span>  </label>
+                                            <div class="input-group">
+                                                <input type="hidden" th:field="*{mrnId}" id="mrnId">
+                                                <input type="text" th:field="*{mrnNo}" id="mrnNo" readonly placeholder="Please Specify a MRN No">
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.requestedUser}"> </span></label>
+                                            <label class="control-label"> <span th:text="#{mrnReturn.requestedUser}"> </span></label>
                                             <div class="input-group">
                                                 <input type="hidden" id="requestedUserId" th:field="*{requestedUserId}">
                                                 <input type="text" id="requestedUserName" readonly th:field="*{requestedUserName}">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{mrn.mrnType}"> </span> <span class="symbol required"></span> </label>
-                                            <select th:field="*{mrnType}" id="mrnTypeId" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
-                                                <option th:each="mrnType : ${mrnTypes}" th:value="${mrnType}" th:text="${mrnType.name}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
 
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-6 col-sm-12">
-                                        <div class="form-group">
-                                            <label class="control-label"> Work Order No </label>
-                                            <div class="input-group">
-                                                <input type="hidden" th:field="*{woId}" id="mrnWoId">
-                                                <input type="text" th:field="*{woNo}" id="mrnWoNo" readonly placeholder="Please Specify a Work Order">
-                                            </div>
-                                        </div>
-                                    </div>
 
                                 </div>
                                 <div class="row">
@@ -227,7 +208,7 @@
                                             </ul>
                                             <div class="tab-content">
                                                 <div class="tab-pane in active" id="item_tab">
-                                                    <div th:replace="inventory/mrn/tab/item-tab :: mrnItemTabFragment"></div>
+                                                    <div th:replace="inventory/mrnReturn/tab/item-tab :: mrnItemTabFragment"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -267,25 +248,24 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
 
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/init.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/add-view.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/tab/item-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/modal/item-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/add-view.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/tab/item-tab.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/modal/item-modal.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/datatable/dt-customers.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/datatable/dt-users.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/datatable/dt-workorders.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/datatable/dt-part.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/datatable/dt-stock.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/datatable/dt-users.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/datatable/dt-mrn.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/mrnReturn/datatable/dt-mrn-item.js}"></script>
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 <script th:inline="javascript"> 
-    var mrnItemList = [[${mrn.mrnItemDTOs}]]; 
+    var mrnItemList = [[${mrnReturn.mrnReturnItemDTOs}]]; 
 </script>
 
 </body>

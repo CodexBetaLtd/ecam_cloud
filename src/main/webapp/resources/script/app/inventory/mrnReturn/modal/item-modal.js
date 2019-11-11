@@ -1,46 +1,26 @@
-var MRNItemAddModal = function () {
+var MRNReturnItemAddModal = function () {
 
     /*********************************************************************
      * Init Buttons
      *********************************************************************/
 
     var initButtons = function () {
-        $('#btn-add-mrn-item').on('click', function () {
-        	MRNItemAddModal.addMRNItem();
+        $('#btn-add-mrn-return-item').on('click', function () {
+        	MRNReturnItemAddModal.addMRNItem();
         });
     };
-    
-    var initApprovedQuntity=function(){
-    	$("#itemQuantity").focusout(function(){
-    		$("#approvedItemQuantity").val($("#itemQuantity").val())
-    	});
-
-    }
 
     /*********************************************************************
      * Init Custom Components
      *********************************************************************/
     
-    var runMrnItemPartInput = function () {
-        $("#itemPartName").inputClear({
+    var runMrnItemInput = function () {
+        $("#mrnItemName").inputClear({
             placeholder: "Select a Part",
-            btnMethod: "MRNItemAddModal.mrnItemPartModalView()",
+            btnMethod: "MRNReturnItemAddModal.mrnItemModalView()",
             clearMethod: "MRNItemAddModal.aodItemClearStockInput()",
         });
     };
-
-    var runMrnItemStockInput = function () {
-        $("#itemStockBatchNo").inputClear({
-            placeholder: "Select a Stock",
-            btnMethod: "MRNItemAddModal.mrnItemStockModalView()",
-        });
-    };
-
-    var clearStockInput = function () {
-        $('#itemStockId').val("");
-        $('#itemStockQuantity').val("");
-        $('#itemStockBatchNo').val("");
-    }
 
     /*********************************************************************
      * Init Modals
@@ -50,43 +30,24 @@ var MRNItemAddModal = function () {
         this.modalName = modalName;
     };
 
-    var mrnItemPartModalView = function () {
-
-        var bizId = $('#businessId').val();
-        if (bizId != null && bizId > 0) {
-            var $modal = $('#aod-item-child-modal');
+    var mrnItemModalView = function () {
+        var mrnId = $('#mrnId').val();
+        if (mrnId != null && mrnId > 0) {
+            var $modal = $('#mrn-item-child-modal');
             CustomComponents.ajaxModalLoadingProgressBar();
             setTimeout(function () {
-                var url = '../aod/partmodalview';
+                var url = '../mrnReturn/mrnItemmodalview';
                 $modal.load(url, '', function () {
-                    AODPartSelectModal.init(bizId);
+                	MRNItemSelectModal.init(mrnId);
                     $modal.modal();
                 });
             }, 1000);
         } else {
-            alert("Please Select a Business First.");
+            alert("Please Select a MRN First.");
         }
     	
     };
 
-    var mrnItemStockModalView = function () {
-
-        var partId = $('#itemPartId').val();
-        if (partId != null && partId > 0 && partId != undefined) {
-            var $modal = $('#aod-item-child-modal');
-            CustomComponents.ajaxModalLoadingProgressBar();
-            setTimeout(function () {
-                var url = '../aod/stockmodalview';
-                $modal.load(url, '', function () {
-                    AODStockSelectModal.init(partId);
-                    $modal.modal();
-                });
-            }, 1000);
-        } else {
-            alert("Please Select a Part First. Try Again !");
-        }
-    	
-    };
 
 
     /*********************************************************************
@@ -95,15 +56,16 @@ var MRNItemAddModal = function () {
     
     var initValidator = function () {
 
-        var form = $('#frm_mrn_item');
+        var form = $('#frm_mrn_return_item');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
 
-        jQuery.validator.addMethod("greaterThanGRNQuantity", function (value, element) {
+        jQuery.validator.addMethod("greaterThanZeroMRNReturnQuantity", function (value, element) {
         	return value > 0
         }, "This item quantity unable to return for seleted AOD");
-        jQuery.validator.addMethod("greaterThanItemQuantity", function (value, element) {
-            return value <=  parseFloat($("#itemQuantity").val());
+        
+        jQuery.validator.addMethod("greaterThanRemainMRNReturnQuantity", function (value, element) {
+            return value <=parseFloat($("#mrnItemRemainigQty").val())
         }, "This item quantity unable to return for seleted AOD");
 
         form.validate({
@@ -122,33 +84,24 @@ var MRNItemAddModal = function () {
             },
             ignore: "",
             rules: {
-            	itemPartName: {
+            	mrnItemName: {
                     required: true
                 },
-                itemQuantity: {
-                	required: true,
-                	number: true,
-                	greaterThanGRNQuantity: []
-                
-                },
-                approvedItemQuantity: {
+                mrnItemReturnQuantity: {
                     required: true,
                     number: true,
-                    greaterThanItemQuantity: []
+                    greaterThanZeroMRNReturnQuantity: [],
+                greaterThanRemainMRNReturnQuantity: []
 
                 }
             },
 
             messages: {
-            	itemPartName: "Please Select a Part for MRN Item.",
-            	itemQuantity: {
-            		required: "Please Insert Item Quantity.",
-            		greaterThanGRNQuantity: "0 is not valid for MRN Item Qunatity.",
-            		number: "Please Insert numeric value only"
-            	},
-            	approvedItemQuantity: {
-                    required: "Please Insert Item Quantity.",
-                    greaterThanItemQuantity: "Please enter approved quantity less than quantity",
+            	mrnItemName: "Please Select a MRN Item.",
+            	mrnItemReturnQuantity: {
+                    required: "Please Insert Return Quantity.",
+                    greaterThanZeroMRNReturnQuantity: "0 is not valid for MRN Item Qunatity.",
+                    greaterThanRemainMRNReturnQuantity: "Unable to return MRN Item Qunatity.Remaining Qunatity exceed",
                     number: "Please Insert numeric value only"
                 }
             },
@@ -180,10 +133,10 @@ var MRNItemAddModal = function () {
     };
 
     var addMRNItem = function () {
-        if ($('#frm_mrn_item').valid()) { 
+        if ($('#frm_mrn_return_item').valid()) { 
         	var aodItem = mrnItemObj(); 
             if (!isItemAlreadyAdd(aodItem)) { 
-            	MRNItemTab.addItemToList(aodItem);  
+            	MRNReturnItemTab.addItemToList(aodItem);  
                $('#'+ this.modalName).modal('toggle');  
                 
             } else {
@@ -197,12 +150,10 @@ var MRNItemAddModal = function () {
     	
     	mrnItems['index'] = CustomValidation.nullValueReplace($("#itemIndex").val());
 		mrnItems['id'] = CustomValidation.nullValueReplace($("#itemId").val());
-        mrnItems['partId'] = CustomValidation.nullValueReplace($("#itemPartId").val());
-        mrnItems['partName'] = CustomValidation.nullValueReplace($("#itemPartName").val());
-    	mrnItems['partCode'] = CustomValidation.nullValueReplace($("#aodItemPartCode").val());
-		mrnItems['description'] = CustomValidation.nullValueReplace($("#itemDescription").val());
-		mrnItems['itemQuantity'] = CustomValidation.nullValueReplace($("#itemQuantity").val()); 
-		mrnItems['approvedQuantity'] = CustomValidation.nullValueReplace($("#approvedItemQuantity").val()); 
+        mrnItems['mrnItemId'] = CustomValidation.nullValueReplace($("#mrnItemId").val());
+        mrnItems['partName'] = CustomValidation.nullValueReplace($("#mrnItemName").val());
+		mrnItems['description'] = CustomValidation.nullValueReplace($("#mrnReturnItemDescription").val());
+		mrnItems['itemReturnQuantity'] = CustomValidation.nullValueReplace($("#mrnItemReturnQuantity").val()); 
 		mrnItems['version'] = CustomValidation.nullValueReplace($("#itemVersion").val()); 
 		
 		return mrnItems;
@@ -212,7 +163,7 @@ var MRNItemAddModal = function () {
     	console.log(item)
         for (var i = 0; i < mrnItemList.length; i++) {
             if (mrnItemList[i].index != item.index) {
-                if (item.partId == mrnItemList[i].partId) {
+                if (item.mrnItemId == mrnItemList[i].mrnItemId) {
                         return true;
                 }
             }
@@ -224,19 +175,17 @@ var MRNItemAddModal = function () {
 
         init: function (modalName) {
             setModal(modalName);
-            runMrnItemPartInput();
-            runMrnItemStockInput();
+            runMrnItemInput();
             initButtons();
-            initValidator();
-            initApprovedQuntity();
+            initValidator()
         },
 
         addMRNItem: function () {
             addMRNItem();
         },
 
-        mrnItemPartModalView: function () {
-            mrnItemPartModalView();
+        mrnItemModalView: function () {
+        	mrnItemModalView();
         },
 
         mrnItemStockModalView: function () {

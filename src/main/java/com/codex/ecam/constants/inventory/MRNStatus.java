@@ -7,7 +7,8 @@ public enum MRNStatus {
 
     DRAFT(0, "Draft"),
     REQUETED(1, "Requested"),
-    APPROVED(2, "Approved");
+    APPROVED(2, "Approved"),
+    REJECTED(3, "Rejected");
 
 
     private Integer id;
@@ -19,12 +20,17 @@ public enum MRNStatus {
     }
 
     public static MRNStatus getAODStatusById(Integer id) {
+     MRNStatus mrnStatus=MRNStatus.DRAFT;
         if (id == 0) {
-            return DRAFT;
+        	mrnStatus= DRAFT;
         } else if (id == 1) {
-            return APPROVED;
+        	mrnStatus=REQUETED;
+        } else if (id == 2) {
+        	mrnStatus= APPROVED;
+        } else if (id == 3) {
+        	mrnStatus= REJECTED;
         }
-        return null;
+        return mrnStatus;
     }
 
     public static List<MRNStatus> getAODStatusList() {
@@ -32,6 +38,7 @@ public enum MRNStatus {
         list.add(MRNStatus.DRAFT);
         list.add(MRNStatus.REQUETED);
         list.add(MRNStatus.APPROVED);
+        list.add(MRNStatus.REJECTED);
 
         return list;
     }
