@@ -86,28 +86,33 @@ var MRNItemTab = function () {
 	    return this.value;
 	}).get();
    	
+   	if(checkedValues.length>0){
+   		$.ajax({
+   	        type: "GET",
+   	        url: "../aod/generateAodFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
+   	        contentType: "application/json",
+   	        dataType: "json",
+   	        success: function (result) {
+   	       	if (result.status == "SUCCESS") {
+   	        		var mappingUrlText = "../aod/edit?id=" + result.msgList[1];
+   	        		$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],result.msgList[2],mappingUrlText));
+   	        	} else {
+   	        		$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
+   	        	}
+   	        },
+   	        error: function (xhr, ajaxOptions, thrownError) {
+   	            alert(xhr.status + " " + thrownError);
+   	        },
+   	        error: function (e) {
+   	           // alert("Failed to Create AOD.");
+   	            console.log(e);
+   	        }
+   	    });
+   	}else{
+   		alert("Please select at least one MRN Item")
+   	}
    	
-	$.ajax({
-        type: "GET",
-        url: "../aod/generateAodFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
-        contentType: "application/json",
-        dataType: "json",
-        success: function (result) {
-       	if (result.status == "SUCCESS") {
-        		var mappingUrlText = " " + result.msgList[1] + " ID = ( " + result.msgList[2] + " )";
-        		$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0], mappingUrlText, mappingUrl));
-        	} else {
-        		$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
-        	}
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            alert(xhr.status + " " + thrownError);
-        },
-        error: function (e) {
-           // alert("Failed to Create AOD.");
-            console.log(e);
-        }
-    });
+
    }
 
     /**********************************************************

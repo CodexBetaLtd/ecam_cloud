@@ -41,12 +41,14 @@ import com.codex.ecam.exception.inventory.StockQuantityExceedException;
 import com.codex.ecam.mappers.inventory.aod.AODItemMapper;
 import com.codex.ecam.mappers.inventory.aod.AODMapper;
 import com.codex.ecam.mappers.inventory.aod.AODReportMapper;
+import com.codex.ecam.mappers.inventory.mrn.MRNMapper;
 import com.codex.ecam.model.inventory.aod.AOD;
 import com.codex.ecam.model.inventory.aod.AODItem;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODResult;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.inventory.api.AODService;
 import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -251,6 +253,9 @@ public class AODServiceImpl implements AODService {
 		}
 		if ((aodItemDTO.getStockId() != null) && (aodItemDTO.getStockId() > 0)) {
 			aodItem.setStock(stockDao.findOne(aodItemDTO.getStockId()));
+		}else{
+			result.setResultStatusError();
+			result.addToErrorList("Please select stock for "+aodItem.getPart().getName());
 		}
 		if ((aodItemDTO.getWarehouseId() != null) && (aodItemDTO.getWarehouseId() > 0)) {
 			aodItem.setWarehouse(assetDao.findOne(aodItemDTO.getWarehouseId()));
@@ -260,6 +265,10 @@ public class AODServiceImpl implements AODService {
 		aodItem.setQuantity(aodItemDTO.getItemQuantity());
 		aodItem.setDescription(aodItemDTO.getDescription());
 		setMRNitem(aodItem);
+	}
+	
+	private void checkAvailabilty(AODResult result, AODItemDTO aodItemDTO){
+		
 	}
 	
 	private void setMRNitem(AODItem aodItem) {
@@ -471,8 +480,8 @@ public class AODServiceImpl implements AODService {
 	}
 
 	@Override
-	public AODResult generateAodFromMrn(String idStr, Integer mrnId) {
-		AODResult result=new AODResult(new AOD(), null);
+	public MRNResult generateAodFromMrn(String idStr, Integer mrnId) {
+		MRNResult result=new MRNResult(null, null);
 		MRN mrn =mrnDao.findOne(mrnId);
 		AODDTO aoddto=newAOD().getDtoEntity();
 		aoddto.setAodStatus(AODStatus.DRAFT);
@@ -485,6 +494,10 @@ public class AODServiceImpl implements AODService {
 		}
 		if(mrn!=null && mrn.getSite()!=null){
 			aoddto.setSiteId(mrn.getSite().getId());
+		}
+		if(mrn!=null && mrn.getRequestedBy()!=null){
+			aoddto.setRequestedUserId(mrn.getRequestedBy().getId());
+
 		}
 		List<AODItemDTO> aodItemDTOs=new ArrayList<>();
 		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
@@ -500,16 +513,18 @@ public class AODServiceImpl implements AODService {
 		
 
 		  try {
-			save(aoddto);
-			result.addToMessageList("Successfully Generated the AOD");
+			AODResult aodResult=save(aoddto);
+			result.setStatus(ResultStatus.SUCCESS);
+			result.addToMessageList("Successfully Generated the AOD as ");
+			result.addToMessageList(aodResult.getDtoEntity().getId().toString());
+			result.addToMessageList(aodResult.getDtoEntity().getAodNo());
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		e.printStackTrace();
 			result.setStatus(ResultStatus.ERROR);
 			result.addToErrorList("Error while AOD generate");
 		}
-		return null;
+		return result;
 	}
 
 

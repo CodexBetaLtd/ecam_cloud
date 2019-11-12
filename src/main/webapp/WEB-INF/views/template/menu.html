@@ -110,12 +110,7 @@
                     <i class="icon-custom icon-receipt"></i> <span class="title">Receipt Order</span>
                 </a>
             </li>
-            <li>
-                <a th:href="@{/aod/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD.id)">
-                    <i class="icon-custom icon-aod"></i> <span class="title">AOD</span>
-                </a>
-            </li>
-            <li>
+             <li>
                 <a th:href="@{/mrn/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).MRN.id)">
                     <i class="fa fa-list-alt"></i> <span class="title">MRN</span>
                 </a>
@@ -123,6 +118,11 @@
             <li>
                 <a th:href="@{/mrnReturn/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).MRN.id)">
                     <i class="fa fa-list-alt"></i> <span class="title">MRN Return</span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/aod/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD.id)">
+                    <i class="icon-custom icon-aod"></i> <span class="title">AOD</span>
                 </a>
             </li>
             <li>

@@ -15,6 +15,7 @@ import com.codex.ecam.constants.inventory.AODStatus;
 import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.dto.inventory.aod.AODDTO;
 import com.codex.ecam.result.inventory.AODResult;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.inventory.api.AODService;
@@ -157,8 +158,8 @@ public class AODController {
 	} 
 
 	@RequestMapping(value = "/generateAodFromMrn", method = RequestMethod.GET)
-	public @ResponseBody AODResult generateAodFromMrn(String ids, Integer mrnId) throws Exception {
-		AODResult result = null;
+	public @ResponseBody MRNResult generateAodFromMrn(String ids, Integer mrnId) throws Exception {
+		MRNResult result = null;
 		if ((mrnId != null) && (mrnId > 0)) { 
 			result = aodService.generateAodFromMrn(ids, mrnId); 
 		}

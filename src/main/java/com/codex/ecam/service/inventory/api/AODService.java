@@ -9,6 +9,7 @@ import com.codex.ecam.dto.inventory.aod.AODItemDTO;
 import com.codex.ecam.dto.inventory.aod.AODRepDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODResult;
+import com.codex.ecam.result.inventory.MRNResult;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface AODService {
     AODResult findById(Integer id) throws Exception;
 
     AODResult statusChange(Integer id, AODStatus status);
-    AODResult generateAodFromMrn(String ids, Integer mrnId);
+    MRNResult generateAodFromMrn(String ids, Integer mrnId);
 
 
     AODRepDTO findAODRepById(Integer id) throws Exception;
