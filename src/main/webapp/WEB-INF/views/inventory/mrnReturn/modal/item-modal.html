@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title"> MRN Return <span th:text="#{mrnReturn.tab.item}"> </span></h4>
+</div>
+
+<div class="modal-body" id="mrnItemModalBody">
+
+    <input type="hidden" id="itemId">
+    <input type="hidden" id="itemIndex">
+    <input type="hidden" id="itemVersion">
+
+    <div id="mrn-item-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
+         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+        <div class="modal-content"></div>
+    </div>
+
+    <form id="frm_mrn_return_item">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tab-pane in active" id="aod_item_tab">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label"> <span th:text="#{mrnReturn.tab.item.mrnItem}"></span> <span class="symbol required"></span></label>
+                                <div class="input-group">
+                                    <input type="hidden" id="mrnItemId">
+                                    <input type="text" id="mrnItemName" name="mrnItemName" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label"> <span th:text="#{mrnReturn.tab.item.quantity}"></span><span
+                                        class="symbol required"></span> </label>
+                              <input id="mrnItemRemainigQty" class="form-control" name="mrnItemRemainigQty" type="text" readonly placeholder="MRN Item Return Quantity">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+	                  <div class="col-md-12 col-sm-12">
+	                 <div class="form-group">
+	                     <label class="control-label"> <span th:text="#{mrnReturn.mrnReturnNo}"> </span> <span class="symbol required"></span> </label>
+                                <input id="mrnItemReturnQuantity" class="form-control" name="mrnItemReturnQuantity" type="text" placeholder="MRN Item Return Quantity">
+	                     </div>
+	                  </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label"> <span th:text="#{mrnReturn.tab.item.description}"></span>
+                                </label><br/>
+                                <textarea id="mrnReturnItemDescription" placeholder="Description"
+                                          class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <a type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
+        <span th:text="#{form.btn.close}"></span>
+    </a>
+    <a class="btn btn-sm btn-blue cls-addBtn-aodItem" id="btn-add-mrn-return-item">
+        <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span>
+    </a>
+</div>
+</html>

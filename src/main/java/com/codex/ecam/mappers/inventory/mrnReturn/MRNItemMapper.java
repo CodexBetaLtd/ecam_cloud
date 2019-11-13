@@ -1,4 +1,4 @@
-package com.codex.ecam.mappers.inventory.mrn;
+package com.codex.ecam.mappers.inventory.mrnReturn;
 
 import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
 import com.codex.ecam.mappers.GenericMapper;
@@ -27,8 +27,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
         dto.setItemReturnQuantity(domain.getReturnQuantity());
         dto.setDescription(domain.getDescription());
         dto.setItemCost(domain.getItemCost()); 
-        dto.setApprovedQuantity(domain.getApprovedQuantity());
-
+        
         if (domain.getPart() != null && domain.getPart().getId() != null) {
             dto.setPartId(domain.getPart().getId());
             dto.setPartName(domain.getPart().getName());
@@ -55,7 +54,6 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
         domain.setVersion(dto.getVersion());
         domain.setQuantity(dto.getItemQuantity());
         domain.setReturnQuantity(dto.getItemReturnQuantity());
-        domain.setApprovedQuantity(dto.getApprovedQuantity());
         domain.setDescription(dto.getDescription());
         domain.setItemCost(dto.getItemCost());
     }
@@ -64,18 +62,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
     @Override
     public MRNItemDTO domainToDtoForDataTable(MRNItem domain) throws Exception {
     	MRNItemDTO dto = new MRNItemDTO();
-    	dto.setId(domain.getId());
-        dto.setVersion(domain.getVersion());
-        dto.setItemQuantity(domain.getQuantity());
-        dto.setItemReturnQuantity(domain.getReturnQuantity());
-        dto.setRemainingQuantity(domain.getQuantity());
-        dto.setDescription(domain.getDescription());
-        dto.setItemCost(domain.getItemCost()); 
-        dto.setApprovedQuantity(domain.getApprovedQuantity());
-        if (domain.getPart() != null && domain.getPart().getId() != null) {
-            dto.setPartId(domain.getPart().getId());
-            dto.setPartName(domain.getPart().getName());
-        }
+
         return dto;
     }
 

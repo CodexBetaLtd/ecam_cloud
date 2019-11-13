@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.criteria.Predicate;
 
@@ -18,13 +20,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.AODStatus;
+import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.inventory.AODDao;
 import com.codex.ecam.dao.inventory.AODItemDao;
+import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.inventory.aod.AODDTO;
@@ -35,10 +41,14 @@ import com.codex.ecam.exception.inventory.StockQuantityExceedException;
 import com.codex.ecam.mappers.inventory.aod.AODItemMapper;
 import com.codex.ecam.mappers.inventory.aod.AODMapper;
 import com.codex.ecam.mappers.inventory.aod.AODReportMapper;
+import com.codex.ecam.mappers.inventory.mrn.MRNMapper;
 import com.codex.ecam.model.inventory.aod.AOD;
 import com.codex.ecam.model.inventory.aod.AODItem;
+import com.codex.ecam.model.inventory.mrn.MRN;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODResult;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.inventory.api.AODService;
 import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -57,6 +67,12 @@ public class AODServiceImpl implements AODService {
 
 	@Autowired
 	private AssetDao assetDao;
+	
+	@Autowired
+	private MRNDao mrnDao;
+	
+	@Autowired
+	private MRNItemDao mrnItemDao;
 
 	@Autowired
 	private BusinessDao businessDao;
@@ -202,6 +218,7 @@ public class AODServiceImpl implements AODService {
 		}
 	}
 
+
 	private void setAODItem(AODResult result) {
 		
 		Set<AODItem> aodItems = new HashSet<>();
@@ -236,6 +253,9 @@ public class AODServiceImpl implements AODService {
 		}
 		if ((aodItemDTO.getStockId() != null) && (aodItemDTO.getStockId() > 0)) {
 			aodItem.setStock(stockDao.findOne(aodItemDTO.getStockId()));
+		}else{
+			result.setResultStatusError();
+			result.addToErrorList("Please select stock for "+aodItem.getPart().getName());
 		}
 		if ((aodItemDTO.getWarehouseId() != null) && (aodItemDTO.getWarehouseId() > 0)) {
 			aodItem.setWarehouse(assetDao.findOne(aodItemDTO.getWarehouseId()));
@@ -244,6 +264,17 @@ public class AODServiceImpl implements AODService {
 		aodItem.setAod(result.getDomainEntity()); 
 		aodItem.setQuantity(aodItemDTO.getItemQuantity());
 		aodItem.setDescription(aodItemDTO.getDescription());
+		setMRNitem(aodItem);
+	}
+	
+	private void checkAvailabilty(AODResult result, AODItemDTO aodItemDTO){
+		
+	}
+	
+	private void setMRNitem(AODItem aodItem) {
+		if (aodItem.getMrnItem() != null && aodItem.getMrnItem().getId() != null) {
+			aodItem.setMrnItem(mrnItemDao.findOne(aodItem.getMrnItem().getId()));
+		}
 	}
 
 	private void setBusinessSite(AODResult result) {
@@ -446,6 +477,54 @@ public class AODServiceImpl implements AODService {
 			ex.printStackTrace();
 		}
 		return out;
+	}
+
+	@Override
+	public MRNResult generateAodFromMrn(String idStr, Integer mrnId) {
+		MRNResult result=new MRNResult(null, null);
+		MRN mrn =mrnDao.findOne(mrnId);
+		AODDTO aoddto=newAOD().getDtoEntity();
+		aoddto.setAodStatus(AODStatus.DRAFT);
+		aoddto.setAodNo("");
+		aoddto.setAodType(AODType.OTHER);
+		aoddto.setDate(new Date());
+		aoddto.setIsDeleted(Boolean.FALSE);
+		if(mrn!=null && mrn.getBusiness()!=null){
+			aoddto.setBusinessId(mrn.getBusiness().getId());
+		}
+		if(mrn!=null && mrn.getSite()!=null){
+			aoddto.setSiteId(mrn.getSite().getId());
+		}
+		if(mrn!=null && mrn.getRequestedBy()!=null){
+			aoddto.setRequestedUserId(mrn.getRequestedBy().getId());
+
+		}
+		List<AODItemDTO> aodItemDTOs=new ArrayList<>();
+		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		for (Integer id : ids) {
+			MRNItem item=mrnItemDao.findOne(id);
+			AODItemDTO aodItem=new AODItemDTO();
+			aodItem.setItemQuantity(item.getApprovedQuantity());
+			aodItem.setPartId(item.getPart().getId());
+			aodItem.setItemQuantity(item.getApprovedQuantity());
+			aodItemDTOs.add(aodItem);
+		}
+		aoddto.setAodItemList(aodItemDTOs);
+		
+
+		  try {
+			AODResult aodResult=save(aoddto);
+			result.setStatus(ResultStatus.SUCCESS);
+			result.addToMessageList("Successfully Generated the AOD as ");
+			result.addToMessageList(aodResult.getDtoEntity().getId().toString());
+			result.addToMessageList(aodResult.getDtoEntity().getAodNo());
+
+		} catch (Exception e) {
+		e.printStackTrace();
+			result.setStatus(ResultStatus.ERROR);
+			result.addToErrorList("Error while AOD generate");
+		}
+		return result;
 	}
 
 

@@ -28,8 +28,10 @@ public interface MRNService {
     List<MRNDTO> findAll();
 
     DataTablesOutput<MRNDTO> findAll(FocusDataTablesInput input) throws Exception;
+    
+    DataTablesOutput<MRNDTO> findAllApprovedMRN(FocusDataTablesInput input) throws Exception;
 
-    DataTablesOutput<MRNItemDTO> findAll(FocusDataTablesInput input, Integer id);
+    DataTablesOutput<MRNItemDTO> getMRNItemDataTable(FocusDataTablesInput input, Integer mrnId);
 
 	//AODResult statusChange(Integer id, MRNStatus mrnStatus);
 

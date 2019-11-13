@@ -1,5 +1,6 @@
 package com.codex.ecam.service.inventory.impl;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,10 +19,12 @@ import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.CustomerDao;
 import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
+import com.codex.ecam.mappers.inventory.mrn.MRNItemMapper;
 import com.codex.ecam.mappers.inventory.mrn.MRNMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
@@ -52,7 +55,7 @@ public class MRNServiceImpl implements MRNService {
 	private CustomerDao customerDao;
 	
 	@Autowired
-	private StockDao stockDao;
+	private MRNItemDao mrnItemDao;
 	
 	@Override
 	public MRNResult newMRN() {
@@ -192,6 +195,11 @@ public class MRNServiceImpl implements MRNService {
 		
 		aodItem.setMrn(result.getDomainEntity()); 
 		aodItem.setQuantity(aodItemDTO.getItemQuantity());
+		aodItem.setApprovedQuantity(aodItemDTO.getApprovedQuantity());
+		if(result.getDomainEntity().getMrnStatus().equals(MRNStatus.REJECTED)){
+			aodItem.setApprovedQuantity(BigDecimal.ZERO);
+
+		}
 		aodItem.setDescription(aodItemDTO.getDescription());
 	}
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -285,10 +293,43 @@ public class MRNServiceImpl implements MRNService {
 		return out;
 	}
 
+	
+	public DataTablesOutput<MRNDTO> findAllApprovedMRN(FocusDataTablesInput input) throws Exception {
+		//AODPropertyMapper.getInstance().generateDataTableInput(input);
+		DataTablesOutput<MRN> domainOut;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			Specification<MRN> specification = (root, query, cb) -> cb.equal(root.get("mrnStatus"), MRNStatus.APPROVED);
+			domainOut = mrnDao.findAll(input,specification);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			Specification<MRN> specification = (root, query, cb) -> 
+			cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("mrnStatus"), MRNStatus.APPROVED));
+			domainOut = mrnDao.findAll(input, specification);
+		} else {
+			Specification<MRN> specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
+					cb.equal(root.get("mrnStatus"), MRNStatus.APPROVED)
+					);
+			domainOut = mrnDao.findAll(input, specification);
+		}
+		DataTablesOutput<MRNDTO> out = MRNMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
 	@Override
-	public DataTablesOutput<MRNItemDTO> findAll(FocusDataTablesInput input, Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+	public DataTablesOutput<MRNItemDTO> getMRNItemDataTable(FocusDataTablesInput input, Integer mrnId) {
+		DataTablesOutput<MRNItem> domainOut;
+		Specification<MRNItem> specification = (root, query, cb) -> cb.equal(root.get("mrn").get("id"),mrnId);
+		domainOut = mrnItemDao.findAll(input,specification);
+		DataTablesOutput<MRNItemDTO> out = null;
+		try {
+			out = MRNItemMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return out;
 	}
 
 

@@ -1,15 +1,11 @@
-var MRNItemTab = function () {
+var MRNReturnItemTab = function () {
     
     /**********************************************************
      * Init Buttons
      *********************************************************/
     var initButtons = function () {
-        $('#btn-mrn-item-modal-view').on('click', function () {
-        	MRNItemTab.mrnItemView();
-        });
-        
-        $('#btn-generate-aod').on('click', function () {
-        	MRNItemTab.generateAODFromMrn();
+        $('#btn-mrn-return-item-modal-view').on('click', function () {
+        	MRNReturnItemTab.mrnReturnItemView();
         });
     };
     
@@ -17,13 +13,13 @@ var MRNItemTab = function () {
      * View Modals
      *********************************************************/
 
-    var mrnItemView = function () {
+    var mrnReturnItemView = function () {
         var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../mrn/mrnItemView';
+            var url = '../mrnReturn/mrnReturnItemView';
             $modal.load(url, '', function () {
-            	MRNItemAddModal.init('master-modal-datatable');
+            	MRNReturnItemAddModal.init('master-modal-datatable');
                 $modal.modal();
             });
         }, 1000);
@@ -36,7 +32,7 @@ var MRNItemTab = function () {
             var url = '../mrn/mrnItemView';
             $modal.load(url, '', function () {
                 fillItemEditForm(mrnItemList[itemIndex]);
-                MRNItemAddModal.init('master-modal-datatable');
+                MRNReturnItemAddModal.init('master-modal-datatable');
                 $modal.modal();
             });
         }, 1000);
@@ -48,72 +44,29 @@ var MRNItemTab = function () {
     var populateItems = function () {
         if (mrnItemList.length > 0) {
             var row, item;
-            $("#tbl_aod_item > tbody").html("");
+            $("#tbl_mrn_return_item> tbody").html("");
             for (row = 0; row < mrnItemList.length; row++) {
                 item = mrnItemList[row]; 
                 item['index'] = row;
                 var html = "<tr id='row_" + row + "' >" +
-	                "<input id='items_" + row + "_aodItemId' name='mrnItemDTOs[" + row + "].id' value='" + CustomValidation.nullValueReplace(item.id) + "' type='hidden'>" + 
-                    "<input id='items_" + row + "_aodItemPartId' name='mrnItemDTOs[" + row + "].partId' value='" + CustomValidation.nullValueReplace(item.partId) + "' type='hidden'>" +
+                "<input id='items_" + row + "_aodItemId' name='mrnItemDTOs[" + row + "].id' value='" + CustomValidation.nullValueReplace(item.id) + "' type='hidden'>" + 
+	                "<input id='items_" + row + "_aodItemId' name='mrnItemDTOs[" + row + "].mrnItemId' value='" + CustomValidation.nullValueReplace(item.mrnItemId) + "' type='hidden'>" + 
                     "<input id='items_" + row + "_aodItemPartName' name='mrnItemDTOs[" + row + "].partName' value='" + CustomValidation.nullValueReplace(item.partName) + "' type='hidden'>" + 
-                    "<input id='items_" + row + "_aodItemQuantity' name='mrnItemDTOs[" + row + "].itemQuantity' value='" + CustomValidation.nullValueReplace(item.itemQuantity) + "' type='hidden'>" +
-                    "<input id='items_" + row + "_approvedQuantity' name='mrnItemDTOs[" + row + "].approvedQuantity' value='" + CustomValidation.nullValueReplace(item.approvedQuantity) + "' type='hidden'>" +
+                    "<input id='items_" + row + "_aodItemQuantity' name='mrnItemDTOs[" + row + "].itemReturnQuantity' value='" + CustomValidation.nullValueReplace(item.itemReturnQuantity) + "' type='hidden'>" +
                     "<input id='items_" + row + "_aodItemDescription' name='mrnItemDTOs[" + row + "].description' value='" + CustomValidation.nullValueReplace(item.description) + "' type='hidden'>" +
                     "<input id='items_" + row + "_aodItemVersion' name='mrnItemDTOs[" + row + "].version' value='" + CustomValidation.nullValueReplace(item.version) + "' type='hidden'>" + 
-                    "<td>" +
-                    "<div class='checkbox-center'>" +
-                    "<input type='checkbox' name='selectedMRNItem' value='" + CustomValidation.nullValueReplace(item.id)+ "' class='grey'>" +
-                    "</div>" +
+                    "<td>" + (row + 1) + "</td>" +
                     "<td>" + CustomValidation.nullValueReplace(item.partName) + "</td>" + 
                     "<td>" + CustomValidation.nullValueReplace(item.description) + "</td>" +
-                    "<td>" + parseFloat(item.itemQuantity).toFixed(2) + "</td>" +
-                    "<td>" + parseFloat(item.approvedQuantity).toFixed(2) + "</td>" +
-                    "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "MRNItemTab") + "</td>" +
+                    "<td>" + parseFloat(item.itemReturnQuantity).toFixed(2) + "</td>" +
+                    "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "MRNReturnItemTab") + "</td>" +
                     "</tr>";
-                $('#tbl_aod_item > tbody:last-child').append(html);
+                $('#tbl_mrn_return_item > tbody:last-child').append(html);
             }
         } else {
-            CustomComponents.emptyTableRow("tbl_aod_item", 8);
+            CustomComponents.emptyTableRow("tbl_mrn_return_item", 8);
         }
     };
-    
-    
-   var generateAODFromMrn=function(){
-   	var checkedValues = $("input[name='selectedMRNItem']:checkbox:checked").map(function() {
-		if(this.value == null || this.value == "") {
-			isSaved = false;
-		}
-	    return this.value;
-	}).get();
-   	
-   	if(checkedValues.length>0){
-   		$.ajax({
-   	        type: "GET",
-   	        url: "../aod/generateAodFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
-   	        contentType: "application/json",
-   	        dataType: "json",
-   	        success: function (result) {
-   	       	if (result.status == "SUCCESS") {
-   	        		var mappingUrlText = "../aod/edit?id=" + result.msgList[1];
-   	        		$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],result.msgList[2],mappingUrlText));
-   	        	} else {
-   	        		$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
-   	        	}
-   	        },
-   	        error: function (xhr, ajaxOptions, thrownError) {
-   	            alert(xhr.status + " " + thrownError);
-   	        },
-   	        error: function (e) {
-   	           // alert("Failed to Create AOD.");
-   	            console.log(e);
-   	        }
-   	    });
-   	}else{
-   		alert("Please select at least one MRN Item")
-   	}
-   	
-
-   }
 
     /**********************************************************
      * Add Item
@@ -125,7 +78,6 @@ var MRNItemTab = function () {
 
         if (item.index != null && item.index != "" && item.index >= 0) {
             itemObj = mrnItemList[item.index];
-            console.log(mrnItemList[ item.index ])
             setCommonDataToItemObj(item, itemObj);
         } else {
         	console.log(itemObj)
@@ -147,12 +99,10 @@ var MRNItemTab = function () {
     	
     	CustomValidation.validateFieldNull(itemObj, 'id', updatedItemObj.id);
     	CustomValidation.validateFieldNull(itemObj, 'index', updatedItemObj.index);
-    	CustomValidation.validateFieldNull(itemObj, 'partId', updatedItemObj.partId);
+    	CustomValidation.validateFieldNull(itemObj, 'mrnItemId', updatedItemObj.mrnItemId);
     	CustomValidation.validateFieldNull(itemObj, 'partName', updatedItemObj.partName); 
-    	CustomValidation.validateFieldNull(itemObj, 'partCode', updatedItemObj.partCode); 
     	CustomValidation.validateFieldNull(itemObj, 'description', updatedItemObj.description);
-    	CustomValidation.validateFieldNull(itemObj, 'itemQuantity', updatedItemObj.itemQuantity);
-    	CustomValidation.validateFieldNull(itemObj, 'approvedQuantity', updatedItemObj.approvedQuantity);
+    	CustomValidation.validateFieldNull(itemObj, 'itemReturnQuantity', updatedItemObj.itemReturnQuantity);
         CustomValidation.validateFieldNull(itemObj, 'version', updatedItemObj.version);
         
     };
@@ -163,12 +113,11 @@ var MRNItemTab = function () {
 
     var fillItemEditForm = function (item) {	
         $('#itemIndex').val(item['index']);
-        $('#itemId').val(item['itemId']);
-        $('#itemPartId').val(item['partId']);
+        $('#mrnItemId').val(item['mrnItemId']);
+        $('#itemId').val(item['id']);
         $('#itemPartName').val(item['partName']);
-        $('#itemDescription').val(item['description']);
-        $('#itemQuantity').val(item['itemQuantity']); 
-        $('#approvedItemQuantity').val(item['approvedQuantity']); 
+        $('#mrnReturnItemDescription').val(item['description']);
+        $('#itemQuantity').val(item['itemReturnQuantity']); 
         $("#itemVersion").val(item['version']); 
         
     };
@@ -205,8 +154,8 @@ var MRNItemTab = function () {
         /**********************************************************
          * View Modals
          *********************************************************/
-        mrnItemView: function () {
-            mrnItemView();
+        mrnReturnItemView: function () {
+        	mrnReturnItemView();
         },  
 
         /**********************************************************
@@ -223,9 +172,6 @@ var MRNItemTab = function () {
         deleteListItem: function (index) {
             removeItem(index);
         },
-        generateAODFromMrn:function(){
-        	generateAODFromMrn();
-        }
 
     };
 }();

@@ -1,4 +1,6 @@
-package com.codex.ecam.controller.inventory.aod;
+package com.codex.ecam.controller.inventory.mrnReturn;
+
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -6,30 +8,26 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
-import com.codex.ecam.constants.inventory.AODStatus;
-import com.codex.ecam.constants.inventory.AODType;
-import com.codex.ecam.dto.inventory.aod.AODDTO;
-import com.codex.ecam.result.inventory.AODResult;
-import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.constants.inventory.MRNReturnStatus;
+import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnDTO;
+import com.codex.ecam.result.inventory.MRNReturnResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
-import com.codex.ecam.service.inventory.api.AODService;
-
-import java.util.ArrayList;
+import com.codex.ecam.service.inventory.api.MRNReturnService;
 
 @Controller
-@RequestMapping(AODController.REQUEST_MAPPING_URL)
-public class AODController {
+@RequestMapping(MRNReturnController.REQUEST_MAPPING_URL)
+public class MRNReturnController {
 
-	public static final String REQUEST_MAPPING_URL = "/aod";
+	public static final String REQUEST_MAPPING_URL = "/mrnReturn";
 
 	@Autowired
-	private AODService aodService;
+	private MRNReturnService mrnReturnService;
+	
 	@Autowired
 	private BusinessService businessService;
 	@Autowired
@@ -37,14 +35,14 @@ public class AODController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
-		return "inventory/aod/home-view";
+		return "inventory/mrnReturn/home-view";
 	}
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
 		model.addAttribute("error", error);
-		return "inventory/aod/home-view";
+		return "inventory/mrnReturn/home-view";
 	}
 
 	/*********************************************************************
@@ -52,32 +50,22 @@ public class AODController {
 	 *********************************************************************/
     @RequestMapping(value = "/requestusermodalview", method = RequestMethod.GET)
     public String getUserView(Model model) {
-        return "inventory/aod/modal/user-modal";
+        return "inventory/mrnReturn/modal/user-modal";
 	}
 
-    @RequestMapping(value = "/customermodalview", method = RequestMethod.GET)
-    public String getCustomerView(Model model) {
-        return "inventory/aod/modal/customer-modal";
-	}
-
-    @RequestMapping(value = "/workordermodalview", method = RequestMethod.GET)
+    @RequestMapping(value = "/mrnmodalview", method = RequestMethod.GET)
     public String getPartView(Model model) {
-        return "inventory/aod/modal/workorder-modal";
+        return "inventory/mrnReturn/modal/mrn-modal";
 	}
 
-	@RequestMapping(value = "/aodItemView", method = RequestMethod.GET)
+	@RequestMapping(value = "/mrnReturnItemView", method = RequestMethod.GET)
 	public String getItemView(Model model) {
-		return "inventory/aod/modal/item-modal";
+		return "inventory/mrnReturn/modal/item-modal";
 	}
 
-    @RequestMapping(value = "/partmodalview", method = RequestMethod.GET)
-    public String getItemAssetView(Model model) {
-        return "inventory/aod/modal/asset-modal";
-    }
-
-    @RequestMapping(value = "/stockmodalview", method = RequestMethod.GET)
-    public String getStockView(Model model, Integer id) {
-        return "inventory/aod/modal/stock-modal";
+    @RequestMapping(value = "/mrnItemmodalview", method = RequestMethod.GET)
+    public String getMRNItemView(Model model) {
+        return "inventory/mrnReturn/modal/mrn-item-modal";
     }
 
 
@@ -88,21 +76,21 @@ public class AODController {
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String add(Model model, RedirectAttributes ra) {
 		try {
-			setCommonData(model, aodService.newAOD().getDtoEntity());
-			return "inventory/aod/add-view";
+			setCommonData(model, mrnReturnService.newMRN().getDtoEntity());
+			return "inventory/mrnReturn/add-view";
 		} catch (Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
-			return "redirect:/aod/index";
+			return "redirect:/mrnReturn/index";
 		}
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveOrUpdate(@ModelAttribute("aod") AODDTO dto, Model model) throws Exception {
-		AODResult result;
+	public String saveOrUpdate(@ModelAttribute("mrnReturn") MRNReturnDTO dto, Model model) throws Exception {
+		MRNReturnResult result;
 		if ((dto.getId() != null) && (dto.getId() > 0)) {
-			result = aodService.update(dto);
+			result = mrnReturnService.update(dto);
 		} else {
-			result = aodService.save(dto);
+			result = mrnReturnService.save(dto);
 		}
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -110,24 +98,24 @@ public class AODController {
 			model.addAttribute("success", result.getMsgList());
 		}
 		setCommonData(model, result.getDtoEntity());
-		return "inventory/aod/add-view";
+		return "inventory/mrnReturn/add-view";
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			setCommonData(model, aodService.findById(id).getDtoEntity());
-			return "inventory/aod/add-view";
+			setCommonData(model, mrnReturnService.findById(id).getDtoEntity());
+			return "inventory/mrnReturn/add-view";
 		} catch (Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
-			return "redirect:/aod/index";
+			return "redirect:/mrnReturn/index";
 		}
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			AODResult result = aodService.delete(id);
+			MRNReturnResult result = mrnReturnService.delete(id);
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				ra.addFlashAttribute("error", result.getErrorList());
 			} else {
@@ -137,37 +125,28 @@ public class AODController {
 			ra.addFlashAttribute("error", e.getMessage());
 		}
 
-		return "redirect:/aod/index";
+		return "redirect:/mrnReturn/index";
 	}  
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
-	public String aodStatusChange(Integer id, AODStatus aodStatus, Model model, RedirectAttributes ra) throws Exception {
-		AODResult result = null;
+	public String mrnStatusChange(Integer id, MRNReturnStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {
+		MRNReturnResult result = null;
 		if ((id != null) && (id > 0)) { 
-			result = aodService.statusChange(id, aodStatus); 
+		result = mrnReturnService.statusChange(id, mrnStatus); 
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				model.addAttribute("error", result.getErrorList());
 			} else {
 				model.addAttribute("success", result.getMsgList());
 			} 
 		} else {  
-			ra.addFlashAttribute("error", "Please Save/Select the AOD first"); 
+			ra.addFlashAttribute("error", "Please Save/Select the MRN Return first"); 
 		}
-		setCommonData(model, aodService.findById(id).getDtoEntity());
-		return "inventory/aod/add-view";
+		setCommonData(model, mrnReturnService.findById(id).getDtoEntity());
+		return "inventory/mrnReturn/add-view";
 	} 
 
-	@RequestMapping(value = "/generateAodFromMrn", method = RequestMethod.GET)
-	public @ResponseBody MRNResult generateAodFromMrn(String ids, Integer mrnId) throws Exception {
-		MRNResult result = null;
-		if ((mrnId != null) && (mrnId > 0)) { 
-			result = aodService.generateAodFromMrn(ids, mrnId); 
-		}
-		return result;
-	} 
-	private void setCommonData(Model model, AODDTO dto) {
-		model.addAttribute("aodTypes", AODType.getAODTypes());
-		model.addAttribute("aod", dto);
+	private void setCommonData(Model model, MRNReturnDTO dto) {
+		model.addAttribute("mrnReturn", dto);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("sites", assetService.findSiteByBusinessId(dto.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
 	}

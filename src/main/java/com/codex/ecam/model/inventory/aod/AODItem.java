@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.asset.Asset;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.stock.Stock;
 
 import java.math.BigDecimal;
@@ -40,6 +41,10 @@ public class AODItem extends BaseModel {
     @JoinColumn(name = "stock_id")
     @ManyToOne(targetEntity = Stock.class, fetch = FetchType.LAZY)
     private Stock stock;
+    
+    @JoinColumn(name = "mrn_item_id")
+    @ManyToOne(targetEntity = MRNItem.class, fetch = FetchType.LAZY)
+    private MRNItem mrnItem;
 
     @Column(name = "batch_no")
     private String batchNo;
@@ -154,4 +159,14 @@ public class AODItem extends BaseModel {
     public void setAodItemStocks(Set<AODItemStock> aodItemStocks) {
         updateCollection("aodItemStocks", aodItemStocks);
     }
+
+	public MRNItem getMrnItem() {
+		return mrnItem;
+	}
+
+	public void setMrnItem(MRNItem mrnItem) {
+		this.mrnItem = mrnItem;
+	}
+    
+    
 }

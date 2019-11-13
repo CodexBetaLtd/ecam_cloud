@@ -25,6 +25,8 @@ public class MRNItemDTO extends BaseDTO {
     private BigDecimal itemReturnQuantity;
     private BigDecimal itemCost;
     private BigDecimal remainingQuantity;
+    private BigDecimal approvedQuantity;
+
 
 
     /*=================================================================*/
@@ -139,4 +141,14 @@ public class MRNItemDTO extends BaseDTO {
 	public void setStockBatchNo(String stockBatchNo) {
 		this.stockBatchNo = stockBatchNo;
 	}
+
+	public BigDecimal getApprovedQuantity() {
+		return approvedQuantity;
+	}
+
+	public void setApprovedQuantity(BigDecimal approvedQuantity) {
+		this.approvedQuantity = approvedQuantity;
+	}
+	
+	
 }
