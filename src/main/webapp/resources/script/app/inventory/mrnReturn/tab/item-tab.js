@@ -29,7 +29,7 @@ var MRNReturnItemTab = function () {
         var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../mrn/mrnItemView';
+            var url = '../mrnReturn/mrnReturnItemView';
             $modal.load(url, '', function () {
                 fillItemEditForm(mrnItemList[itemIndex]);
                 MRNReturnItemAddModal.init('master-modal-datatable');
@@ -49,16 +49,18 @@ var MRNReturnItemTab = function () {
                 item = mrnItemList[row]; 
                 item['index'] = row;
                 var html = "<tr id='row_" + row + "' >" +
-                "<input id='items_" + row + "_aodItemId' name='mrnItemDTOs[" + row + "].id' value='" + CustomValidation.nullValueReplace(item.id) + "' type='hidden'>" + 
-	                "<input id='items_" + row + "_aodItemId' name='mrnItemDTOs[" + row + "].mrnItemId' value='" + CustomValidation.nullValueReplace(item.mrnItemId) + "' type='hidden'>" + 
-                    "<input id='items_" + row + "_aodItemPartName' name='mrnItemDTOs[" + row + "].partName' value='" + CustomValidation.nullValueReplace(item.partName) + "' type='hidden'>" + 
-                    "<input id='items_" + row + "_aodItemQuantity' name='mrnItemDTOs[" + row + "].itemReturnQuantity' value='" + CustomValidation.nullValueReplace(item.itemReturnQuantity) + "' type='hidden'>" +
-                    "<input id='items_" + row + "_aodItemDescription' name='mrnItemDTOs[" + row + "].description' value='" + CustomValidation.nullValueReplace(item.description) + "' type='hidden'>" +
-                    "<input id='items_" + row + "_aodItemVersion' name='mrnItemDTOs[" + row + "].version' value='" + CustomValidation.nullValueReplace(item.version) + "' type='hidden'>" + 
+                "<input id='items_" + row + "_aodItemId' name='mrnReturnItemDTOs[" + row + "].id' value='" + CustomValidation.nullValueReplace(item.id) + "' type='hidden'>" + 
+	                "<input id='items_" + row + "_aodItemId' name='mrnReturnItemDTOs[" + row + "].mrnItemId' value='" + CustomValidation.nullValueReplace(item.mrnItemId) + "' type='hidden'>" + 
+                    "<input id='items_" + row + "_aodItemPartName' name='mrnReturnItemDTOs[" + row + "].partName' value='" + CustomValidation.nullValueReplace(item.partName) + "' type='hidden'>" + 
+                    "<input id='items_" + row + "_aodItemQuantity' name='mrnReturnItemDTOs[" + row + "].itemReturnQuantity' value='" + CustomValidation.nullValueReplace(item.itemReturnQuantity) + "' type='hidden'>" +
+                    "<input id='items_" + row + "_aodItemQuantity' name='mrnReturnItemDTOs[" + row + "].itemQuantity' value='" + CustomValidation.nullValueReplace(item.itemQuantity) + "' type='hidden'>" +
+                    "<input id='items_" + row + "_aodItemDescription' name='mrnReturnItemDTOs[" + row + "].description' value='" + CustomValidation.nullValueReplace(item.description) + "' type='hidden'>" +
+                    "<input id='items_" + row + "_aodItemVersion' name='mrnReturnItemDTOs[" + row + "].version' value='" + CustomValidation.nullValueReplace(item.version) + "' type='hidden'>" + 
                     "<td>" + (row + 1) + "</td>" +
                     "<td>" + CustomValidation.nullValueReplace(item.partName) + "</td>" + 
                     "<td>" + CustomValidation.nullValueReplace(item.description) + "</td>" +
-                    "<td>" + parseFloat(item.itemReturnQuantity).toFixed(2) + "</td>" +
+                    "<td>" + parseFloat(item.itemQuantity).toFixed(2) + "</td>" +
+                    "<td>" + parseFloat(item.itemReturnQuantity).toFixed(2) + "</td>" +                 
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "MRNReturnItemTab") + "</td>" +
                     "</tr>";
                 $('#tbl_mrn_return_item > tbody:last-child').append(html);
@@ -103,6 +105,7 @@ var MRNReturnItemTab = function () {
     	CustomValidation.validateFieldNull(itemObj, 'partName', updatedItemObj.partName); 
     	CustomValidation.validateFieldNull(itemObj, 'description', updatedItemObj.description);
     	CustomValidation.validateFieldNull(itemObj, 'itemReturnQuantity', updatedItemObj.itemReturnQuantity);
+    	CustomValidation.validateFieldNull(itemObj, 'itemQuantity', updatedItemObj.itemQuantity);
         CustomValidation.validateFieldNull(itemObj, 'version', updatedItemObj.version);
         
     };
@@ -115,9 +118,10 @@ var MRNReturnItemTab = function () {
         $('#itemIndex').val(item['index']);
         $('#mrnItemId').val(item['mrnItemId']);
         $('#itemId').val(item['id']);
-        $('#itemPartName').val(item['partName']);
+        $('#mrnItemName').val(item['partName']);
         $('#mrnReturnItemDescription').val(item['description']);
-        $('#itemQuantity').val(item['itemReturnQuantity']); 
+        $('#mrnItemReturnQuantity').val(item['itemReturnQuantity']); 
+        $('#mrnItemRemainigQty').val(item['itemQuantity']); 
         $("#itemVersion").val(item['version']); 
         
     };

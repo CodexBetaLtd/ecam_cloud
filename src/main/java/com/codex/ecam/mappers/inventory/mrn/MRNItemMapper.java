@@ -24,7 +24,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
     	dto.setId(domain.getId());
         dto.setVersion(domain.getVersion());
         dto.setItemQuantity(domain.getQuantity());
-        dto.setItemReturnQuantity(domain.getReturnQuantity());
+    //    dto.setItemReturnQuantity(domain.get());
         dto.setDescription(domain.getDescription());
         dto.setItemCost(domain.getItemCost()); 
         dto.setApprovedQuantity(domain.getApprovedQuantity());
@@ -54,7 +54,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
         domain.setIsDeleted(dto.getIsDeleted());
         domain.setVersion(dto.getVersion());
         domain.setQuantity(dto.getItemQuantity());
-        domain.setReturnQuantity(dto.getItemReturnQuantity());
+        domain.setRemainQuantity(dto.getItemReturnQuantity());
         domain.setApprovedQuantity(dto.getApprovedQuantity());
         domain.setDescription(dto.getDescription());
         domain.setItemCost(dto.getItemCost());
@@ -67,8 +67,8 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
     	dto.setId(domain.getId());
         dto.setVersion(domain.getVersion());
         dto.setItemQuantity(domain.getQuantity());
-        dto.setItemReturnQuantity(domain.getReturnQuantity());
-        dto.setRemainingQuantity(domain.getQuantity());
+      //  dto.setItemReturnQuantity(domain.getRemainQuantity());
+        dto.setRemainingQuantity(domain.getRemainQuantity());
         dto.setDescription(domain.getDescription());
         dto.setItemCost(domain.getItemCost()); 
         dto.setApprovedQuantity(domain.getApprovedQuantity());

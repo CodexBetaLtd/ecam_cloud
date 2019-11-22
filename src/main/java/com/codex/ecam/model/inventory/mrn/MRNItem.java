@@ -42,8 +42,8 @@ public class MRNItem extends BaseModel {
     @Column(name = "quantity")
     private BigDecimal quantity;
 
-    @Column(name = "return_quantity")
-    private BigDecimal returnQuantity;
+    @Column(name = "remain_quantity")
+    private BigDecimal remainQuantity;
     
     @Column(name = "approved_quantity")
     private BigDecimal approvedQuantity;
@@ -88,15 +88,17 @@ public class MRNItem extends BaseModel {
         this.quantity = quantity;
     }
 
-    public BigDecimal getReturnQuantity() {
-        return returnQuantity;
-    }
 
-    public void setReturnQuantity(BigDecimal returnQuantity) {
-        this.returnQuantity = returnQuantity;
-    }
 
-    public String getDescription() {
+    public BigDecimal getRemainQuantity() {
+		return remainQuantity;
+	}
+
+	public void setRemainQuantity(BigDecimal remainQuantity) {
+		this.remainQuantity = remainQuantity;
+	}
+
+	public String getDescription() {
         return description;
     }
 

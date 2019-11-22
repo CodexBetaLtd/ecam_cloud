@@ -154,6 +154,7 @@ var MRNReturnItemAddModal = function () {
         mrnItems['partName'] = CustomValidation.nullValueReplace($("#mrnItemName").val());
 		mrnItems['description'] = CustomValidation.nullValueReplace($("#mrnReturnItemDescription").val());
 		mrnItems['itemReturnQuantity'] = CustomValidation.nullValueReplace($("#mrnItemReturnQuantity").val()); 
+		mrnItems['itemQuantity'] = CustomValidation.nullValueReplace($("#mrnItemRemainigQty").val()); 
 		mrnItems['version'] = CustomValidation.nullValueReplace($("#itemVersion").val()); 
 		
 		return mrnItems;

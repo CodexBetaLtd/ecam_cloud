@@ -59,15 +59,15 @@
                     </a>
                     <!-- Save -->
                     <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
-                       data-original-title="Save"   onclick="document.getElementById('btn_mrn_submit').click();"
-                       th:disabled="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
+                       data-original-title="Save"   onclick="document.getElementById('btn_mrn_return_submit').click();"
+                       th:disabled="${mrnReturn.mrnReturnStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_MRN_ADD.id)">
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
                     </a>
 
                     <!-- Delete -->
                     <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/mrnReturn/delete(id=${mrnReturn.id})}"
-                       th:disabled="${mrnReturn.id} == null or ${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
+                       th:disabled="${mrnReturn.id} == null or ${mrnReturn.mrnReturnStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_MRN_ADD.id)"
                        data-placement="top" data-original-title="Delete">
                         <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs" th:text="#{form.btn.delete}"> </span>
@@ -91,16 +91,16 @@
 
                     <!-- Approved -->
                     <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).DRAFT} "
+                       th:if="${mrnReturn.mrnReturnStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).DRAFT} "
                        th:disabled="${mrnReturn.id} == null ? 'disabled'"
-                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnRetunStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED})}"
+                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnReturnStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="MRN Requested">
                         <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.requested}"></span>
                     </a> 
                     <a class="btn btn-default btn-sm active tooltips" id="approvedAOD"
-                       th:if="${mrnReturn.mrnRetunStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED} "
-                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnRetunStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED})}"
+                       th:if="${mrnReturn.mrnReturnStatus}==${T(com.codex.ecam.constants.inventory.MRNReturnStatus).REQUETED} "
+                       th:href="@{/mrnReturn/statusChange(id=${mrnReturn.id},mrnReturnStatus=${T(com.codex.ecam.constants.inventory.MRNReturnStatus).APPROVED})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_STATUS_CHANGE_BUTTON_AOD_ADD.id)"
                        data-placement="top" data-original-title="MRN Approved">
                         <i class="fa fa-share-square-o"></i><span th:text="#{mrn.form.btn.apporved}"></span>
@@ -118,16 +118,16 @@
                             <div class="panel-body">
                                 <div th:replace="template/messageview :: message"></div>
 
-                                <input type="hidden" id="mrnId" name="id" th:field="*{id}"/>
-                                <input type="hidden" id="mrnVersion" name="version" th:field="*{version}"/>
+                                <input type="hidden" id="mrnReturnId" name="id" th:field="*{id}"/>
+                                <input type="hidden" id="mrnReturnVersion" name="version" th:field="*{version}"/>
 
                                 <div class="row">
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label class="control-label"><span th:text="#{mrn.status}"></span></label>
 												<p> 
-												<input type="hidden" th:field="*{mrnRetunStatus}">
-													<b><span style="font-size: medium;" th:text="${mrnReturn.mrnRetunStatus.getName()}"></span></b>
+												<input type="hidden" th:field="*{mrnReturnStatus}">
+													<b><span style="font-size: medium;" th:text="${mrnReturn.mrnReturnStatus.getName()}"></span></b>
 												</p>
                                         </div>
                                     </div>
@@ -215,7 +215,7 @@
                                     </div>
                                 </div>
                                 <div class="row" style="visibility: hidden;">
-                                    <button id="btn_mrn_submit" type="submit"></button>
+                                    <button id="btn_mrn_return_submit" type="submit"></button>
                                 </div>
                             </div>
                         </div>

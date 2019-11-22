@@ -129,10 +129,10 @@ public class MRNReturnController {
 	}  
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
-	public String mrnStatusChange(Integer id, MRNReturnStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {
+	public String mrnStatusChange(Integer id, MRNReturnStatus mrnReturnStatus, Model model, RedirectAttributes ra) throws Exception {
 		MRNReturnResult result = null;
 		if ((id != null) && (id > 0)) { 
-		result = mrnReturnService.statusChange(id, mrnStatus); 
+		result = mrnReturnService.statusChange(id, mrnReturnStatus); 
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				model.addAttribute("error", result.getErrorList());
 			} else {

@@ -14,7 +14,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.codex.ecam.model.BaseModel;
-import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 
 @Entity
@@ -39,6 +38,9 @@ public class MRNReturnItem extends BaseModel {
 
     @Column(name = "return_quantity")
     private BigDecimal returnQuantity;
+    
+    @Column(name = "mrn_item_current_quantity")
+    private BigDecimal mrnItemCurrentQuantity;
 
     @Column(name = "description")
     private String description;
@@ -84,6 +86,14 @@ public class MRNReturnItem extends BaseModel {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public BigDecimal getMrnItemCurrentQuantity() {
+		return mrnItemCurrentQuantity;
+	}
+
+	public void setMrnItemCurrentQuantity(BigDecimal mrnItemCurrentQuantity) {
+		this.mrnItemCurrentQuantity = mrnItemCurrentQuantity;
 	}
 
 

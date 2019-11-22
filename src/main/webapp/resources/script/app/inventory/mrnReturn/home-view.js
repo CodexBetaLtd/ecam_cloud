@@ -132,7 +132,7 @@ var MRNReturnHome = function () {
                     },
                     responsivePriority: 1 
                 }, {
-                    data: 'mrnRetunNo',
+                    data: 'mrnReturnNo',
                     responsivePriority: 1
                 },{
                     orderable: false,
@@ -141,7 +141,7 @@ var MRNReturnHome = function () {
                     responsivePriority: 2 
                 },
                 {
-                    data: 'mrnRetunStatus',
+                    data: 'mrnReturnStatus',
                     responsivePriority: 2 
 
                 },
@@ -160,10 +160,10 @@ var MRNReturnHome = function () {
                 ],
             aoColumnDefs: [{ 
                 searchable: false,
-                targets: 4,
+                targets: 5,
                 data: "id",
                 render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("mrn", data);
+                    return ButtonUtil.getHomeBtnWithURL("mrnReturn", data);
                 }
             }],
             oLanguage: {
