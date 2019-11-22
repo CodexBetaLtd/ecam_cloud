@@ -119,11 +119,10 @@
             },
                 {data: 'partName'},
                 {data: 'itemQuantity'},
-                {data: 'itemReturnQuantity'},
                 {data: 'remainingQuantity'}
             ],
             aoColumnDefs: [{
-                targets: 5, 
+                targets: 4, 
                 data: "id",
                 render: function (data, type, row, meta) {
                     var vars = [row.id, row.partName, row.itemQuantity, row.remainingQuantity];

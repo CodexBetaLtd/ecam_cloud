@@ -1,5 +1,6 @@
 package com.codex.ecam.service.inventory.impl;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,7 @@ import com.codex.ecam.dao.inventory.MRNReturnDao;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnDTO;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnItemDTO;
 import com.codex.ecam.mappers.inventory.mrnReturn.MRNReturnMapper;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.mrnReturn.MRNReturn;
 import com.codex.ecam.model.inventory.mrnReturn.MRNReturnItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
@@ -112,8 +114,8 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	}
 
 	private void setMRNStatus(MRNReturnResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMrnRetunStatus() != null)) {
-			result.getDomainEntity().setMrnReturnStatus(result.getDtoEntity().getMrnRetunStatus());
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMrnReturnStatus() != null)) {
+			result.getDomainEntity().setMrnReturnStatus(result.getDtoEntity().getMrnReturnStatus());
 		}
 	}
 	
@@ -170,8 +172,15 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 		}
 		
 		mrnReturnItem.setMrnReturn(result.getDomainEntity()); 
+		mrnReturnItem.setMrnItemCurrentQuantity(mrnReturnItemDTO.getItemQuantity());
 		mrnReturnItem.setReturnQuantity(mrnReturnItemDTO.getItemReturnQuantity());
 		mrnReturnItem.setDescription(mrnReturnItemDTO.getDescription());
+		if(result.getDomainEntity().getMrnReturnStatus().equals(MRNReturnStatus.APPROVED)){
+			MRNItem mrnItem=mrnItemDao.findOne(mrnReturnItem.getMrnItem().getId());
+			BigDecimal mrnitemRemainingQuntity=mrnReturnItem.getMrnItemCurrentQuantity().subtract(mrnReturnItem.getReturnQuantity());
+			mrnItem.setRemainQuantity(mrnitemRemainingQuntity);
+			mrnItemDao.save(mrnItem);
+		}
 	}
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private MRNReturn findEntityById(Integer id) throws Exception {
@@ -221,16 +230,16 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 		MRNReturnResult result = new MRNReturnResult(null, null);
 		try {
 			MRNReturnDTO dto=findDTOById(id);
-	/*		//dto.setMrnStatus(status);
-			MRN domain = findEntityById(dto.getId());
-			String  previousStatus=domain.getMrnStatus().getName();
+			dto.setMrnReturnStatus(status);
+			MRNReturn domain = findEntityById(dto.getId());
+			String  previousStatus=domain.getMrnReturnStatus().getName();
 			result.setDtoEntity(dto);
-			result.setDomainEntity(domain);*/
-			saveOrUpdate(result);
-		//	result.addToMessageList("MRN Status Updated Successfully. "+previousStatus+" --> "+ status.getName());
+			//result.setDomainEntity(domain);
+			update(result.getDtoEntity());
+		result.addToMessageList("MRN Return Status Updated Successfully. "+previousStatus+" --> "+ status.getName());
 		} catch (ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
-			result.addToErrorList("MRN Already updated. Please Reload MRN.");
+			result.addToErrorList("MRN Return Already updated. Please Reload MRN Return.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();

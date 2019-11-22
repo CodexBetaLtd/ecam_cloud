@@ -28,7 +28,7 @@ public class MRNReturnDTO extends BaseDTO {
     
     private Integer statusId;
     private String statusName;
-    private MRNReturnStatus mrnRetunStatus = MRNReturnStatus.DRAFT;
+    private MRNReturnStatus mrnReturnStatus = MRNReturnStatus.DRAFT;
 
     private String name;
     private String description;
@@ -132,12 +132,13 @@ public class MRNReturnDTO extends BaseDTO {
 		this.statusName = statusName;
 	}
 
-	public MRNReturnStatus getMrnRetunStatus() {
-		return mrnRetunStatus;
+
+	public MRNReturnStatus getMrnReturnStatus() {
+		return mrnReturnStatus;
 	}
 
-	public void setMrnRetunStatus(MRNReturnStatus mrnRetunStatus) {
-		this.mrnRetunStatus = mrnRetunStatus;
+	public void setMrnReturnStatus(MRNReturnStatus mrnReturnStatus) {
+		this.mrnReturnStatus = mrnReturnStatus;
 	}
 
 	public String getName() {
