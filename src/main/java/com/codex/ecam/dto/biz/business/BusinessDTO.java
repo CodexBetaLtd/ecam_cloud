@@ -35,6 +35,7 @@ public class BusinessDTO extends BaseDTO {
 	
 	private Boolean roleCustomer; 
 	private Boolean roleSupplier;
+	private Boolean isFIFO=Boolean.FALSE;
 	 
 	private List<BusinessContactDTO> businessContactDTOs=new ArrayList<>();
 	
@@ -214,6 +215,16 @@ public class BusinessDTO extends BaseDTO {
 
 	public void setRoleSupplier(Boolean roleSupplier) {
 		this.roleSupplier = roleSupplier;
+	}
+
+	public Boolean getIsFIFO() {
+		return isFIFO;
+	}
+
+	public void setIsFIFO(Boolean isFIFO) {
+		this.isFIFO = isFIFO;
 	} 
+	
+	
 
 }

@@ -2,10 +2,12 @@ package com.codex.ecam.service.inventory.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,12 +22,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.RFQStatus;
 import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.SupplierDao;
+import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderItemDao;
 import com.codex.ecam.dao.inventory.RFQDao;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
@@ -40,6 +45,8 @@ import com.codex.ecam.mappers.purchasing.RFQMapper;
 import com.codex.ecam.mappers.purchasing.RFQNotificationMapper;
 import com.codex.ecam.mappers.purchasing.RFQReportMapper;
 import com.codex.ecam.model.admin.User;
+import com.codex.ecam.model.inventory.mrn.MRN;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItemRFQItem;
 import com.codex.ecam.model.inventory.rfq.RFQ;
@@ -48,6 +55,7 @@ import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.model.inventory.rfq.RFQNotification;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.inventory.api.RFQService;
 import com.codex.ecam.util.FileDownloadUtil;
@@ -82,6 +90,11 @@ public class RFQServiceImpl implements RFQService {
 	
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private MRNDao mrnDao;
+	
+	@Autowired
+	private MRNItemDao mrnItemDao;
 	
 	@Autowired
     private VelocityEmailSender velocityEmailService;
@@ -518,6 +531,49 @@ public class RFQServiceImpl implements RFQService {
 		
 	}
 
+	@Override
+	public MRNResult generateRFQFromMrn(String idStr, Integer mrnId) {
+		MRNResult result=new MRNResult(null, null);
+		MRN mrn =mrnDao.findOne(mrnId);
+		RFQDTO rfqDTO=new RFQDTO();
+		rfqDTO.setRfqStatus(RFQStatus.DRAFT);
+		rfqDTO.setCode("");
+		rfqDTO.setIsDeleted(Boolean.FALSE);
+		if(mrn!=null && mrn.getBusiness()!=null){
+			rfqDTO.setBusinessId(mrn.getBusiness().getId());
+		}
+		if(mrn!=null && mrn.getSite()!=null){
+			rfqDTO.setSiteId(mrn.getSite().getId());
+		}
+
+		List<RFQItemDTO> rfqItemDTOs=new ArrayList<>();
+		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		for (Integer id : ids) {
+			MRNItem item=mrnItemDao.findOne(id);
+			RFQItemDTO itemDTO=new RFQItemDTO();
+			itemDTO.setItemQtyRequested(item.getApprovedQuantity().intValue());
+			itemDTO.setItemAssetId(item.getPart().getId());
+			rfqItemDTOs.add(itemDTO);
+		}
+		rfqDTO.setItems(rfqItemDTOs);
+		
+
+		  try {
+			RFQResult rfqResult=save(rfqDTO);
+			result.setStatus(ResultStatus.SUCCESS);
+			result.addToMessageList("Successfully Generated the RFQ as ");
+			result.addToMessageList(rfqResult.getDomainEntity().getId().toString());
+			result.addToMessageList(rfqResult.getDomainEntity().getCode());
+
+		} catch (Exception e) {
+		e.printStackTrace();
+			result.setStatus(ResultStatus.ERROR);
+			result.addToErrorList("Error while RFQ generate");
+		}
+		return result;
+	}
+
+	
 
 
 }

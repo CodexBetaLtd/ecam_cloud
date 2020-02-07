@@ -8,8 +8,16 @@
 	            <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span> Item
 	        </button>
 	        <button th:disabled="${mrn.mrnStatus}!=${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED}? 'disabled'"
-	                type="button" class="btn btn-blue btn-sm active tooltips" id="btn-generate-aod" data-toggle="modal" data-placement="top" data-original-title="Generate AOD">
+	                type="submit" class="btn btn-blue btn-sm active tooltips" id="btn-generate-aod" data-toggle="modal" data-placement="top" data-original-title="Generate AOD">
 	            <i class="clip-plus-circle-2 "></i>  Generate AOD
+	        </button>
+	        <button th:disabled="${mrn.mrnStatus}!=${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED}? 'disabled'"
+	                type="submit" class="btn btn-blue btn-sm active tooltips" id="btn-generate-po" data-toggle="modal" data-placement="top" data-original-title="Generate AOD">
+	            <i class="clip-plus-circle-2 "></i>  Generate PO
+	        </button>
+	        <button th:disabled="${mrn.mrnStatus}!=${T(com.codex.ecam.constants.inventory.MRNStatus).APPROVED}? 'disabled'"
+	                type="submit" class="btn btn-blue btn-sm active tooltips" id="btn-generate-rfq" data-toggle="modal" data-placement="top" data-original-title="Generate AOD">
+	            <i class="clip-plus-circle-2 "></i>  Generate RFQ
 	        </button>
 	    </div>
 	

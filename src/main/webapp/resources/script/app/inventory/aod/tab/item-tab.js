@@ -135,7 +135,7 @@ var AodItemTab = function () {
         $('#itemStockBatchNo').val(item['stockBatchNo']);  
         $('#itemStockWarehouseId').val(item['warehouseId']);
         $('#itemStockWarehouseName').val(item['warehouseName']);  
-        $("#itemStockOnHandQty").text(item['remainingQuantity']); 
+        $("#itemStockOnHandQty").val(item['remainingQuantity']); 
         $("#itemStockQuantity").val(item['remainingQuantity']); 
         $('#itemDescription').val(item['description']);
         $('#itemQuantity').val(item['itemQuantity']); 

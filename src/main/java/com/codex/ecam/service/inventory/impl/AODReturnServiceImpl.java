@@ -1,8 +1,10 @@
 package com.codex.ecam.service.inventory.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,7 @@ import com.codex.ecam.mappers.inventory.aodReturn.AODReturnItemMapper;
 import com.codex.ecam.mappers.inventory.aodReturn.AODReturnMapper;
 import com.codex.ecam.mappers.inventory.aodReturn.AODReturnReportMapper;
 import com.codex.ecam.model.inventory.aod.AODItem;
+import com.codex.ecam.model.inventory.aod.AODItemStock;
 import com.codex.ecam.model.inventory.aodRetun.AODReturn;
 import com.codex.ecam.model.inventory.aodRetun.AODReturnItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
@@ -284,7 +287,7 @@ public class AODReturnServiceImpl implements AODReturnService {
 	private AODReturnDTO AODReturnByAOD() throws Exception {
 		AODReturnDTO returnDTO = new AODReturnDTO();
 		returnDTO.setReturnNo("r-aod-ots" + new Random().nextInt(12));
-		returnDTO.setAodReturnItemList(aodReturnItemByAODItem());
+		returnDTO.setAodReturnItemList((List<AODReturnItemDTO>) aodReturnItemByAODItem());
 		return returnDTO;
 	}
 
@@ -361,45 +364,48 @@ public class AODReturnServiceImpl implements AODReturnService {
 	}
 
 	private void updateAODItem(AODReturnResult result) throws Exception {
-		//		for (AODReturnItem returnItem : result.getDomainEntity().getAodReturnItems()) {
-		//			try {
-		//				/*if (returnItem.getAodItem() != null) {
-		//					AODItem aodItem = aodItemDao.findOne(returnItem.getAodItem().getId());
-		//					aodItem.setReturnQuantity(aodItem.getReturnQuantity() + returnItem.getReturnQty());
-		//					Double returnQty = returnItem.getReturnQty();
-		//					Collections.sort(aodItem.getAodItemStocks(), (a, b) -> a.getStock().getId().compareTo(b.getStock().getId()));
-		//					Collections.reverse(aodItem.getAodItemStocks());
-		//					if ((aodItem.getAodItemStocks() != null) && (aodItem.getAodItemStocks().size() > 0)) {
-		//						Double totalReturnQty = aodItem.getAodItemStocks().stream().mapToDouble(obj -> obj.getReturnQuantity()).sum();
-		//						if (aodItem.getQuantity() < (totalReturnQty + returnQty)) {
-		//							throw new RuntimeException(" Total Return Item Qty is more than Total AOD Qty");
-		//						}
-		//					}
-		//					for (AODItemStock aodItemStock : aodItem.getAodItemStocks()) {
-		//						if (aodItemStock.getQuantity().equals(aodItemStock.getReturnQuantity())) {
-		//							continue;
-		//						}
-		//						if ((aodItemStock.getQuantity() >= returnQty) && (returnQty != 0.0)) {
-		//							aodItemStock.setReturnQuantity(aodItemStock.getReturnQuantity() + returnQty);
-		//							updateStock(aodItemStock, returnQty);
-		//							returnQty = 0.0;
-		//						} else {
-		//							aodItemStock.setReturnQuantity(aodItemStock.getQuantity());
-		//							returnQty = returnQty - aodItemStock.getQuantity();
-		//							updateStock(aodItemStock, aodItemStock.getQuantity());
-		//						}
-		//					}
-		//					aodItemDao.save(aodItem);
-		//					result.setResultStatusSuccess();
-		//					result.addToMessageList("AOD Item Return value update Successful!");
-		//				}*/
-		//			} catch (Exception ex) {
-		//				ex.printStackTrace();
-		//				result.setResultStatusError();
-		//				result.addToErrorList("AOD Item Return value update Not Successful!");
-		//				logger.error(ex.getMessage());
-		//			}
-		//		}
+/*				for (AODReturnItem returnItem : result.getDomainEntity().getAodReturnItems()) {
+					try {
+						if (returnItem.getAodItem() != null) {
+							AODItem aodItem = aodItemDao.findOne(returnItem.getAodItem().getId());
+							aodItem.setReturnQuantity(aodItem.getReturnQuantity());
+							if(aodItem.getQuantity().subtract(aodItem.getReturnQuantity()).compareTo(BigDecimal.ZERO) >=0){
+								aodItem.getStock().getCurrentQuantity().add(aodItem.getReturnQuantity());	
+							}
+							Double returnQty = returnItem.getReturnQty();
+							Collections.sort(aodItem.getAodItemStocks(), (a, b) -> a.getStock().getId().compareTo(b.getStock().getId()));
+							Collections.reverse(aodItem.getAodItemStocks());
+							if ((aodItem.getAodItemStocks() != null) && (aodItem.getAodItemStocks().size() > 0)) {
+								Double totalReturnQty = aodItem.getAodItemStocks().stream().mapToDouble(obj -> obj.getReturnQuantity()).sum();
+								if (aodItem.getQuantity() < (totalReturnQty + returnQty)) {
+									throw new RuntimeException(" Total Return Item Qty is more than Total AOD Qty");
+								}
+							}
+							for (AODItemStock aodItemStock : aodItem.getAodItemStocks()) {
+								if (aodItemStock.getQuantity().equals(aodItemStock.getReturnQuantity())) {
+									continue;
+								}
+								if ((aodItemStock.getQuantity() >= returnQty) && (returnQty != 0.0)) {
+									aodItemStock.setReturnQuantity(aodItemStock.getReturnQuantity() + returnQty);
+									updateStock(aodItemStock, returnQty);
+									returnQty = 0.0;
+								} else {
+									aodItemStock.setReturnQuantity(aodItemStock.getQuantity());
+									returnQty = returnQty - aodItemStock.getQuantity();
+									updateStock(aodItemStock, aodItemStock.getQuantity());
+								}
+							}
+							aodItemDao.save(aodItem);
+							result.setResultStatusSuccess();
+							result.addToMessageList("AOD Item Return value update Successful!");
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						result.setResultStatusError();
+						result.addToErrorList("AOD Item Return value update Not Successful!");
+						logger.error(ex.getMessage());
+					}
+				}*/
 
 	}
 

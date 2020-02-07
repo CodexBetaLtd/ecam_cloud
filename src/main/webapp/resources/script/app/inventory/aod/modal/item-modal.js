@@ -197,7 +197,7 @@ var AodItemAddModal = function () {
 		aodItems['warehouseName'] = CustomValidation.nullValueReplace($("#itemStockWarehouseName").val()); 
 		aodItems['description'] = CustomValidation.nullValueReplace($("#itemDescription").val());
 		aodItems['itemQuantity'] = CustomValidation.nullValueReplace($("#itemQuantity").val()); 
-		aodItems['remainingQuantity'] = CustomValidation.nullValueReplace($("#itemStockOnHandQty").text()); 
+		aodItems['remainingQuantity'] = CustomValidation.nullValueReplace($("#itemStockOnHandQty").val()); 
 		aodItems['version'] = CustomValidation.nullValueReplace($("#itemVersion").val()); 
 		
 		return aodItems;

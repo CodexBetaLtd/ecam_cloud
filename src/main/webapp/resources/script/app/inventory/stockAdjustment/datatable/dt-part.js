@@ -117,12 +117,13 @@ var dtPart = function () {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
+                {data: 'name'},
                 {data: 'code'},
-                {data: 'partNo'},
-                {data: 'assetBrandName'}
+                {data: 'brandName'},
+                {data: 'description'}
             ],
             aoColumnDefs: [{
-                targets: 4,
+                targets: 5,
                 width: "10%",
                 data: "id",
                 render: function (data, type, row, meta) {
@@ -186,7 +187,7 @@ var dtPart = function () {
     return {
         getPartDataTable: function (url, func) {
             if (url == null) {
-                url = "../restapi/part/getPartDataTable";
+                url = "../restapi/part/tabledata";
             }
             getPartDataTable(url, func);
         },

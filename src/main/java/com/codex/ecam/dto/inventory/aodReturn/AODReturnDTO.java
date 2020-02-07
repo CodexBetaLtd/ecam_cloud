@@ -1,8 +1,8 @@
 package com.codex.ecam.dto.inventory.aodReturn;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import com.codex.ecam.constants.inventory.AODReturnStatus;
 import com.codex.ecam.dto.BaseDTO;
@@ -30,7 +30,7 @@ public class AODReturnDTO extends BaseDTO {
     private Integer statusId;
     private String statusName;
     private AODReturnStatus aodReturnStatus = AODReturnStatus.DRAFT;
-    private Set<AODReturnItemDTO> aodReturnItemList = new HashSet<>();
+    private List<AODReturnItemDTO> aodReturnItemList = new ArrayList<>();
 
     /*=============================================================================*/
 
@@ -162,11 +162,13 @@ public class AODReturnDTO extends BaseDTO {
         this.aodCustomerAddress = aodCustomerAddress;
     }
 
-    public Set<AODReturnItemDTO> getAodReturnItemList() {
-        return aodReturnItemList;
-    }
+	public List<AODReturnItemDTO> getAodReturnItemList() {
+		return aodReturnItemList;
+	}
 
-    public void setAodReturnItemList(Set<AODReturnItemDTO> aodReturnItemList) {
-        this.aodReturnItemList = aodReturnItemList;
-    }
+	public void setAodReturnItemList(List<AODReturnItemDTO> aodReturnItemList) {
+		this.aodReturnItemList = aodReturnItemList;
+	}
+
+
 }

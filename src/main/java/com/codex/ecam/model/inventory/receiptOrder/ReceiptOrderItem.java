@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -83,8 +82,8 @@ public class ReceiptOrderItem extends BaseModel {
 	@OneToMany(mappedBy = "receiptOrderItem", fetch = FetchType.LAZY)
 	private Set<Stock> stocks;
 
-	@OneToMany(mappedBy = "receiptOrderItem", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-	private Set<ReceiptOrderItemSerialNumber> receiptOrderItemSerialNumbers;
+	//@OneToMany(mappedBy = "receiptOrderItem", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	//private Set<ReceiptOrderItemSerialNumber> receiptOrderItemSerialNumbers;
 
 	public Integer getId() {
 		return id;
@@ -206,11 +205,11 @@ public class ReceiptOrderItem extends BaseModel {
 		updateCollection("stocks", stocks);
 	}
 
-	public Set<ReceiptOrderItemSerialNumber> getReceiptOrderItemSerialNumbers() {
+/*	public Set<ReceiptOrderItemSerialNumber> getReceiptOrderItemSerialNumbers() {
 		return receiptOrderItemSerialNumbers;
 	}
 
 	public void setReceiptOrderItemSerialNumbers(Set<ReceiptOrderItemSerialNumber> receiptOrderItemSerialNumbers) {
 		updateCollection("receiptOrderItemSerialNumbers", receiptOrderItemSerialNumbers);
-	}
+	}*/
 }

@@ -59,7 +59,9 @@ public class AODItemMapper extends GenericMapper<AODItem, AODItemDTO> {
         dto.setId(domain.getId());
         dto.setItemQuantity(domain.getQuantity());
         dto.setItemReturnQuantity(domain.getReturnQuantity());
-        dto.setRemainingQuantity(domain.getQuantity().subtract(domain.getReturnQuantity()));
+        if(domain.getQuantity()!=null && domain.getReturnQuantity()!=null){
+            dto.setRemainingQuantity(domain.getQuantity().subtract(domain.getReturnQuantity()));
+        }
         if (domain.getWarehouse() != null && domain.getWarehouse().getId() != null) {
             dto.setWarehouseId(domain.getWarehouse().getId());
             dto.setWarehouseName(domain.getWarehouse().getName());

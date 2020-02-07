@@ -10,6 +10,7 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQRepDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 
 public interface RFQService {
@@ -34,5 +35,8 @@ public interface RFQService {
 
 	void rfqFileDownload(Integer id,HttpServletResponse response) throws Exception;
 	void rfqFileDelete(Integer id) throws Exception;
+	
+    MRNResult generateRFQFromMrn(String ids, Integer mrnId);
+
 
 }

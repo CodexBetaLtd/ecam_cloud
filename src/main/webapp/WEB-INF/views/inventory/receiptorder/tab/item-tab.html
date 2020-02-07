@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-12">
             <button type="button" class="btn btn-blue btn-sm active tooltips" id="btnNewReceiptItem"
-                    data-toggle="modal" data-placement="top" data-original-title="Add New Item">
+                    data-toggle="modal" data-placement="top" data-original-title="Add New Item" th:disabled="${receiptOrder.receiptOrderStatus} == ${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).RECEIVED} or ${receiptOrder.receiptOrderStatus} == ${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).CANCEL} ? 'disabled'">
                 <i class="clip-plus-circle-2 "></i> Add Items
             </button>
         </div>

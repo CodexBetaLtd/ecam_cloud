@@ -131,6 +131,9 @@ public class Business extends BaseModel {
 
 	@Column(name = "role_supplier")
 	private Boolean roleSupplier = false;
+	
+	@Column(name = "is_fifo")
+	private Boolean isFIFO = false;
 
 	@OneToMany(mappedBy = "business", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private Set<Asset> assets;
@@ -465,4 +468,14 @@ public class Business extends BaseModel {
 	public void setContacts(Set<BusinessContact> contacts) {
 		this.contacts = contacts;
 	}
+
+	public Boolean getIsFIFO() {
+		return isFIFO;
+	}
+
+	public void setIsFIFO(Boolean isFIFO) {
+		this.isFIFO = isFIFO;
+	}
+	
+	
 }

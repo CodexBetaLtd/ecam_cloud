@@ -44,7 +44,8 @@ import com.codex.ecam.dto.inventory.stock.StockHistoryDTO;
 import com.codex.ecam.dto.inventory.stock.StockNotificationDTO;
 import com.codex.ecam.dto.inventory.stock.StockViewFilterDTO;
 import com.codex.ecam.dto.inventory.stockAdjuestment.StockAdjustmentDTO;
-import com.codex.ecam.exception.inventory.StockQuantityExceedException;
+import com.codex.ecam.exception.inventory.stock.StockException;
+import com.codex.ecam.exception.inventory.stock.StockQuantityExceedException;
 import com.codex.ecam.mappers.inventory.stock.StockHistoryMapper;
 import com.codex.ecam.mappers.inventory.stock.StockMapper;
 import com.codex.ecam.mappers.inventory.stock.StockNotificationMapper;
@@ -351,21 +352,12 @@ public class StockServiceImpl implements StockService {
 
 	/****************************************
 	 * Stock Dispatch
+	 * @return 
 	 *****************************************/
 
-	@Override
-	public StockResult dispatchStock(AOD aod) throws Exception {
-		StockResult result = new StockResult(null, null);
-		if ((aod.getAodItemList() != null) && (aod.getAodItemList().size() > 0)) {
-			for (AODItem aodItem : aod.getAodItemList()) {
-				dispatchStockByItem(result, aodItem);
-			}
-		}
-		result.setResultStatusSuccess();
-		return result;
-	}
+	
 
-	private StockResult dispatchStockByItem(StockResult result, AODItem aodItem) throws Exception {
+	private StockResult dispatchStockByItemWithoutFIFO(StockResult result, AODItem aodItem) throws Exception {
 		setStockData(result, aodItem);
 		stockDao.save(result.getDomainEntity());
 		result.setResultStatusSuccess();  
@@ -385,6 +377,80 @@ public class StockServiceImpl implements StockService {
 			}
 			result.setDomainEntity(stock);
 		}
+	}
+	
+	@Override
+	public StockResult dispatchStock(final AOD aod) throws Exception {
+		final StockResult result = new StockResult(null, null);
+		if (aod.getAodItemList() != null && aod.getAodItemList().size() > 0) {
+			for (final AODItem aodItem : aod.getAodItemList()) {
+				if(aod.getBusiness().getIsFIFO()){
+					dispatchStockByItemWithFIFO(result, aodItem);
+				}else{
+					dispatchStockByItemWithoutFIFO(result, aodItem);
+				}
+				
+			}
+		}
+	return result;
+	}
+
+	//first in first out
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	private void dispatchStockByItemWithFIFO(final StockResult result, final AODItem aodItem) throws StockException {
+		final Set<AODItemStock> aodItemStocks = new HashSet<>();
+		BigDecimal itemQty = aodItem.getQuantity();
+		Integer itemCount = 0;
+		final List<Stock> stockList = stockDao.findNonEmptyStockByItemIdAndWarehouse(aodItem.getPart().getId(), aodItem.getWarehouse().getId());
+		if (stockList != null && stockList.size() > 0) {
+			for (; itemQty.compareTo(BigDecimal.ZERO) > 0;) {
+				final AODItemStock aodItemStock = new AODItemStock();
+				BigDecimal tempItemQty = BigDecimal.ZERO;
+				if (itemQty.compareTo(BigDecimal.ZERO) > 0 && itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) >= 0) {
+					tempItemQty = stockList.get(itemCount).getCurrentQuantity();
+					itemQty = itemQty.subtract(tempItemQty);
+					stockList.get(itemCount).setCurrentQuantity(BigDecimal.ZERO);
+					addStockHistory(stockList.get(itemCount), stockList.get(itemCount).getCurrentQuantity());
+				} else if (itemQty.compareTo(BigDecimal.ZERO) > 0 && itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) < 0) {
+					stockList.get(itemCount).setCurrentQuantity(stockList.get(itemCount).getCurrentQuantity().subtract(itemQty));
+					addStockHistory(stockList.get(itemCount), itemQty);
+					tempItemQty = itemQty;
+					itemQty = BigDecimal.ZERO;
+				}
+				stockDao.save(stockList.get(itemCount));
+				aodItemStock.setAodItem(aodItem);
+				aodItemStock.setStock(stockDao.findOne(stockList.get(itemCount).getId()));
+				aodItemStock.setQuantity(tempItemQty);
+				aodItemStocks.add(aodItemStock);
+				itemCount++;
+			}
+			aodItem.setAodItemStocks(aodItemStocks);
+			//            aodItemDao.save(aodItem);
+		} else {
+			throw new StockException("ERROR! STOCK Empty for AOD Item :- ".concat(aodItem.getPart().getName()).concat(" ."));
+		}
+	}
+
+
+	private void addStockHistory(final Stock stock, final BigDecimal qty) {
+		final StockHistory stockHistory = new StockHistory();
+		stockHistory.setDescription("[DISPATCHED] ".concat(stock.getPart().getName()));
+		stockHistory.setLastPrice(stock.getUnitPrice());
+		addStockHistory(stock, stockHistory, qty);
+	}
+
+	private void addStockHistory(final Stock stock, final StockHistory stockHistory, final BigDecimal qty) {
+		StockHistory tempLastHistory = new StockHistory();
+		stockHistory.setStock(stock);
+		stockHistory.setQuantity(qty);
+		final Optional<StockHistory> lastObj = stock.getStockHistoryList().stream().reduce((first, second) -> first.getId() > second.getId() ? first : second);
+		if (lastObj.isPresent()) {
+			tempLastHistory = lastObj.get();
+			stockHistory.setBeforeQuantity(tempLastHistory.getAfterQuantity());
+		}
+		stockHistory.setAfterQuantity(stock.getCurrentQuantity());
+		stockHistory.setDate(new Date());
+		stock.getStockHistoryList().add(stockHistory);
 	}
 
 	/****************************************
@@ -443,7 +509,8 @@ public class StockServiceImpl implements StockService {
 		setStockAdjustment(stock);
 		stock.setCurrentQuantity(newQty);
 		setStockAdjustmentStockHistory(stock, newQty, oldQty);
-		stock.setAvgPrice(getAVGPrice(stock.getPart().getId()));
+		//stock.setAvgPrice(getAVGPrice(stock.getPart().getId()));
+		stock.setAvgPrice(BigDecimal.ZERO);
 		stockDao.save(stock);
 	}
 
@@ -468,7 +535,7 @@ public class StockServiceImpl implements StockService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void updateItemAVGPrice(Integer partId) throws Exception {
-		updateAVGPrice(partId);
+		//updateAVGPrice(partId);
 	}
 
 	private void updateAVGPrice(Integer partId) throws Exception {
@@ -1086,7 +1153,7 @@ public class StockServiceImpl implements StockService {
 	/*********************************************************************
 	 * [COMMON] Set STOCK History
 	 *********************************************************************/
-	private void addStockHistory(Stock stock, StockHistory stockHistory, BigDecimal qty) {
+/*	private void addStockHistory(Stock stock, StockHistory stockHistory, BigDecimal qty) {
 		StockHistory tempLastHistory = new StockHistory();
 		stockHistory.setStock(stock);
 		stockHistory.setQuantity(qty);
@@ -1098,7 +1165,7 @@ public class StockServiceImpl implements StockService {
 		stockHistory.setAfterQuantity(stock.getCurrentQuantity());
 		stockHistory.setDate(new Date());
 		stock.getStockHistoryList().add(stockHistory);
-	}
+	}*/
 
 	/*********************************************************************
 	 *********************************************************************

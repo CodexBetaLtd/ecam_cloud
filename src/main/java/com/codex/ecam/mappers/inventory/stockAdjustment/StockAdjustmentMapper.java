@@ -39,7 +39,7 @@ public class StockAdjustmentMapper extends GenericMapper<StockAdjustment, StockA
         }
         if (domain.getStock() != null) {
             dto.setStockId(domain.getStock().getId());
-//            dto.setStockNo(domain.getStock().getStockNo());
+           dto.setStockNo(domain.getStock().getBatchNo());
         }
         dto.setLastQuantity(domain.getLastQuantity());
         dto.setNewQuantity(domain.getNewQuantity());
@@ -70,6 +70,7 @@ public class StockAdjustmentMapper extends GenericMapper<StockAdjustment, StockA
         dto.setPartName(domain.getPart().getName());
         dto.setNewQuantity(domain.getNewQuantity());
         dto.setLastQuantity(domain.getLastQuantity());
+
         dto.setStockAdjustmentDate(domain.getStockAdjustmentDate());
         return dto;
     }

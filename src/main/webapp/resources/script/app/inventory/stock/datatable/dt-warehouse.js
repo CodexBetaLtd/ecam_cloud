@@ -130,7 +130,7 @@ var dtWarehouse = function () {
                 data: "id",
                 render: function (data, type, row, meta) {
                     //  console.log(row);
-                    var vars = [data, row.id, row.name, row.itemQty]
+                    var vars = [row.id, row.name]
                     return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
                     //  return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.id + "\",\"" + row.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' data-dismiss='modal'> Select </button>";
                 }

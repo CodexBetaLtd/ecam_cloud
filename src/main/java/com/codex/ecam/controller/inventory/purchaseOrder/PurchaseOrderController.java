@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.*;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.admin.api.*;
 import com.codex.ecam.service.asset.api.AssetService;
@@ -211,7 +212,14 @@ public class PurchaseOrderController {
 		purchaseOrderService.purchaseOrderFileDelete(refId);
 	}
 
-
+	@RequestMapping(value = "/generatePoFromMrn", method = RequestMethod.GET)
+	public @ResponseBody MRNResult generateAodFromMrn(String ids, Integer mrnId) throws Exception {
+		MRNResult result = null;
+		if ((mrnId != null) && (mrnId > 0)) { 
+			result = purchaseOrderService.generatePoFromMrn(ids, mrnId); 
+		}
+		return result;
+	}
 	private void setCommonData(Model model, PurchaseOrderDTO purchaseOrder) throws Exception {
 		model.addAttribute("purchaseOrder", purchaseOrder);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());

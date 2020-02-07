@@ -36,6 +36,8 @@ public class BusinessMapper extends GenericMapper<Business, BusinessDTO> {
 		dto.setCity(domain.getCity());
 		dto.setProvince(domain.getProvince());
 		dto.setPostalCode(domain.getPostalcode());
+		
+		dto.setIsFIFO(domain.getIsFIFO());
 
 		if (domain.getCountry() != null) {
 			dto.setCountryId(domain.getCountry().getId());
@@ -77,6 +79,8 @@ public class BusinessMapper extends GenericMapper<Business, BusinessDTO> {
 		domain.setCity(dto.getCity());
 		domain.setProvince(dto.getProvince());
 		domain.setPostalcode(dto.getPostalCode());
+
+		domain.setIsFIFO(dto.getIsFIFO());
 
 		setCommanDomainFields(dto, domain);
 

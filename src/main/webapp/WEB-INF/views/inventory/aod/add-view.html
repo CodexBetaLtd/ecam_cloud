@@ -118,7 +118,10 @@
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
                                             <label class="control-label"><span th:text="#{aod.status}"></span></label>
-                                            <input type="text" th:field="*{aodStatus}" class="form-control bold" readonly="readonly"/>
+     												<p> 
+												<input type="hidden" th:field="*{aodStatus}">
+													<b><span style="font-size: medium;" th:text="${aod.aodStatus.getName()}"></span></b>
+												</p>
                                         </div>
                                     </div>
                                 </div>
@@ -151,7 +154,7 @@
                                     </div>
                                     <div class="col-md-6 col-sm-12">
                                         <div class="form-group">
-                                            <label class="control-label"> <span th:text="#{aod.customerName}"> </span><span class="symbol required"></span></label>
+                                            <label class="control-label"> <span th:text="#{aod.customerName}"> </span></label>
                                             <div class="input-group">
                                                 <input type="hidden" id="aodCustomerId" th:field="*{aodCustomerId}">
                                                 <input type="text" id="aodCustomerName" name=" aodCustomerName" readonly th:field="*{aodCustomerName}">

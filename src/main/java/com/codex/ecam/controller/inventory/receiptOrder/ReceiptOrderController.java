@@ -112,7 +112,7 @@ public class ReceiptOrderController {
         } else {
             model.addAttribute("success", result.getMsgList());
         }
-        setCommonData(model, receiptOrder);
+        setCommonData(model, result.getDtoEntity());
         return "inventory/receiptorder/add-view";
     }
 
@@ -129,17 +129,12 @@ public class ReceiptOrderController {
 
     @RequestMapping(value = "/statusChange", method = RequestMethod.GET)
     public String receiptOrderStatusChange(Integer id, ReceiptOrderStatus receiptOrderStatus, Model model, RedirectAttributes ra) {
-        ReceiptOrderResult result = new ReceiptOrderResult(null, null);
-        if ((id != null) && (id > 0)) {
-            try {
-                result = receiptOrderService.statusChange(id, receiptOrderStatus);
-                model.addAttribute("success", new ArrayList<String>().add("Successfully updated the status"));
-            } catch (Exception e) {
-                e.printStackTrace();
-                model.addAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
-            }
+       // ReceiptOrderResult result = null;
+    	ReceiptOrderResult result = receiptOrderService.statusChange(id, receiptOrderStatus);    
+        if (result.getStatus().equals(ResultStatus.ERROR)) {
+            ra.addFlashAttribute("error", result.getErrorList());
         } else {
-            model.addAttribute("error", new ArrayList<String>().add("Please Save the RFQ first"));
+            ra.addFlashAttribute("success", result.getMsgList());
         }
 
         setCommonData(model, result.getDtoEntity());

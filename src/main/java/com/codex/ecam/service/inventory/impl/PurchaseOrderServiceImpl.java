@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,7 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.PurchaseOrderAdditionalCostType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
+import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.ShippingType;
+import com.codex.ecam.constants.inventory.AODStatus;
+import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.dao.admin.AccountDao;
 import com.codex.ecam.dao.admin.ChargeDepartmentDao;
 import com.codex.ecam.dao.admin.CountryDao;
@@ -30,9 +34,13 @@ import com.codex.ecam.dao.admin.CurrencyDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderDao;
 import com.codex.ecam.dao.inventory.RFQItemDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
+import com.codex.ecam.dto.inventory.aod.AODDTO;
+import com.codex.ecam.dto.inventory.aod.AODItemDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderAdditionalCostDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDiscussionDTO;
@@ -42,6 +50,8 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderNotificationDTO;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderFileMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderMapper;
+import com.codex.ecam.model.inventory.mrn.MRN;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderAdditionalCost;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderDiscussion;
@@ -52,6 +62,8 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderNotification;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.AODResult;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -94,6 +106,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private MRNItemDao mrnItemDao;
+	
+	@Autowired
+	private MRNDao mrnDao;
 	
 	@Autowired
 	Environment environment;
@@ -579,8 +597,60 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         } 
 	}
 
+	@Override
+	public MRNResult generatePoFromMrn(String idStr, Integer mrnId) {
+		MRNResult result=new MRNResult(null, null);
+		MRN mrn =mrnDao.findOne(mrnId);
+		PurchaseOrderDTO purchaseOrderDTO=new PurchaseOrderDTO();
+		purchaseOrderDTO.setPurchaseOrderstatus(PurchaseOrderStatus.DRAFT);
+		purchaseOrderDTO.setCode("");
+		purchaseOrderDTO.setIsDeleted(Boolean.FALSE);
+		if(mrn!=null && mrn.getBusiness()!=null){
+			purchaseOrderDTO.setBusinessId(mrn.getBusiness().getId());
+		}
+		if(mrn!=null && mrn.getSite()!=null){
+			purchaseOrderDTO.setSiteId(mrn.getSite().getId());
+		}
+
+		List<PurchaseOrderItemDTO> purchaseOrderItemDTOs=new ArrayList<>();
+		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		for (Integer id : ids) {
+			MRNItem item=mrnItemDao.findOne(id);
+			PurchaseOrderItemDTO itemDTO=new PurchaseOrderItemDTO();
+			itemDTO.setItemQtyOnOrder(item.getApprovedQuantity().intValue());
+			itemDTO.setItemAssetId(item.getPart().getId());
+			purchaseOrderItemDTOs.add(itemDTO);
+		}
+		purchaseOrderDTO.setItems(purchaseOrderItemDTOs);
+		
+
+		  try {
+			PurchaseOrderResult purchaseOrderResult=save(purchaseOrderDTO);
+			result.setStatus(ResultStatus.SUCCESS);
+			//result.addToMessageList(getApprovesPoForItem(mrn.)"Successfully Generated the PO as ");
+			result.addToMessageList(purchaseOrderResult.getDomainEntity().getId().toString());
+			result.addToMessageList(purchaseOrderResult.getDomainEntity().getCode());
+
+		} catch (Exception e) {
+		e.printStackTrace();
+			result.setStatus(ResultStatus.ERROR);
+			result.addToErrorList("Error while PO generate");
+		}
+		return result;
+	}
 
 
+private String getApprovesPoForItem(MRNItem mrnItem){
+	String poList="";
+	List<PurchaseOrderItem> items=purchaseOrderDao.findItemOrderBeforeDate(mrnItem.getMrn().getDate(),mrnItem.getPart().getId());
+	if(items !=null && items.size()>0){
+		poList=poList+"Po already generated ";
+		for(PurchaseOrderItem item:items){
+			poList=poList+" "+item.getPurchaseOrder().getCode();
+		}
+	}
+	return poList;
+}
 
 
 

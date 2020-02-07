@@ -70,7 +70,7 @@ var StockAdjustmentAdd = function () {
     var getStockView = function (partId) {
         var warehouseId = $('#warehouseId').val();
         if (warehouseId == null || warehouseId == "") {
-            dtURL = '../restapi/stock/dtStockByPart?partId=' + partId;
+            dtURL = '../restapi/stock/stockByPart?partId=' + partId;
         } else {
             dtURL = '../restapi/stock/stockByPartAndWarehouse?partId=' + partId + '&&warehouseId=' + warehouseId;
         }

@@ -167,7 +167,7 @@ var AODStockSelectModal = function () {
         $("#itemStockBatchNo").val(batchNo);
         $("#itemStockWarehouseId").val(wharehouseId);
         $("#itemStockWarehouseName").val(wharehouseName);
-        $("#itemStockOnHandQty").text(qtyOnHand); 
+        $("#itemStockOnHandQty").val(qtyOnHand); 
         $("#itemStockQuantity").val(qtyOnHand); 
     };
 

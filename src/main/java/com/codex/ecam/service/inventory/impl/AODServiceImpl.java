@@ -37,7 +37,9 @@ import com.codex.ecam.dto.inventory.aod.AODDTO;
 import com.codex.ecam.dto.inventory.aod.AODFilterDTO;
 import com.codex.ecam.dto.inventory.aod.AODItemDTO;
 import com.codex.ecam.dto.inventory.aod.AODRepDTO;
-import com.codex.ecam.exception.inventory.StockQuantityExceedException;
+import com.codex.ecam.exception.inventory.aod.AODException;
+import com.codex.ecam.exception.inventory.stock.StockException;
+import com.codex.ecam.exception.inventory.stock.StockQuantityExceedException;
 import com.codex.ecam.mappers.inventory.aod.AODItemMapper;
 import com.codex.ecam.mappers.inventory.aod.AODMapper;
 import com.codex.ecam.mappers.inventory.aod.AODReportMapper;
@@ -267,10 +269,28 @@ public class AODServiceImpl implements AODService {
 		setMRNitem(aodItem);
 	}
 	
-	private void checkAvailabilty(AODResult result, AODItemDTO aodItemDTO){
-		
+
+	
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	private void approveAndDispatch(final AODResult result) throws Exception, StockException {
+		if (result.getDomainEntity().getAodStatus() != AODStatus.APPROVED) {
+			stockService.dispatchStock(result.getDomainEntity());
+			updateApproveAOD(result);
+		}
 	}
 	
+	private void updateApproveAOD(final AODResult result) throws AODException {
+		result.getDomainEntity().setAodStatus(AODStatus.APPROVED);
+		try {
+			aodDao.save(result.getDomainEntity());
+			result.setDtoEntity(findDTOById(result.getDomainEntity().getId()));
+		} catch (final AODException e) {
+			throw new AODException("ERROR! AOD Save operation not completed. ");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	private void setMRNitem(AODItem aodItem) {
 		if (aodItem.getMrnItem() != null && aodItem.getMrnItem().getId() != null) {
 			aodItem.setMrnItem(mrnItemDao.findOne(aodItem.getMrnItem().getId()));
@@ -443,6 +463,33 @@ public class AODServiceImpl implements AODService {
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()) );
 			domainOut = aodDao.findAll(input, specification);
 		}
+		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
+	@Override
+	public DataTablesOutput<AODDTO> findAllApprovedAOD(FocusDataTablesInput input) throws Exception {
+		AODPropertyMapper.getInstance().generateDataTableInput(input);
+		DataTablesOutput<AOD> domainOut;
+		Specification<AOD> specification;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			 specification = (root, query, cb) -> cb.equal(
+					root.get("aodStatus"), AODStatus.APPROVED);
+			domainOut = aodDao.findAll(input, specification);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			specification = (root, query, cb) -> 
+			cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					 cb.equal(root.get("aodStatus"), AODStatus.APPROVED));
+		} else {
+			 specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
+					cb.equal(root.get("aodStatus"), AODStatus.APPROVED)
+					);
+			domainOut = aodDao.findAll(input, specification);
+		}
+		domainOut = aodDao.findAll(input, specification);
 		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}

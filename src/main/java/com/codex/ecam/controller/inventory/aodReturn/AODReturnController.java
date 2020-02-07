@@ -1,5 +1,10 @@
 package com.codex.ecam.controller.inventory.aodReturn;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.AODReturnStatus;
 import com.codex.ecam.dto.inventory.aodReturn.AODReturnDTO;
@@ -17,10 +21,6 @@ import com.codex.ecam.result.inventory.AODReturnResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.inventory.api.AODReturnService;
-
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(AODReturnController.REQUEST_MAPPING_URL)
@@ -83,7 +83,7 @@ public class AODReturnController {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveOrUpdate(@ModelAttribute("part") @Valid AODReturnDTO dto, Model model) throws Exception {
+    public String saveOrUpdate(@ModelAttribute("aodReturn") @Valid AODReturnDTO dto, Model model) throws Exception {
         AODReturnResult result;
         if ((dto.getId() != null) && (dto.getId() > 0)) {
             result = aodReturnService.update(dto);
@@ -95,7 +95,7 @@ public class AODReturnController {
         } else {
             model.addAttribute("success", result.getMsgList());
         }
-        setCommonData(model, aodReturnService.findById(dto.getId()).getDtoEntity());
+        setCommonData(model, result.getDtoEntity());
         return "inventory/aodReturn/add-view";
     }
 
@@ -183,7 +183,7 @@ public class AODReturnController {
     private void setCommonData(Model model, AODReturnDTO dto) {
         model.addAttribute("aodReturn", dto);
         model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-        model.addAttribute("sites", assetService.findSiteByBusinessId(dto.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+        model.addAttribute("sites", assetService.findAllByLevel());
 
     }
 

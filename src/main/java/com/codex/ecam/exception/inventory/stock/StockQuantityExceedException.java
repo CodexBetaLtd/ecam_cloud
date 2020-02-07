@@ -1,4 +1,4 @@
-package com.codex.ecam.exception.inventory;
+package com.codex.ecam.exception.inventory.stock;
 
 
 public class StockQuantityExceedException extends RuntimeException { 

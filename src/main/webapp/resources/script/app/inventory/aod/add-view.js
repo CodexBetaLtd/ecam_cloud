@@ -78,9 +78,9 @@ var AODAdd = function () {
                 siteId: {
                     required: true
                 },
-                aodCustomerName: {
+        /*        aodCustomerName: {
                     required: true
-                },
+                },*/
                 jobNo: {
                     required: true
                 },
@@ -90,7 +90,7 @@ var AODAdd = function () {
                 aodType: "Please Select AOD Type",
                 businessId: "Please Select Business",
                 siteId: "Please Select Site",
-                aodCustomerName: "Please Select a customer",
+             //   aodCustomerName: "Please Select a customer",
                 jobNo: "Please Select a job No",
             },
             invalidHandler: function (event, validator) {

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
@@ -164,18 +165,6 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label"> Warehouse</label>
-                                            <div class="input-group">
-                                                <input type="hidden" th:field="*{warehouseId}" id="warehouseId">
-                                                <input type="text" th:field="*{warehouseName}" id="warehouseName"
-                                                       class="form-control" name="warehouseName" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
                                             <label class="control-label"> Stock <span
                                                     class="symbol required"></span></label><br/>
                                             <div class="input-group">
@@ -185,6 +174,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
@@ -194,14 +186,10 @@
                                                    id="lastQuantity">
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row">
-
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">
-                                                New Stock Level <span lass="symbol required"></span>
+                                                New Stock Level <span class="symbol required"></span>
                                             </label>
                                             <input type="text" th:field="*{newQuantity}" id="itemNewStockLevel"
                                                    class="form-control" name="itemNewStockLevel">

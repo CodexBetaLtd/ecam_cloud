@@ -101,6 +101,10 @@ public class AODMapper extends GenericMapper<AOD, AODDTO> {
         if (domain.getWorkOrder() != null && domain.getWorkOrder().getId() != null) {
             dto.setWoNo(domain.getWorkOrder().getCode());
         }
+        if (domain.getCustomer() != null && domain.getCustomer().getId() != null) {
+            dto.setAodCustomerId(domain.getCustomer().getId());
+            dto.setAodCustomerName(domain.getCustomer().getName());
+        }
         
         return dto;
     }

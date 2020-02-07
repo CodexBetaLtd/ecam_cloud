@@ -17,7 +17,7 @@ public class ReceiptOrderDTO extends BaseDTO {
 	private String statusName;
 	private String supplierName;
 	private String code;
-	private ReceiptOrderStatus receiptOrderStatus = ReceiptOrderStatus.DRAFT;
+	private ReceiptOrderStatus receiptOrderStatus=ReceiptOrderStatus.DRAFT;
 
 	private List<ReceiptOrderItemDTO> items = new ArrayList<>();
     private List<ReceiptOrderTaxDTO> taxDTOs = new ArrayList<>();

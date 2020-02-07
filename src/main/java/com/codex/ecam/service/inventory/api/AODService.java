@@ -41,6 +41,7 @@ public interface AODService {
 
 
     DataTablesOutput<AODDTO> findAll(FocusDataTablesInput input) throws Exception;
+    DataTablesOutput<AODDTO> findAllApprovedAOD(FocusDataTablesInput input) throws Exception;
 
     DataTablesOutput<AODItemDTO> findAll(FocusDataTablesInput input, Integer id);
 

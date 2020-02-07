@@ -43,17 +43,17 @@ public class StockAdjustmentController {
 
     @RequestMapping(value = "/itemView", method = RequestMethod.GET)
     public String getItemView(Model model) {
-        return "general/modal/dt-modal-item";
+        return "inventory/stockAdjustment/datatable/item-select-modal";
     }
 
     @RequestMapping(value = "/stockView", method = RequestMethod.GET)
     public String getStockView(Model model) {
-        return "general/modal/dt-modal-stock";
+        return "inventory/stockAdjustment/datatable/stock-select-modal";
     }
 
     @RequestMapping(value = "/warehouseView", method = RequestMethod.GET)
     public String getWarehouseView(Model model) {
-        return "general/modal/dt-modal-warehouse";
+        return "inventory/stockAdjustment/datatable/item-select-modal";
     }
 
 
@@ -115,19 +115,11 @@ public class StockAdjustmentController {
     @RequestMapping(value = "/statusChange", method = RequestMethod.GET)
     public String aodStatusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus, Model model, RedirectAttributes ra) throws Exception {
         StockAdjustmentResult result = null;
-        if ((id != null) && (id > 0)) {
-            try {
-                result = stockAdjustmentService.statusChange(id, stockAdjustmentStatus);
-                if (result.getStatus().equals(ResultStatus.ERROR)) {
-                    //                    model.addAttribute("error", result.getErrorListLine());
-                } else {
-                    model.addAttribute("success", new ArrayList<String>().add("Successfully Changed the Stock Adjustment Status"));
-                }
-            } catch (Exception ex) {
-                model.addAttribute("error", new ArrayList<String>().add("Error! Cannot Change Stock Adjustment Status...!  " + ex.getMessage()));
-            }
+        result = stockAdjustmentService.statusChange(id, stockAdjustmentStatus);
+        if (result.getStatus().equals(ResultStatus.ERROR)) {
+            ra.addFlashAttribute("error", result.getErrorList());
         } else {
-            model.addAttribute("error", new ArrayList<String>().add("Please Save/Select the Stock Adjustment first"));
+            ra.addFlashAttribute("success", result.getMsgList());
         }
         setCommonData(model, result.getDtoEntity());
         return "inventory/stockAdjustment/add-view";

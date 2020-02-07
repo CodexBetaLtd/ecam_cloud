@@ -1,5 +1,7 @@
 package com.codex.ecam.service.inventory.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -18,16 +20,22 @@ import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.StockDao;
+import com.codex.ecam.dao.inventory.StockHistoryDao;
+import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderItemDTO;
+import com.codex.ecam.exception.inventory.stock.StockException;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderMapper;
+import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
+import com.codex.ecam.model.inventory.stock.StockHistory;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
+import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.VelocityEmailSender;
 import com.codex.ecam.util.search.inventory.receiptOrder.ReceiptOrderPropertyMapper;
@@ -45,6 +53,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	private StockDao stockDao;
 	
 	@Autowired
+	private StockHistoryDao stockHistoryDao;
+	
+	@Autowired
 	private SupplierDao supplierDao;
 	
 	@Autowired
@@ -52,6 +63,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Autowired
 	private VelocityEmailSender velocityEmailService;
+	
+	@Autowired
+	private StockService stockService;
 
 
 	private ReceiptOrderDTO findDTOById(Integer id) throws Exception {
@@ -80,9 +94,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	}
 
 
-	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public ReceiptOrderResult update(ReceiptOrderDTO dto) {
-		ReceiptOrderResult result = new ReceiptOrderResult(new ReceiptOrder(), dto);
+		ReceiptOrderResult result = new ReceiptOrderResult(null, dto);
 		try {
 			result.setDomainEntity(findEntityById(dto.getId()));
 			saveOrUpdate(result);
@@ -90,7 +104,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		} catch (ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Receipt Order Already updated. Please Reload. ".concat(e.getMessage()));
-		} catch (Exception e) {
+		}catch (Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 			result.addToMessageList("Receipt Order Update Unsuccessful. ".concat(e.getMessage()));
@@ -100,7 +114,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Override
 	public ReceiptOrderResult save(ReceiptOrderDTO dto) {
-		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
+		ReceiptOrderResult result = new ReceiptOrderResult(new ReceiptOrder(), dto);
 		try {
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
@@ -108,7 +122,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		} catch (Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
-			result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
+		result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
 		}
 		return result;
 	}
@@ -125,7 +139,11 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		setSupplier(result);
 		setBusiness(result);
 		setItems(result);
+		//recievedStock(result);
 	}
+	
+
+	
 
 	private void setSupplier(ReceiptOrderResult result) throws Exception {
 		if ( (result.getDtoEntity().getSupplierId() != null) && (result.getDtoEntity().getSupplierId() > 0) ) {
@@ -158,6 +176,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 				items.add(item);
 			}
 		}
+		
 		result.getDomainEntity().setReceiptOrderItems(items);
 	}
 
@@ -170,10 +189,26 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		if ( (dto.getItemStockId() != null) && (dto.getItemStockId() > 0) ) {
 			domain.setStock(stockDao.findOne(dto.getItemStockId()));
 		}
+		
+		if(receiptOrder.getReceiptOrderStatus().equals(ReceiptOrderStatus.RECEIVED)){
+			addStockHistory(domain);
+		}
 	}
 
 
-
+		private void addStockHistory(ReceiptOrderItem domain){
+			StockHistory stockHitory=new StockHistory();
+			stockHitory.setBeforeQuantity(BigDecimal.ZERO);
+			stockHitory.setAfterQuantity(domain.getQuantityReceived());
+			stockHitory.setQuantity(domain.getQuantityReceived());
+			stockHitory.setLastPrice(domain.getUnitPrice());
+			stockHitory.setStock(domain.getStock());
+			stockHitory.setDescription("Item recived to stock");
+			stockHitory.setReceiptOrderItem(domain);
+			stockHitory.setDate(new Date());
+			stockHitory.setIsDeleted(Boolean.FALSE);
+			stockHistoryDao.save(stockHitory);
+		}
 
 
 
@@ -207,27 +242,55 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Override
 	public ReceiptOrderResult statusChange(Integer id, ReceiptOrderStatus receiptOrderStatus) {
+		
 		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
 		try {
-			result.setDtoEntity(findDTOById(id));
-			statusChange(result, receiptOrderStatus);
+			
+			ReceiptOrderDTO dto=findDTOById(id);
+			dto.setReceiptOrderStatus(receiptOrderStatus);
+			ReceiptOrder domain = findEntityById(dto.getId());
+			String  previousStatus=domain.getReceiptOrderStatus().getName();
+			result.setDtoEntity(dto);
+			result.setDomainEntity(domain);
+			saveOrUpdate(result);
 			result.setResultStatusSuccess();
-			result.addToMessageList("Receipt Order Status Change Successful.");
+			result.addToMessageList("Receipt order Status Updated Successfully. "+previousStatus+" --> "+ receiptOrderStatus.getName());
+		} catch (ObjectOptimisticLockingFailureException ex) {
+			result.setResultStatusError();
+			result.addToErrorList("Receipt order Already updated. Please Reload Receipt order.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
-			result.addToMessageList("Receipt Order Status Change Unsuccessful. ".concat(e.getMessage()));
+			result.addToErrorList(e.getMessage());
 		}
 		return result;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	private void statusChange(ReceiptOrderResult result, ReceiptOrderStatus receiptOrderStatus) throws Exception {
-		ReceiptOrderStatus previousStatus = result.getDtoEntity().getReceiptOrderStatus();
-		result.getDtoEntity().setReceiptOrderStatus(receiptOrderStatus);
-		ReceiptOrderStatus currentStatus = result.getDtoEntity().getReceiptOrderStatus();
-		update(result.getDtoEntity());
-		sendStatusChangeEmail(previousStatus,currentStatus);
+	private ReceiptOrderResult statusChange( ReceiptOrderStatus receiptOrderStatus) throws Exception {
+		return null;
+	
+/*		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
+		try {
+			ReceiptOrderDTO dto=findDTOById(id);
+			dto.setReceiptOrderStatus(receiptOrderStatus);
+			ReceiptOrder domain = findEntityById(dto.getId());
+			String  previousStatus=domain.getReceiptOrderStatus().getName();
+			result.setDtoEntity(dto);
+			result.setDomainEntity(domain);
+			saveOrUpdate(result);
+			result.addToMessageList("Receipt order Status Updated Successfully. "+previousStatus+" --> "+ receiptOrderStatus.getName());
+		} catch (ObjectOptimisticLockingFailureException ex) {
+			result.setResultStatusError();
+			result.addToErrorList("Receipt order Already updated. Please Reload Receipt order.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(e.getMessage());
+		}
+		return result;*/
+
+	//	sendStatusChangeEmail(previousStatus,currentStatus);
 	}
 
 	private void sendStatusChangeEmail(ReceiptOrderStatus previousStatus, ReceiptOrderStatus currentStatus) {

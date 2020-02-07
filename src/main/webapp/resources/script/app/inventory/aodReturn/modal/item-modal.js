@@ -27,7 +27,7 @@ var aodReturnModal = function () {
         var form = $('#frm_return_item');
         var errorHandler = $('.errorHandler', form);
         jQuery.validator.addMethod("greaterThanAODQuantity", function (value, element) {
-            return /*value <=$("#aodItemQuantity").val() &&*/ value > 0
+            return value <=$("#aodItemQuantity").val() && value > 0
         }, "This item quantity unable to return for seleted AOD");
         var successHandler = $('.successHandler', form);
         form.validate({
@@ -55,15 +55,6 @@ var aodReturnModal = function () {
                 returnQuantity: {
                     required: true,
                     greaterThanAODQuantity: [],
-                    remote: {
-                        url: "../validate/stock/findRemainAODQty",
-                        type: "GET",
-                        data: {
-                            aodItemId: function () {
-                                return $('#aodReturnAodItemId').val()
-                            }
-                        }
-                    }
                 }
 
             },
@@ -73,7 +64,6 @@ var aodReturnModal = function () {
                 returnQuantity: {
                     required: "Please Insert a  Quantity",
                     greaterThanAODQuantity: 'This item quantity unable to return for seleted AOD',
-                    remote: 'This item quantity unable to return for seleted AOD'
                 }
             },
             invalidHandler: function (event, validator) { //display error alert on form submit

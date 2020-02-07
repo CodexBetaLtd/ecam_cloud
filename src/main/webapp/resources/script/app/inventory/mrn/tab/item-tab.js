@@ -11,6 +11,14 @@ var MRNItemTab = function () {
         $('#btn-generate-aod').on('click', function () {
         	MRNItemTab.generateAODFromMrn();
         });
+        
+        $('#btn-generate-po').on('click', function () {
+        	MRNItemTab.generatePOFromMrn();
+        });
+        
+        $('#btn-generate-rfq').on('click', function () {
+        	MRNItemTab.generateRFQFromMrn();
+        });
     };
     
     /**********************************************************
@@ -78,7 +86,80 @@ var MRNItemTab = function () {
     };
     
     
-   var generateAODFromMrn=function(){
+    var generateAODFromMrn=function(){
+    	var checkedValues = $("input[name='selectedMRNItem']:checkbox:checked").map(function() {
+    		if(this.value == null || this.value == "") {
+    			isSaved = false;
+    		}
+    		return this.value;
+    	}).get();
+    	
+    	if(checkedValues.length>0){
+    		$.ajax({
+    			type: "GET",
+    			url: "../aod/generateAodFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
+    			contentType: "application/json",
+    			dataType: "json",
+    			success: function (result) {
+    				if (result.status == "SUCCESS") {
+    					var mappingUrlText = "../aod/edit?id=" + result.msgList[1];
+    					$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],result.msgList[2],mappingUrlText));
+    				} else {
+    					$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
+    				}
+    			},
+    			error: function (xhr, ajaxOptions, thrownError) {
+    				alert(xhr.status + " " + thrownError);
+    			},
+    			error: function (e) {
+    				// alert("Failed to Create AOD.");
+    				console.log(e);
+    			}
+    		});
+    	}else{
+    		alert("Please select at least one MRN Item")
+    	}
+    	
+    	
+    }
+    var generateRFQFromMrn=function(){
+    	var checkedValues = $("input[name='selectedMRNItem']:checkbox:checked").map(function() {
+    		if(this.value == null || this.value == "") {
+    			isSaved = false;
+    		}
+    		return this.value;
+    	}).get();
+    	
+    	if(checkedValues.length>0){
+    		$.ajax({
+    			type: "GET",
+    			url: "../rfq/generateRFQFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
+    			contentType: "application/json",
+    			dataType: "json",
+    			success: function (result) {
+    				if (result.status == "SUCCESS") {
+    					var mappingUrlText = "../rfq/edit?id=" + result.msgList[1];
+    					console.log(result)
+    					$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],result.msgList[2],mappingUrlText));
+    				} else {
+    					$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
+    				}
+    			},
+    			error: function (xhr, ajaxOptions, thrownError) {
+    				alert(xhr.status + " " + thrownError);
+    			},
+    			error: function (e) {
+    				// alert("Failed to Create AOD.");
+    				console.log(e);
+    			}
+    		});
+    	}else{
+    		alert("Please select at least one MRN Item")
+    	}
+    	
+    	
+    }
+   var generatePOFromMrn=function(){
    	var checkedValues = $("input[name='selectedMRNItem']:checkbox:checked").map(function() {
 		if(this.value == null || this.value == "") {
 			isSaved = false;
@@ -89,12 +170,13 @@ var MRNItemTab = function () {
    	if(checkedValues.length>0){
    		$.ajax({
    	        type: "GET",
-   	        url: "../aod/generateAodFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
+   	        url: "../purchaseorder/generatePoFromMrn?ids=" + checkedValues + "&mrnId=" + $('#mrnId').val(),
    	        contentType: "application/json",
    	        dataType: "json",
    	        success: function (result) {
    	       	if (result.status == "SUCCESS") {
-   	        		var mappingUrlText = "../aod/edit?id=" + result.msgList[1];
+   	        		var mappingUrlText = "../purchaseorder/edit?id=" + result.msgList[1];
+   	        		console.log(result)
    	        		$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],result.msgList[2],mappingUrlText));
    	        	} else {
    	        		$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
@@ -223,8 +305,14 @@ var MRNItemTab = function () {
         deleteListItem: function (index) {
             removeItem(index);
         },
+        generatePOFromMrn:function(){
+        	generatePOFromMrn();
+        },
         generateAODFromMrn:function(){
         	generateAODFromMrn();
+        },
+        generateRFQFromMrn:function(){
+        	generateRFQFromMrn();
         }
 
     };

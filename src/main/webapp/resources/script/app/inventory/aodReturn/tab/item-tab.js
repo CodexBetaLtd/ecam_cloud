@@ -54,7 +54,7 @@ var aodReturnItemTab = function () {
         setTimeout(function () {
             var url = '../aodReturn/aodView';
             $modal.load(url, '', function () {
-                dtAOD.dtAODList("../restapi/aod/getAODDataTable", "dtAOD.setADOReturnAOD");
+                dtAOD.dtAODList("../restapi/aod/getApprovedAOD", "dtAOD.setADOReturnAOD");
                 $modal.modal();
             });
         }, 1000);

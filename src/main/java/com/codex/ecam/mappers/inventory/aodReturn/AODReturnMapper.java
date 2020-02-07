@@ -1,11 +1,13 @@
 package com.codex.ecam.mappers.inventory.aodReturn;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.codex.ecam.dto.inventory.aodReturn.AODReturnDTO;
 import com.codex.ecam.dto.inventory.aodReturn.AODReturnItemDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.aodRetun.AODReturn;
+import com.codex.ecam.model.inventory.aodRetun.AODReturnItem;
 
 
 public class AODReturnMapper extends GenericMapper<AODReturn, AODReturnDTO> {
@@ -22,8 +24,7 @@ public class AODReturnMapper extends GenericMapper<AODReturn, AODReturnDTO> {
 		return instance;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
+
 	public AODReturnDTO domainToDto(AODReturn domain) throws Exception {
 		AODReturnDTO dto = new AODReturnDTO();
 		dto.setId(domain.getId());
@@ -53,9 +54,7 @@ public class AODReturnMapper extends GenericMapper<AODReturn, AODReturnDTO> {
 		}
 		//        dto.setDescription("");
 		//todo : Change Generic Mapper
-		if ((domain.getAodReturnItems() != null) && (domain.getAodReturnItems().size() > 0)) {
-			dto.setAodReturnItemList((Set<AODReturnItemDTO>) AODReturnItemMapper.getInstance().domainToDTOList(domain.getAodReturnItems()));
-		}
+		setItems(dto,domain);
 		dto.setIsDeleted(domain.getIsDeleted());
 		return dto;
 	}
@@ -67,6 +66,24 @@ public class AODReturnMapper extends GenericMapper<AODReturn, AODReturnDTO> {
 		domain.setReturnDate(dto.getReturnDate());
 		domain.setIsDeleted(dto.getIsDeleted());
 		domain.setAodReturnStatus(dto.getAodReturnStatus());
+	}
+	
+	private void setItems(AODReturnDTO dto, AODReturn domain){
+		
+		if(domain.getAodReturnItems().size()>0){
+			List<AODReturnItemDTO> itemDTOs=new ArrayList<>();
+			for(AODReturnItem item:domain.getAodReturnItems()){
+				try {
+					itemDTOs.add(AODReturnItemMapper.getInstance().domainToDto(item));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			dto.setAodReturnItemList(itemDTOs);
+		}
+
 	}
 
 	@Override

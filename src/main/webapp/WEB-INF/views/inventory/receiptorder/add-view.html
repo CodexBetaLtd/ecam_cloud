@@ -99,18 +99,20 @@
 						data-original-title="Back"> <i class="clip-arrow-left-2 "></i>
 						<span class="hidden-xs">Cancel</span>
 					</a> <span class="visible-xs" style="padding-top: 5px"> </span> <a
-						th:if="${receiptOrder.receiptOrderStatus}!=${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).RECEIVED} "
+						th:if="${receiptOrder.id}!=null and ${receiptOrder.receiptOrderStatus}==${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).DRAFT} "
 						class="btn btn-default btn-sm active tooltips" id="receiveRO"
+						th:href="@{/receiptorder/statusChange(id=${receiptOrder.id},receiptOrderStatus=${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).RECEIVED})}"
 						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_RECEIVE_BUTTON_RECEIPT_ORDER_ADD.id)"
-						data-placement="top" data-original-title="Send RFQ"> <i
+						data-placement="top" data-original-title="Receive Order "> <i
 						class="fa fa-share-square-o"></i> Receive
 					</a>
 					<!-- reject or cancel -->
-					<a th:disabled="${receiptOrder.id}==null ? 'disabled'"
+					<a 	
+						th:if="${receiptOrder.id}!=null and ${receiptOrder.receiptOrderStatus}==${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).RECEIVED} "
 						class="btn btn-default btn-sm active tooltips" id="canceltoDraft"
 						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_RECEIPT_ORDER_CANCEL_BUTTON_RECEIPT_ORDER_ADD.id)"
 						th:href="@{/receiptorder/statusChange(id=${receiptOrder.id},receiptOrderStatus=${T(com.codex.ecam.constants.inventory.ReceiptOrderStatus).CANCEL})}"
-						data-placement="top" data-original-title="Send RFQ"> <i
+						data-placement="top" data-original-title="Cancel Order"> <i
 						class="fa fa-share-square-o"></i>Cancel Receipt Order
 					</a>
 

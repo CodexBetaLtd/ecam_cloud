@@ -22,6 +22,15 @@ public class AODRestController {
     @Autowired
     private AODService aodService;
 
+    @RequestMapping(value = "/getApprovedAOD", method = RequestMethod.GET)
+    public DataTablesOutput<AODDTO> getApprovedAODDataTable(@Valid FocusDataTablesInput input) {
+    	try {
+    		return aodService.findAll(input);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return null;
+    }
     @RequestMapping(value = "/tabledata", method = RequestMethod.GET)
     public DataTablesOutput<AODDTO> getAODDataTable(@Valid FocusDataTablesInput input) {
         try {

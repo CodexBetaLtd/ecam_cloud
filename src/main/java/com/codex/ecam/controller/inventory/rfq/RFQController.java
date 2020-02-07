@@ -23,6 +23,7 @@ import com.codex.ecam.constants.ShippingType;
 import com.codex.ecam.constants.inventory.RFQStatus;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.admin.api.AccountService;
 import com.codex.ecam.service.admin.api.ChargeDepartmentService;
@@ -190,6 +191,15 @@ public class RFQController {
             return "redirect:/rfq/index";
         }
     }
+	
+	@RequestMapping(value = "/generateRFQFromMrn", method = RequestMethod.GET)
+	public @ResponseBody MRNResult generateRFQFromMrn(String ids, Integer mrnId) throws Exception {
+		MRNResult result = null;
+		if ((mrnId != null) && (mrnId > 0)) { 
+			result = rfqService.generateRFQFromMrn(ids, mrnId); 
+		}
+		return result;
+	}
 
 	private void setCommonData(Model model, RFQDTO rfq) throws Exception {
 		model.addAttribute("rfq", rfq);

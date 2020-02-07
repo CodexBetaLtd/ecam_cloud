@@ -125,7 +125,7 @@ var dtAOD = function () {
             	responsivePriority: 1
             },
             {
-            	data: 'jobNo',
+            	data: 'woNo',
             	responsivePriority: 2
             },
             {
@@ -143,7 +143,6 @@ var dtAOD = function () {
                 data: "id",
                 render: function (data, type, row, meta) {
                     var vars = [data, row.aodNo, row.aodCustomerName, row.aodCustomerAddress];
-                    console.log(row);
                     return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
                     //  return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.aodNo + "\");' type='button' class='btn btn-blue btn-squared btn-xs' > Select </button>";
                 }

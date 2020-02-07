@@ -29,6 +29,7 @@ import com.codex.ecam.model.inventory.stockAdjustment.StockAdjustment;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.StockAdjustmentResult;
 import com.codex.ecam.service.inventory.api.StockAdjustmentService;
+import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.CommonUtil;
 import com.codex.ecam.util.search.inventory.StockAdjustmentPropertyMapper;
 
@@ -43,6 +44,9 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Autowired
 	private StockAdjustmentDao stockAdjustmentDao;
+	
+	@Autowired
+	private StockService stockService;
 
 	@Override
 	public StockAdjustmentDTO newStockAdjustment() {
@@ -101,7 +105,7 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 	}
 
 	private void adjustStock(StockAdjustmentDTO dto) throws Exception {
-		//        stockService.adjustStock(dto);
+		        stockService.adjustStock(dto);
 	}
 
 	private void updateStockAdjustmentStatus(StockAdjustmentDTO dto) throws Exception {
