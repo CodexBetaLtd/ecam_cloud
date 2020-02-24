@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.TAXType;
+import com.codex.ecam.constants.inventory.PartType;
+import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
@@ -913,7 +915,9 @@ public class StockServiceImpl implements StockService {
 		StockPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<Stock> domainOut;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			Specification<Stock> specification = (root, query, cb) -> cb.equal(root.get("part").get("id"), partId);
+			Specification<Stock> specification = (root, query, cb) -> 
+			cb.and(cb.equal(root.get("part").get("id"), partId),
+					cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			domainOut = stockDao.findAll(input, specification);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			Specification<Stock> specification = (root, query, cb) -> {
@@ -921,7 +925,8 @@ public class StockServiceImpl implements StockService {
 				return cb.and(
 						// cb.equal(root.get("business"),
 						// AuthenticationUtil.getLoginSite().getSite().getAssetBusinesses()),
-						cb.equal(root.get("part").get("id"), partId));
+						cb.equal(root.get("part").get("id"), partId),
+						cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			};
 			domainOut = stockDao.findAll(input, specification);
 		} else {
@@ -931,7 +936,7 @@ public class StockServiceImpl implements StockService {
 						// cb.equal(root.get("business"),
 						// AuthenticationUtil.getLoginSite().getSite().getAssetBusinesses()),
 						// cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
-						cb.equal(root.get("part").get("id"), partId));
+						cb.equal(root.get("part").get("id"), partId),cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			};
 			domainOut = stockDao.findAll(input, specification);
 		}
@@ -1370,15 +1375,38 @@ public class StockServiceImpl implements StockService {
 	public StockDTO createNewStock(Integer partId) {
 		StockDTO dto=new StockDTO();
 		Asset asset=assetDao.findOne(partId);
+		
 		dto.setPartId(asset.getId());
 		dto.setPartName(asset.getName());
 		dto.setPartCode(asset.getCode());
 		if(AuthenticationUtil.isAuthUserSystemLevel()){
 			dto.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
 		}
+		
+		if(asset.getPartType()!=null){
+			setStockType(dto,asset.getPartType());
+		}else{
+			setStockType(dto,PartType.NORMAL);
+		}
 		return dto;
 	}
 	
+	private void setStockType(StockDTO dto,PartType partType){
+		switch (partType) {
+		case NORMAL:
+			dto.setStockType(StockType.NORMAL);
+			break;
+		case  REPAIRABLE:
+			dto.setStockType(StockType.REFURBISH);
+			break;
+		case  OTHER:
+			 dto.setStockType(StockType.OTHER);
+			break;
+
+		default:dto.setStockType(StockType.NORMAL);
+			break;
+		}
+	}
 	
 
 }

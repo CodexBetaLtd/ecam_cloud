@@ -3,6 +3,7 @@ package com.codex.ecam.mappers.inventory.part;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.dto.asset.AssetUserDTO;
 import com.codex.ecam.dto.asset.WarrantyDTO;
 import com.codex.ecam.dto.biz.part.PartDTO;
@@ -55,6 +56,9 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 
 		if ((domain.getBusiness() != null)) {
 			dto.setBusinessId(domain.getBusiness().getId());
+		}
+		if ((domain.getPartType() != null)) {
+			dto.setPartType(domain.getPartType());
 		}
 
 		if ((domain.getBrand() != null)) {
@@ -143,7 +147,6 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 	public void dtoToDomain(PartDTO dto, Asset domain) throws Exception {
 		domain.setId(dto.getId());
 		domain.setName(dto.getName());
-		domain.setCode(dto.getCode());
 		domain.setDescription(dto.getDescription());
 		domain.setNotes(dto.getCompletionNotes());
 		domain.setInventoryCode(dto.getInventoryCode());
@@ -152,6 +155,12 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 		domain.setLastPrice(dto.getLastPrice());
 		domain.setIsOnline(true);
 		domain.setImageLocation(dto.getImageLocation());
+		if ((dto.getPartType() != null)) {
+			domain.setPartType(dto.getPartType());
+		}else{
+			domain.setPartType(PartType.NORMAL);
+		}
+;
 
 		setCommanDomainFields(dto, domain);
 	}
@@ -165,6 +174,9 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 		dto.setDescription(domain.getDescription());
 		if (domain.getBusiness() != null) {
 			dto.setBusinessName(domain.getBusiness().getName());
+		}
+		if ((dto.getPartType() != null)) {
+			domain.setPartType(dto.getPartType());
 		}
 		return dto;
 	}

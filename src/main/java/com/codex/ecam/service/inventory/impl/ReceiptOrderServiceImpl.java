@@ -18,6 +18,7 @@ import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.SupplierDao;
+import com.codex.ecam.dao.inventory.AODItemDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.inventory.StockHistoryDao;
@@ -65,7 +66,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	private VelocityEmailSender velocityEmailService;
 	
 	@Autowired
-	private StockService stockService;
+	private AODItemDao aodItemDao;
 
 
 	private ReceiptOrderDTO findDTOById(Integer id) throws Exception {
@@ -143,7 +144,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	}
 	
 
-	
+
 
 	private void setSupplier(ReceiptOrderResult result) throws Exception {
 		if ( (result.getDtoEntity().getSupplierId() != null) && (result.getDtoEntity().getSupplierId() > 0) ) {
@@ -188,6 +189,10 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		}
 		if ( (dto.getItemStockId() != null) && (dto.getItemStockId() > 0) ) {
 			domain.setStock(stockDao.findOne(dto.getItemStockId()));
+		}
+		
+		if((dto.getIssueNoteitemId() != null) && (dto.getIssueNoteitemId() > 0)){
+			domain.setIssueNoteItem(aodItemDao.findOne(dto.getIssueNoteitemId()));
 		}
 		
 		if(receiptOrder.getReceiptOrderStatus().equals(ReceiptOrderStatus.RECEIVED)){

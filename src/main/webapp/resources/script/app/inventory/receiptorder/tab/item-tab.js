@@ -1,4 +1,28 @@
 var receiptItemTab = function () {
+	
+	var initButton = function(){
+		$('#btn-new-recieptorder-item').on('click', function () {
+			receiptItemTab.receiptItemView();
+		});
+        $('#btn-refurbish-recieptorder-item').on('click', function () {
+        	receiptItemTab.receiptRefurbishItemView();
+        });
+	}
+	
+	
+    var runReceiptOrderTypeChange = function () {
+        $("#receiptOrderTypeId").change(function () {
+            var aodType = $("#receiptOrderTypeId option:selected").val();
+            if (aodType == "REFURBISH") {
+                $("#btn-new-recieptorder-item").hide();
+                $("#btn-refurbish-recieptorder-item").show();
+            } else {
+                $("#btn-new-recieptorder-item").show();
+                $("#btn-refurbish-recieptorder-item").hide();
+            }
+        }).trigger('change');
+
+    };
 
     /*********************************************************************
      * populate Receipt
@@ -19,6 +43,7 @@ var receiptItemTab = function () {
                     "<input id='items" + row + ".itemDescription' name='items[" + row + "].itemDescription' value='" + item.itemDescription + "' type='hidden'>" +
                     "<input id='items" + row + ".itemUnitPrice' name='items[" + row + "].itemUnitPrice' value='" + item.itemUnitPrice + "' type='hidden'>" +
                     "<input id='items" + row + ".version' name='items[" + row + "].version' value='" + item.version + "' type='hidden' >" +
+                    "<input id='items" + row + ".issueNoteitemId' name='items[" + row + "].issueNoteitemId' value='" + item.issueNoteitemId + "' type='hidden' >" +
                     "<td><span>" + ( row + 1 ) + "</span></td>" +
                     "<td><span>" + item.itemAssetName + "</span></td>" +
                     "<td>" + item.itemQtyReceived + "</span></td>" +
@@ -34,19 +59,32 @@ var receiptItemTab = function () {
     };
 
     var receiptItemView = function () {
-        if ($('#supplierId').val() != null && $('#supplierId').val() > 0) {
-            var $modal = $('#common-modal');
+    	if ($('#supplierId').val() != null && $('#supplierId').val() > 0) {
+    		var $modal = $('#common-modal');
+    		CustomComponents.ajaxModalLoadingProgressBar();
+    		setTimeout(function () {
+    			var url = '../receiptorder/receiptItemView';
+    			$modal.load(url, '', function () {
+    				$modal.modal();
+    				ItemAddModal.init();
+    			});
+    		}, 1000);
+    	} else {
+    		alert("Please Set Supplier First");
+    	}
+    };
+    
+    var receiptRefurbishItemView = function () {
+             var $modal = $('#common-modal');
             CustomComponents.ajaxModalLoadingProgressBar();
             setTimeout(function () {
-                var url = '../receiptorder/receiptItemView';
+                var url = '../receiptorder/receiptRefurbishItemView';
                 $modal.load(url, '', function () {
                     $modal.modal();
-                    ItemAddModal.init();
+                    RefurbishItemAddModal.init();
                 });
             }, 1000);
-        } else {
-            alert("Please Set Supplier First");
-        }
+
     };
 
 
@@ -58,6 +96,7 @@ var receiptItemTab = function () {
         var item = {};
         item['itemId'] = $('#itemId').val();
         item['itemIndex'] = $('#itemIndex').val();
+        item['issueNoteitemId'] = $('#issueNoteitemId').val();
         item['itemAssetId'] = $('#itemAssetId').val();
         item['itemAssetName'] = $('#itemAssetName').val();
         item['itemStockId'] = $('#itemStockId').val();
@@ -86,6 +125,7 @@ var receiptItemTab = function () {
     	item['itemAssetId'] = CustomComponents.nullValueReplace($("#itemAssetId").val());
     	item['itemAssetName'] = $("#itemAssetName").val();
     	item['itemStockId'] = $("#itemStockId").val();
+    	item['issueNoteitemId'] = $("#issueNoteitemId").val();
     	item['itemStockName'] = CustomComponents.nullValueReplace($("#itemStockName").val());
     	item['itemQtyReceived'] = CustomComponents.nullValueReplace($("#itemQtyReceived").val());
     	item['itemUnitPrice'] = CustomComponents.nullValueReplace($("#itemUnitPrice").val());
@@ -103,17 +143,38 @@ var receiptItemTab = function () {
 
     var editItem = function (itemIndex) {
         var $modal = $('#common-modal');
+        var aodType = $("#receiptOrderTypeId option:selected").val();
+
+        var URL='../receiptorder/receiptItemView';
+        if (aodType == "REFURBISH") {
+        	URL='../receiptorder/receiptRefurbishItemView';
+        } 
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
-            var url = '../receiptorder/receiptItemView';
+            var url = URL;
             $modal.load(url, '', function () {
                 fillItemEditForm(getItemByIndex(itemIndex),itemIndex);
                 $modal.modal();
-                ItemAddModal.init();
+                if (aodType == "REFURBISH") {
+                    RefurbishItemAddModal.init();
+
+                } else{
+                	ItemAddModal.init();
+                }
+                
                 createLinkForStok(getItemByIndex(itemIndex).itemAssetId)
             });
         }, 1000);
     };
+    
+    var createLinkForStok=function(id){
+    	$( "#createStock" ).empty();
+       	var thelink = $('<a>',{
+        	    text: 'Create New Stock',
+        	    href: '../stock/createstock?partId='+id,
+        	    target:'_blank'
+        	}).appendTo('#createStock');
+    }
 
     var getItemByIndex = function (itemIndex) {
         for (var i = 0; i < items.length; i++) {
@@ -130,6 +191,7 @@ var receiptItemTab = function () {
 
         $('#itemAssetId').val(item['itemAssetId']);
         $('#itemAssetName').val(item['itemAssetName']);
+        $('#issueNoteitemId').val(item['issueNoteitemId']);
         $('#itemStockId').val(item['itemStockId']);
         $('#itemStockName').val(item['itemStockName']);
         $('#itemQtyReceived').val(item['itemQtyReceived']);
@@ -172,75 +234,19 @@ var receiptItemTab = function () {
     };
 
 
-    /*********************************************************************
-     * Receipt Item Asset Data
-     *********************************************************************/
-    var receiptAssetView = function () {
-        loadAssetSelectModal("asset_tbl", "../restapi/asset/parts", "receiptItemTab.setReceiptItemAsset");
-    };
-
-    var loadAssetSelectModal = function (tableId, URL, method) {
-        var $modal = $('#stackable-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../receiptorder/receiptAssetView';
-            $modal.load(url, '', function () {
-                dtReceiptAsset.dtReceiptAsset(tableId, URL, method);
-                $modal.modal();
-            });
-        }, 1000);
-    };
-
-    var setReceiptItemAsset = function (id, name) {
-        $('#itemAssetId').val(id);
-        $('#itemAssetName').val(name);
-        createLinkForStok(id);
-    	$('#stackable-modal').modal('toggle');
-
-    };
-
-    var createLinkForStok=function(id){
-    	$( "#createStock" ).empty();
-       	var thelink = $('<a>',{
-        	    text: 'Create New Stock',
-        	    href: '../stock/createstock?partId='+id,
-        	    target:'_blank'
-        	}).appendTo('#createStock');
-    }
-    
-
-    /*********************************************************************
-     * Receipt Item Stock Data
-     *********************************************************************/
-    var receiptStockView = function () {
-    	partId=$("#itemAssetId").val();
-    	if(partId!=null && partId!='' ){
-            getReceiptStockView("stock_tbl", "../restapi/stock/stockByPart", "receiptItemTab.setReceiptItemStock", partId);
-    	}else{
-    		alert("Please select part first")
-    	}
-    };
-
-    var getReceiptStockView = function (tableId, URL, method, partId) {
-        var $modal = $('#stackable-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../receiptorder/receiptStockView';
-            $modal.load(url, '', function () {
-                dtReceiptStock.getStockDataTable(tableId, URL, method, partId);
-                $modal.modal();
-            });
-        }, 1000);
-    };
-
-    var setReceiptItemStock = function (id, location) {
-        $('#itemStockId').val(id);
-        $('#itemStockName').val(location);
-        $('#stackable-modal').modal('toggle');
-    };
 
 
-    return {
+   return {
+    	
+        /*********************************************************************
+         * Add Receipt item init
+         *********************************************************************/
+    	
+        init: function () {
+            runReceiptOrderTypeChange();
+            initButton();
+            populateReceiptItem();
+        },
 
         /*********************************************************************
          * Add Receipt
@@ -268,25 +274,11 @@ var receiptItemTab = function () {
         deleteListItem: function (index) {
             removeItem(index);
         },
-
-        /*********************************************************************
-         * Receipt Item Asset Data
-         *********************************************************************/
-        receiptAssetView: function () {
-            receiptAssetView();
-        },
         setReceiptItemAsset: function (id, name) {
-            setReceiptItemAsset(id, name);
+        	setReceiptItemAsset(id, name);
         },
-
-        /*********************************************************************
-         * Receipt Item Stock Data
-         *********************************************************************/
-        receiptStockView: function (partId) {
-            receiptStockView(partId);
-        },
-        setReceiptItemStock: function (id, location) {
-            setReceiptItemStock(id, location);
+        setReceiptRefurbishItemAsset: function (id,partId,partName) {
+        	setReceiptRefurbishItemAsset(id,partId,partName);
         },
 
         /*********************************************************************
@@ -296,7 +288,10 @@ var receiptItemTab = function () {
             populateReceiptItem();
         },
         receiptItemView: function () {
-            receiptItemView();
+        	receiptItemView();
+        },
+        receiptRefurbishItemView: function () {
+        	receiptRefurbishItemView();
         }
 
     };

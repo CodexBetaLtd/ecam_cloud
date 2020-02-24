@@ -14,6 +14,7 @@ import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.WarrantyType;
 import com.codex.ecam.constants.WarrantyUsageTermType;
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.dto.admin.AssetBrandDTO;
 import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
@@ -205,7 +206,8 @@ public class PartController {
         model.addAttribute("part", part);
         model.addAttribute("businessGroups", businessGropService.findAllByLevel());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-        model.addAttribute("ledgerDTOs", stockLogService.findAllStockByPartId(part.getId()));
+		model.addAttribute("ledgerDTOs", stockLogService.findAllStockByPartId(part.getId()));
+        model.addAttribute("partTypes", PartType.getPartTypes());
     }
 
 }

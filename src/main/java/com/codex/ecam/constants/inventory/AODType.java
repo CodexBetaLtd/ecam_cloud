@@ -6,7 +6,8 @@ import java.util.List;
 public enum AODType {
 
     WORKORDER(0, "Work Order"),
-    OTHER(1, "Other");
+    OTHER(1, "Other"),
+	ISSUE_NOTE(2, "Issue Note");
 
     private Integer id;
     private String name;
@@ -17,9 +18,15 @@ public enum AODType {
     }
 
     public static List<AODType> getAODTypes() {
+    	List<AODType> list = new ArrayList<AODType>();
+    	list.add(AODType.WORKORDER); 
+    	list.add(AODType.OTHER);
+    	return list;
+    }
+    
+    public static List<AODType> getIssueNoteTypes() {
         List<AODType> list = new ArrayList<AODType>();
-        list.add(AODType.WORKORDER); 
-        list.add(AODType.OTHER);
+        list.add(AODType.ISSUE_NOTE);
         return list;
     }
 

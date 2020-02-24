@@ -74,6 +74,15 @@ public class StockRestController {
     	}
     	return null;
     }
+    @RequestMapping(value = "/stockByPartAndPartType", method = RequestMethod.GET)
+    public DataTablesOutput<StockDTO> findStockByPartAndPartType(@Valid FocusDataTablesInput input, Integer partId) {
+    	try {
+    		return stockService.findStockByPart(input, partId);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return null;
+    }
 
     @RequestMapping(value = "/remainStockPartList", method = RequestMethod.GET)
     public DataTablesOutput<StockDTO> findRemainStockPartList(@Valid FocusDataTablesInput input) {

@@ -17,8 +17,14 @@ var PartAdd = function () {
     };
 
     var initSite = function () {
-        $("#siteId").select2({
-            placeholder: "Select Site",
+    	$("#siteId").select2({
+    		placeholder: "Select Site",
+    		allowClear: true
+    	});
+    };
+    var initPartType = function () {
+        $("#partType").select2({
+            placeholder: "Select Part type",
             allowClear: true
         });
     };
@@ -137,6 +143,9 @@ var PartAdd = function () {
                 	required: true
                 },
                 partCategoryName: {
+                	required: true
+                },
+                partType: {
                     required: true
                 }
             },
@@ -149,7 +158,8 @@ var PartAdd = function () {
                 name: "Please Specify a Name",
                 businessId: "Please Selecet a Business",
                 businessGroupId: "Please Selecet a Business Group",
-                partCategoryName: "Please Select a part Category"
+                partCategoryName: "Please Select a part Category",
+                partType: "Please Select a part type"
             },
             invalidHandler: function (event, validator) { //display error alert on form submit
                 successHandler.hide();
@@ -192,6 +202,7 @@ var PartAdd = function () {
             initImageInput();
             initPartCategoryInput();
             initJsTree();
+            initPartType();
         },
         
 	    setPartCategory:function(categoryId, categoryName){

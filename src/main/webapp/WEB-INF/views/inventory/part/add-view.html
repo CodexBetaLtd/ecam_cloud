@@ -135,6 +135,19 @@
 						            	</div>
 											<div class="row">
 											<div class="col-md-12">
+									            <div class="form-group">
+								                    <label class="control-label">
+								                         Part Type <span class="symbol required"></span>
+								                    </label>
+														<select th:field="*{partType}" class="search-select" class="form-control" style="width: 100%;">
+															<option value="">&nbsp;</option>
+															<option th:each="type : ${partTypes}" th:value="${type}" th:text="${type.name}"></option>
+														</select>
+									            </div>
+								            </div>
+						            	</div>
+											<div class="row">
+											<div class="col-md-12">
 												<div id="data" class="demo"></div>
 								            </div>
 						            	</div>

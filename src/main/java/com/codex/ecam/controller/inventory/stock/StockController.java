@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
+import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.dto.inventory.stock.StockDTO;
 import com.codex.ecam.dto.inventory.stock.StockHistoryDTO;
 import com.codex.ecam.dto.inventory.stock.StockViewFilterDTO;
@@ -207,7 +208,18 @@ public class StockController {
 	}
 	
 	@RequestMapping(value = "/createstock", method = RequestMethod.GET)
-	public String editFormFormReciptOrder(Integer partId, Model model, RedirectAttributes ra) {
+	public String createStock(Integer partId, Model model, RedirectAttributes ra) {
+		try {
+			StockDTO dto = stockService.createNewStock(partId);
+			setCommonData(model, dto);
+			return "inventory/stock/add-view";
+		} catch (Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
+			return "redirect:/stock/index";
+		}
+	}
+	@RequestMapping(value = "/createrefubishstock", method = RequestMethod.GET)
+	public String createRefurbishStock(Integer partId, Model model, RedirectAttributes ra) {
 		try {
 			StockDTO dto = stockService.createNewStock(partId);
 			setCommonData(model, dto);
@@ -220,7 +232,8 @@ public class StockController {
 
     private void setCommonData(Model model, StockDTO stock) {
         model.addAttribute("stock", stock);
-		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+        model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+		model.addAttribute("stockTypes", StockType.getPartTypes());
 	}
 
 

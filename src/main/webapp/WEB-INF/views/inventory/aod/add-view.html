@@ -59,7 +59,7 @@
                     </a>
                     <!-- Save -->
                     <a class="btn btn-default btn-sm active tooltips" id="saveAOD" data-placement="top"
-                       data-original-title="Save"
+                       data-original-title="Save"  onclick="document.getElementById('btn_aod_submit').click();"
                        th:disabled="${aod.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_AOD_ADD.id)">
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>

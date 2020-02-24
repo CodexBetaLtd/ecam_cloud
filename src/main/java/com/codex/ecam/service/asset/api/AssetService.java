@@ -86,7 +86,8 @@ public interface AssetService {
 
 	DataTablesOutput<AssetDTO> findAssetByCategoryTypeBusiness(FocusDataTablesInput input, Integer businessId, AssetCategoryType type);
 
-    DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
+	DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
+    DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
 
 	String assetFileUpload(MultipartFile file,String refId) throws Exception;
 

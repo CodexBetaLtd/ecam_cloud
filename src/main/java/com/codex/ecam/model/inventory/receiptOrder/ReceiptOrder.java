@@ -17,6 +17,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
+import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Currency;
 import com.codex.ecam.model.admin.User;
@@ -73,6 +74,9 @@ public class ReceiptOrder extends BaseModel {
 
 	@Column(name = "date_received")
 	private Date dateReceived;
+	
+	@Column(name = "receiptorder_type_id")
+	private ReceiptOrderType receiptOrderType;
 
 	@OneToMany(mappedBy = "receiptOrder", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
 	private Set<ReceiptOrderItem> receiptOrderItems;
@@ -174,4 +178,14 @@ public class ReceiptOrder extends BaseModel {
 	public void setReceiptOrderItems(Set<ReceiptOrderItem> receiptOrderItems) {
 		updateCollection("receiptOrderItems", receiptOrderItems);
 	}
+
+	public ReceiptOrderType getReceiptOrderType() {
+		return receiptOrderType;
+	}
+
+	public void setReceiptOrderType(ReceiptOrderType receiptOrderType) {
+		this.receiptOrderType = receiptOrderType;
+	}
+	
+	
 }

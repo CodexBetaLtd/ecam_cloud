@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
+import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -52,11 +53,21 @@ public class ReceiptOrderController {
 
     @RequestMapping(value = "/receiptItemView", method = RequestMethod.GET)
     public String getItemAddView(Model model) {
-        return "inventory/receiptorder/modal/item-modal";
+    	return "inventory/receiptorder/modal/item-modal";
+    }
+    
+    @RequestMapping(value = "/receiptRefurbishItemView", method = RequestMethod.GET)
+    public String getRefurbishItemAddView(Model model) {
+        return "inventory/receiptorder/modal/refurbish-item-modal";
     }
 
     @RequestMapping(value = "/receiptAssetView", method = RequestMethod.GET)
     public String getAssetSelectView(Model model) {
+    	return "inventory/receiptorder/modal/asset-modal";
+    }
+    
+    @RequestMapping(value = "/receiptRefubishAssetView", method = RequestMethod.GET)
+    public String getRefurbishAssetSelectView(Model model) {
         return "inventory/receiptorder/modal/asset-modal";
     }
 
@@ -142,7 +153,8 @@ public class ReceiptOrderController {
     }
 
     private void setCommonData(Model model, ReceiptOrderDTO receiptOrder) {
-        model.addAttribute("receiptOrder", receiptOrder);
+    	model.addAttribute("receiptOrder", receiptOrder);
+        model.addAttribute("types", ReceiptOrderType.getAllReceiptOrderType());
         model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
         model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
     }

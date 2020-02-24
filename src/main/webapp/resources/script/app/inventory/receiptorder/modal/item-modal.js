@@ -5,6 +5,90 @@ var ItemAddModal = function () {
         	ItemAddModal.addReceiptOrderItem(this);
         });
 	}
+	
+
+    /*********************************************************************
+     * Receipt Item Asset Data
+     *********************************************************************/
+	
+	var initPartSelect = function () {
+        $("#itemAssetName").inputClear({
+            placeholder: "Select A Part",
+            btnMethod: "ItemAddModal.receiptAssetView()",
+        });
+    };
+    
+    var receiptAssetView = function () {
+    	loadAssetSelectModal("asset_tbl", "../restapi/asset/parts", "ItemAddModal.setReceiptItemAsset");
+    };
+    
+    
+    var loadAssetSelectModal = function (tableId, URL, method) {
+    	var $modal = $('#stackable-modal');
+    	CustomComponents.ajaxModalLoadingProgressBar();
+    	setTimeout(function () {
+    		var url = '../receiptorder/receiptAssetView';
+    		$modal.load(url, '', function () {
+    			dtReceiptAsset.dtReceiptAsset(tableId, URL, method);
+    			$modal.modal();
+    		});
+    	}, 1000);
+    };
+    
+    var setReceiptItemAsset = function (id, name) {
+        $('#itemAssetId').val(id);
+        $('#itemAssetName').val(name);
+        createLinkForStok(id);
+    	$('#stackable-modal').modal('toggle');
+
+    }
+    
+    
+    var createLinkForStok=function(id){
+    	$( "#createStock" ).empty();
+       	var thelink = $('<a>',{
+        	    text: 'Create New Stock',
+        	    href: '../stock/createstock?partId='+id,
+        	    target:'_blank'
+        	}).appendTo('#createStock');
+    }
+    
+    /*********************************************************************
+     * Receipt Item Stock Data
+     *********************************************************************/
+	var initStockSelect = function () {
+        $("#itemStockName").inputClear({
+            placeholder: "Select A Stock",
+            btnMethod: "ItemAddModal.receiptStockView()",
+        });
+    };
+
+    var receiptStockView = function () {
+    	partId=$("#itemAssetId").val();
+    	if(partId!=null && partId!='' ){
+            getReceiptStockView("stock_tbl", "../restapi/stock/stockByPart", "receiptItemTab.setReceiptItemStock", partId);
+    	}else{
+    		alert("Please select part first")
+    	}
+    };
+
+    var getReceiptStockView = function (tableId, URL, method, partId) {
+        var $modal = $('#stackable-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../receiptorder/receiptStockView';
+            $modal.load(url, '', function () {
+                dtReceiptStock.getStockDataTable(tableId, URL, method, partId);
+                $modal.modal();
+            });
+        }, 1000);
+    };
+
+    var setReceiptItemStock = function (id, name) {
+        $('#itemStockId').val(id);
+        $('#itemStockName').val(name);
+        $('#stackable-modal').modal('toggle');
+    };
 	var runValidator = function() {
 
         var form = $('#receiptOrderItemForm');
@@ -89,23 +173,8 @@ var ItemAddModal = function () {
 		});
 	};
 	
-	var initPartSelect = function () {
-        $("#itemAssetName").inputClear({
-            placeholder: "Select A Part",
-            btnMethod: "receiptItemTab.receiptAssetView()",
-        });
-    };
-    
-	var initStockSelect = function () {
-        $("#itemStockName").inputClear({
-            placeholder: "Select A Stock",
-            btnMethod: "receiptItemTab.receiptStockView()",
-        });
-    };
-	
 	var addReceiptOrderItem = function(obj) {
 		var form = $('#receiptOrderItemForm');
-		console.log(form.valid())
 		if (form.valid()) {
 			receiptItemTab.addItemToList(obj);
 		}
@@ -120,8 +189,26 @@ var ItemAddModal = function () {
         	initPartSelect();
         	initStockSelect();
         },
+        
+        receiptAssetView:function(){
+        	receiptAssetView();
+        },
+        
+        setReceiptItemAsset:function(id,name){
+        	setReceiptItemAsset(id,name);
+        },
+        
+        receiptStockView:function(){
+        	receiptStockView()
+        },
+        
+        setReceiptItemStock:function(id,name){
+        	setReceiptItemStock(id,name)
+        },
+        
         addReceiptOrderItem:function(obj){
         	addReceiptOrderItem(obj);
-        }
+        },
+
     };
 }();

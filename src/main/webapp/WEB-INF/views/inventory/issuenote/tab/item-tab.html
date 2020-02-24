@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+ 
+	<div th:fragment="issueNoteItemTabFragment">
+	    <div class="row btn-bar">
+	        <button th:disabled="${issuenote.aodStatus}==${T(com.codex.ecam.constants.inventory.AODStatus).APPROVED} ? 'disabled'"
+	                type="button" class="btn btn-blue btn-sm active tooltips" id="btn-issue-note-item-modal-view" data-toggle="modal" data-placement="top" data-original-title="Add New Item">
+	            <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span> Item
+	        </button>
+	    </div>
+	
+	    <div class="row">
+	        <div class="col-md-12">
+	            <table class="table table-striped table-bordered table-hover table-full-width" style="width:100%;" id="tbl_issuenote_item">
+	                <thead>
+	                <tr>
+	                    <th class="first-th" ><span th:text="#{global.symbol.count}"></span></th>
+	                    <th><span th:text="#{issuenote.tab.item.asset}"></span></th>
+	                    <th><span th:text="#{issuenote.tab.item.batchNo}"></span></th>
+	                    <th><span th:text="#{issuenote.tab.item.qty}"></span></th>
+	                    <th><span th:text="#{issuenote.tab.item.description}"></span></th>
+	                    <th class="last-th"><span th:text="#{global.keyword.more}"></span></th>
+	                </tr>
+	                </thead>
+	                <tbody></tbody>
+	            </table>
+	        </div>
+	    </div>
+	</div> 
+
+</html>

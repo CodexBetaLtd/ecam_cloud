@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 
 import org.springframework.context.ApplicationEvent;
 
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.event.RootAwareEvent;
 import com.codex.ecam.listeners.asset.AssetLogListener;
 import com.codex.ecam.model.BaseModel;
@@ -145,6 +146,9 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	
 	@Column(name="last_price")
 	private Integer lastPrice;
+	
+	@Column(name="part_type_id")
+	private PartType partType;
 
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReading> assetMeterReadings;
@@ -586,6 +590,14 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	public void setChildCount(Integer childCount) {
 		this.childCount = childCount;
+	}
+
+	public PartType getPartType() {
+		return partType;
+	}
+
+	public void setPartType(PartType partType) {
+		this.partType = partType;
 	}
 	
 	

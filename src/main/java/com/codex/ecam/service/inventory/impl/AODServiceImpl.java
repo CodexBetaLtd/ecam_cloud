@@ -43,7 +43,6 @@ import com.codex.ecam.exception.inventory.stock.StockQuantityExceedException;
 import com.codex.ecam.mappers.inventory.aod.AODItemMapper;
 import com.codex.ecam.mappers.inventory.aod.AODMapper;
 import com.codex.ecam.mappers.inventory.aod.AODReportMapper;
-import com.codex.ecam.mappers.inventory.mrn.MRNMapper;
 import com.codex.ecam.model.inventory.aod.AOD;
 import com.codex.ecam.model.inventory.aod.AODItem;
 import com.codex.ecam.model.inventory.mrn.MRN;
@@ -194,6 +193,7 @@ public class AODServiceImpl implements AODService {
 		setAODItem(result);
 		setBusinessSite(result);
 		setNextAODNo(result);
+		approveAndDispatch(result);
 	}
 
 	private void setAODCustomer(AODResult result) {
@@ -452,17 +452,23 @@ public class AODServiceImpl implements AODService {
 	public DataTablesOutput<AODDTO> findAll(FocusDataTablesInput input) throws Exception {
 		AODPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<AOD> domainOut;
+		Specification<AOD> specification;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			domainOut = aodDao.findAll(input);
+			specification = (root, query, cb) -> 
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE) ;
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<AOD> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			 specification = (root, query, cb) ->  cb.and(
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
 			domainOut = aodDao.findAll(input, specification);
 		} else {
-			Specification<AOD> specification = (root, query, cb) -> cb.and(
+			specification = (root, query, cb) -> cb.and(
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()) );
-			domainOut = aodDao.findAll(input, specification);
 		}
+		domainOut = aodDao.findAll(input, specification);
+
 		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
@@ -473,21 +479,24 @@ public class AODServiceImpl implements AODService {
 		DataTablesOutput<AOD> domainOut;
 		Specification<AOD> specification;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			 specification = (root, query, cb) -> cb.equal(
-					root.get("aodStatus"), AODStatus.APPROVED);
-			domainOut = aodDao.findAll(input, specification);
+			 specification = (root, query, cb) ->
+			 cb.and(
+					 cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
+					 cb.equal(root.get("aodStatus"), AODStatus.APPROVED))
+			 ;
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			specification = (root, query, cb) -> 
 			cb.and(
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
-					 cb.equal(root.get("aodStatus"), AODStatus.APPROVED));
+					cb.equal(root.get("aodStatus"), AODStatus.APPROVED));
 		} else {
 			 specification = (root, query, cb) -> cb.and(
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
 					cb.equal(root.get("aodStatus"), AODStatus.APPROVED)
 					);
-			domainOut = aodDao.findAll(input, specification);
 		}
 		domainOut = aodDao.findAll(input, specification);
 		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);

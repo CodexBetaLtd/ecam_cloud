@@ -97,6 +97,15 @@ public class AssetRestController {
 		}
 		return null;
 	}
+	@RequestMapping(value = "/tabledata-parts-repairable-by-business", method = RequestMethod.GET)
+	public DataTablesOutput<AssetDTO> getRepairablePartsByBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
+		try {
+			return assetService.findRepairablePartsByBusiness(input, id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	@RequestMapping(value = "/assetList", method = RequestMethod.GET)
 	public List<AssetDTO> getAllAssets() {

@@ -3,6 +3,7 @@ package com.codex.ecam.dto.biz.part;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.dto.BaseDTO;
 import com.codex.ecam.dto.asset.AssetUserDTO;
 import com.codex.ecam.dto.asset.WarrantyDTO;
@@ -39,6 +40,7 @@ public class PartDTO extends BaseDTO {
 	private String completionNotes;
 	private Integer partCategoryId;
 	private String partCategoryName;
+	private PartType partType=PartType.NORMAL;
 	
 
 	private List<StockDTO> stockDTOs = new ArrayList<>();
@@ -303,6 +305,14 @@ public class PartDTO extends BaseDTO {
 
 	public void setLedgerDTOs(List<StockLedgerDTO> ledgerDTOs) {
 		this.ledgerDTOs = ledgerDTOs;
+	}
+
+	public PartType getPartType() {
+		return partType;
+	}
+
+	public void setPartType(PartType partType) {
+		this.partType = partType;
 	}
 	 
 }

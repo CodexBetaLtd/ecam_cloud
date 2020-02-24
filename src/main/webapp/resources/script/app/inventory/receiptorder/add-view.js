@@ -12,6 +12,12 @@ var ReceiptOrderAdd = function () {
 			allowClear: true
 		});
 	};
+	var runReceiptOrderTypeSelect = function () {
+		$("#receiptOrderTypeId").select2({
+			placeholder: "Select a ReceiptOrder Type",
+			allowClear: true
+		});
+	};
 
     var runDatePicker = function () {
         $('.date-picker').datepicker({
@@ -19,6 +25,8 @@ var ReceiptOrderAdd = function () {
         });
     };
     
+    
+   
     var runValidator = function () {
         var form = $('#receipt_order_add_frm');
         var errorHandler = $('.errorHandler', form);
@@ -85,6 +93,8 @@ var ReceiptOrderAdd = function () {
             runSupplierBusinessSelect();
             runBusinessSelect();
             runDatePicker();
+            runReceiptOrderTypeSelect();
+   
         }
     };
 }();

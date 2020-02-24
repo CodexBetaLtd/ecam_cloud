@@ -14,6 +14,7 @@ public class ReceiptOrderItemDTO extends BaseDTO {
 	private String itemDescription;
 	private BigDecimal itemUnitPrice;
 	private BigDecimal itemQtyReceived;
+	private Integer issueNoteitemId;
 
 
 
@@ -82,4 +83,14 @@ public class ReceiptOrderItemDTO extends BaseDTO {
 	public void setItemQtyReceived(BigDecimal itemQtyReceived) {
 		this.itemQtyReceived = itemQtyReceived;
 	}
+
+	public Integer getIssueNoteitemId() {
+		return issueNoteitemId;
+	}
+
+	public void setIssueNoteitemId(Integer issueNoteitemId) {
+		this.issueNoteitemId = issueNoteitemId;
+	}
+	
+	
 }

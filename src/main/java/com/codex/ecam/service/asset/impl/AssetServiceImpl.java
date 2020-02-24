@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.AssetCategoryType;
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetEventTypeDao;
@@ -1431,11 +1432,28 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
-
+		
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
 		Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.equal(root.get("business").get("id"), bizId));
+		
+		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		
+		return out;
+	}
+	@Override
+	public DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
+
+		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		Specification<Asset> specification = (root, query, cb) -> cb.and(
+				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
+				cb.isNotNull(root.get("partType")),
+				cb.equal(root.get("partType"), PartType.REPAIRABLE),
+				cb.equal(root.get("business").get("id"), bizId)
+				
+				);
 
 		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
 		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);

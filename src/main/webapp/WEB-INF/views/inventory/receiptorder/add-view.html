@@ -216,6 +216,17 @@
 											</div>
 										</div>
 									</div>
+									                                <div class="row">
+                                    <div class="col-md-6 col-sm-12">
+                                        <div class="form-group">
+                                            <label class="control-label"> Receipt Order type <span class="symbol required"></span> </label>
+                                            <select th:field="*{receiptOrderType}" id="receiptOrderTypeId" class="search-select" style="width: 100%;">
+                                                <option value="">&nbsp;</option>
+                                                <option th:each="type : ${types}" th:value="${type}" th:text="${type.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    </div>
 									<div class="row">
 										<div class="col-md-12">
 											<div>
@@ -264,45 +275,30 @@
 	<!-- end: MAIN JAVASCRIPTS -->
 
 	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/select2.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/init.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/add-view.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/tab/item-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/modal/item-modal.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-assets.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-stock.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/init.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/add-view.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/tab/item-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/modal/item-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/modal/refurbish-item-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-refurbish-assets.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-assets.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-stock.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-refurbish-stock.js}"></script>
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 

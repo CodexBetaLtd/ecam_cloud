@@ -2,6 +2,7 @@ package com.codex.ecam.model.inventory.stock;
 
 import javax.persistence.*;
 
+import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.listeners.inventory.part.PartStockLogListener;
 import com.codex.ecam.listeners.inventory.stock.StockNotificationPublishListener;
 import com.codex.ecam.listeners.stock.StockLogListener;
@@ -77,6 +78,9 @@ public class Stock extends BaseModel {
 	
 	@Column(name = "stock_date")
 	private Date date;
+	
+	@Column(name = "stock_type_id")
+	private StockType stockType;
 
 	@OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private Set<StockHistory> stockHistoryList;
@@ -259,6 +263,16 @@ public class Stock extends BaseModel {
 
 	public void setStockNotifications(Set<StockNotification> stockNotifications) {
 		updateCollection("stockNotifications", stockNotifications);
+	}
+
+	public StockType getStockType() {
+		return stockType;
+	}
+
+	public void setStockType(StockType stockType) {
+		this.stockType = stockType;
 	} 
+	
+	
 	
 }

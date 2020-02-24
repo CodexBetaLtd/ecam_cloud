@@ -35,7 +35,7 @@ public class StockMapper extends GenericMapper<Stock, StockDTO> {
 		dto.setSellingPrice(domain.getSellingPrice());
 		dto.setDescription(domain.getDescription());
 		dto.setDate(domain.getDate());
-
+        dto.setStockType(domain.getStockType());
 		if ((domain.getBusiness() != null)) {
 			dto.setBusinessId(domain.getBusiness().getId());
 			dto.setBusinessRef(domain.getBusiness().getName());
@@ -89,6 +89,9 @@ public class StockMapper extends GenericMapper<Stock, StockDTO> {
 		domain.setSellingPrice(dto.getSellingPrice());
 		domain.setDescription(dto.getDescription());
 		domain.setDate(dto.getDate());
+		
+		domain.setStockType(dto.getStockType());
+
 
 	}
 

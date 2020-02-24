@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
+import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.admin.UserDao;
@@ -218,6 +219,15 @@ public class PartServiceImpl implements PartService {
 		setModel(result);
 		setPartNotification(result);
 		setPartImage(result, image);
+		setPartcode(result);
+	}
+	
+	private void setPartcode(PartResult result){
+		if(result.getDtoEntity().getCode()!=null && result.getDtoEntity().getPartType()!=null){
+			if(result.getDtoEntity().getPartType().equals(PartType.REPAIRABLE)){
+				result.getDomainEntity().setCode(result.getDtoEntity().getCode()+"-R");
+			}
+		}
 	}
 
 	private void setPartNotification(PartResult result)throws Exception {

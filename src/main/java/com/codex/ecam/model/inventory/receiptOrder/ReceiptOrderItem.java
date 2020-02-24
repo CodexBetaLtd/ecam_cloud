@@ -18,6 +18,7 @@ import javax.persistence.Table;
 
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.asset.Asset;
+import com.codex.ecam.model.inventory.aod.AODItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.stock.Stock;
 
@@ -57,6 +58,10 @@ public class ReceiptOrderItem extends BaseModel {
 	@JoinColumn(name = "warehouse_id")
 	@ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
 	private Asset warehouse;
+	
+	@JoinColumn(name = "issue_note_item_id")
+	@ManyToOne(targetEntity = AODItem.class, fetch = FetchType.LAZY)
+	private AODItem issueNoteItem;
 
 	@Column(name = "unit_price")
 	private BigDecimal unitPrice;
@@ -204,6 +209,16 @@ public class ReceiptOrderItem extends BaseModel {
 	public void setStocks(Set<Stock> stocks) {
 		updateCollection("stocks", stocks);
 	}
+
+	public AODItem getIssueNoteItem() {
+		return issueNoteItem;
+	}
+
+	public void setIssueNoteItem(AODItem issueNoteItem) {
+		this.issueNoteItem = issueNoteItem;
+	}
+	
+	
 
 /*	public Set<ReceiptOrderItemSerialNumber> getReceiptOrderItemSerialNumbers() {
 		return receiptOrderItemSerialNumbers;

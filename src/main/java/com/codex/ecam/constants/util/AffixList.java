@@ -11,7 +11,8 @@ public enum AffixList {
     SUPPLIER(6, "supplier", "SUP", "printSupplier", "newSupplier"),
     STOCK(7, "stock", "STK", "printStock", "newStock"),
     STOCK_ADJUSTMENT(8, "stock", "STK-ADJ", "printStockAdjustment", "newStockAdjustment"),
-    OTHER(9, "Other", "Oth", "printOther", "newOther");
+    OTHER(9, "Other", "Oth", "printOther", "newOther"),
+    ISSUE_NOTE(10, "Issue Note", "ISN", "printOther", "newOther");
 
     private Integer id;
     private String name;

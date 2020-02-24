@@ -21,8 +21,14 @@ var StockAdd = function () {
     };
     
     var runBusinessSelect = function () {
-        $("#businessId").select2({
-            placeholder: "Select Business",
+    	$("#businessId").select2({
+    		placeholder: "Select Business",
+    		allowClear: true
+    	});
+    };
+    var runStockTypeSelect = function () {
+        $("#stockType").select2({
+            placeholder: "Select Stock Type",
             allowClear: true
         });
     };
@@ -154,6 +160,7 @@ var StockAdd = function () {
             runWarehouseNameInput();
             runItemNameInput();
             runBusinessSelect();
+            runStockTypeSelect();
             initValidator();
             runDatePicker();
         },

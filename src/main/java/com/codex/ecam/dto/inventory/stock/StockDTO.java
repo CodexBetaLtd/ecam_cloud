@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.dto.BaseDTO;
 
 public class StockDTO extends BaseDTO {
@@ -51,6 +52,9 @@ public class StockDTO extends BaseDTO {
 	private String stockNo;
 	private String stockTransactionDescription;
 
+	
+	private StockType stockType;
+	
 	private BigDecimal qtyMovement;
 	private BigDecimal qtyOnHand;
 	private BigDecimal minQty;
@@ -365,6 +369,14 @@ public class StockDTO extends BaseDTO {
 
 	public void setStockNotificationDTOs(List<StockNotificationDTO> stockNotificationDTOs) {
 		this.stockNotificationDTOs = stockNotificationDTOs;
+	}
+
+	public StockType getStockType() {
+		return stockType;
+	}
+
+	public void setStockType(StockType stockType) {
+		this.stockType = stockType;
 	}
  
 }

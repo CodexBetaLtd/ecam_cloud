@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
+import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.dto.BaseDTO;
 
 public class ReceiptOrderDTO extends BaseDTO {
@@ -18,6 +19,7 @@ public class ReceiptOrderDTO extends BaseDTO {
 	private String supplierName;
 	private String code;
 	private ReceiptOrderStatus receiptOrderStatus=ReceiptOrderStatus.DRAFT;
+	private ReceiptOrderType receiptOrderType=ReceiptOrderType.NORMAL;
 
 	private List<ReceiptOrderItemDTO> items = new ArrayList<>();
     private List<ReceiptOrderTaxDTO> taxDTOs = new ArrayList<>();
@@ -90,6 +92,12 @@ public class ReceiptOrderDTO extends BaseDTO {
 	}
 	public void setBusinessId(Integer businessId) {
 		this.businessId = businessId;
+	}
+	public ReceiptOrderType getReceiptOrderType() {
+		return receiptOrderType;
+	}
+	public void setReceiptOrderType(ReceiptOrderType receiptOrderType) {
+		this.receiptOrderType = receiptOrderType;
 	}
     
     
