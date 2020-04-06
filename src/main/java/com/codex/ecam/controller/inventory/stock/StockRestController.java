@@ -44,6 +44,17 @@ public class StockRestController {
         }
         return null;
     }
+    
+    @RequestMapping(value = "/tabledata", method = RequestMethod.GET)
+    public DataTablesOutput<StockDTO> findDataTable(@Valid FocusDataTablesInput input) {
+        try {
+            return stockService.findStock(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     @RequestMapping(value = "/stockByAssetTemp", method = RequestMethod.GET)
     public DataTablesOutput<StockDTO> findStockByAssetTemp(@Valid FocusDataTablesInput input, Integer partId) {

@@ -196,7 +196,7 @@ public class MRNServiceImpl implements MRNService {
 		aodItem.setMrn(result.getDomainEntity()); 
 		aodItem.setQuantity(aodItemDTO.getItemQuantity());
 		aodItem.setApprovedQuantity(aodItemDTO.getApprovedQuantity());
-		aodItem.setRemainQuantity(aodItemDTO.getApprovedQuantity());
+		aodItem.setRemainQuantity(aodItemDTO.getRemainingQuantity());
 		if(result.getDomainEntity().getMrnStatus().equals(MRNStatus.REJECTED)){
 			aodItem.setApprovedQuantity(BigDecimal.ZERO);
 			aodItem.setRemainQuantity(BigDecimal.ZERO);

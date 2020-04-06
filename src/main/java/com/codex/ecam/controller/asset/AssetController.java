@@ -208,6 +208,16 @@ public class AssetController {
 	public String modelView(Model model) {
 		return "asset/modals/model/asset-model-select-modal";
 	}
+	
+	@RequestMapping(value = "/sparepartaddview", method = RequestMethod.GET)
+	public String modelSparePartAddView(Model model) {
+		return "asset/modals/spare-part-add-modal";
+	}
+	
+	@RequestMapping(value = "/sparepartselectmodalview", method = RequestMethod.GET)
+	public String modelSparePartSelectView(Model model) {
+		return "asset/modals/part-select-modal";
+	}
 
 	@RequestMapping(value = "/assetmodeladdview", method = RequestMethod.GET)
 	public String modelAddView(Model model) {

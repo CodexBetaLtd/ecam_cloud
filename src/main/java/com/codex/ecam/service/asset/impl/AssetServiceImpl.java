@@ -56,6 +56,7 @@ import com.codex.ecam.dto.asset.AssetMeterReadingDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingValueDTO;
 import com.codex.ecam.dto.asset.AssetPurchasingDTO;
 import com.codex.ecam.dto.asset.AssetUserDTO;
+import com.codex.ecam.dto.asset.SparePartDTO;
 import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
 import com.codex.ecam.mappers.asset.AssetEventMapper;
 import com.codex.ecam.mappers.asset.AssetEventTypeAssetMapper;
@@ -77,6 +78,7 @@ import com.codex.ecam.model.asset.AssetMeterReadingFormulaValue;
 import com.codex.ecam.model.asset.AssetMeterReadingFormulaVariable;
 import com.codex.ecam.model.asset.AssetMeterReadingValue;
 import com.codex.ecam.model.asset.AssetUser;
+import com.codex.ecam.model.asset.SparePart;
 import com.codex.ecam.model.inventory.bom.BOMGroup;
 import com.codex.ecam.model.inventory.bom.BOMGroupPart;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
@@ -360,10 +362,47 @@ public class AssetServiceImpl implements AssetService {
 		setLocation(result);
 		setModel(result);
 		setAssetFiles(result);
+		setAssetSparePart(result);
 		setAssetImage(result, image);
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
 	}
 
+	private void setAssetSparePart(AssetResult result) throws Exception {
+		Set<SparePart> spareParts = new HashSet<>();
+
+		if ((result.getDtoEntity().getSparePartDTOs() != null)
+				&& (result.getDtoEntity().getSparePartDTOs().size() > 0)) {
+
+			Set<SparePart> currentSpareParts = result.getDomainEntity().getSpareParts();
+
+			for (SparePartDTO sparePartDTO : result.getDtoEntity().getSparePartDTOs()) {
+				SparePart sparePart;
+
+				if (sparePartDTO.getId() != null) {
+					sparePart = currentSpareParts.stream().filter((x) -> x.getId().equals(sparePartDTO.getId()))
+							.findAny().orElseGet(SparePart::new);
+				} else {
+					sparePart = new SparePart();
+				}
+
+				sparePart.setId(sparePartDTO.getId());
+				sparePart.setVersion(sparePartDTO.getVersion());
+				sparePart.setQuantity(sparePartDTO.getQuantity());
+				sparePart.setDescription(sparePartDTO.getDescription());
+				sparePart.setAsset(result.getDomainEntity());
+				sparePart.setIsDeleted(Boolean.FALSE);
+				setSparePartPart(sparePart,sparePartDTO);
+				spareParts.add(sparePart);
+			}
+		}
+		result.getDomainEntity().setSpareParts(spareParts);
+	}
+	
+	private void setSparePartPart(SparePart sparePart,SparePartDTO sparePartDTO) {
+		if ((sparePartDTO != null) && (sparePartDTO.getPartId()) != null) {
+			sparePart.setSparePart(findEntityById(sparePartDTO.getPartId()));
+		}
+	}
 	private void setAssetImage(AssetResult result, MultipartFile image) throws Exception {
 		if (image != null) {
 			String uploadFolder = environment.getProperty("upload.asset.file.folder");

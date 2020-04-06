@@ -9,11 +9,11 @@
                              General
                           </a>
                       </li>
-<!--                     	 <li>
+                    	 <li>
                           <a href="#location_tab"  data-toggle="tab">
                               Location
                           </a>
-                      </li> -->
+                      </li> 
                       <li>
                           <a href="#event_tab"  data-toggle="tab">
                               Asset Event 
@@ -27,6 +27,11 @@
                       <li>
                           <a href="#parts_tab" data-toggle="tab">
                               Parts/BOM
+                          </a>
+                      </li>
+                      <li>
+                          <a href="#spare_parts_tab" data-toggle="tab">
+                              Spare Parts
                           </a>
                       </li>
                       <li>
@@ -64,9 +69,9 @@
                       <div class="tab-pane in active" id="general_tab">
                           <div th:replace="asset/tab/machine-general-tab :: machineGeneralTabFragment"></div>
                       </div>
-<!--                        <div class="tab-pane" id="location_tab">
+                      <div class="tab-pane" id="location_tab">
                           <div th:replace="asset/tab/location-tab :: locationTabFragment"></div>
-                      </div> -->
+                      </div> 
                       <div class="tab-pane" id="event_tab">
                           <div th:replace="asset/tab/asset-event-tab :: assetEventTabFragment"></div>
                       </div>
@@ -78,6 +83,9 @@
                       </div>
                       <div class="tab-pane" id="parts_tab">
                           <div th:replace="asset/tab/bom-tab :: bomTabFragment"></div>
+                      </div>
+                      <div class="tab-pane" id="spare_parts_tab">
+                          <div th:replace="asset/tab/spare-part-tab :: saprePartTabFragment"></div>
                       </div>
                       <div class="tab-pane" id="warranties_tab">
                           <div th:replace="asset/tab/warranty-tab:: warrantyTabFragment"></div>

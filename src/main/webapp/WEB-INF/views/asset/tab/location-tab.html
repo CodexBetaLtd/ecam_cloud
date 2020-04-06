@@ -2,19 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 <div th:fragment="locationTabFragment">
 <div class="row">
-	<div id="map-container" class="col-md-6"></div>
-	<div class="col-md-6">
-	  <div class="form-group">
-	      <label class="control-label"> Longitude
-	      </label>
-	      <input type="number" class="form-control" id="longitude" th:field="*{locationDTO.longitude}" >
-	    </div>
-		<div class="form-group">
-		    <label class="control-label"> Latitude 
-		    </label>
-		    <input type="number"  class="form-control" id="latitude" th:field="*{locationDTO.latitude}" >
-		</div>
-	</div>
-</div>
-</div>
+	<div class="col-xs-12 col-sm-12 col-md-12">
+		    		<div id="tableDiv" th:fragment="tableDiv">
+                	<table class="table table-striped table-bordered table-hover table-full-width" id="location_tree_tbl">
+	                    <thead>
+	                        <tr>
+	                        	<th> # </th>
+	                            <th>Name</th>
+	                            <th class="">Code</th>
+        						<th>Category</th> 
+	                            <th class="">Customer</th>
+        						<th class="">Business</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        
+	                    </tbody>
+                	</table>
+               	</div>
+    		</div>		                  
+ 		</div>
+ 	</div>
 </html>

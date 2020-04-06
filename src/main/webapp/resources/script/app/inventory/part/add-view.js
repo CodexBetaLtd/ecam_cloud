@@ -23,8 +23,14 @@ var PartAdd = function () {
     	});
     };
     var initPartType = function () {
-        $("#partType").select2({
-            placeholder: "Select Part type",
+    	$("#partType").select2({
+    		placeholder: "Select Part type",
+    		allowClear: true
+    	});
+    };
+    var initPartUsageType = function () {
+        $("#partUsageType").select2({
+            placeholder: "Select Part Usage type",
             allowClear: true
         });
     };
@@ -203,6 +209,7 @@ var PartAdd = function () {
             initPartCategoryInput();
             initJsTree();
             initPartType();
+            initPartUsageType();
         },
         
 	    setPartCategory:function(categoryId, categoryName){

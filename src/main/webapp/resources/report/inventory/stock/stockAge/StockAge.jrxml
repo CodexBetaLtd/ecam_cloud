@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 3.1.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="aod-view" pageWidth="650" pageHeight="842" columnWidth="590" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.7715610000000017"/>
+	<property name="ireport.x" value="67"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="stockAgeRemainQty" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[stockAgeRemainQty]]></fieldDescription>
+	</field>
+	<field name="stockAgeCreatedDate" class="java.util.Date">
+		<fieldDescription><![CDATA[stockAgeCreatedDate]]></fieldDescription>
+	</field>
+	<field name="stockAgePartCode" class="java.lang.String">
+		<fieldDescription><![CDATA[stockAgePartCode]]></fieldDescription>
+	</field>
+	<field name="stockAgeStockNo" class="java.lang.String">
+		<fieldDescription><![CDATA[stockAgeStockNo]]></fieldDescription>
+	</field>
+	<field name="stockAgePartDescription" class="java.lang.String"/>
+	<field name="stockAgeDaysAge" class="java.lang.Integer"/>
+	<field name="stockAgeTypeName" class="java.lang.String"/>
+	<field name="stockAgeItemTypeName" class="java.lang.String"/>
+	<field name="stockAgeDate" class="java.util.Date"/>
+	<field name="stockAgeYears" class="java.math.BigDecimal"/>
+	<field name="stockAgeMonths" class="java.math.BigDecimal"/>
+	<field name="stockAgeTotalAmount" class="java.math.BigDecimal"/>
+	<field name="stockAgeDays" class="java.math.BigDecimal"/>
+	<field name="stockAgePartUnitPrice" class="java.math.BigDecimal"/>
+	<field name="stockAgeStockQty" class="java.math.BigDecimal"/>
+	<variable name="date_with_age" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").format($F{stockAgeDate})+"("+$F{stockAgeTypeName}.toUpperCase()+")"]]></variableExpression>
+		<initialValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").format($F{stockAgeDate})+"("+$F{stockAgeTypeName}.toUpperCase()+")"]]></initialValueExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="31">
+			<staticText>
+				<reportElement x="2" y="0" width="588" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Stock Age Summary
+
+]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="23">
+			<staticText>
+				<reportElement x="2" y="1" width="60" height="20"/>
+				<textElement lineSpacing="Single">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date           :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="61" y="1" width="529" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{date_with_age}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25">
+			<frame>
+				<reportElement x="0" y="0" width="590" height="25"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<staticText>
+					<reportElement x="2" y="0" width="19" height="25" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="90" y="0" width="46" height="25" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part Code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="136" y="0" width="110" height="25"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="246" y="0" width="61" height="25" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Received Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="307" y="1" width="63" height="24" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Age 
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="490" y="0" width="44" height="25" isPrintWhenDetailOverflows="true"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Current Quantity]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="21" y="0" width="69" height="25"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Stock No]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="432" y="0" width="58" height="25"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Stock Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="370" y="1" width="62" height="24"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unit price
+]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="534" y="0" width="56" height="25"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Amount
+]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="16">
+			<frame>
+				<reportElement x="0" y="0" width="590" height="16"/>
+				<box>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField>
+					<reportElement x="21" y="0" width="69" height="16"/>
+					<box leftPadding="3"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgeStockNo}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="2" y="0" width="19" height="16">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="90" y="0" width="46" height="16"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgePartCode}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="136" y="0" width="110" height="16"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgePartDescription}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="490" y="0" width="44" height="16"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgeRemainQty}]]></textFieldExpression>
+				</textField>
+				<textField pattern="yyyy-MM-dd">
+					<reportElement x="246" y="0" width="61" height="16"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgeCreatedDate}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="307" y="0" width="63" height="16"/>
+					<box leftPadding="2"/>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA["Y: "+$F{stockAgeYears}+" M: "+$F{stockAgeMonths}+" D: "+$F{stockAgeDays}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="370" y="0" width="62" height="16"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgePartUnitPrice}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="432" y="0" width="58" height="16">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="fbba32a8-369a-4921-8504-d9717332b8e2"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgeStockQty}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="534" y="0" width="56" height="16">
+						<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1218fdeb-aba6-45ff-9588-def14a0ed7e7"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{stockAgeTotalAmount}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="22">
+			<textField>
+				<reportElement x="470" y="1" width="80" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="550" y="1" width="40" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="2" width="178" height="18"/>
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Y=Years M=Months D=Days
+]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="22">
+			<textField>
+				<reportElement x="469" y="2" width="80" height="20"/>
+				<textElement textAlignment="Right" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="549" y="2" width="40" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
+
+<body>
+
+<!-- start: HEADER -->
+<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+<!-- end: HEADER -->
+
+<!-- start: MAIN CONTAINER -->
+<div class="main-container">
+    <div class="navbar-content">
+
+        <!-- start: SIDEBAR -->
+        <div class="main-navigation navbar-collapse collapse">
+
+            <!-- start: MAIN MENU TOGGLER BUTTON -->
+            <div class="navigation-toggler">
+                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+            </div>
+            <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+            <!-- start: MAIN NAVIGATION MENU -->
+            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            <!-- end: MAIN NAVIGATION MENU -->
+        </div>
+        <!-- end: SIDEBAR -->
+    </div>        
+
+    <!-- start: PAGE -->
+    <div class="main-content">
+
+        <div class="container">
+        
+        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top: 0px; position: relative; display: block;" data-focus-on="input:first"></div>
+
+            <!-- start: PAGE HEADER -->
+            <div class="row" th:replace="report/part/page-header :: pageheader"></div>
+            <!-- end: PAGE HEADER -->
+
+            <form id="frm_part_report" role="form" th:action="@{/report/part/print}" th:object="${filterDTO}" method="post">
+                <div class="row btn-bar">
+                    <button th:id="btn_view_report" type="button" class="btn btn-default btn-sm active tooltips"
+                            data-original-title="View Report">
+                        <i class="clip-checkmark-circle-2 btn-view"></i> View Report
+                    </button>
+                    <button th:name="printPDF" type="submit" class="btn btn-default btn-sm active tooltips" name="print" data-placement="top" data-original-title="Print PDF Report">
+                        <i class="fa fa-print btn-save"></i> Print PDF
+                    </button>
+                    <button th:name="printCSV" type="submit" class="btn btn-default btn-sm active tooltips" name="print" data-placement="top" data-original-title="Print CVS Report">
+                        <i class="fa fa-print btn-save"></i> Print CSV
+                    </button>
+                </div>
+
+
+                <!-- end: BUTTON CONTENT -->
+
+                <!-- start: FILTER CONTENT -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="fa fa-file-text"></i> Report Filter
+                                <div class="panel-tools">
+                                    <a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
+                                </div>
+                            </div>
+                            <div class="panel-body ">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Item Type</label>
+                                                <select  id="partType" th:field="*{partType}" class="select2cls search-select" style="width: 100%;">
+                                                    <option value="">&nbsp;</option>
+                                                    <option th:each="itemType : ${types}" th:value="${itemType}" th:text="${itemType.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: FILTER CONTENT-->
+            </form>
+
+            <!-- start: LIST PAGE CONTENT -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-clock-o"></i> Part Report
+                            <div class="panel-tools">
+                                <a class="btn btn-xs btn-link panel-collapse collapses" href="#"> </a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                            		<div class="table-responsive">
+	                                    <table style="width: 100%" class="table table-striped table-bordered table-hover" id="tbl_parts">
+	                                        <thead>
+	                                        <tr>
+	                                            <th class="first-th">#</th>
+	                                          	<th>Item Code</th>
+												<th>Item</th>
+												<th>Part No</th>
+												<th>Item Type</th>
+	                                        </tr>
+	                                        </thead>
+	                                        <tbody>
+	
+	                                        </tbody>
+	
+	                                    </table>
+                                	</div>
+                            	</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end: LIST PAGE CONTENT-->
+
+    </div>
+</div>
+<!-- end: PAGE -->
+
+<!-- end: MAIN CONTAINER -->
+
+<!-- start: FOOTER -->
+<div class="row" th:replace="template/footer :: footer"></div>
+<!-- end: FOOTER -->
+
+<!-- start: MAIN JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjs"></div>
+<!-- end: MAIN JAVASCRIPTS -->
+
+<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+<script type="text/javascript" th:src="@{/resources/script/libs/bootbox.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.min.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/report/part/init.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/report/part/report-view.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/report/part/detail-table.js}"></script>
+
+</body>
+</html>

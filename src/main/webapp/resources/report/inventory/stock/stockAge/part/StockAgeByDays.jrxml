@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="aod-view" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="20" uuid="6bc01838-763e-4f7d-b148-eed5531a3307">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.7715610000000017"/>
+	<property name="ireport.x" value="67"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<field name="stockAgeRemainQty" class="java.math.BigDecimal"/>
+	<field name="stockAgeCreatedDate" class="java.util.Date"/>
+	<field name="stockAgePartCode" class="java.lang.String"/>
+	<field name="stockAgeStockNo" class="java.lang.String"/>
+	<field name="stockAgePartDescription" class="java.lang.String"/>
+	<field name="stockAgeDaysAge" class="java.lang.Integer"/>
+	<field name="stockAgeTypeName" class="java.lang.String"/>
+	<field name="stockAgeItemTypeName" class="java.lang.String"/>
+	<field name="stockAgeDate" class="java.util.Date"/>
+	<field name="stockAgeLastIssueDate" class="java.lang.String"/>
+	<field name="stockAgeLastAOD" class="java.lang.String"/>
+	<field name="stockAgeLastGRN" class="java.lang.String"/>
+	<field name="stockAgeLastGRNDate" class="java.util.Date"/>
+	<field name="stockAgeLastAODDate" class="java.util.Date"/>
+	<field name="stockAgePartUnitPrice" class="java.math.BigDecimal"/>
+	<field name="stockAgeValue" class="java.math.BigDecimal"/>
+	<field name="stockAgeValueOfBelow90Days" class="java.math.BigDecimal"/>
+	<field name="stockAgeValueOfBetween91And180Days" class="java.math.BigDecimal"/>
+	<field name="stockAgeValueOfBetween181And360Days" class="java.math.BigDecimal"/>
+	<field name="stockAgeValueOfAbouve361Days" class="java.math.BigDecimal"/>
+	<field name="stockAgeQtyOfBelow90Days" class="java.lang.Double"/>
+	<field name="stockAgeQtyOfBetween91And180Days" class="java.lang.Double"/>
+	<field name="stockAgeQtyOfBetween181And360Days" class="java.lang.Double"/>
+	<field name="stockAgeQtyOfAbouve361Days" class="java.lang.Double"/>
+	<variable name="date_with_age" class="java.lang.String">
+		<variableExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").format($F{stockAgeDate})+"("+$F{stockAgeTypeName}.toUpperCase()+")"]]></variableExpression>
+		<initialValueExpression><![CDATA[new SimpleDateFormat("yyyy-MM-dd").format($F{stockAgeDate})+"("+$F{stockAgeTypeName}.toUpperCase()+")"]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_QTY" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeRemainQty}]]></variableExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_BELOW_90_DAYS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeValueOfBelow90Days}]]></variableExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_QTY_BELOW_90_DAYS" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeQtyOfBelow90Days}]]></variableExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_BETWEEN_91_180_DAYS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeValueOfBetween91And180Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_QTY_BETWEEN_91_180_DAYS" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeQtyOfBetween91And180Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_BETWEEN_181_360_DAYS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeValueOfBetween181And360Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_QTY_BETWEEN_181_360_DAYS" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeQtyOfBetween181And360Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_ABOVE_361_DAYS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeValueOfAbouve361Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<variable name="STOCK_AGE_TOTAL_QTY_ABOVE_361_DAYS" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{stockAgeQtyOfAbouve361Days}]]></variableExpression>
+		<initialValueExpression><![CDATA[0.00]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<image hAlign="Left" vAlign="Middle" isLazy="true">
+				<reportElement key="" positionType="Float" x="0" y="0" width="782" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="b2365416-df80-4cdc-b35d-5feab65ef109">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{SUBREPORT_DIR}+"images/report_logo.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement positionType="Float" x="25" y="40" width="757" height="15" uuid="062f0293-f12b-45f5-9c5c-5111c255856f"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["ITEM TYPE " + $F{stockAgeItemTypeName}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="25" y="55" width="757" height="15" uuid="d696bff0-97c2-40a9-8840-1cd409698831"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["AGE ANALYSIS AS AT " + $V{date_with_age}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="40" width="25" height="15" isPrintWhenDetailOverflows="true" uuid="fd75a7bc-cc43-418f-86b4-2a90d38effa4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="55" width="25" height="15" isPrintWhenDetailOverflows="true" uuid="b7a328e5-8edc-4971-a29f-ed8631516a61"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="19" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="782" height="25" uuid="fe6fe344-4c95-45e1-984c-3a8666154f57"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<staticText>
+					<reportElement x="0" y="0" width="25" height="25" isPrintWhenDetailOverflows="true" uuid="c1080114-a5ff-4a8e-a992-a10ac6c4a453"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[#]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="25" y="0" width="35" height="25" isPrintWhenDetailOverflows="true" uuid="b0ef93fd-93e1-4eff-ada2-9697ca711b51"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Part
+ Code]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="0" width="129" height="25" uuid="bda32ac3-595a-4c85-85b2-d66861a9c7e8"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Description]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="463" y="0" width="51" height="25" isPrintWhenDetailOverflows="true" uuid="614de347-5dd6-4673-8c5a-9ff8db30cd4d"/>
+					<box leftPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[0 - 90 Days ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="548" y="0" width="51" height="25" isPrintWhenDetailOverflows="true" uuid="362f6669-1109-412d-89be-db7ea9767342"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[91 - 180 Days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="633" y="0" width="57" height="25" isPrintWhenDetailOverflows="true" uuid="908a8288-0be7-4f10-8786-e566d45356e3"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="6" isBold="true"/>
+					</textElement>
+					<text><![CDATA[181 - 360 Days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="724" y="0" width="58" height="25" isPrintWhenDetailOverflows="true" uuid="cf6919fa-8c43-4721-adb2-ac0369849d29"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[361 > Days]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="389" y="0" width="40" height="25" isPrintWhenDetailOverflows="true" uuid="38bf0108-7652-40e2-ac87-20513ccebc37"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Current Qty.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="349" y="0" width="40" height="25" uuid="bfee5250-cdea-4b4f-945e-673c558c41c2"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unit Price]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="189" y="0" width="40" height="25" uuid="5e4446b0-8eba-4d4d-b144-b57f6977b97e"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Last GRN]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="269" y="0" width="40" height="25" uuid="fd5c176b-caa5-440d-b7c9-13563759a7c4"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Last AOD]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="229" y="0" width="40" height="25" uuid="5a959fde-e380-483b-a2ae-4f1dbe5f8ed9"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Last GRN Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="309" y="0" width="40" height="25" uuid="6900546b-d493-4dc1-983c-ccdf85166136"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Last AOD Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="690" y="0" width="34" height="25" isPrintWhenDetailOverflows="true" uuid="1728467e-aaa6-4c70-b0de-1595cc353a1a"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[361 > Days Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="599" y="0" width="34" height="25" isPrintWhenDetailOverflows="true" uuid="9509345d-c8b3-424a-a6c5-f25ac2c5fc7f"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[181 - 360 Days Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="514" y="0" width="34" height="25" isPrintWhenDetailOverflows="true" uuid="6427d613-1f5e-4b10-8b54-6b84007ef0dc"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[91 - 180 Days Qty]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="429" y="0" width="34" height="25" isPrintWhenDetailOverflows="true" uuid="784aa8c3-c6c1-4c08-91ae-6dbc47cc58cc"/>
+					<box>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[0 - 90 Days Qty]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="782" height="13" uuid="1b6719c5-a535-43ec-9353-fb867383d84f"/>
+				<box>
+					<leftPen lineWidth="1.0" lineStyle="Solid"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="25" height="13" uuid="76e81a41-244a-41eb-ba6b-ad08889170e3">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box topPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="25" y="0" width="35" height="13" uuid="d692fdd5-d3b1-4588-b238-aac7bc1be17d"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgePartCode}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="60" y="0" width="129" height="13" uuid="b2cb1c6c-c6bd-4a81-8836-a95f5099dd02"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgePartDescription}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00#;-#,##0.00#" isBlankWhenNull="true">
+					<reportElement stretchType="ElementGroupHeight" x="349" y="0" width="40" height="13" uuid="57ef660c-6357-4674-923e-f35e5c13f839"/>
+					<box leftPadding="2" rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgePartUnitPrice}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="ElementGroupHeight" x="189" y="0" width="40" height="13" uuid="185a48d7-9ca4-4ece-935a-374d68f6e08c"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeLastGRN}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd" isBlankWhenNull="true">
+					<reportElement stretchType="ElementGroupHeight" x="269" y="0" width="40" height="13" uuid="22abe19f-ee76-45bb-b630-0d0411145ced"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeLastAOD}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="463" y="0" width="51" height="13" uuid="5ba9f362-3527-4039-8a16-8fa7dfcf1526"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeValueOfBelow90Days} != null ? $F{stockAgeValueOfBelow90Days} : "0.00"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="548" y="0" width="51" height="13" uuid="314e5662-3c57-412e-bfaf-d8f00c49a707"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeValueOfBetween91And180Days} != null ? $F{stockAgeValueOfBetween91And180Days} : "0.00"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="633" y="0" width="57" height="13" uuid="5bbeb3d9-2b8a-4391-bd20-a21188919fc9"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeValueOfBetween181And360Days} != null ? $F{stockAgeValueOfBetween181And360Days} : "0.00"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="724" y="0" width="58" height="13" uuid="b9ae3a48-6190-4ea6-b59f-e451555c7925"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeValueOfAbouve361Days} != null ? $F{stockAgeValueOfAbouve361Days} : "0.00"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="389" y="0" width="40" height="13" uuid="d0865347-1b77-43db-875e-f5fc63809a1b"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeRemainQty}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd" isBlankWhenNull="true">
+					<reportElement stretchType="ElementGroupHeight" x="229" y="0" width="40" height="13" uuid="4ea836ea-bf8d-431f-ac9f-dc7ff5bdf623"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeLastGRNDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="yyyy-MM-dd" isBlankWhenNull="true">
+					<reportElement stretchType="ElementGroupHeight" x="309" y="0" width="40" height="13" uuid="17afb6ad-08da-4544-827e-0fd7910aa44c"/>
+					<box leftPadding="2">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeLastAODDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="690" y="0" width="34" height="13" uuid="4a194e05-31fa-490d-b8f2-0b8134f219b9"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeQtyOfAbouve361Days} != null ? $F{stockAgeQtyOfAbouve361Days} : "0.0"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="599" y="0" width="34" height="13" uuid="a30422d1-ada7-46cf-be18-ef3faee0c1b4"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeQtyOfBetween181And360Days} != null ? $F{stockAgeQtyOfBetween181And360Days} : "0.0"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="514" y="0" width="34" height="13" uuid="982e9784-4cc4-4659-96a3-1b1fe22bf22d"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeQtyOfBetween91And180Days} != null ? $F{stockAgeQtyOfBetween91And180Days} : "0.0"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="429" y="0" width="34" height="13" uuid="999154f8-7368-4931-9383-719d5ec74f2f"/>
+					<box topPadding="2" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{stockAgeQtyOfBelow90Days} != null ? $F{stockAgeQtyOfBelow90Days} : "0.0"]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="15">
+			<textField evaluationTime="Master">
+				<reportElement x="25" y="0" width="757" height="15" uuid="d3405624-33ce-46ab-8cf3-5677a5b522a6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[msg("Page {0} of {1}",$V{MASTER_CURRENT_PAGE},$V{MASTER_TOTAL_PAGES})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="25" height="15" uuid="2e71bc81-365b-4f80-b4bc-bd510a60703c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box topPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="15" splitType="Stretch">
+			<textField evaluationTime="Master">
+				<reportElement x="25" y="0" width="757" height="15" uuid="08ce7adf-e6d2-4c97-b82d-40003ab48337"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[msg("Page {0} of {1}",$V{MASTER_CURRENT_PAGE},$V{MASTER_TOTAL_PAGES})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="25" height="15" uuid="d76cce16-5f26-4386-bad7-010a54efbc2c">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box topPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="7"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="26" splitType="Stretch">
+			<frame>
+				<reportElement x="0" y="0" width="782" height="13" uuid="204bf6b5-3b0f-4491-8faa-91a9de94e9e2"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="463" y="0" width="51" height="13" uuid="67795412-b1c0-4a29-9571-bd379c542c6c"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_BELOW_90_DAYS} != null ? $V{STOCK_AGE_TOTAL_BELOW_90_DAYS} : 0.00]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="548" y="0" width="51" height="13" uuid="45e732e1-1f62-4321-9157-566e6cff0ac4"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_BETWEEN_91_180_DAYS} != null ? $V{STOCK_AGE_TOTAL_BETWEEN_91_180_DAYS} : 0.00]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="633" y="0" width="57" height="13" uuid="19f9bd4e-8f70-4a69-875b-aec79d7ad9d2"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_BETWEEN_181_360_DAYS} != null ? $V{STOCK_AGE_TOTAL_BETWEEN_181_360_DAYS} : 0.00]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="724" y="0" width="58" height="13" uuid="1c1fb9f7-6a6d-40db-be7b-39285945f164"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_ABOVE_361_DAYS} != null ? $V{STOCK_AGE_TOTAL_ABOVE_361_DAYS} : 0.00]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="25" y="0" width="364" height="13" uuid="9e709317-264c-4748-a254-ab50c474a376"/>
+					<box leftPadding="2" rightPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="690" y="0" width="34" height="13" uuid="316301f5-f769-42c2-806e-51c83175443f"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_QTY_ABOVE_361_DAYS} != null ? $V{STOCK_AGE_TOTAL_QTY_ABOVE_361_DAYS} : 0.0]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="599" y="0" width="34" height="13" uuid="14c49a44-4c3d-469e-92ea-a01501388786"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_QTY_BETWEEN_181_360_DAYS} != null ? $V{STOCK_AGE_TOTAL_QTY_BETWEEN_181_360_DAYS} : 0.0]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="514" y="0" width="34" height="13" uuid="da19fa7a-afba-4cb2-bddb-6bfa46611c7e"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_QTY_BETWEEN_91_180_DAYS} != null ? $V{STOCK_AGE_TOTAL_QTY_BETWEEN_91_180_DAYS} : 0.0]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="429" y="0" width="34" height="13" uuid="bd04555c-9bd2-43ca-adb9-f34da97c46a8"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_QTY_BELOW_90_DAYS} != null ? $V{STOCK_AGE_TOTAL_QTY_BELOW_90_DAYS} : 0.0]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="389" y="0" width="40" height="13" uuid="ca2cb296-0aa9-426b-abf2-d9ab0d1e9b2c"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_QTY} != null ? $V{STOCK_AGE_TOTAL_QTY} : 0.00]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="25" height="13" uuid="254cd619-42f9-4c00-bbdf-6c4c69c56d29">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box topPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="13" width="782" height="13" uuid="e3ea1194-d1ea-497c-9ea1-ba1cbef76373"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textField pattern="#,##0.0;-#,##0.0" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="25" y="0" width="665" height="13" uuid="64919a0f-8a8e-4e48-9c37-60d84b121fa6"/>
+					<box topPadding="0" leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total Value"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="25" height="13" uuid="b7f0d528-bd18-47cf-a8ed-83196c927f94">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box topPadding="2">
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="7"/>
+						<paragraph leftIndent="2"/>
+					</textElement>
+				</textField>
+				<textField pattern="#,##0.00;-#,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" stretchType="ElementGroupHeight" x="690" y="0" width="92" height="13" uuid="33580854-2e6a-4856-87d6-f8ffedb21ba9"/>
+					<box leftPadding="2">
+						<pen lineWidth="0.0"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="7" isBold="true"/>
+						<paragraph rightIndent="2"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{STOCK_AGE_TOTAL_BELOW_90_DAYS}.add( $V{STOCK_AGE_TOTAL_BETWEEN_91_180_DAYS} ).add( $V{STOCK_AGE_TOTAL_BETWEEN_181_360_DAYS} ).add($V{STOCK_AGE_TOTAL_ABOVE_361_DAYS})]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</summary>
+</jasperReport>

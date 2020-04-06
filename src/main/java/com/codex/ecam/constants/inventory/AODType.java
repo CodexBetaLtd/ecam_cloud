@@ -7,7 +7,8 @@ public enum AODType {
 
     WORKORDER(0, "Work Order"),
     OTHER(1, "Other"),
-	ISSUE_NOTE(2, "Issue Note");
+    ISSUE_NOTE(2, "Issue Note"),
+	GRN_RETURN(3, "GRN Return");
 
     private Integer id;
     private String name;
@@ -20,6 +21,16 @@ public enum AODType {
     public static List<AODType> getAODTypes() {
     	List<AODType> list = new ArrayList<AODType>();
     	list.add(AODType.WORKORDER); 
+    	list.add(AODType.GRN_RETURN);
+    	list.add(AODType.OTHER);
+    	return list;
+    }
+    
+    public static List<AODType> getAllAODTypes() {
+    	List<AODType> list = new ArrayList<AODType>();
+    	list.add(AODType.ISSUE_NOTE);
+    	list.add(AODType.WORKORDER); 
+    	list.add(AODType.GRN_RETURN);
     	list.add(AODType.OTHER);
     	return list;
     }

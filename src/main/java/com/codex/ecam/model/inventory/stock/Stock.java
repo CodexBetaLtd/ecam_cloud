@@ -81,6 +81,12 @@ public class Stock extends BaseModel {
 	
 	@Column(name = "stock_type_id")
 	private StockType stockType;
+	
+	@Column(name = "cost_center")
+	private String costCenter;
+	
+	@Column(name = "account")
+	private String account;
 
 	@OneToMany(mappedBy = "stock", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private Set<StockHistory> stockHistoryList;
@@ -271,6 +277,22 @@ public class Stock extends BaseModel {
 
 	public void setStockType(StockType stockType) {
 		this.stockType = stockType;
+	}
+
+	public String getCostCenter() {
+		return costCenter;
+	}
+
+	public void setCostCenter(String costCenter) {
+		this.costCenter = costCenter;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
 	} 
 	
 	

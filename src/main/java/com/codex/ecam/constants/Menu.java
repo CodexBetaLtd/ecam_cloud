@@ -13,7 +13,8 @@ public enum Menu {
 	SALE(5, "Sale"),
 	BIZ(6, "Biz"),
 	APP(7, "App"),
-	NOTIFICATIONS(8, "Notifications");
+	NOTIFICATIONS(8, "Notifications"),
+	REPORT(9,"Report");
 
 	private Integer id;
 	private String name;

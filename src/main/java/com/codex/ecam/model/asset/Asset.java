@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.springframework.context.ApplicationEvent;
 
 import com.codex.ecam.constants.inventory.PartType;
+import com.codex.ecam.constants.inventory.PartUsageType;
 import com.codex.ecam.event.RootAwareEvent;
 import com.codex.ecam.listeners.asset.AssetLogListener;
 import com.codex.ecam.model.BaseModel;
@@ -149,6 +150,10 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	
 	@Column(name="part_type_id")
 	private PartType partType;
+	
+	@Column(name="part_usage_type")
+	private PartUsageType partUsageType;
+
 
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReading> assetMeterReadings;
@@ -194,6 +199,9 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private Set<RFQItem> rfqItems;
+	
+	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<SparePart> spareParts;
 	
 	@Transient
 	private Integer childCount;
@@ -599,6 +607,23 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	public void setPartType(PartType partType) {
 		this.partType = partType;
 	}
+
+	public PartUsageType getPartUsageType() {
+		return partUsageType;
+	}
+
+	public void setPartUsageType(PartUsageType partUsageType) {
+		this.partUsageType = partUsageType;
+	}
+
+	public Set<SparePart> getSpareParts() {
+		return spareParts;
+	}
+
+	public void setSpareParts(Set<SparePart> spareParts) {
+		updateCollection("spareParts", spareParts);
+	}
+	
 	
 	
 }

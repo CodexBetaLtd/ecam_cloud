@@ -51,6 +51,9 @@ public class StockDTO extends BaseDTO {
 
 	private String stockNo;
 	private String stockTransactionDescription;
+	
+	private String costCenter;
+	private String account;
 
 	
 	private StockType stockType;
@@ -378,5 +381,23 @@ public class StockDTO extends BaseDTO {
 	public void setStockType(StockType stockType) {
 		this.stockType = stockType;
 	}
+
+	public String getCostCenter() {
+		return costCenter;
+	}
+
+	public void setCostCenter(String costCenter) {
+		this.costCenter = costCenter;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	
+	
  
 }

@@ -203,6 +203,7 @@ var MRNItemAddModal = function () {
 		mrnItems['description'] = CustomValidation.nullValueReplace($("#itemDescription").val());
 		mrnItems['itemQuantity'] = CustomValidation.nullValueReplace($("#itemQuantity").val()); 
 		mrnItems['approvedQuantity'] = CustomValidation.nullValueReplace($("#approvedItemQuantity").val()); 
+		mrnItems['remainingQuantity'] = CustomValidation.nullValueReplace($("#remainingQuantity").val()); 
 		mrnItems['version'] = CustomValidation.nullValueReplace($("#itemVersion").val()); 
 		
 		return mrnItems;

@@ -7,7 +7,8 @@ public abstract class BaseReportFilterDTO {
     private Date date;
     private Date fromDate;
     private Date toDate;
-
+    private static String pathToTemplate="/resources/report";
+    private static String templateType=".jrxml";
 
     public Date getDate() {
         return date;
@@ -32,4 +33,22 @@ public abstract class BaseReportFilterDTO {
     public void setToDate(Date toDate) {
         this.toDate = toDate;
     }
+
+	public static String getPathToTemplate() {
+		return pathToTemplate;
+	}
+
+	public static void setPathToTemplate(String pathToTemplate) {
+		BaseReportFilterDTO.pathToTemplate = pathToTemplate;
+	}
+
+	public static String getTemplateType() {
+		return templateType;
+	}
+
+	public static void setTemplateType(String templateType) {
+		BaseReportFilterDTO.templateType = templateType;
+	}
+    
+    
 }

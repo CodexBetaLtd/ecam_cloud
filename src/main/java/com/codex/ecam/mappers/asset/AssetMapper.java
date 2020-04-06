@@ -6,6 +6,7 @@ import java.util.List;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetFileDTO;
 import com.codex.ecam.dto.asset.LocationDTO;
+import com.codex.ecam.dto.asset.SparePartDTO;
 import com.codex.ecam.dto.asset.WarrantyDTO;
 import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
 import com.codex.ecam.mappers.GenericMapper;
@@ -15,6 +16,7 @@ import com.codex.ecam.model.asset.AssetConsumingReference;
 import com.codex.ecam.model.asset.AssetEventTypeAsset;
 import com.codex.ecam.model.asset.AssetFile;
 import com.codex.ecam.model.asset.AssetMeterReading;
+import com.codex.ecam.model.asset.SparePart;
 import com.codex.ecam.model.asset.Warranty;
 
 public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
@@ -86,6 +88,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		setPartConsumingReferences(dto, domain);
 		setWarranties(dto, domain);
 		setAssetFile( domain,dto);
+		setAssetSparePart( domain,dto);
 
 		dto.setNotes(domain.getNotes());
 
@@ -204,6 +207,25 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 				assetFileDTO.setFileType(assetFile.getFileType());
 				assetFileDTO.setFileDate(assetFile.getFileDate());
 				dto.getAssetFileDTOs().add(assetFileDTO);
+
+			}
+		}
+	}
+	
+	private void setAssetSparePart(Asset domain, AssetDTO dto) throws Exception {
+		if (domain.getSpareParts().size() > 0) {
+			for (SparePart sparePart :domain.getSpareParts()) {
+				SparePartDTO sparePartDTO=new SparePartDTO();
+				sparePartDTO.setId(sparePart.getId());
+				sparePartDTO.setQuantity(sparePart.getQuantity());
+				sparePartDTO.setVersion(sparePart.getVersion());
+				sparePartDTO.setDescription(sparePart.getDescription());
+				if(sparePart.getAsset()!=null){
+					sparePartDTO.setPartCode(sparePart.getAsset().getCode());
+					sparePartDTO.setPartId(sparePart.getAsset().getId());
+				}
+
+				dto.getSparePartDTOs().add(sparePartDTO);
 
 			}
 		}

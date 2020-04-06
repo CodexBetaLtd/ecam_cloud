@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PurchaseOrder" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="c207abd3-7957-4b96-8435-0098bb78aad8">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="Dataset1" uuid="4bd6f7bc-d19f-4548-9b39-8f3a46891ca3">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="po_no" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["DPO/00001"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COM_NAME" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["ELEVATORS (PVT) LTD."]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ADD_LINE1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["9th Floor, Aitkin Spence Tower II, 315, Vauxhall Street, Colombo 02, Sri Lanka"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ADD_LINE2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ADD_LINE3" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TP_NO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["+94112308308, +94112308140"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FAX_N0" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["+94112308156"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="VAT_REG_NO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1140574527000"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COM_REG_NO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["PV3064"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="INVOICE_NO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="COM_NAME_2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AN ASSOCIATE OF AITKIN SPENCE & CO., LTD."]]></defaultValueExpression>
+	</parameter>
+	<field name="poCompanyName" class="java.lang.String"/>
+	<field name="poCompanyAddress1" class="java.lang.String"/>
+	<field name="poCompanyAddress2" class="java.lang.String"/>
+	<field name="poCompanyAddress3" class="java.lang.String"/>
+	<field name="poCompanyRegNo" class="java.lang.String"/>
+	<field name="poCompanyTelNo" class="java.lang.String"/>
+	<field name="poCompanyFaxNo" class="java.lang.String"/>
+	<field name="poCompanyVatRegNo" class="java.lang.String"/>
+	<field name="poCode" class="java.lang.String"/>
+	<field name="poJobCode" class="java.lang.String"/>
+	<field name="poSupplierName" class="java.lang.String"/>
+	<field name="poSupplierCode" class="java.lang.String"/>
+	<field name="poTypeName" class="java.lang.String"/>
+	<field name="poDate" class="java.util.Date"/>
+	<field name="poBillingTermName" class="java.lang.String"/>
+	<field name="poRefNo" class="java.lang.String"/>
+	<field name="poDeliveredByPersonName" class="java.lang.String"/>
+	<field name="poVatRate" class="java.lang.Double"/>
+	<field name="poVatAmount" class="java.lang.Double"/>
+	<field name="poSubTotal" class="java.lang.Double"/>
+	<field name="poItemName" class="java.lang.String"/>
+	<field name="poItemDescription" class="java.lang.String"/>
+	<field name="poItemUnitPrice" class="java.lang.Double"/>
+	<field name="poItemQtyOnOrder" class="java.lang.Integer"/>
+	<field name="poItemTotalPrice" class="java.lang.Double"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="224" splitType="Stretch">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="93" width="535" height="13" uuid="ac6dd2b7-8e05-4100-8f9c-075702c782e9"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Registration No : " +$P{COM_REG_NO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-5" x="246" y="27" width="289" height="18" uuid="1d43958b-ddd0-4434-b08e-59f3ce5001b1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[DESPATCH NOTE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="423" y="108" width="112" height="18" uuid="8cebe188-88ba-4416-a103-4e2348332531"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Date  :  " + $F{poDate}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-4" x="0" y="46" width="535" height="15" uuid="2bf46b50-6f99-46d3-a384-138f53c25acf"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{COM_NAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-5" x="0" y="63" width="535" height="13" uuid="ca2acda8-fd6d-4c5a-a0e9-119914c28e59"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ADD_LINE1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-8" x="0" y="78" width="535" height="13" uuid="e9e22dde-a2b8-4296-b48f-42bc5a8c3ce8"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tel: "+ $P{TP_NO}+" Fax: "+$P{FAX_N0}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Left" vAlign="Middle" isLazy="true">
+				<reportElement key="" x="2" y="5" width="244" height="40" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true" uuid="37a42d71-7c79-46dd-aa47-ef4d6107c84b">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{SUBREPORT_DIR}+"report_logo.jpg"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="127" width="460" height="24" uuid="d8a2bd87-406d-4028-b5b8-53cea4ddf1df"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA["Dear sir,\nWe have much pleasure in forwarding goods as detailed below in accordence with your Order No " + $F{poCode}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-15" x="470" y="127" width="70" height="24" uuid="5e73183e-2e60-4db2-acc1-6ec98e52a5c3"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<text><![CDATA[dated]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="174" width="211" height="14" uuid="56da0f5a-a775-4bf7-b519-910dc9abaf99"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA["JOB NO  :  "+( $F{poJobCode} != null ? $F{poJobCode}  : "")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-16" x="370" y="165" width="165" height="56" uuid="08dbce5e-f34c-4b3f-a7a1-2fcdea354ca4"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Yours Faithfully,
+
+---------------------------------------------
+for ELEVATORS (PVT) LTD.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="108" width="297" height="18" uuid="bdfb5ae3-3559-4121-b52f-20117959bf8b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{poSupplierName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="200" width="370" height="14" uuid="c0dd7b43-9b40-4964-b699-26f3131f3e43"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA["Delivered By : "+($F{poDeliveredByPersonName} != null ? $F{poDeliveredByPersonName} : "")]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText-1" x="0" y="0" width="100" height="25" uuid="d1d1f55e-cb4d-48c2-9065-06c386a969a7"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-2" x="100" y="0" width="435" height="25" uuid="d2d8bef9-c9d2-4ba7-b40a-acb502cbdb0e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[DESCRIPTION OF GOODS SUPPLIED]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="100" y="0" width="435" height="18" uuid="00f9bc59-b624-4936-aa5b-ef77df27affb"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{poItemName}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="0" width="101" height="18" uuid="67ba2868-a4e8-486f-af4e-b01625644d39"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{poItemQtyOnOrder}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Prevent"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="62" splitType="Stretch">
+			<line direction="BottomUp">
+				<reportElement key="line-1" x="0" y="-1" width="535" height="1" uuid="89ce7719-6ba2-4ac5-92c9-d04c178383d0"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement key="staticText-11" x="0" y="15" width="297" height="47" uuid="f0284245-9c83-46fc-aac4-1bd26818070f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[
+----------------------------------------
+RECEIVED IN GOOD ORDER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-13" x="434" y="2" width="101" height="13" uuid="e5b8960a-1f89-4e8d-80a3-0ab155cb34ba"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font fontName="SansSerif"/>
+				</textElement>
+				<text><![CDATA[DELIVERY COPY]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-17" x="297" y="41" width="73" height="20" uuid="23efa79b-70df-494b-898f-5ca84afdb6b1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<text><![CDATA[DATE:]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

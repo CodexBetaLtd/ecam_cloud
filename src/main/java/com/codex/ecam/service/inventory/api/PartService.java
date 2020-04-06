@@ -27,6 +27,7 @@ public interface PartService {
 	byte[] getPartImageStream(Integer id, HttpServletRequest request) throws IOException;
 
 	DataTablesOutput<PartDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<PartDTO> findAllSparePart(FocusDataTablesInput input) throws Exception;
 
 	DataTablesOutput<PartDTO> getPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 

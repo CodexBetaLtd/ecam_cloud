@@ -12,29 +12,39 @@ var MeterReadingAddModal = function() {
 
 	};
 	var initCheckBoxes = function() {
+
 		$('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
 			checkboxClass : 'icheckbox_minimal-grey',
 			radioClass : 'iradio_minimal-grey',
 			increaseArea : '10%', // optional
 		});
+		initMultipleMeterReadingEnable();
 
 		$('#isMultipleMeterReading').on('ifChecked', function(event) {
-			$('#formula').prop('readonly', false);
-			$("#btn-new-meter-reading-consumption-variable").attr("disabled", false);
-			$(".multipleReading").show();
+			initMultipleMeterReadingEnable();
 		});
 		
 		$('#isMultipleMeterReading').on('ifUnchecked', function(event) {
+			initMultipleMeterReadingEnable();
+		});
+
+	};
+
+
+	var initMultipleMeterReadingEnable=function(){
+		if($('#isMultipleMeterReading').prop("checked")){
+			$('#formula').prop('readonly', false);
+			$("#btn-new-meter-reading-consumption-variable").attr("disabled", false);
+			$(".multipleReading").show();
+		}else{
 			$('#formula').val("");
 			$('#formula').prop('readonly', true);
 			$("#btn-new-meter-reading-consumption-variable").attr("disabled", true);
 			var variables=[];
 			MeterReadingConsumptionVariableAddModal.loadMeterReadingVariable(variables);
 			$(".multipleReading").hide();
-
-		});
-
-	};
+		}
+	}
 	var addAssetMeterReading = function() {
 		if ($('#asset-meter-reading-add-frm').valid()) {
 			TabMeterReading.addAssetMeterReading();
@@ -161,7 +171,7 @@ var MeterReadingAddModal = function() {
 			runMeterReadingUnitSelect();
 			initValidator();
 			initCheckBoxes()
-			$(".multipleReading").hide();
+		//	$(".multipleReading").hide();
 
 		},
 

@@ -34,10 +34,12 @@ var TabMeterReading = function () {
 		initFormulaScope();
 		
 		$('#btn-add-meter-reading-value').on('click', function () {
+            console.log('xx');			
+
 			TabMeterReading.addAssetMeterReadingValue();
 	    });	
 		
-		$('#btn-new-meter-reading-consumption').on('click', function () {			
+		$('#btn-new-meter-reading-consumption').on('click', function () {
 			TabMeterReading.addAssetMeterReadingConsumptionModal();			
 	    });	
 		

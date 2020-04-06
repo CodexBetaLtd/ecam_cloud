@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<!-- General Filter Fragment -->
+<div class="row" th:fragment="generalFilterViewFragment">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label">
+                Site
+            </label>
+            <div class="input-group">
+                <input type="hidden" th:field="*{siteId}">
+                <input type="text" th:field="*{siteName}" readonly class="form-control" placeholder="Select Site">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-blue" id="btnSiteView"data-placement="top">
+                        <i class="clip-pencil"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> From Date
+            </label>
+            <div class="input-group" id="picker-container">
+                <input type="text" data-date-format="dd-mm-yyyy"
+                       th:field="*{fromDate}" data-date-viewmode="years"
+                       placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="control-label"> Item/Part </label>
+            <div class="input-group">
+                <input type="hidden" th:field="*{itemId}">
+                <input type="text" th:field="*{itemName}" readonly class="form-control"
+                       placeholder="Select Item">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-blue" id="btnItemView"
+                            data-placement="top">
+                        <i class="clip-pencil"></i>
+                    </button>
+				</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label"> To Date
+            </label>
+            <div class="input-group" >
+                <input type="text" data-date-format="dd-mm-yyyy"
+                       th:field="*{toDate}" data-date-viewmode="years"
+                       placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estimate Filter Fragment -->
+<div th:fragment="estimateFilterFragment">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Estimate Reference <span class="symbol required"></span> </label>
+                <input type="text" th:field="*{refNo}" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Customer Name </label>
+                <div class="input-group">
+                    <input type="hidden" id="customerId" th:field="*{customerId}">
+                    <input type="text" id="customerName" th:field="*{customerName}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> From Date (Date Between)
+                </label>
+                <div class="input-group">
+                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{fromDate}" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> To Date (Date Between)
+                </label>
+                <div class="input-group" >
+                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{toDate}" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Supervisor <span class="symbol required"></span>
+                </label>
+                <select th:field="*{supervisorId}" class="select2cls search-select" style="width: 100%;">
+                    <option value="0"></option>
+                    <option th:each="supervisor : ${supervisorList}" th:value="${supervisor.id}"
+                            th:text="${supervisor.name}"></option>
+                </select>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Estimate Status </label>
+                <select th:field="*{estimateStatusId}" class="select2cls search-select" style="width:100%;">
+                    <option value="">Please</option>
+                    <option th:each="estimateStatus : ${estimateStatusList}" th:value="${estimateStatus.id}"
+                            th:text="${estimateStatus.name}"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Estimated By</label>
+                <div class="input-group">
+                    <input type="hidden" th:field="*{estimateById}">
+                    <input type="text" th:field="*{estimateByName}" id="estimateByName" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Sign By </label>
+                <div class="input-group">
+                    <input type="hidden" id="signById" th:field="*{signById}">
+                    <input type="text" id="signByName" th:field="*{signByName}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- Expense Filter Fragment -->
+<div th:fragment="expenseFilterFragment">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">
+                    Business
+                </label>
+                <div class="input-group">
+                    <input type="hidden" th:field="*{businessId}">
+                    <input type="text" th:field="*{businessName}" readonly id="businessName">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">
+                    Site
+                </label>
+                <div class="input-group">
+                    <input type="hidden" th:field="*{siteId}">
+                    <input type="text" th:field="*{siteName}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> From Date
+                </label>
+                <div class="input-group" >
+                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{fromDate}" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> To Date
+                </label>
+                <div class="input-group">
+                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{toDate}" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Estimate Reference <span class="symbol required"></span> </label>
+                <input type="text" th:field="*{refNo}" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Estimate Status </label>
+                <select th:field="*{estimateStatusId}" class="select2cls search-select" style="width:100%;">
+                    <option value="">Please</option>
+                    <option th:each="estimateStatus : ${estimateStatusList}" th:value="${estimateStatus.id}"
+                            th:text="${estimateStatus.name}"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Estimated By</label>
+                <div class="input-group">
+                    <input type="hidden" th:field="*{estimateById}">
+                    <input type="text" th:field="*{estimateByName}" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Sign By </label>
+                <div class="input-group">
+                    <input type="hidden" id="signById" th:field="*{signById}">
+                    <input type="text" id="signByName" th:field="*{signByName}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- AOD Filter Fragment -->
+<div th:fragment="AODFilterFragment">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> AOD Status </label>
+                <select th:field="*{aodStatus}" class="select2cls search-select" style="width:100%;">
+                    <option value=""></option>
+                    <option th:each="aodStatus : ${aodStatusList}" th:value="${aodStatus}"
+                            th:text="${aodStatus.name}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span th:text="#{aod.aodNo}"> </span> <span
+                        class="symbol required"></span> </label>
+                <input type="text" placeholder="Insert the Name" th:field="*{aodNo}" class="form-control" id="aodNo">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span th:text="#{aod.refNo}"> </span> <span
+                        class="symbol required"></span> </label>
+                <input type="text" placeholder="Insert the RefNo" th:field="*{refNo}" class="form-control" id="refNo">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span th:text="#{aod.aodType}"> </span> <span
+                        class="symbol required"></span> </label>
+                <select th:field="*{aodType}" id="aodTypeId" class="select2cls search-select" style="width: 100%;">
+                    <option value="">&nbsp;</option>
+                    <option th:each="aodType : ${aodTypes}" th:value="${aodType}" th:text="${aodType.name}"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span th:text="#{aod.date}"> </span> </label>
+                <div class="input-group">
+                    <input th:field="*{aodDate}" type="text" data-date-format="yyyy-mm-dd" data-date-viewmode="years"
+                           class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Job No</label>
+                <div class="input-group">
+                    <input type="hidden" th:field="*{jobId}">
+                    <input type="text" th:field="*{jobNo}" id="jobNo" readonly
+                           placeholder=" ">
+                    <!-- <span class="input-group-btn">
+                    <button type="button" class="btn btn-blue" id="btnJOBNo" data-placement="top">
+                        <i class="clip-pencil"></i>
+                    </button>
+				    <button type="button" id="btnClearJOBNo" class="btn btn-blue" data-placement="top">
+					    <i class="fa fa-times"></i>
+					</button>
+                 </span> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Customer </label>
+                <div class="input-group">
+                    <input type="hidden" id="aodCustomerId" th:field="*{customerId}">
+                    <input type="text" id="aodCustomerName" th:field="*{customerName}" readonly>
+                    <!--  <span class="input-group-btn">
+                    <button type="button" class="btn btn-blue" id="btnAODCustomer" data-placement="top">
+                        <i class="clip-pencil"></i>
+                    </button>
+				    <button type="button" id="btnClearAODCustomer" class="btn btn-blue" data-placement="top">
+					    <i class="fa fa-times"></i>
+					</button>
+                 </span>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AOD Return Filter Fragment -->
+<div th:fragment="AODReturnFilterFragment">
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span
+                        th:text="#{aodReturn.status}"></span> </label>
+                <select th:field="*{aodReturnStatus}" class="select2cls search-select" style="width:100%;">
+                    <option value=""></option>
+                    <option th:each="aodReturnStatus : ${aodReturnStatusList}" th:value="${aodReturnStatus}"
+                            th:text="${aodReturnStatus.name}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">
+                    <span th:text="#{aodReturn.aodReturnNo}"></span>
+                    <span class="symbol required"></span>
+                </label>
+                <input type="text" placeholder="Insert the Name" th:field="*{returnNo}" class="form-control"
+                       id="aodReturnNo">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">
+                    <span th:text="#{aodReturn.refNo}"></span>
+                    <span class="symbol required"></span>
+                </label>
+                <input type="text" placeholder="Insert the RefNo" th:field="*{refNo}" class="form-control" id="refNo">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> <span th:text="#{aodReturn.date}"></span></label>
+                <div class="input-group">
+                    <input th:field="*{aodReturnDate}" type="text" data-date-format="yyyy-mm-dd"
+                           data-date-viewmode="years" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- GRN Filter Fragment -->
+<div th:fragment="GRNFilterFragment">
+    <div class="col-md-12">
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> GRN Status </label>
+                <select th:field="*{grnStatus}" class="select2cls search-select" style="width:100%;">
+                    <option value=""></option>
+                    <option th:each="grnStatus : ${grnStatusList}" th:value="${grnStatus}"
+                            th:text="${grnStatus.name}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">GRN No</label>
+                <input type="text" th:field="*{grnNo}" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Supplier </label>
+                <select id="supplierId" th:field="*{supplierId}" class="select2cls search-select"
+                        style="width:100%;">
+                    <option value="">&nbsp;</option>
+                    <option th:each="business : ${businesses}" th:value="${business.id}"
+                            th:text="${business.name}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Date Ordered
+                </label>
+                <div class="input-group">
+                    <input type="text" th:field="*{dateOrdered}"
+                           data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Date Received
+                </label>
+                <div class="input-group">
+                    <input type="text" th:field="*{dateReceived}"
+                           data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
+                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label"> Invoice No
+                </label>
+                <input type="text" th:field="*{invoiceNo}" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Order No
+                </label>
+                <input type="text" th:field="*{orderNo}" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

@@ -52,6 +52,42 @@ public class AssetTreeServiceImpl implements AssetTreeService {
 		setChildrens(assets);
 		return AssetMapper.getInstance().domainToDTOList(assets);
 	}
+	
+	public DataTablesOutput<AssetDTO> findMachineParentLocation(final FocusDataTablesInput input,Integer id,Integer assetId) throws Exception {
+		DataTablesOutput<Asset> assets =null;
+	final Specification<Asset> specification = (root, query, cb) -> { 
+			return cb.equal(root.get("id"), id) ;
+		};
+		assets = assetDao.findAll(input, specification);
+
+		setChildrensLocation(assets.getData(),assetId);
+		return AssetMapper.getInstance().domainToDTODataTablesOutput(assets);
+	}
+	
+	private void setChildrensLocation(final List<Asset> domainOut,Integer assetId) {
+		for (final Asset parentAsset : domainOut) {
+				final Integer count = (int) assetDao.count(getLocationChildCount(parentAsset.getId()));
+				parentAsset.setChildCount(count);
+						
+		}
+	}
+	private void setParentLocation(final List<Asset> domainOut,Integer assetId) {
+		for (final Asset parentAsset : domainOut) {
+			if(assetId.equals(parentAsset.getId())){
+				final Integer count = (int) assetDao.count(getLocationChildCount(parentAsset.getId()));
+				parentAsset.setChildCount(count);
+			}
+
+		}
+	}
+
+	private Specification<Asset> getLocationChildCount(final Integer id) {
+		final Specification<Asset> specification = (root, query, cb) -> {
+			return cb.or(
+			cb.equal(root.get("site").get("id"), id));
+		};
+		return specification;
+	}
 
 	@Override
 	public DataTablesOutput<AssetDTO> findAllParentFacilities(final FocusDataTablesInput input) throws Exception {

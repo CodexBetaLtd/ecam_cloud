@@ -11,4 +11,6 @@ jQuery(document).ready(function () {
     TabBom.init();
     TabLog.init();
     TabFile.init();
+    SparePartTab.init();
+    LocationTreeView.init();
 });

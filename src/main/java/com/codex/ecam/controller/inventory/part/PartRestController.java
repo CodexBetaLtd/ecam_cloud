@@ -35,6 +35,16 @@ public class PartRestController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/spare-part", method = RequestMethod.GET)
+	public DataTablesOutput<PartDTO> getAllSpareParts(@Valid FocusDataTablesInput input) {
+		try {
+			return partService.findAllSparePart(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
     }
 
     @RequestMapping(value = "/tabledata-by-business", method = RequestMethod.GET)

@@ -1,327 +1,370 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
+    xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
 
 <head th:include="template/commoncss :: commoncss"></head>
 
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/fileinput/fileinput.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/fileinput/fileinput.min.css}" />
 
 <body>
 
-<!-- start: HEADER -->
-<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
-<!-- end: HEADER -->
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
 
-<!-- start: MAIN CONTAINER -->
-<div class="main-container">
-    <div class="navbar-content">
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+        <div class="navbar-content">
 
-        <!-- start: SIDEBAR -->
-        <div class="main-navigation navbar-collapse collapse">
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
 
-            <!-- start: MAIN MENU TOGGLER BUTTON -->
-            <div class="navigation-toggler">
-                <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i> <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+                <!-- end: MAIN NAVIGATION MENU -->
             </div>
-            <!-- end: MAIN MENU TOGGLER BUTTON -->
-
-            <!-- start: MAIN NAVIGATION MENU -->
-            <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
-            <!-- end: MAIN NAVIGATION MENU -->
+            <!-- end: SIDEBAR -->
         </div>
-        <!-- end: SIDEBAR -->
-    </div>
 
-    <!-- start: PAGE -->
-    <div class="main-content">
+        <!-- start: PAGE -->
+        <div class="main-content">
 
-        <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div> 
-		
-		<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
-        <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+            <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1"
+                style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
 
-        <div class="container">
+            <div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+            <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
 
-            <!-- start: PAGE HEADER -->
-            <div class="row"  th:replace="asset/page-header :: pageheader"></div><!-- end: PAGE HEADER -->
+            <div class="container">
 
-            <div class="row btn-bar">
+                <!-- start: PAGE HEADER -->
+                <div class="row" th:replace="asset/page-header :: pageheader"></div><!-- end: PAGE HEADER -->
 
-                <a class="btn btn-default btn-sm active tooltips" id="new-machine-btn"
-                   th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES})}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_MACHINE_ADD.id)"
-                   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> Machine
-                </a>
-                <a class="btn btn-default btn-sm active tooltips" id="new-tools-btn"
-                   th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).TOOLS})}"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_TOOL_ADD.id)"
-                   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> Tools
-                </a>
-                <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_ADD.id)"
-                   onclick="document.getElementById('asset_add_btn').click();"> <i class="clip-checkmark-circle-2 btn-save"></i> Save
-                </a>
-                <a class="btn btn-default btn-sm active tooltips" id="delete"
-                   th:href="@{/asset/machine/delete(id=${asset.id})}" th:disabled="${asset.id} == null ? 'disabled'"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_ADD.id)"
-                   data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
-                </a>
-                <a class="btn btn-default btn-sm active tooltips" id="cancel" 
-                	th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}"
-                	th:href="@{/asset/machine/}" data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i> Cancel
-                </a> 
+                <div class="row btn-bar">
 
-            </div>
+                    <a class="btn btn-default btn-sm active tooltips" id="new-machine-btn"
+                        th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES})}"
+                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_MACHINE_ADD.id)"
+                        data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i>
+                        Machine
+                    </a>
+                    <a class="btn btn-default btn-sm active tooltips" id="new-tools-btn"
+                        th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).TOOLS})}"
+                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_TOOL_ADD.id)"
+                        data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i>
+                        Tools
+                    </a>
+                    <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
+                        data-original-title="Save"
+                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_ADD.id)"
+                        onclick="document.getElementById('asset_add_btn').click();"> <i
+                            class="clip-checkmark-circle-2 btn-save"></i> Save
+                    </a>
+                    <a class="btn btn-default btn-sm active tooltips" id="delete"
+                        th:href="@{/asset/machine/delete(id=${asset.id})}"
+                        th:disabled="${asset.id} == null ? 'disabled'"
+                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_ADD.id)"
+                        data-placement="top" data-original-title="Delete"> <i
+                            class=" clip-cancel-circle-2 btn-delete"></i> Delete
+                    </a>
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel"
+                        th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}"
+                        th:href="@{/asset/machine/}" data-placement="top" data-original-title="Back"> <i
+                            class="clip-arrow-left-2 "></i> Cancel
+                    </a>
 
-            <!-- start: PAGE CONTENT -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <i class="clip-cube "></i> Asset
-                        </div>
+                </div>
 
-                        <div class="panel-body">
+                <!-- start: PAGE CONTENT -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="clip-cube "></i> Asset
+                            </div>
 
-                            <div th:replace="template/messageview :: message"></div>							
-                            
-                            <form role="form" id="asset_add_frm" th:action="@{/asset/machine/save} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" th:object="${asset}" method="post" enctype="multipart/form-data">
-                                
-                                <input type="hidden" id="id" name="id" th:field="*{id}"/>
-                                <input type="hidden" id="type" name="type" th:value="${type}"/>
-                                <input type="hidden" id="version" name="version" th:field="*{version}"/>
-            					<input type="hidden" th:field="*{imageLocation}">
-            					
-                                <div class="row">
-	                                <div class="col-sm-6">
-                                		<div class="form-group"> 
-                                            <div id="kv-avatar-errors" class="center-block" style="display:none"></div>
-                                            <div class="kv-avatar asset">
-                                                <input id="assetImage" name="assetImage" type="file" class="file-loading">
+                            <div class="panel-body">
+
+                                <div th:replace="template/messageview :: message"></div>
+
+                                <form role="form" id="asset_add_frm"
+                                    th:action="@{/asset/machine/save} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}"
+                                    th:object="${asset}" method="post" enctype="multipart/form-data">
+
+                                    <input type="hidden" id="id" name="id" th:field="*{id}" />
+                                    <input type="hidden" id="type" name="type" th:value="${type}" />
+                                    <input type="hidden" id="version" name="version" th:field="*{version}" />
+                                    <input type="hidden" th:field="*{imageLocation}">
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div id="kv-avatar-errors" class="center-block" style="display:none">
+                                                </div>
+                                                <div class="kv-avatar asset">
+                                                    <input id="assetImage" name="assetImage" type="file"
+                                                        class="file-loading">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label"> Name <span
+                                                                class="symbol required"></span>
+                                                        </label>
+                                                        <input type="text" placeholder="Insert the Asset Name"
+                                                            th:field="*{name}" class="form-control" id="assetName">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label"> Code <span
+                                                                class="symbol required"></span>
+                                                        </label>
+                                                        <input type="text" placeholder="Insert the Asset Code"
+                                                            th:field="*{code}" class="form-control" id="code">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label"> Description </label>
+                                                        <input type="text" placeholder="Insert the Asset Description"
+                                                            th:field="*{description}" class="form-control"
+                                                            id="description">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-	                                    <div class="row">
-		                                    <div class="col-md-12">
-		                                        <div class="form-group">
-		                                            <label class="control-label"> Name <span class="symbol required"></span>
-		                                            </label>
-		                                            <input type="text" placeholder="Insert the Asset Name" th:field="*{name}" class="form-control" id="assetName">
-		                                        </div>
-		                                    </div>
-	                                    </div>
-	                                    <div class="row">                                    
-		                                    <div class="col-md-12">
-		                                        <div class="form-group">
-		                                            <label class="control-label"> Code <span class="symbol required"></span>
-		                                            </label>
-		                                            <input type="text" placeholder="Insert the Asset Code" th:field="*{code}" class="form-control" id="code">
-		                                        </div>
-		                                    </div>
-	                                    </div>
-	                                    <div class="row">
-		                                    <div class="col-md-12">
-		                                    	<div class="form-group">
-			                                        <label class="control-label"> Description </label>
-			                                        <input type="text" placeholder="Insert the Asset Description" th:field="*{description}" class="form-control" id="description">
-		                                    	</div>
-	                                    	</div>
-	                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Business <span
+                                                        class="symbol required"></span>
+                                                </label>
+                                                <select th:field="*{businessId}" class="search-select"
+                                                    style="width: 100%;">
+                                                    <option value="">&nbsp;</option>
+                                                    <option th:each="business : ${businesses}" th:value="${business.id}"
+                                                        th:text="${business.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"
+                                            th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
+                                            <div class="form-group">
+                                                <label class="control-label"> This Equipment is located at <span
+                                                        class="symbol required"></span>
+                                                </label>
+                                                <select id="siteId" th:field="*{siteId}" class="search-select"
+                                                    style="width: 100%;">
+                                                    <option value="">&nbsp;</option>
+                                                    <option th:each="site : ${sites}" th:value="${site.id}"
+                                                        th:text="${site.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                   <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label"> Business <span class="symbol required"></span>
-                                            </label>
-                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
-                                                <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
-                                            </select>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">
+                                                    Asset Category <span class="symbol required"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{assetCategoryId}">
+                                                    <input type="text" th:field="*{assetCategoryName}" readonly
+                                                        class="form-control" placeholder="Select Asset Category"
+                                                        id="assetCategoryName">
+                                                </div>
+                                            </div>
                                         </div>
-                                   </div>
-                                   <div class="col-md-6" th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
-                                        <div class="form-group">
-                                            <label class="control-label"> This Equipment is located at <span class="symbol required"></span>
-                                            </label>
-                                            <select id="siteId" th:field="*{siteId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
-                                                <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
-                                            </select>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> This Equipment is a part of </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{parentAssetId}">
+                                                    <input type="text" th:field="*{parentAssetName}" readonly
+                                                        class="form-control" placeholder="Select a Parent Asset"
+                                                        id="parentAssetName">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>                                     
-                                </div> 
-                                <div class="row">
-                                    <div class="col-md-6">
-							            <div class="form-group">
-						                    <label class="control-label">
-						                         Asset Category <span class="symbol required"></span>
-						                    </label>
-						                    <div class="input-group">
-						                        <input type="hidden" th:field="*{assetCategoryId}">
-						                        <input type="text" th:field="*{assetCategoryName}" readonly class="form-control" placeholder="Select Asset Category" id="assetCategoryName">                     
-						                    </div>
-							            </div>
-						            </div>
-                                	<div class="col-md-6">
-										<div class="form-group">
-						                    <label class="control-label"> This Equipment is a part of </label>
-						                    <div class="input-group">
-						                        <input type="hidden" th:field="*{parentAssetId}">
-						                        <input type="text" th:field="*{parentAssetName}" readonly class="form-control" placeholder="Select a Parent Asset" id="parentAssetName">                     
-						                    </div>
-							            </div>		
-									</div>                                	
-                                </div>               
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label"> Status </label>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Status </label>
+                                                <div>
+                                                    <input id="isOnline" name="isOnline" type="checkbox"
+                                                        data-size="small" th:value="*{isOnline}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
                                             <div>
-                                                <input id="isOnline" name="isOnline" type="checkbox" data-size="small" th:value="*{isOnline}">
+                                                <span class="symbol required"></span>Required Fields
+                                                <hr>
                                             </div>
                                         </div>
-                                    </div>                                    
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div>
-                                            <span class="symbol required"></span>Required Fields
-                                            <hr>
-                                        </div>
                                     </div>
-                                </div> 
-                                <div th:if="${type == T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES}">
-                                    <div th:replace="asset/machine/machine-info-add-view :: machineinfo"></div>
-                                </div>
-                                <div th:if="${type == T(com.codex.ecam.constants.AssetCategoryType).TOOLS}">
-                                    <div th:replace="asset/machine/tool-info-add-view :: toolinfo"></div>
-                                </div>
-                                <div class="row" style="visibility: hidden;">
-                                    <button id="asset_add_btn" type="submit"></button>
-                                </div>
-                            </form>
+                                    <div
+                                        th:if="${type == T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES}">
+                                        <div th:replace="asset/machine/machine-info-add-view :: machineinfo"></div>
+                                    </div>
+                                    <div th:if="${type == T(com.codex.ecam.constants.AssetCategoryType).TOOLS}">
+                                        <div th:replace="asset/machine/tool-info-add-view :: toolinfo"></div>
+                                    </div>
+                                    <div class="row" style="visibility: hidden;">
+                                        <button id="asset_add_btn" type="submit"></button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- end: PAGE CONTENT-->
             </div>
-            <!-- end: PAGE CONTENT-->
         </div>
+        <!-- end: PAGE -->
     </div>
-    <!-- end: PAGE -->
-</div>
-<!-- end: MAIN CONTAINER -->
+    <!-- end: MAIN CONTAINER -->
 
-<!-- start: FOOTER -->
-<div class="row" th:replace="template/footer :: footer"></div>
-<!-- end: FOOTER -->
+    <!-- start: FOOTER -->
+    <div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
 
-<!-- start: MAIN JAVASCRIPTS -->
-<div th:include="template/commonjs :: commonjs"></div>
-<!-- end: MAIN JAVASCRIPTS -->
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+    <!-- end: MAIN JAVASCRIPTS -->
 
-<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script> 
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/ColReorderWithResize.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/math.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/math.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/asset/init.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/init.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/add-view.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/add-view.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/home-view.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/add-view.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/add-view.js}"></script>
+    <script type="text/javascript"
+        th:src="@{/resources/script/app/admin/cmmssetting/assetbrands/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/add-view.js}"></script>
+    <script type="text/javascript"
+        th:src="@{/resources/script/app/admin/cmmssetting/assetmodels/home-view.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/meter-reading-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/personal-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/warranty-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/asset-event-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/bom-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/purchasing-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/customer-history-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/log-tab.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/tab/file-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/meter-reading-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/personal-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/warranty-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/asset-event-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/bom-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/purchasing-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/customer-history-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/log-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/file-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/location-tree-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/tab/spare-part-tab.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/part-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/customer-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/bom-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/user-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/warranty-add-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-event-history-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-event-add-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-add-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-category-add-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-history-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-brand-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-model-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/parent-asset-select-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/file-add-modal.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-consumption-add-modal.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-category.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-brand.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-model.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-event-type.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-log.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/part-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/customer-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/bom-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/user-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/warranty-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-event-history-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-event-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-category-add-modal.js}"></script>
+    <script type="text/javascript"
+        th:src="@{/resources/script/app/asset/modals/meter-reading-history-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-brand-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-model-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/parent-asset-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/file-add-modal.js}"></script>
+    <script type="text/javascript"
+        th:src="@{/resources/script/app/asset/modals/meter-reading-consumption-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/spare-part-add-modal.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
-<!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-category.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-brand.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-model.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-event-type.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-log.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-spare-part.js}"></script>
+
+    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+    <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
  -->
-<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+    <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
-<script th:inline="javascript">
+    <script th:inline="javascript">
 
-    var assetMeterReadings = [];
-    var assetMeterReadingValues = [];
-    var assetEvents = [];
-    var assetEventTypeAssets = [];
-    var userList = [];
-    var warranties = [];
-    var partConsumeRefs = [];
-    var meterReadingUnitList = [];
-    var categoryType = [[${type}]];
-    var files = [[${asset.assetFileDTOs}]];
-    var fileLocation='';
-    var fileType='';
+        var assetMeterReadings = [];
+        var assetMeterReadingValues = [];
+        var assetEvents = [];
+        var assetEventTypeAssets = [];
+        var userList = [];
+        var warranties = [];
+        var partConsumeRefs = [];
+        var meterReadingUnitList = [];
+        var categoryType = [[${ type }]];
+        var files = [[${ asset.assetFileDTOs }]];
+        var fileLocation = '';
+        var fileType = '';
 
-    var thymeLeafAssetMeterReadings = [[${asset.assetMeterReadings}]];
-    var thymeLeafAssetMeterReadingValues = [[${asset.assetMeterReadingValues}]];
-    var thymeLeafWarranties = [[${asset.warranties}]];
-    var thymeLeafmeterReadingUnitList = [[${meterReadingUnits}]];
-    var thymeLeafAssetEventTypeAssets = [[${asset.assetEventTypeAssets}]];
-    var thymeLeafUserList = [[${asset.assetUserDTOs}]];
-    var thymeLeafAssetEvents = [[${asset.assetEvents}]];
-    var thymeLeafPartConsumeRefs = [[${asset.partConsumeRefs}]];
-    var previewContent = [[${asset.imageLocation}]];
-    var assetId = [[${asset.id}]];   
-    var file = [[${fileLocation}]];   
-    var locationDetails=[[${asset.locationDTO}]];
+        var thymeLeafAssetMeterReadings = [[${ asset.assetMeterReadings }]];
+        var thymeLeafAssetMeterReadingValues = [[${ asset.assetMeterReadingValues }]];
+        var thymeLeafWarranties = [[${ asset.warranties }]];
+        var thymeLeafmeterReadingUnitList = [[${ meterReadingUnits }]];
+        var thymeLeafAssetEventTypeAssets = [[${ asset.assetEventTypeAssets }]];
+        var thymeLeafUserList = [[${ asset.assetUserDTOs }]];
+        var thymeLeafAssetEvents = [[${ asset.assetEvents }]];
+        var thymeLeafPartConsumeRefs = [[${ asset.partConsumeRefs }]];
+        var previewContent = [[${ asset.imageLocation }]];
+        var assetId = [[${ asset.id }]];
+        var file = [[${ fileLocation }]];
+        var locationDetails = [[${ asset.locationDTO }]];
+        var spareParts = [[${ asset.sparePartDTOs }]];
 
-</script>
+
+    </script>
 
 </body>
 

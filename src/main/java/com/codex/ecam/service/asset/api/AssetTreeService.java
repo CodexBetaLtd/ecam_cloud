@@ -16,5 +16,6 @@ public interface AssetTreeService {
 	DataTablesOutput<AssetDTO> findAllParentFacilities(FocusDataTablesInput input) throws Exception;
 
 	DataTablesOutput<AssetDTO> findAllParentMachinesAndTools(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<AssetDTO> findMachineParentLocation(FocusDataTablesInput input,Integer id,Integer assetId) throws Exception;
 
 }

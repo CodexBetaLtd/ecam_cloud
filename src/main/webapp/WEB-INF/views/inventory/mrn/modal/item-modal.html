@@ -22,7 +22,7 @@
             <div class="col-sm-12">
                 <div class="tab-pane in active" id="aod_item_tab">
                     <div class="row">
-                        <div class="col-md-12 col-sm-12">
+                        <div class="col-md-6 col-sm-12">
                             <div class="form-group">
                                 <label class="control-label"> <span th:text="#{aod.tab.item.asset}"></span> <span class="symbol required"></span></label>
                                 <div class="input-group">
@@ -31,8 +31,6 @@
                                 </div>
                             </div>
                         </div>
-                        </div>
-                   <div class="row">
                          <div class="col-md-6 col-sm-12">
                             <div class="form-group">
                                 <label class="control-label"> <span th:text="#{aod.tab.item.qty}"></span><span
@@ -41,6 +39,10 @@
                                        class="form-control numericOnly">
                             </div>
                         </div>
+
+                   </div>
+                        
+                    <div class="row">
                          <div class="col-md-6 col-sm-12">
                             <div class="form-group">
                                 <label class="control-label"> Approved Quantity<span
@@ -49,8 +51,15 @@
                                        class="form-control numericOnly">
                             </div>
                         </div>
-                   </div>
-                        
+                         <div class="col-md-6 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label"> Remaining Quantity<span
+                                        class="symbol required"></span> </label>
+                                <input id="remainingQuantity" name="remainingQuantity" type="text" placeholder="Remaining Item Quantity"
+                                       class="form-control numericOnly">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-12">
                             <div class="form-group">

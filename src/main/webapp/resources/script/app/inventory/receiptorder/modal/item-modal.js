@@ -66,7 +66,7 @@ var ItemAddModal = function () {
     var receiptStockView = function () {
     	partId=$("#itemAssetId").val();
     	if(partId!=null && partId!='' ){
-            getReceiptStockView("stock_tbl", "../restapi/stock/stockByPart", "receiptItemTab.setReceiptItemStock", partId);
+            getReceiptStockView("stock_tbl", "../restapi/stock/stockByPart", "ItemAddModal.setReceiptItemStock", partId);
     	}else{
     		alert("Please select part first")
     	}

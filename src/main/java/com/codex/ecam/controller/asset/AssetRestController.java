@@ -156,6 +156,15 @@ public class AssetRestController {
 		}
 		return null;
 	}
+	@RequestMapping(value = "/parent-machines-by-location", method = RequestMethod.GET)
+	public DataTablesOutput<AssetDTO> getParentMachineLocation(@Valid FocusDataTablesInput input,Integer id,Integer assetId) {
+		try {
+			return assetTreeService.findMachineParentLocation(input,id,assetId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 	@RequestMapping(value = "/tabledata", method = RequestMethod.GET)
 	public DataTablesOutput<AssetDTO> getAssetList(@Valid FocusDataTablesInput input) {

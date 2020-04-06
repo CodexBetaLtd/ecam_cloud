@@ -28,6 +28,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
         dto.setDescription(domain.getDescription());
         dto.setItemCost(domain.getItemCost()); 
         dto.setApprovedQuantity(domain.getApprovedQuantity());
+        dto.setRemainingQuantity(domain.getRemainQuantity());
 
         if (domain.getPart() != null && domain.getPart().getId() != null) {
             dto.setPartId(domain.getPart().getId());
@@ -54,7 +55,7 @@ public class MRNItemMapper extends GenericMapper<MRNItem, MRNItemDTO> {
         domain.setIsDeleted(dto.getIsDeleted());
         domain.setVersion(dto.getVersion());
         domain.setQuantity(dto.getItemQuantity());
-        domain.setRemainQuantity(dto.getItemReturnQuantity());
+        domain.setRemainQuantity(dto.getRemainingQuantity());
         domain.setApprovedQuantity(dto.getApprovedQuantity());
         domain.setDescription(dto.getDescription());
         domain.setItemCost(dto.getItemCost());

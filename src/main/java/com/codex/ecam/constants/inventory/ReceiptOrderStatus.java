@@ -1,5 +1,8 @@
 package com.codex.ecam.constants.inventory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum ReceiptOrderStatus {
 	
 	DRAFT(0, "Draft"),
@@ -16,6 +19,17 @@ public enum ReceiptOrderStatus {
 		setName(name);
 	}
 
+	
+	public static List<ReceiptOrderStatus> getAllStatus(){
+		List<ReceiptOrderStatus> list=new ArrayList<>();
+		list.add(ReceiptOrderStatus.DRAFT);
+		list.add(ReceiptOrderStatus.RECEIVED);
+		list.add(ReceiptOrderStatus.CANCEL);
+		list.add(ReceiptOrderStatus.APPROVED);
+		
+		return list;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

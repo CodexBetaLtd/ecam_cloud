@@ -56,6 +56,7 @@ var MRNItemTab = function () {
     var populateItems = function () {
         if (mrnItemList.length > 0) {
             var row, item;
+            console.log(mrnItemList)
             $("#tbl_aod_item > tbody").html("");
             for (row = 0; row < mrnItemList.length; row++) {
                 item = mrnItemList[row]; 
@@ -65,6 +66,7 @@ var MRNItemTab = function () {
                     "<input id='items_" + row + "_aodItemPartId' name='mrnItemDTOs[" + row + "].partId' value='" + CustomValidation.nullValueReplace(item.partId) + "' type='hidden'>" +
                     "<input id='items_" + row + "_aodItemPartName' name='mrnItemDTOs[" + row + "].partName' value='" + CustomValidation.nullValueReplace(item.partName) + "' type='hidden'>" + 
                     "<input id='items_" + row + "_aodItemQuantity' name='mrnItemDTOs[" + row + "].itemQuantity' value='" + CustomValidation.nullValueReplace(item.itemQuantity) + "' type='hidden'>" +
+                    "<input id='items_" + row + "_remainingQuantity' name='mrnItemDTOs[" + row + "].remainingQuantity' value='" + CustomValidation.nullValueReplace(item.remainingQuantity) + "' type='hidden'>" +
                     "<input id='items_" + row + "_approvedQuantity' name='mrnItemDTOs[" + row + "].approvedQuantity' value='" + CustomValidation.nullValueReplace(item.approvedQuantity) + "' type='hidden'>" +
                     "<input id='items_" + row + "_aodItemDescription' name='mrnItemDTOs[" + row + "].description' value='" + CustomValidation.nullValueReplace(item.description) + "' type='hidden'>" +
                     "<input id='items_" + row + "_aodItemVersion' name='mrnItemDTOs[" + row + "].version' value='" + CustomValidation.nullValueReplace(item.version) + "' type='hidden'>" + 
@@ -76,6 +78,7 @@ var MRNItemTab = function () {
                     "<td>" + CustomValidation.nullValueReplace(item.description) + "</td>" +
                     "<td>" + parseFloat(item.itemQuantity).toFixed(2) + "</td>" +
                     "<td>" + parseFloat(item.approvedQuantity).toFixed(2) + "</td>" +
+                    "<td>" + parseFloat(item.remainingQuantity).toFixed(2) + "</td>" +
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "MRNItemTab") + "</td>" +
                     "</tr>";
                 $('#tbl_aod_item > tbody:last-child').append(html);
@@ -235,6 +238,7 @@ var MRNItemTab = function () {
     	CustomValidation.validateFieldNull(itemObj, 'description', updatedItemObj.description);
     	CustomValidation.validateFieldNull(itemObj, 'itemQuantity', updatedItemObj.itemQuantity);
     	CustomValidation.validateFieldNull(itemObj, 'approvedQuantity', updatedItemObj.approvedQuantity);
+    	CustomValidation.validateFieldNull(itemObj, 'remainingQuantity', updatedItemObj.remainingQuantity);
         CustomValidation.validateFieldNull(itemObj, 'version', updatedItemObj.version);
         
     };
@@ -251,6 +255,7 @@ var MRNItemTab = function () {
         $('#itemDescription').val(item['description']);
         $('#itemQuantity').val(item['itemQuantity']); 
         $('#approvedItemQuantity').val(item['approvedQuantity']); 
+        $('#remainingQuantity').val(item['remainingQuantity']); 
         $("#itemVersion").val(item['version']); 
         
     };

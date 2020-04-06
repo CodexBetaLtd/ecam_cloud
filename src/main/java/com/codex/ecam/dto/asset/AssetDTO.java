@@ -60,6 +60,7 @@ public class AssetDTO extends BaseDTO {
 	private List<AssetConsumingReferenceDTO> partConsumeRefs = new ArrayList<>();
 	private List<AssetFileDTO> assetFileDTOs = new ArrayList<>();
 	private List<AssetDTO> children = new ArrayList<>();
+	private List<SparePartDTO> sparePartDTOs = new ArrayList<>();
 	
 	private Integer childCount;
 
@@ -405,6 +406,14 @@ public class AssetDTO extends BaseDTO {
 
 	public void setChildCount(Integer childCount) {
 		this.childCount = childCount;
+	}
+
+	public List<SparePartDTO> getSparePartDTOs() {
+		return sparePartDTOs;
+	}
+
+	public void setSparePartDTOs(List<SparePartDTO> sparePartDTOs) {
+		this.sparePartDTOs = sparePartDTOs;
 	}
 
 	

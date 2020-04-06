@@ -15,9 +15,7 @@ var TabItem = function () {
                     "<input id='items" + row + ".itemPurchaseOrderCodes' name='items[" + row + "].itemPurchaseOrderCodes' value='" + item.itemPurchaseOrderCodes + "' type='hidden'>" +
                     "<input id='items" + row + ".itemQtyRequested' name='items[" + row + "].itemQtyRequested' value='" + item.itemQtyRequested + "' type='hidden'>" +
                     "<input id='items" + row + ".itemDescription' name='items[" + row + "].itemDescription' value='" + item.itemDescription + "' type='hidden'>" +
-                    "<input id='items" + row + ".itemQuotedUnitPrice' name='items[" + row + "].itemQuotedUnitPrice' value='" + item.itemQuotedUnitPrice + "' type='hidden'>" +
                     "<input id='items" + row + ".itemQuotedTotalPrice' name='items[" + row + "].itemQuotedTotalPrice' value='" + item.itemQuotedTotalPrice + "' type='hidden'>" +
-                    "<input id='items" + row + ".itemQuotedQty' name='items[" + row + "].itemQuotedQty' value='" + item.itemQuotedQty + "' type='hidden'>" +
                     "<input id='items" + row + ".version' name='items[" + row + "].version' value='" + item.version + "' type='hidden' >" +
 
                     "<td>" +
@@ -28,8 +26,6 @@ var TabItem = function () {
 
                     "<td><span>" + item.itemAssetName + "</span></td>" +
                     "<td >" + item.itemQtyRequested + "</span></td>" +
-                    "<td><span>" + item.itemQuotedQty + "</td>" +
-                    "<td>" + item.itemQuotedUnitPrice + "</span></td>" +
                     "<td><span>" + item.itemQuotedTotalPrice + "</td>" +
                     "<td>" + item.itemPurchaseOrderCodes + "</span></td>" +
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "TabItem") + "</td>" +

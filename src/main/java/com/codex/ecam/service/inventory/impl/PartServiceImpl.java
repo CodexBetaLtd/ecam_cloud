@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.inventory.PartType;
+import com.codex.ecam.constants.inventory.PartUsageType;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.admin.UserDao;
@@ -486,6 +487,39 @@ public class PartServiceImpl implements PartService {
 		return out;
 	}
 
+	public DataTablesOutput<PartDTO> findAllSparePart(FocusDataTablesInput input) throws Exception {
+		DataTablesOutput<Asset> domainOut;
+		PartSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			Specification<Asset> specification = (root, query, cb) -> {
+				return cb.and(
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								AssetCategoryType.PARTS_AND_SUPPLIES),
+						cb.equal(root.get("partUsageType"), PartUsageType.SPARE_PART));
+			};
+			domainOut = partDao.findAll(input, specification);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			Specification<Asset> specification = (root, query, cb) -> {
+				return cb.and(
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								AssetCategoryType.PARTS_AND_SUPPLIES),
+						cb.equal(root.get("partUsageType"), PartUsageType.SPARE_PART),
+						cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+			};
+			domainOut = partDao.findAll(input, specification);
+		} else {
+			Specification<Asset> specification = (root, query, cb) -> {
+				return cb.and(
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								AssetCategoryType.PARTS_AND_SUPPLIES),
+						cb.equal(root.get("partUsageType"), PartUsageType.SPARE_PART),
+						cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness()));
+			};
+			domainOut = partDao.findAll(input, specification);
+		}
+		DataTablesOutput<PartDTO> out = PartMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
 	@Override
 	public byte[] getPartImageStream(Integer id, HttpServletRequest request) throws IOException {
 		if (id != null) {

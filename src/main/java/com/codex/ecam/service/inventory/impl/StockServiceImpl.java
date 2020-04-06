@@ -1368,6 +1368,13 @@ public class StockServiceImpl implements StockService {
 		Specification<Stock> specification = (root, query, cb) ->getLowStockItemPredicate(root,cb);
 		domainOut=stockDao.findAll(input,specification);
 		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		
+	}
+	public DataTablesOutput<StockDTO> findStock(FocusDataTablesInput input) throws Exception {
+		StockPropertyMapper.getInstance().generateDataTableInput(input);
+		DataTablesOutput<Stock> domainOut;
+		domainOut=stockDao.findAll(input);
+		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 	}
 

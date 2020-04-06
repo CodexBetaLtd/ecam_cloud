@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h4 class="modal-title">Add Spare Part</h4>
+</div>
+<div class="modal-body">
+	<div id="meter-reading-consumption-variable-modal" class="modal datatable fade" role="dialog" tabindex="-1"
+		style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+
+	<form id="spare-part-add-frm">
+
+		<input type="hidden" id="spareId">
+		<input type="hidden" id="sparePartVersion">
+		<input type="hidden" id="sparePartindex">
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label">
+						 Spare Part<span class="symbol required"></span>
+					</label>
+					<div class="input-group">
+						<input type="hidden" id="sparePartPartId" name="sparePartPartId" >
+						<input type="text" id="sparePartPartCode" name="sparePartPartCode" readonly class="form-control" placeholder="Select a spare Part" >                     
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Quantity <span class="symbol required"></span> </label>
+					<input id="sparePartQuantity" name="sparePartQuantity" type="text" placeholder="Please Type Spare Part Quantity" class="form-control" >
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="form-group">
+					<label class="control-label"> Description  </label>
+					<input id="sparePartDescription" name="sparePartDescription" type="text" placeholder="Please Type Description" class="form-control" >
+				</div>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+<div class="modal-footer">
+	<button type="button" class="btn btn-blue btn-sm" id="btn-add-spare-part">
+		<i class="clip-checkmark-circle-2"></i>Add
+	</button>
+	<button type="button" data-dismiss="modal" class="btn btn-blue btn-sm">Close</button>
+</div>
+
+</html>

@@ -49,6 +49,7 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 		dto.setBarcode(domain.getBarcode());
 		dto.setLastPrice(domain.getLastPrice());
 		dto.setImageLocation(domain.getImageLocation());
+		dto.setPartUsageType(domain.getPartUsageType());
 
 		if ((domain.getAssetUsers() != null) && (domain.getAssetUsers().size() > 0)) {
 			dto.setAssetUserDTOs(AssetUserMapper.getInstance().domainToDTOList(domain.getAssetUsers()));
@@ -154,6 +155,8 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 		domain.setBarcode(dto.getBarcode());
 		domain.setLastPrice(dto.getLastPrice());
 		domain.setIsOnline(true);
+		domain.setPartUsageType(dto.getPartUsageType());
+
 		domain.setImageLocation(dto.getImageLocation());
 		if ((dto.getPartType() != null)) {
 			domain.setPartType(dto.getPartType());
@@ -178,6 +181,8 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 		if ((dto.getPartType() != null)) {
 			domain.setPartType(dto.getPartType());
 		}
+		dto.setPartUsageType(domain.getPartUsageType());
+
 		return dto;
 	}
 

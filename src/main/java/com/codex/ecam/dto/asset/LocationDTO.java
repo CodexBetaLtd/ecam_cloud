@@ -8,6 +8,8 @@ public class LocationDTO extends BaseDTO {
 	private String latitude="6.9270";
 	private String locationTitel;
 	
+	
+	
 	public String getLongitude() {
 		return longitude;
 	}

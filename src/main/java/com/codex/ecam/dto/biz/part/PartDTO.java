@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.codex.ecam.constants.inventory.PartType;
+import com.codex.ecam.constants.inventory.PartUsageType;
 import com.codex.ecam.dto.BaseDTO;
 import com.codex.ecam.dto.asset.AssetUserDTO;
 import com.codex.ecam.dto.asset.WarrantyDTO;
@@ -41,6 +42,7 @@ public class PartDTO extends BaseDTO {
 	private Integer partCategoryId;
 	private String partCategoryName;
 	private PartType partType=PartType.NORMAL;
+	private PartUsageType partUsageType=PartUsageType.NORMAL_PART;
 	
 
 	private List<StockDTO> stockDTOs = new ArrayList<>();
@@ -314,5 +316,16 @@ public class PartDTO extends BaseDTO {
 	public void setPartType(PartType partType) {
 		this.partType = partType;
 	}
+
+	public PartUsageType getPartUsageType() {
+		return partUsageType;
+	}
+
+	public void setPartUsageType(PartUsageType partUsageType) {
+		this.partUsageType = partUsageType;
+	}
+
+
 	 
+	
 }
