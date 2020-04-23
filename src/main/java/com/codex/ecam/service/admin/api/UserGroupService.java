@@ -6,6 +6,7 @@ import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.SubMenu;
+import com.codex.ecam.dto.admin.PermisonTreeDTO;
 import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.UserGroupResult;
@@ -24,6 +25,11 @@ public interface UserGroupService {
 	List<UserGroupDTO> findAll() throws Exception;
 
 	List<GenericCheckBox<Menu, SubMenu>> getMenuPermissions();
+	List<PermisonTreeDTO> getMenuPermissionsAll(Integer id);
+	List<PermisonTreeDTO> getMenuAll();
+	List<PermisonTreeDTO> getSubMenuAll(Integer id);
+	List<PermisonTreeDTO> getPageAll(Integer id);
+	List<PermisonTreeDTO> getPagePermistionAll(Integer id);
 
 	List<Page> findPageListByBusiness();
 

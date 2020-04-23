@@ -47,9 +47,11 @@ import com.codex.ecam.model.inventory.aod.AOD;
 import com.codex.ecam.model.inventory.aod.AODItem;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.AODService;
 import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -145,17 +147,11 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public AODResult save(AODDTO dto) throws Exception {
-		AODResult result = new AODResult(new AOD(), dto);
-		try {
-			saveOrUpdate(result);
-			result.setResultStatusSuccess();
-			result.addToMessageList("AOD Added Successfully.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setResultStatusError();
-			result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
-		}
+		AODResult result = new AODResult(new AOD(), dto);		
+		saveOrUpdate(result);
+		result.addToMessageList("AOD Added Successfully.");
 		return result;
+
 	}
 
 	@Override
@@ -182,7 +178,9 @@ public class AODServiceImpl implements AODService {
 		AODMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setAODData(result);
 		aodDao.save(result.getDomainEntity()); 
-		result.setDtoEntity(findDTOById(result.getDomainEntity().getId())); 
+		result.updateDtoIdAndVersion();
+
+		//result.setDtoEntity(findDTOById(result.getDomainEntity().getId())); 
 	}
 
 	private void setAODData(AODResult result) throws Exception {
@@ -273,7 +271,7 @@ public class AODServiceImpl implements AODService {
 	
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void approveAndDispatch(final AODResult result) throws Exception, StockException {
-		if (result.getDomainEntity().getAodStatus() != AODStatus.APPROVED) {
+		if (result.getDomainEntity().getAodStatus().equals(AODStatus.APPROVED)) {
 			stockService.dispatchStock(result.getDomainEntity());
 			updateApproveAOD(result);
 		}
@@ -571,9 +569,9 @@ public class AODServiceImpl implements AODService {
 		  try {
 			AODResult aodResult=save(aoddto);
 			result.setStatus(ResultStatus.SUCCESS);
-			result.addToMessageList("Successfully Generated the AOD as ");
-			result.addToMessageList(aodResult.getDtoEntity().getId().toString());
-			result.addToMessageList(aodResult.getDtoEntity().getAodNo());
+			result.addToMessageList("Successfully Generated the AOD  ");
+		result.addToMessageList(aodResult.getDomainEntity().getId().toString());
+			result.addToMessageList(aodResult.getDomainEntity().getAodNo());
 
 		} catch (Exception e) {
 		e.printStackTrace();

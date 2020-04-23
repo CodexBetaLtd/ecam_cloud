@@ -7,6 +7,7 @@ public enum WorkOrderStatus {
 
 	OPEN(0, "Open"),
 	APPROVED(2, "Approved"),
+	//complete
 	CLOSED(1, "Closed");
 
 	private Integer id;

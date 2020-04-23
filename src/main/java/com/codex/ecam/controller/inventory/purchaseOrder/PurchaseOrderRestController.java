@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 
@@ -21,10 +22,20 @@ public class PurchaseOrderRestController {
 	@Autowired
     private PurchaseOrderService purchaseOrderService;
 
-    @RequestMapping(value = "/tableData", method = RequestMethod.GET)
-    public DataTablesOutput<PurchaseOrderDTO> findAllWorkOrder(@Valid FocusDataTablesInput dataTablesInput) throws Exception {
+	@RequestMapping(value = "/tableData", method = RequestMethod.GET)
+	public DataTablesOutput<PurchaseOrderDTO> findAllPurchaseorder(@Valid FocusDataTablesInput dataTablesInput) throws Exception {
+		try {
+			return purchaseOrderService.findAll(dataTablesInput);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+		
+	}
+    @RequestMapping(value = "/tableApprovedItemData", method = RequestMethod.GET)
+    public DataTablesOutput<PurchaseOrderItemDTO> findAllPurchaseorderItem(@Valid FocusDataTablesInput dataTablesInput) throws Exception {
         try {
-        	return purchaseOrderService.findAll(dataTablesInput);
+        	return purchaseOrderService.findAllApproved(dataTablesInput);
         } catch (Exception e) {
             e.printStackTrace();
         }

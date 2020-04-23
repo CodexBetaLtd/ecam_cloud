@@ -12,7 +12,8 @@ public class PurchaseOrderResult  extends BaseResult<PurchaseOrder, PurchaseOrde
 
 	@Override
 	public void updateDtoIdAndVersion() {
-		// TODO Auto-generated method stub
+		getDtoEntity().setId(getDomainEntity().getId());
+		getDtoEntity().setVersion(getDomainEntity().getVersion());
 		
 	}
 

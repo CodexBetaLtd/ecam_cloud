@@ -36,6 +36,7 @@ import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.maintenance.ProjectDao;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceDao;
 import com.codex.ecam.dao.maintenance.TaskGroupDao;
+import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.maintenance.scheduledmaintenance.ScheduledMaintenanceDTO;
 import com.codex.ecam.dto.maintenance.scheduledmaintenance.ScheduledMaintenanceFileDTO;
@@ -116,6 +117,9 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 	@Autowired
 	private StockDao stockDao;
+	@Autowired
+	private WorkOrderDao workORderDao;
+	
 
 	@Autowired
 	Environment environment;
@@ -188,6 +192,7 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 					if ((smt.getTtCreateWOOnStartDate() != null) && smt.getTtCreateWOOnStartDate()) {
 						WorkOrder wo = scheduledMaintenanceTriggerService.createWorkOrderFromTrigger(smt);
 						result.addToMessageList("Work Order Created. WO Code : " + wo.getCode());
+						workORderDao.save(wo);
 						Set<WorkOrder> list = new HashSet<>(1);
 						list.add(wo);
 						sm.setWorkOrders(list);

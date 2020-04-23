@@ -1,5 +1,4 @@
-﻿var AODPartSelectModal = function () {
-
+var dtPurchaseAsset = function () {
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -98,37 +97,49 @@
         });
     });
 
+    var initAssetSelectTable = function (tableId, URL, method) {
 
-    var getPartTable = function (bizId) {
-
-        var tableId = "tbl-dt-item";
-        
         var oTable = $('#' + tableId).dataTable({
-            // processing: true,
+            processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: '../restapi/part/tabledata-by-business?bizId=' + bizId,
+                url: URL,
                 pages: 5
             }),
             columns: [{
                 orderable: false,
-                searchable: false, 
+                searchable: false,
+                width: "2%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            },
-                {data: 'name'},
-                {data: 'code'},
-                {data: 'brandName'},
-                {data: 'description'}
-            ],
+            }, {
+                orderable: false,
+                searchable: false,
+                data: 'itemAssetName'
+            }, {
+                orderable: false,
+                searchable: false,
+                data: 'itemQtyOnOrder'
+            }, {
+                data: 'purchaseOrderCode',
+                orderable: false,
+                searchable: false,            }, 
+                {
+                data: 'itemRequiredByDate',
+                orderable: false,
+                searchable: false,            }, ],
             aoColumnDefs: [{
-                targets: 5, 
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.name, row.code];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODPartSelectModal.setAODPart", data, vars);
-                }
+                targets: 5,//index of column starting from 0
+                data: "id", //this name should exist in your JSON response
+  /*              render: function (data, type, rowData, meta) {
+                	
+                    return tblButton(rowData, tableId, URL, method);
+                }*/
+            render: function (data, type, row, meta) {
+                var vars = [row.itemId,row.itemAssetId, row.itemAssetName];
+                return ButtonUtil.getCommonBtnSelectWithMultipleVars(method, data, vars);
+            }
             }],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
@@ -158,26 +169,23 @@
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+
     };
 
-    /*********************************************************************
-     * Set Data Value
-     *********************************************************************/
 
-    var setAODPart = function (id, name, code) {
-        $("#itemPartId").val(id);
-        $("#itemPartName").val(name + " [" + code + "]");
+    var tblButton = function (rowData, tableId, URL, method) {
+    	console.log(rowData)
+
+        return ButtonUtil.getCommonBtnSelect(method, rowData.itemId,rowData.itemAssetId, rowData.itemAssetName);
+
+   //     return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
+        // return "<a id='link" + data.id + "' onclick='TabItem.setRFQItemAsset(this,\"" + data.id + "\",\"" + data.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</a>";
     };
 
     return {
 
-        init: function (bizId) {
-            getPartTable(bizId);
+        dtReceiptAsset: function (tableId, url, method) {
+            initAssetSelectTable(tableId, url, method);
         },
-
-        setAODPart: function (id, name, code) {
-            setAODPart(id, name, code);
-        },
-
     };
 }();

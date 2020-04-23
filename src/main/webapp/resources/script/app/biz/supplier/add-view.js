@@ -65,14 +65,11 @@ var SupplierBusinessAdd = function () {
                 currencyId: {
                     required: true
                 },
-                businessClassficationId: {
-                    required: true
-                },
 //                businessTypeId: {
 //                    required: true
 //                },
                 countryId: {
-                    required: true
+                   required: true
                 }
             },
             messages: {
@@ -83,7 +80,7 @@ var SupplierBusinessAdd = function () {
                 },
                 name: "Please Specify a Name",
                 currencyId: "Please Specify a Currency",
-                businessClassficationId: "Please Specify a Business Classfication",
+               // businessClassficationId: "Please Specify a Business Classfication",
 //                businessTypeId: "Please Specify a Business Type",
                 countryId: "Please Specify a Country",
             },
@@ -97,7 +94,8 @@ var SupplierBusinessAdd = function () {
                 $(element).closest('.form-group').removeClass('has-success').addClass('has-error').find('.symbol').removeClass('ok').addClass('required');
                 // add the Bootstrap error class to the control group
             },
-            unhighlight: function (element) { // revert the change done by hightlight
+            unhighlight: function (element) { 
+            	// revert the change done by hightlight
                 $(element).closest('.form-group').removeClass('has-error');
                 // set error class to the control group
             },

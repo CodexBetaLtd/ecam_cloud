@@ -148,6 +148,7 @@ public class PartMapper extends GenericMapper<Asset, PartDTO> {
 	public void dtoToDomain(PartDTO dto, Asset domain) throws Exception {
 		domain.setId(dto.getId());
 		domain.setName(dto.getName());
+		domain.setCode(dto.getCode());
 		domain.setDescription(dto.getDescription());
 		domain.setNotes(dto.getCompletionNotes());
 		domain.setInventoryCode(dto.getInventoryCode());

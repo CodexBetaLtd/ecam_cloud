@@ -15,6 +15,7 @@ import com.codex.ecam.constants.*;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
+import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.admin.api.*;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -163,7 +164,7 @@ public class PurchaseOrderController {
 		} else {
 			model.addAttribute("success", result.getMsgList());
 		}
-		setCommonData(model, purchaseOrder);
+		setCommonData(model, result.getDtoEntity());
 		return "inventory/purchaseorder/add-view";
 	}
 
@@ -180,17 +181,14 @@ public class PurchaseOrderController {
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
 	public String purchaseOrderStatusChange(Integer id, PurchaseOrderStatus status, Model model, RedirectAttributes ra) throws Exception {
-		PurchaseOrderDTO purchaseOrder = null;
+		PurchaseOrderResult result= purchaseOrderService.statusChange(id, status);
+		if (result.getStatus().equals(ResultStatus.ERROR)) {
+            model.addAttribute("error", result.getErrorList());
+        } else {
+            model.addAttribute("success", result.getMsgList());
+        }
 
-		if ((id != null) && (id > 0)) {
-			purchaseOrder = purchaseOrderService.statusChange(id,status);
-		}
-		else{
-			ra.addFlashAttribute("warning", "Submit for approvel");
-			ra.addFlashAttribute("messageBody", "Submit for approvel");
-		}
-
-		setCommonData(model, purchaseOrder);
+		setCommonData(model, result.getDtoEntity());
 		return "inventory/purchaseorder/add-view";
 	}
 	

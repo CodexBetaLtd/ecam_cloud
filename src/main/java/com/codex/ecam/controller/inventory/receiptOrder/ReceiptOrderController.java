@@ -6,12 +6,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.biz.api.SupplierService;
@@ -73,7 +75,11 @@ public class ReceiptOrderController {
 
     @RequestMapping(value = "/receiptStockView", method = RequestMethod.GET)
     public String getStockSelectView(Model model) {
-        return "inventory/receiptorder/modal/stock-modal";
+    	return "inventory/receiptorder/modal/stock-modal";
+    }
+    @RequestMapping(value = "/receiptPurchaseorderItemView", method = RequestMethod.GET)
+    public String getPurchaseOrderSelectView(Model model) {
+        return "inventory/receiptorder/modal/purchaseorder-item-modal";
     }
 
 
@@ -152,6 +158,14 @@ public class ReceiptOrderController {
         return "inventory/receiptorder/add-view";
     }
 
+	@RequestMapping(value = "/generateGrnFrom", method = RequestMethod.GET)
+	public @ResponseBody ReceiptOrderResult generateGrnFromPo(String ids, Integer poId) throws Exception {
+		ReceiptOrderResult result = null;
+		if ((poId != null) && (poId > 0)) { 
+			result = receiptOrderService.generateGrnFromPo(ids, poId); 
+		}
+		return result;
+	}
     private void setCommonData(Model model, ReceiptOrderDTO receiptOrder) {
     	model.addAttribute("receiptOrder", receiptOrder);
         model.addAttribute("types", ReceiptOrderType.getAllReceiptOrderType());

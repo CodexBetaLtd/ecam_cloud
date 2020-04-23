@@ -43,7 +43,9 @@ var receiptItemTab = function () {
                     "<input id='items" + row + ".itemDescription' name='items[" + row + "].itemDescription' value='" + item.itemDescription + "' type='hidden'>" +
                     "<input id='items" + row + ".itemUnitPrice' name='items[" + row + "].itemUnitPrice' value='" + item.itemUnitPrice + "' type='hidden'>" +
                     "<input id='items" + row + ".version' name='items[" + row + "].version' value='" + item.version + "' type='hidden' >" +
-                    "<input id='items" + row + ".issueNoteitemId' name='items[" + row + "].issueNoteitemId' value='" + item.issueNoteitemId + "' type='hidden' >" +
+                    "<input id='items" + row + ".issueNoteitemId' name='items[" + row + "].issueNoteitemId' value=" + CustomComponents.nullValueReplace(item.issueNoteitemId) + " type='hidden' >" +
+                    "<input id='items" + row + ".poItemId' name='items[" + row + "].poItemId' value=" +CustomComponents.nullValueReplace( item.poItemId) + " type='hidden' >" +
+                    "<input id='items" + row + ".poItemName' name='items[" + row + "].poItemName' value='" + CustomComponents.nullValueReplace(item.poItemName) + "' type='hidden' >" +
                     "<td><span>" + ( row + 1 ) + "</span></td>" +
                     "<td><span>" + item.itemAssetName + "</span></td>" +
                     "<td>" + item.itemQtyReceived + "</span></td>" +
@@ -104,6 +106,8 @@ var receiptItemTab = function () {
         item['itemQtyReceived'] = $('#itemQtyReceived').val();
         item['itemUnitPrice'] = $('#itemUnitPrice').val();
         item['itemDescription'] = $('#itemDescription').val();
+        item['poItemId'] = $('#poItemId').val();
+        item['poItemName'] = $('#poItemName').val();
         item['version'] = $('#itemVersion').val();
         items.push(item)
     };
@@ -131,6 +135,8 @@ var receiptItemTab = function () {
     	item['itemUnitPrice'] = CustomComponents.nullValueReplace($("#itemUnitPrice").val());
     	item['itemDescription'] = CustomComponents.nullValueReplace($("#itemDescription").val());
     	item['description'] = CustomComponents.nullValueReplace($("#description").val());
+    	item['poItemId'] = CustomComponents.nullValueReplace($("#poItemId").val());
+    	item['poItemName'] = CustomComponents.nullValueReplace($("#poItemName").val());
     	item['version'] = CustomComponents.nullValueReplace($("#itemVersion").val());
     	item['itemIndex'] = CustomComponents.nullValueReplace($("#itemIndex").val());
     };
@@ -197,6 +203,8 @@ var receiptItemTab = function () {
         $('#itemQtyReceived').val(item['itemQtyReceived']);
         $('#itemUnitPrice').val(item['itemUnitPrice']);
         $('#itemDescription').val(item['itemDescription']);
+        $('#poItemId').val(item['poItemId']);
+        $('#poItemName').val(item['poItemName']);
         $('#itemVersion').val(item['version']);
     };
 

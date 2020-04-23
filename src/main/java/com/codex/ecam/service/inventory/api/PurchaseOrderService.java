@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
@@ -20,7 +21,7 @@ public interface PurchaseOrderService {
 
 	PurchaseOrderDTO findById(Integer id) throws Exception;
 	
-	PurchaseOrderDTO statusChange(Integer id,PurchaseOrderStatus status);
+	PurchaseOrderResult statusChange(Integer id,PurchaseOrderStatus status);
 	
 	PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds);
 	
@@ -37,7 +38,10 @@ public interface PurchaseOrderService {
 	String purchaseOrderFileUpload(MultipartFile fileData, String refId);
 
 	void purchaseOrderFileDelete(Integer id);
+	
     MRNResult generatePoFromMrn(String ids, Integer mrnId);
+    
+    DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input);
 
 
 }

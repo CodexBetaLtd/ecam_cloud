@@ -138,7 +138,64 @@ public class PurchaseOrderItemMapper extends GenericMapper<PurchaseOrderItem, Pu
 
     @Override
     public PurchaseOrderItemDTO domainToDtoForDataTable(PurchaseOrderItem domain) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+		PurchaseOrderItemDTO dto = new PurchaseOrderItemDTO();
+	 	
+	 	dto.setItemId(domain.getId());
+	 	
+ 	
+	 	if ( domain.getAsset() != null ) {
+	 		dto.setItemAssetId(domain.getAsset().getId());
+	 		dto.setItemAssetName(domain.getAsset().getName());
+	 	}
+
+	 	
+	 	if ( domain.getParentPurchaseOrderItem() != null ) {
+	 		dto.setItemParentId(domain.getParentPurchaseOrderItem().getId());
+	 	}
+	 	
+	 	if ( domain.getPurchaseOrder() != null ) {
+	 		dto.setItemPurchaseOrderId(domain.getPurchaseOrder().getId());
+	 	}
+	 	
+	 	if ( domain.getRequestedByUser() != null ) {
+	 		dto.setItemRequestedByUserId(domain.getRequestedByUser().getId());
+	 	}
+	 	
+	 	if ( domain.getSite() != null ) {
+	 		dto.setItemSiteId(domain.getSite().getId());
+	 		dto.setItemSiteName(domain.getSite().getName());
+	 	}
+	 	
+
+	 	
+	 	if ( domain.getStockHistory() != null ) {
+	 		dto.setItemStockHistoryId(domain.getStockHistory().getId());
+	 	}
+	 	
+	 	if ( domain.getStock() != null ) {
+	 		dto.setItemStockId(domain.getStock().getId());
+	 	}
+	 	
+	 	if ( domain.getSupplier() != null ) {
+	 		dto.setItemSupplierId(domain.getSupplier().getId());
+	 	}
+
+        if (domain.getPurchaseOrder() != null) {
+            dto.setPurchaseOrderId(domain.getPurchaseOrder().getId());
+            dto.setPurchaseOrderCode(domain.getPurchaseOrder().getCode());
+        }
+
+		dto.setItemDescription(domain.getDescription());
+
+		dto.setItemTotalPrice(domain.getTotalPrice());
+		dto.setItemUnitPrice(domain.getUnitPrice());
+		dto.setItemQtyOnOrder(domain.getQtyOnOrder());
+
+		dto.setItemRequiredByDate(domain.getRequiredByDate());
+		
+		dto.setVersion(domain.getVersion());
+		dto.setIsDeleted(domain.getIsDeleted());
+		
+		return dto;
     }
 }

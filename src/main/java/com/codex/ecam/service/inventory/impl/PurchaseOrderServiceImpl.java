@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,6 @@ import com.codex.ecam.constants.PurchaseOrderAdditionalCostType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.ShippingType;
-import com.codex.ecam.constants.inventory.AODStatus;
-import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.dao.admin.AccountDao;
 import com.codex.ecam.dao.admin.ChargeDepartmentDao;
 import com.codex.ecam.dao.admin.CountryDao;
@@ -37,10 +34,9 @@ import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.inventory.MRNDao;
 import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderDao;
+import com.codex.ecam.dao.inventory.PurchaseOrderItemDao;
 import com.codex.ecam.dao.inventory.RFQItemDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
-import com.codex.ecam.dto.inventory.aod.AODDTO;
-import com.codex.ecam.dto.inventory.aod.AODItemDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderAdditionalCostDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDiscussionDTO;
@@ -50,6 +46,7 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderNotificationDTO;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderFileMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderMapper;
+import com.codex.ecam.mappers.purchasing.PurchaseOrderRFQMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
@@ -62,7 +59,6 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderNotification;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
@@ -99,20 +95,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	private WorkOrderDao workOrderDao;
 
 	@Autowired
-    private VelocityEmailSender velocityEmailService;
+	private VelocityEmailSender velocityEmailService;
 
-    @Autowired
-    private RFQItemDao rfqItemDao;
+	@Autowired
+	private RFQItemDao rfqItemDao;
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private MRNItemDao mrnItemDao;
-	
+
 	@Autowired
 	private MRNDao mrnDao;
-	
+
+	@Autowired
+	private PurchaseOrderItemDao poItemDao;
+
 	@Autowired
 	Environment environment;
 
@@ -122,13 +121,44 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = purchaseOrderDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-            Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-            domainOut = purchaseOrderDao.findAll(input, specification);
-        } else {
-            Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-            domainOut = purchaseOrderDao.findAll(input, specification);
-        }
-		DataTablesOutput<PurchaseOrderDTO> out = PurchaseOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+			Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
+			domainOut = purchaseOrderDao.findAll(input, specification);
+		} else {
+			Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
+					AuthenticationUtil.getLoginSite().getSite());
+			domainOut = purchaseOrderDao.findAll(input, specification);
+		}
+		DataTablesOutput<PurchaseOrderDTO> out = PurchaseOrderMapper.getInstance()
+				.domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+
+	public DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input) {
+		DataTablesOutput<PurchaseOrderItem> domainOut;
+		Specification<PurchaseOrderItem> specification;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			specification = (root, query, cb) -> cb.equal(root.get("purchaseOrder").get("purchaseOrderStatus"),
+					PurchaseOrderStatus.APPROVED);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("purchaseOrder").get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("purchaseOrder").get("purchaseOrderStatus"), PurchaseOrderStatus.APPROVED));
+		} else {
+			specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("purchaseOrder").get("site"), AuthenticationUtil.getLoginSite().getSite()),
+					cb.equal(root.get("purchaseOrder").get("purchaseOrderStatus"), PurchaseOrderStatus.APPROVED));
+
+		}
+		domainOut = poItemDao.findAll(input, specification);
+
+		DataTablesOutput<PurchaseOrderItemDTO> out = null;
+		try {
+			out = PurchaseOrderItemMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return out;
 	}
 
@@ -149,9 +179,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		try {
 			PurchaseOrder domain = purchaseOrderDao.findOne(dto.getId());
 			result.setDomainEntity(domain);
-            saveOrUpdate(result);
-            result.addToMessageList("Purchase Order Updated Successfully.");
-        } catch (Exception e) {
+			saveOrUpdate(result);
+			result.addToMessageList("Purchase Order Updated Successfully.");
+		} catch (Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 		}
@@ -211,143 +241,148 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 		List<PurchaseOrderItem> items = new ArrayList<>();
 
-        if ((result.getDtoEntity().getItems() != null) && (result.getDtoEntity().getItems().size() > 0)) {
+		if ((result.getDtoEntity().getItems() != null) && (result.getDtoEntity().getItems().size() > 0)) {
 
 			List<PurchaseOrderItem> currentItems = result.getDomainEntity().getPurchaseOrderItems();
 
-            for (PurchaseOrderItemDTO itemDTO : result.getDtoEntity().getItems()) {
+			for (PurchaseOrderItemDTO itemDTO : result.getDtoEntity().getItems()) {
 
-                PurchaseOrderItem item;
+				PurchaseOrderItem item;
 
-                if ((currentItems != null) && (currentItems.size() > 0)) {
-                    Optional<PurchaseOrderItem> optionalItem = currentItems.stream().filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
-                    if ( optionalItem.isPresent() ) {
+				if ((currentItems != null) && (currentItems.size() > 0)) {
+					Optional<PurchaseOrderItem> optionalItem = currentItems.stream()
+							.filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
+					if (optionalItem.isPresent()) {
 						item = optionalItem.get();
 					} else {
 						item = new PurchaseOrderItem();
 					}
 				} else {
 					item = new PurchaseOrderItem();
-                }
-                createPurchaseOrderItem(itemDTO, item, result.getDomainEntity());
-                items.add(item);
+				}
+				createPurchaseOrderItem(itemDTO, item, result.getDomainEntity());
+				items.add(item);
 			}
-        }
-        result.getDomainEntity().setPurchaseOrderItems(items);
+		}
+		result.getDomainEntity().setPurchaseOrderItems(items);
 
 	}
 
-	private void createPurchaseOrderItem(PurchaseOrderItemDTO dto, PurchaseOrderItem domain, PurchaseOrder purchaseOrder) throws Exception {
+	private void createPurchaseOrderItem(PurchaseOrderItemDTO dto, PurchaseOrderItem domain,
+			PurchaseOrder purchaseOrder) throws Exception {
 		PurchaseOrderItemMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setPurchaseOrder(purchaseOrder);
 		domain.setSupplier(purchaseOrder.getSupplier());
 
-        if ((dto.getItemAssetId() != null) && (dto.getItemAssetId() > 0)) {
-            domain.setAsset(assetDao.findOne(dto.getItemAssetId()));
-        }
+		if ((dto.getItemAssetId() != null) && (dto.getItemAssetId() > 0)) {
+			domain.setAsset(assetDao.findOne(dto.getItemAssetId()));
+		}
 
-        if ((dto.getItemAccountId() != null) && (dto.getItemAccountId() > 0)) {
-            domain.setAccount(accountDao.findOne(dto.getItemAccountId()));
-        }
+		if ((dto.getItemAccountId() != null) && (dto.getItemAccountId() > 0)) {
+			domain.setAccount(accountDao.findOne(dto.getItemAccountId()));
+		}
 
-        if ((dto.getItemChargeDepartmentId() != null) && (dto.getItemChargeDepartmentId() > 0)) {
-            domain.setChargeDepartment(chargeDepartmentDao.findOne(dto.getItemChargeDepartmentId()));
-        }
+		if ((dto.getItemChargeDepartmentId() != null) && (dto.getItemChargeDepartmentId() > 0)) {
+			domain.setChargeDepartment(chargeDepartmentDao.findOne(dto.getItemChargeDepartmentId()));
+		}
 
-        if ((dto.getItemSiteId() != null) && (dto.getItemSiteId() > 0)) {
-            domain.setSite(assetDao.findOne(dto.getItemSiteId()));
-        }
+		if ((dto.getItemSiteId() != null) && (dto.getItemSiteId() > 0)) {
+			domain.setSite(assetDao.findOne(dto.getItemSiteId()));
+		}
 
-        if ((dto.getItemSourceWorkOrderId() != null) && (dto.getItemSourceWorkOrderId() > 0)) {
-            domain.setSourceWorkOrder(workOrderDao.findOne(dto.getItemSourceWorkOrderId()));
-        }
+		if ((dto.getItemSourceWorkOrderId() != null) && (dto.getItemSourceWorkOrderId() > 0)) {
+			domain.setSourceWorkOrder(workOrderDao.findOne(dto.getItemSourceWorkOrderId()));
+		}
 
-        if ((dto.getItemSourceAssetId() != null) && (dto.getItemSourceAssetId() > 0)) {
-            domain.setSourceAsset(assetDao.findOne(dto.getItemSourceAssetId()));
-        }
+		if ((dto.getItemSourceAssetId() != null) && (dto.getItemSourceAssetId() > 0)) {
+			domain.setSourceAsset(assetDao.findOne(dto.getItemSourceAssetId()));
+		}
 
-        if ((dto.getItemRfqItemId() != null) && (dto.getItemRfqItemId() > 0)) {
-            RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
+		if ((dto.getItemRfqItemId() != null) && (dto.getItemRfqItemId() > 0)) {
+			RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
 
 			PurchaseOrderItemRFQItem item = new PurchaseOrderItemRFQItem();
 			item.setPurchaseOrderItem(domain);
 			item.setRfqItem(rfqItem);
 			item.setIsDeleted(false);
 
-            domain.getRfqItems().add(item);
-        }
+			domain.getRfqItems().add(item);
+		}
 
-    }
+	}
 
 	private void setBusiness(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
-            result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
+		}
 	}
 
 	private void setSite(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
-            result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
+		}
 	}
 
 	private void setPurchaseOrderCurrency(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getPurchaseCurrencyId() != null)) {
-            result.getDomainEntity().setPurchaseCurrency(currencyDao.findOne(result.getDtoEntity().getPurchaseCurrencyId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getPurchaseCurrencyId() != null)) {
+			result.getDomainEntity()
+					.setPurchaseCurrency(currencyDao.findOne(result.getDtoEntity().getPurchaseCurrencyId()));
+		}
 	}
 
 	private void setSupplierBusiness(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierId() != null)) {
-            result.getDomainEntity().setSupplier(businessDao.findOne(result.getDtoEntity().getSupplierId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierId() != null)) {
+			result.getDomainEntity().setSupplier(businessDao.findOne(result.getDtoEntity().getSupplierId()));
+		}
 	}
 
 	private void setSupplierCountry(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierCountry() != null)) {
-            result.getDomainEntity().setSupplierCountry(countryDao.findOne(result.getDtoEntity().getSupplierCountry()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierCountry() != null)) {
+			result.getDomainEntity().setSupplierCountry(countryDao.findOne(result.getDtoEntity().getSupplierCountry()));
+		}
 	}
 
 	private void setShipToFacility(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToId() != null)) {
-            result.getDomainEntity().setShipToFacility(assetDao.findOne(result.getDtoEntity().getShipToId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToId() != null)) {
+			result.getDomainEntity().setShipToFacility(assetDao.findOne(result.getDtoEntity().getShipToId()));
+		}
 	}
 
 	private void setShipToCountry(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToCountry() != null)) {
-            result.getDomainEntity().setShipToCountry(countryDao.findOne(result.getDtoEntity().getShipToCountry()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToCountry() != null)) {
+			result.getDomainEntity().setShipToCountry(countryDao.findOne(result.getDtoEntity().getShipToCountry()));
+		}
 	}
 
 	private void setBillToFacility(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToId() != null)) {
-            result.getDomainEntity().setBillToFaciltiy(assetDao.findOne(result.getDtoEntity().getBillToId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToId() != null)) {
+			result.getDomainEntity().setBillToFaciltiy(assetDao.findOne(result.getDtoEntity().getBillToId()));
+		}
 	}
 
 	private void setBillToCountry(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToCountry() != null)) {
-            result.getDomainEntity().setBillCountry(countryDao.findOne(result.getDtoEntity().getBillToCountry()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToCountry() != null)) {
+			result.getDomainEntity().setBillCountry(countryDao.findOne(result.getDtoEntity().getBillToCountry()));
+		}
 	}
 
 	private void setAccount(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAccountId() != null)) {
-            result.getDomainEntity().setAccount(accountDao.findOne(result.getDtoEntity().getAccountId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAccountId() != null)) {
+			result.getDomainEntity().setAccount(accountDao.findOne(result.getDtoEntity().getAccountId()));
+		}
 	}
 
 	private void setChargeDepartment(PurchaseOrderResult result) {
-        if ((result.getDtoEntity() != null) && (result.getDtoEntity().getChargeDepartmentId() != null)) {
-            result.getDomainEntity().setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
-        }
+		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getChargeDepartmentId() != null)) {
+			result.getDomainEntity()
+					.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
+		}
 	}
 
 	private void setAdditionalCost(PurchaseOrderResult result) {
 		List<PurchaseOrderAdditionalCost> purchaseOrderAdditionalCosts = new ArrayList<PurchaseOrderAdditionalCost>();
-		for (PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO : result.getDtoEntity().getAdditionalCostDTOs()) {
+		for (PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO : result.getDtoEntity()
+				.getAdditionalCostDTOs()) {
 
 			PurchaseOrderAdditionalCost purchaseOrderAdditionalCost;
 
@@ -364,11 +399,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				purchaseOrderAdditionalCost = new PurchaseOrderAdditionalCost();
 			}
 			purchaseOrderAdditionalCost.setDescription(purchaseOrderAdditionalCostDTO.getAdditionalCostName());
-            purchaseOrderAdditionalCost.setIsOverridePoItemTax(purchaseOrderAdditionalCostDTO.getIsOverridePoItemTax());
-            purchaseOrderAdditionalCost.setPrice(purchaseOrderAdditionalCostDTO.getAmount());
-            purchaseOrderAdditionalCost.setTaxRate(purchaseOrderAdditionalCostDTO.getTaxRate());
-            purchaseOrderAdditionalCost.setPurchaseOrder(result.getDomainEntity());
-			purchaseOrderAdditionalCost.setPurchaseOrderAdditionalCostType(setAdditionalCostType(purchaseOrderAdditionalCostDTO));
+			purchaseOrderAdditionalCost.setIsOverridePoItemTax(purchaseOrderAdditionalCostDTO.getIsOverridePoItemTax());
+			purchaseOrderAdditionalCost.setPrice(purchaseOrderAdditionalCostDTO.getAmount());
+			purchaseOrderAdditionalCost.setTaxRate(purchaseOrderAdditionalCostDTO.getTaxRate());
+			purchaseOrderAdditionalCost.setPurchaseOrder(result.getDomainEntity());
+			purchaseOrderAdditionalCost
+					.setPurchaseOrderAdditionalCostType(setAdditionalCostType(purchaseOrderAdditionalCostDTO));
 			purchaseOrderAdditionalCost.setShippingType(setShippingType(purchaseOrderAdditionalCostDTO));
 			purchaseOrderAdditionalCost.setIsDeleted(false);
 			purchaseOrderAdditionalCosts.add(purchaseOrderAdditionalCost);
@@ -378,31 +414,33 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		result.getDomainEntity().setPurchaseOrderAdditionalCosts(purchaseOrderAdditionalCosts);
 	}
 
-
-	protected PurchaseOrderAdditionalCostType setAdditionalCostType(PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO) {
-		for(PurchaseOrderAdditionalCostType additionalCostType:PurchaseOrderAdditionalCostType.getAdditionalCostTypeList()){
+	protected PurchaseOrderAdditionalCostType setAdditionalCostType(
+			PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO) {
+		for (PurchaseOrderAdditionalCostType additionalCostType : PurchaseOrderAdditionalCostType
+				.getAdditionalCostTypeList()) {
 			if (purchaseOrderAdditionalCostDTO.getAdditionalCostTypeId() == additionalCostType.getId()) {
 				return additionalCostType;
 			}
 		}
 		return null;
 
-    }
+	}
 
 	protected ShippingType setShippingType(PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO) {
-		for(ShippingType shippingType:ShippingType.getShippingTypeList()){
-			if(purchaseOrderAdditionalCostDTO.getShippingTypeId()==shippingType.getId()){
+		for (ShippingType shippingType : ShippingType.getShippingTypeList()) {
+			if (purchaseOrderAdditionalCostDTO.getShippingTypeId() == shippingType.getId()) {
 				return shippingType;
 			}
 		}
 		return null;
 
-    }
+	}
 
 	private void setPurchaseOrderFiles(PurchaseOrderResult result) throws Exception {
 		List<PurchaseOrderFile> purchaseOrderFiles = new ArrayList<PurchaseOrderFile>();
 
-		if ( (result.getDtoEntity().getPurchaseOrderFileDTOs() != null) && (result.getDtoEntity().getPurchaseOrderFileDTOs().size() > 0) ) {
+		if ((result.getDtoEntity().getPurchaseOrderFileDTOs() != null)
+				&& (result.getDtoEntity().getPurchaseOrderFileDTOs().size() > 0)) {
 
 			List<PurchaseOrderFile> currentPurchaseOrderFiles = result.getDomainEntity().getPurchaseOrderFiles();
 
@@ -410,7 +448,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				PurchaseOrderFile purchaseOrderFile;
 
 				if (purchaseOrderFileDTO.getId() != null) {
-					purchaseOrderFile = currentPurchaseOrderFiles.stream().filter((x) -> x.getId().equals(purchaseOrderFileDTO.getId())).findAny().orElseGet(PurchaseOrderFile :: new);
+					purchaseOrderFile = currentPurchaseOrderFiles.stream()
+							.filter((x) -> x.getId().equals(purchaseOrderFileDTO.getId())).findAny()
+							.orElseGet(PurchaseOrderFile::new);
 				} else {
 					purchaseOrderFile = new PurchaseOrderFile();
 				}
@@ -423,12 +463,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		}
 		result.getDomainEntity().setPurchaseOrderFiles(purchaseOrderFiles);
 	}
-    private void setDiscussion(PurchaseOrderResult result) {
-        List<PurchaseOrderDiscussion> purchaseOrderDiscussions = new ArrayList<PurchaseOrderDiscussion>();
+
+	private void setDiscussion(PurchaseOrderResult result) {
+		List<PurchaseOrderDiscussion> purchaseOrderDiscussions = new ArrayList<PurchaseOrderDiscussion>();
 		for (PurchaseOrderDiscussionDTO purchaseOrderDiscussionDTO : result.getDtoEntity().getDiscussionDTOs()) {
 			PurchaseOrderDiscussion purchaseOrderDiscussion;
 			if (purchaseOrderDiscussionDTO.getId() != null) {
-				Optional<PurchaseOrderDiscussion> optionalPurchaseOrderDiscussions = result.getDomainEntity().getPurchaseOrderDiscussions().stream()
+				Optional<PurchaseOrderDiscussion> optionalPurchaseOrderDiscussions = result.getDomainEntity()
+						.getPurchaseOrderDiscussions().stream()
 						.filter((x) -> x.getId() == purchaseOrderDiscussionDTO.getId()).findAny();
 				if (optionalPurchaseOrderDiscussions.isPresent()) {
 					purchaseOrderDiscussion = optionalPurchaseOrderDiscussions.get();
@@ -451,7 +493,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		List<PurchaseOrderNotification> poNotificationList = new ArrayList<>();
 		for (PurchaseOrderNotificationDTO notificationDTO : result.getDtoEntity().getNotificationDTOs()) {
 			PurchaseOrderNotification notification = new PurchaseOrderNotification();
-			notification.setUser(notificationDTO.getUserId() != null ? userDao.findOne(notificationDTO.getUserId()) : null);
+			notification
+					.setUser(notificationDTO.getUserId() != null ? userDao.findOne(notificationDTO.getUserId()) : null);
 			notification.setNotifyOnAssignment(notificationDTO.getNotifyOnAssignment());
 			notification.setNotifyOnStatusChange(notificationDTO.getNotifyOnStatusChange());
 			notification.setNotifyOnCompletion(notificationDTO.getNotifyOnCompletion());
@@ -467,15 +510,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		}
 
 	}
-
-
-
-
-
-
-
-
-
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
@@ -494,27 +528,29 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	@Override
-	public PurchaseOrderDTO statusChange(Integer id,PurchaseOrderStatus status) {
+	public PurchaseOrderResult statusChange(Integer id, PurchaseOrderStatus status) {
 
-        PurchaseOrderDTO purchaseOrderDTO;
-        try {
+		PurchaseOrderResult orderResult = new PurchaseOrderResult(null, null);
+		try {
+			PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
 			purchaseOrderDTO = findById(id);
-//			PurchaseOrderStatus preStaus=purchaseOrderDTO.getPurchaseOrderstatus();
+			// PurchaseOrderStatus
+			// preStaus=purchaseOrderDTO.getPurchaseOrderstatus();
 			purchaseOrderDTO.setPurchaseOrderstatus(status);
-//			PurchaseOrderStatus currentStatus=purchaseOrderDTO.getPurchaseOrderstatus();
-			update(purchaseOrderDTO);
-			//sendstatusEmail(preStaus,currentStatus);
+			// PurchaseOrderStatus
+			// currentStatus=purchaseOrderDTO.getPurchaseOrderstatus();
+			orderResult = update(purchaseOrderDTO);
+			// sendstatusEmail(preStaus,currentStatus);
 
-            return purchaseOrderDTO;
-        } catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return orderResult;
 
-    }
+	}
 
-    public void sendstatusEmail(PurchaseOrderStatus prestatus, PurchaseOrderStatus poststatus) {
-        VelocityMail velocityMail = new VelocityMail();
+	public void sendstatusEmail(PurchaseOrderStatus prestatus, PurchaseOrderStatus poststatus) {
+		VelocityMail velocityMail = new VelocityMail();
 		velocityMail.getModel().put("user", "wasantha");
 		velocityMail.getModel().put("priviouspurchaseOrderstatus", prestatus.getName());
 		velocityMail.getModel().put("currentpurchaseOrderstatus", poststatus.getName());
@@ -524,19 +560,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		velocityEmailService.sendEmail(velocityMail);
 	}
 
-    @Override
-    public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds) {
+	@Override
+	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds) {
 		String[] ids = rfqItemIds.split(",");
-        //		List<Integer> list = Arrays.asList(ids).stream().mapToInt(Integer::parseInt).collect(Collectors.toList());
-        List<Integer> list = Arrays.asList(ids).stream().map(Integer::parseInt).collect(Collectors.toList());
-        return generatePurchaseOrderFromRFQItems(list);
+		// List<Integer> list =
+		// Arrays.asList(ids).stream().mapToInt(Integer::parseInt).collect(Collectors.toList());
+		List<Integer> list = Arrays.asList(ids).stream().map(Integer::parseInt).collect(Collectors.toList());
+		return generatePurchaseOrderFromRFQItems(list);
 	}
 
 	@Override
 	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds) {
 		return generatePurchaseOrderFromRFQItems(rfqItemIds);
 	}
-
 
 	protected PurchaseOrderDTO generatePurchaseOrderFromRFQItems(List<Integer> rfqItemIds) {
 		PurchaseOrderDTO dto = new PurchaseOrderDTO();
@@ -549,9 +585,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			item.setItemAssetName(rfqItem.getAsset().getName());
 			item.setItemRfqItemId(rfqItem.getId());
 			item.setItemRfqCodes(rfqItem.getRfq().getCode());
-			item.setItemQtyOnOrder(rfqItem.getQuoted());
+			item.setItemQtyOnOrder(rfqItem.getRequested());
 			item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit());
 			items.add(item);
+			try {
+				dto = PurchaseOrderRFQMapper.getInstance().domainToDto(rfqItem.getRfq());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		dto.setItems(items);
 		return dto;
@@ -564,7 +607,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			PurchaseOrderFile file = purchaseOrderDao.findByFileId(id);
 			String externalFilePath = uploadLocation + file.getFileLocation();
 			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
-		}		
+		}
 	}
 
 	@Override
@@ -581,101 +624,88 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public void purchaseOrderFileDelete(Integer id) {
-         
+
 		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 
 		PurchaseOrderFile pofile = purchaseOrderDao.findByFileId(id);
 		String externalFilePath = uploadLocation + pofile.getFileLocation();
 		File file = new File(externalFilePath);
-        if(file.delete()) 
-        { 
-            System.out.println("File deleted successfully"); 
-        } 
-        else
-        { 
-            System.out.println("Failed to delete the file"); 
-        } 
+		if (file.delete()) {
+			System.out.println("File deleted successfully");
+		} else {
+			System.out.println("Failed to delete the file");
+		}
 	}
 
 	@Override
 	public MRNResult generatePoFromMrn(String idStr, Integer mrnId) {
-		MRNResult result=new MRNResult(null, null);
-		MRN mrn =mrnDao.findOne(mrnId);
-		PurchaseOrderDTO purchaseOrderDTO=new PurchaseOrderDTO();
+		MRNResult result = new MRNResult(null, null);
+		MRN mrn = mrnDao.findOne(mrnId);
+		PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
 		purchaseOrderDTO.setPurchaseOrderstatus(PurchaseOrderStatus.DRAFT);
 		purchaseOrderDTO.setCode("");
 		purchaseOrderDTO.setIsDeleted(Boolean.FALSE);
-		if(mrn!=null && mrn.getBusiness()!=null){
+		if (mrn != null && mrn.getBusiness() != null) {
 			purchaseOrderDTO.setBusinessId(mrn.getBusiness().getId());
 		}
-		if(mrn!=null && mrn.getSite()!=null){
+		if (mrn != null && mrn.getSite() != null) {
 			purchaseOrderDTO.setSiteId(mrn.getSite().getId());
 		}
 
-		List<PurchaseOrderItemDTO> purchaseOrderItemDTOs=new ArrayList<>();
-		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		List<PurchaseOrderItemDTO> purchaseOrderItemDTOs = new ArrayList<>();
+		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt)
+				.collect(Collectors.toList());
 		for (Integer id : ids) {
-			MRNItem item=mrnItemDao.findOne(id);
-			PurchaseOrderItemDTO itemDTO=new PurchaseOrderItemDTO();
+			MRNItem item = mrnItemDao.findOne(id);
+			PurchaseOrderItemDTO itemDTO = new PurchaseOrderItemDTO();
 			itemDTO.setItemQtyOnOrder(item.getApprovedQuantity().intValue());
 			itemDTO.setItemAssetId(item.getPart().getId());
 			purchaseOrderItemDTOs.add(itemDTO);
 		}
 		purchaseOrderDTO.setItems(purchaseOrderItemDTOs);
-		
 
-		  try {
-			PurchaseOrderResult purchaseOrderResult=save(purchaseOrderDTO);
+		try {
+			PurchaseOrderResult purchaseOrderResult = save(purchaseOrderDTO);
 			result.setStatus(ResultStatus.SUCCESS);
-			//result.addToMessageList(getApprovesPoForItem(mrn.)"Successfully Generated the PO as ");
+			result.addToMessageList("Successfully Generated PO  ");
 			result.addToMessageList(purchaseOrderResult.getDomainEntity().getId().toString());
-			result.addToMessageList(purchaseOrderResult.getDomainEntity().getCode());
+			result.addToMessageList("Link TO PO");
 
 		} catch (Exception e) {
-		e.printStackTrace();
+			e.printStackTrace();
 			result.setStatus(ResultStatus.ERROR);
 			result.addToErrorList("Error while PO generate");
 		}
 		return result;
 	}
 
-
-private String getApprovesPoForItem(MRNItem mrnItem){
-	String poList="";
-	List<PurchaseOrderItem> items=purchaseOrderDao.findItemOrderBeforeDate(mrnItem.getMrn().getDate(),mrnItem.getPart().getId());
-	if(items !=null && items.size()>0){
-		poList=poList+"Po already generated ";
-		for(PurchaseOrderItem item:items){
-			poList=poList+" "+item.getPurchaseOrder().getCode();
+	private String getApprovesPoForItem(MRNItem mrnItem) {
+		String poList = "";
+		List<PurchaseOrderItem> items = purchaseOrderDao.findItemOrderBeforeDate(mrnItem.getMrn().getDate(),
+				mrnItem.getPart().getId());
+		if (items != null && items.size() > 0) {
+			poList = poList + "Po already generated ";
+			for (PurchaseOrderItem item : items) {
+				poList = poList + " " + item.getPurchaseOrder().getCode();
+			}
 		}
+		return poList;
 	}
-	return poList;
-}
 
-
-
-	/*@Override
-	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds) {
-		PurchaseOrderDTO dto = new PurchaseOrderDTO();
-		List<PurchaseOrderItemDTO> items = new ArrayList<>();
-		String[] ids = rfqItemIds.split(",");
-		PurchaseOrderItemDTO item;
-		for ( String id : ids ) {
-			item = new PurchaseOrderItemDTO();
-			RFQItem rfqItem = rfqItemDao.findOne(Integer.parseInt(id));
-			item.setItemAssetId(rfqItem.getAsset().getId());
-			item.setItemAssetName(rfqItem.getAsset().getName());
-			item.setItemRfqItemId(rfqItem.getId());
-			item.setItemRfqCodes(rfqItem.getRfq().getCode());
-			item.setItemQtyOnOrder(rfqItem.getQuoted());
-			item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit());
-			items.add(item);
-		}
-		dto.setItems(items);
-		return dto;
-	}*/
-
-
-
+	/*
+	 * @Override public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String
+	 * rfqItemIds) { PurchaseOrderDTO dto = new PurchaseOrderDTO();
+	 * List<PurchaseOrderItemDTO> items = new ArrayList<>(); String[] ids =
+	 * rfqItemIds.split(","); PurchaseOrderItemDTO item; for ( String id : ids )
+	 * { item = new PurchaseOrderItemDTO(); RFQItem rfqItem =
+	 * rfqItemDao.findOne(Integer.parseInt(id));
+	 * item.setItemAssetId(rfqItem.getAsset().getId());
+	 * item.setItemAssetName(rfqItem.getAsset().getName());
+	 * item.setItemRfqItemId(rfqItem.getId());
+	 * item.setItemRfqCodes(rfqItem.getRfq().getCode());
+	 * item.setItemQtyOnOrder(rfqItem.getQuoted());
+	 * item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit()); items.add(item);
+	 * } dto.setItems(items); return dto; }
+	 */
 
 }

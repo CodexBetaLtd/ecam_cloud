@@ -1,8 +1,11 @@
 package com.codex.ecam.service.inventory.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,26 +17,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.AODItemDao;
+import com.codex.ecam.dao.inventory.PurchaseOrderItemDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
+import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
 import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.inventory.StockHistoryDao;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderItemDTO;
 import com.codex.ecam.exception.inventory.stock.StockException;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
 import com.codex.ecam.model.inventory.stock.StockHistory;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
 import com.codex.ecam.service.inventory.api.StockService;
@@ -46,6 +57,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Autowired
 	private ReceiptOrderDao receiptOrderDao;
+	
+	@Autowired
+	private PurchaseOrderItemDao purchaseOrderItemDao;
 
 	@Autowired
 	private AssetDao assetDao;
@@ -190,7 +204,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		if ( (dto.getItemStockId() != null) && (dto.getItemStockId() > 0) ) {
 			domain.setStock(stockDao.findOne(dto.getItemStockId()));
 		}
-		
+		if((dto.getPoItemId() != null) && (dto.getPoItemId() > 0)){
+			domain.setPurchaseOrderItem(purchaseOrderItemDao.findOne(dto.getPoItemId()));
+		}
 		if((dto.getIssueNoteitemId() != null) && (dto.getIssueNoteitemId() > 0)){
 			domain.setIssueNoteItem(aodItemDao.findOne(dto.getIssueNoteitemId()));
 		}
@@ -328,6 +344,33 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		}
 		DataTablesOutput<ReceiptOrderDTO> out = ReceiptOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
+	}
+
+	@Override
+	public ReceiptOrderResult generateGrnFromPo(String idStr, Integer poId) {
+		
+		ReceiptOrderResult result=new ReceiptOrderResult(null, null);
+		ReceiptOrder receiptOrder =receiptOrderDao.findOne(poId);
+		ReceiptOrderDTO receiptOrderDTO=new ReceiptOrderDTO();
+		receiptOrderDTO.setReceiptOrderStatus(ReceiptOrderStatus.DRAFT);
+		receiptOrderDTO.setCode("");
+		receiptOrderDTO.setIsDeleted(Boolean.FALSE);
+		if(receiptOrder!=null && receiptOrder.getBusiness()!=null){
+			receiptOrderDTO.setBusinessId(receiptOrder.getBusiness().getId());
+		}
+		if(receiptOrder!=null && receiptOrder.getSite()!=null){
+			//receiptOrderDTO.setS(receiptOrder.getSite().getId());
+		}
+
+		List<ReceiptOrderItemDTO> receiptOrderItemDTOs=new ArrayList<>();
+/*		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		for (Integer id : ids) {
+			PurchaseOrderItem item=purchaseOrderItemDao.findOne(id);
+			ReceiptOrderItemDTO itemDTO=new ReceiptOrderItemDTO();
+				receiptOrderItemDTOs.add(itemDTO);
+		}*/
+		receiptOrderDTO.setItems(receiptOrderItemDTOs);		
+		return null;
 	}
 
 

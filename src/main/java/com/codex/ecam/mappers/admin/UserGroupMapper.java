@@ -8,6 +8,7 @@ import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.PagePermission;
 import com.codex.ecam.constants.SubMenu;
 import com.codex.ecam.constants.Widgets;
+import com.codex.ecam.dto.admin.PermisonTreeDTO;
 import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.admin.UserGroup;
@@ -50,7 +51,31 @@ public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
 	public UserGroupDTO domainToDtoWithPermission(UserGroup domain) throws Exception {
 
 		UserGroupDTO dto = domainToDto(domain);
-
+		List<String> p=new ArrayList<>();
+		int i=0;
+		for (Menu menu : Menu.getMenus()) {
+			int k=0;
+			for(SubMenu subMenu:SubMenu.getSubMenuByMenu(menu)){
+				int j=0;
+				for(Page page:Page.findPageBySubMenu(subMenu)){
+					int n=0;
+					for(PagePermission pagePermission:PagePermission.getPagePermissionsByPage(page)){
+					for(UserGroupPage groupPage:domain.getPageList()){
+						for(UserGroupPagePermission userGroupPagePermission:groupPage.getPermissionList()){
+						if(userGroupPagePermission.getPagePermission().equals(pagePermission)){
+							p.add(i+"-"+k+"-"+j+"-"+n);
+						}
+						}
+					}
+						n++;
+					}
+					j++;
+				}
+				k++;
+			}
+			i++;
+		}
+		dto.setPermissionList(p);
 		if ((domain.getMenuList() != null) && (domain.getMenuList().size() > 0)) {
 			List<Menu> topMenus = new ArrayList<Menu>();
 			List<SubMenu> subMenus = new ArrayList<SubMenu>();

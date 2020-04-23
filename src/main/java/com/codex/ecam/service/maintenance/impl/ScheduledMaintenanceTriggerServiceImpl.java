@@ -150,6 +150,7 @@ public class ScheduledMaintenanceTriggerServiceImpl implements ScheduledMaintena
 	public WorkOrder createWorkOrderFromTrigger(ScheduledMaintenanceTrigger smt) throws Exception {
 
 		WorkOrder wo = ScheduledMaintenanceTriggerToWorkOrderMapper.getInstance().createWorkOrderFromTrigger(smt);
+		wo.setCode("123");
 
 		if ( smt.getTriggerType().equals( SMTriggerType.TIME_TRIGGER )) {
 			scheduledService.setNextCalendarEvent(smt, smt.getTtNextCalenderEvent().getScheduledDate());

@@ -563,7 +563,7 @@ public class RFQServiceImpl implements RFQService {
 			result.setStatus(ResultStatus.SUCCESS);
 			result.addToMessageList("Successfully Generated the RFQ as ");
 			result.addToMessageList(rfqResult.getDomainEntity().getId().toString());
-			result.addToMessageList(rfqResult.getDomainEntity().getCode());
+			result.addToMessageList("Link to rfq");
 
 		} catch (Exception e) {
 		e.printStackTrace();

@@ -30,7 +30,12 @@ public class ReceiptOrderItemMapper extends GenericMapper<ReceiptOrderItem, Rece
 			dto.setItemStockId(domain.getStock().getId());
 			dto.setItemStockName(domain.getStock().getBatchNo());
 	 	}
-		
+		if(domain.getPurchaseOrderItem()!=null){
+			if(domain.getPurchaseOrderItem().getAsset()!=null){
+				dto.setPoItemId(domain.getPurchaseOrderItem().getAsset().getId());
+				dto.setPoItemName(domain.getPurchaseOrderItem().getAsset().getName());
+			}
+		}
 		if(domain.getIssueNoteItem() != null){
 			dto.setIssueNoteitemId(domain.getIssueNoteItem().getId());
 		}

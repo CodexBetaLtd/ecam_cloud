@@ -68,6 +68,8 @@ public enum SubMenu {
 		setMenu(menu);
 	}
 
+
+
 	public static List<SubMenu> getSubMenuByMenu(Menu menu) {
 		List<SubMenu> list = new ArrayList<SubMenu>();
 
@@ -79,6 +81,16 @@ public enum SubMenu {
 		}
 
 		return list;
+	}
+	
+	
+	public static SubMenu getSubMenuById(Integer id) {
+		for (SubMenu subMenu : values()) {
+			if (subMenu.getId().equals(id)) {
+				return subMenu;
+			}
+		}
+		return null;
 	}
 
 	public Integer getId() {

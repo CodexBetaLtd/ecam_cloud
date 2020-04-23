@@ -22,7 +22,8 @@ public class UserGroupDTO extends BaseDTO {
 	private List<SubMenu> subMenus;
 	private List<PagePermission> pagePermissions;
 	private List<Widgets> wigets;
-	
+	private List<String> permissionList;
+ 	
 	private Page page; 
 
 	public Page getPage() {
@@ -84,6 +85,12 @@ public class UserGroupDTO extends BaseDTO {
 	}
 	public void setWigets(List<Widgets> wigets) {
 		this.wigets = wigets;
+	}
+	public List<String> getPermissionList() {
+		return permissionList;
+	}
+	public void setPermissionList(List<String> permissionList) {
+		this.permissionList = permissionList;
 	}
 
 	

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 
 public interface ReceiptOrderService {
@@ -20,5 +21,8 @@ public interface ReceiptOrderService {
 	ReceiptOrderResult statusChange(Integer id, ReceiptOrderStatus receiptOrderStatus);
 
 	DataTablesOutput<ReceiptOrderDTO> findAll(FocusDataTablesInput input) throws Exception;
+	
+	ReceiptOrderResult generateGrnFromPo(String ids, Integer poId);
+
 
 }

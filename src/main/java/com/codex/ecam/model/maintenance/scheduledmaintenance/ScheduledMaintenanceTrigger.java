@@ -47,7 +47,7 @@ public class ScheduledMaintenanceTrigger extends BaseModel {
 	private Integer id;
 
 	@JoinColumn(name = "scheduled_maintenance_id")
-	@ManyToOne(targetEntity = ScheduledMaintenance.class, fetch = FetchType.LAZY)
+	@ManyToOne(targetEntity = ScheduledMaintenance.class,cascade = {CascadeType.MERGE}, fetch = FetchType.LAZY)
 	private ScheduledMaintenance scheduledMaintenance;
 
 	@JoinColumn(name = "et_asset_event_type_asset_id")

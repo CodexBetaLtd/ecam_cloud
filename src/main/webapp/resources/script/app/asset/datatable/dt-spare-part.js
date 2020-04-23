@@ -120,7 +120,7 @@ var dtSparePart = function () {
                 data: 'id'
             }],
             aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
+                targets: 2,//index of column starting from 0
                 data: "id", //this name should exist in your JSON response
                 render: function (data, type, rowData, meta) {
                     return tblButton(rowData, tableId, URL, method);

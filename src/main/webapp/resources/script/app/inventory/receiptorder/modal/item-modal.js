@@ -12,14 +12,25 @@ var ItemAddModal = function () {
      *********************************************************************/
 	
 	var initPartSelect = function () {
-        $("#itemAssetName").inputClear({
-            placeholder: "Select A Part",
-            btnMethod: "ItemAddModal.receiptAssetView()",
+		$("#itemAssetName").inputClear({
+			placeholder: "Select A Part",
+			btnMethod: "ItemAddModal.receiptAssetView()",
+		});
+	};
+	
+	var initPotSelect = function () {
+        $("#poItemName").inputClear({
+            placeholder: "Select A Po Item",
+            btnMethod: "ItemAddModal.receiptPoView()",
         });
     };
     
     var receiptAssetView = function () {
     	loadAssetSelectModal("asset_tbl", "../restapi/asset/parts", "ItemAddModal.setReceiptItemAsset");
+    };
+    
+    var receiptPoView = function () {
+    	loadPOSelectModal("purchase_order_item_tbl", "../restapi/purchaseorder/tableApprovedItemData", "ItemAddModal.setReceiptItemPO");
     };
     
     
@@ -35,10 +46,32 @@ var ItemAddModal = function () {
     	}, 1000);
     };
     
+    var loadPOSelectModal = function (tableId, URL, method) {
+    	var $modal = $('#stackable-modal');
+    	CustomComponents.ajaxModalLoadingProgressBar();
+    	setTimeout(function () {
+    		var url = '../receiptorder/receiptPurchaseorderItemView';
+    		$modal.load(url, '', function () {
+    			dtPurchaseAsset.dtReceiptAsset(tableId, URL, method);
+    			$modal.modal();
+    		});
+    	}, 1000);
+    };
+    
     var setReceiptItemAsset = function (id, name) {
-        $('#itemAssetId').val(id);
-        $('#itemAssetName').val(name);
-        createLinkForStok(id);
+    	$('#itemAssetId').val(id);
+    	$('#itemAssetName').val(name);
+    	createLinkForStok(id);
+    	$('#stackable-modal').modal('toggle');
+    	
+    }
+    
+    var setReceiptItemPO = function (id, assetId,assetName) {
+        $('#poItemId').val(id);
+        $('#poItemName').val(assetName);
+    	$('#itemAssetId').val(assetId);
+    	$('#itemAssetName').val(assetName)
+       createLinkForStok(assetId);
     	$('#stackable-modal').modal('toggle');
 
     }
@@ -188,14 +221,22 @@ var ItemAddModal = function () {
         	runValidator();
         	initPartSelect();
         	initStockSelect();
+        	initPotSelect();
         },
         
         receiptAssetView:function(){
         	receiptAssetView();
         },
+        receiptPoView:function(){
+        	receiptPoView();
+        },
         
         setReceiptItemAsset:function(id,name){
         	setReceiptItemAsset(id,name);
+        },
+        
+        setReceiptItemPO:function(id, assetId,assetName){
+        	setReceiptItemPO(id, assetId,assetName);
         },
         
         receiptStockView:function(){
