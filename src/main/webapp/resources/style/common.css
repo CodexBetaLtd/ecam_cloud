@@ -687,7 +687,26 @@ input[type="checkbox"][readonly] {
   content: counter(level1) " "; /*Instead of ". " */
   counter-increment: level1;
 }
+.qr-img{
+display: block;
+ 	 margin-left: auto;
+  margin-right: auto;
+	height: 100px;
+}
+.qr-btn{
+display: block;
+ 	 margin-left: auto;
+  margin-right: auto;
+	width: 136px;
+}
 
+.qr-not{
+	display: block;
+margin-left: auto;
+margin-right: auto;
+text-align: center;
+font-weight: bold;
+}
 /*body { zoom: 5; }
 /* body {
     zoom: 1;

@@ -8,12 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.MRNReturnStatus;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnDTO;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.inventory.MRNReturnResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -144,6 +146,14 @@ public class MRNReturnController {
 		setCommonData(model, mrnReturnService.findById(id).getDtoEntity());
 		return "inventory/mrnReturn/add-view";
 	} 
+	
+	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+		RestResult<String> result = new RestResult<>();
+		result.setData(mrnReturnService.getNextCode(businessId).toString());
+
+		return result ;
+	}
 
 	private void setCommonData(Model model, MRNReturnDTO dto) {
 		model.addAttribute("mrnReturn", dto);

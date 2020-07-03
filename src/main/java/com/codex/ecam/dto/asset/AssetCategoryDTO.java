@@ -1,7 +1,11 @@
 package com.codex.ecam.dto.asset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.BaseDTO;
+import com.codex.ecam.dto.maintenance.task.TaskDTO;
 
 public class AssetCategoryDTO extends BaseDTO {
 	
@@ -17,6 +21,7 @@ public class AssetCategoryDTO extends BaseDTO {
 	
 	private Integer businessId;
 	private String businessName;
+	private List<TaskDTO>  tasks=new ArrayList<>();
 	
 	public Integer getId() {
 		return id;
@@ -78,6 +83,12 @@ public class AssetCategoryDTO extends BaseDTO {
 	}
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
+	}
+	public List<TaskDTO> getTasks() {
+		return tasks;
+	}
+	public void setTasks(List<TaskDTO> tasks) {
+		this.tasks = tasks;
 	}
 	
 	

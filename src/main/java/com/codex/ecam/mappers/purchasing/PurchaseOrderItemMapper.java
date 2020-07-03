@@ -130,7 +130,7 @@ public class PurchaseOrderItemMapper extends GenericMapper<PurchaseOrderItem, Pu
 		domain.setIsAddedDirectlyToPurchaseOrder(dto.getIsAddedDirectlyToPurchaseOrder());
 		domain.setIsProductionEquipmentDownWhileOnOrder(dto.getIsProductionEquipmentDownWhileOnOrder());
 		domain.setIsSupplierConfirmed(dto.getIsSupplierConfirmed());
-		domain.setRequiredByDate(DateUtil.getDateObj(dto.getItemRequiredByDate()));
+		//domain.setRequiredByDate(DateUtil.getDateObj(dto.getItemRequiredByDate()));
 		
 		domain.setVersion(dto.getVersion());
 		domain.setIsDeleted(dto.getIsDeleted());

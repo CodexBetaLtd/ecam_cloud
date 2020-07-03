@@ -44,6 +44,11 @@ public class AODReturnReportController {
 	public void printCSV(@Valid AODReturnFilterDTO filterDTO, HttpServletRequest request, HttpServletResponse response) throws Exception {		
 		aodReturnReportService.print(filterDTO, response, request, PrintType.CSV);
 	}
+	
+	@RequestMapping( value = "/printAodReturn", method = RequestMethod.GET)
+	public void printPDF(@Valid Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception {		
+		aodReturnReportService.printDoc(id, response, request);
+	}
 	private void setCommonData(Model model) {
 		model.addAttribute("filterDTO", new AODReturnFilterDTO());
 		model.addAttribute("aodReturnStatusList", AODReturnStatus.getAODReturnStatus());

@@ -10,13 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.constants.util.PrintType;
-import com.codex.ecam.dto.report.filter.PartFilterDTO;
 import com.codex.ecam.dto.report.filter.ReceiptOrderFilterDTO;
-import com.codex.ecam.service.report.part.api.PartReportService;
 import com.codex.ecam.service.report.receiptorder.api.ReceiptOrderReportService;
 
 
@@ -45,6 +42,12 @@ public class ReceiptOrderReportController {
 	public void printCSV(@Valid ReceiptOrderFilterDTO filterDTO, HttpServletRequest request, HttpServletResponse response) throws Exception {		
 		service.print(filterDTO, response, request, PrintType.CSV);
 	}
+	
+	@RequestMapping( value = "/printRO", method = RequestMethod.GET)
+	public void printPDF(@Valid Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception {		
+		service.printDoc(id, response, request);
+	}
+	
 
 
 	private void setCommonData(Model model) {

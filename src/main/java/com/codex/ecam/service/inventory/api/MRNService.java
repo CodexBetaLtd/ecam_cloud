@@ -14,7 +14,9 @@ import com.codex.ecam.result.inventory.MRNResult;
 public interface MRNService {
 
     MRNResult newMRN();
-
+    
+    String getNextCode(Integer businessId);
+    
     MRNResult save(MRNDTO mrndto) throws Exception;
 
     MRNResult update(MRNDTO mrndto) throws Exception;

@@ -3,11 +3,13 @@ package com.codex.ecam.mappers.purchasing;
 import com.codex.ecam.dto.inventory.rfq.RFQChangeLogDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
+import com.codex.ecam.dto.inventory.rfq.RFQSupplierDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.rfq.RFQ;
 import com.codex.ecam.model.inventory.rfq.RFQChangeLog;
 import com.codex.ecam.model.inventory.rfq.RFQFile;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
+import com.codex.ecam.model.inventory.rfq.RFQSupplier;
 
 public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
@@ -35,35 +37,35 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 		dto.setSentDate(domain.getDateSent());
 		dto.setMessageSubject(domain.getMessageSubject());
 		dto.setMessageContent(domain.getMessageContent());
-		dto.setQuoteReferenceNumber(domain.getQuoteReferenceNumber());				
-		
-		dto.setSupplierAddress(domain.getSupplierAddress());		
+		dto.setQuoteReferenceNumber(domain.getQuoteReferenceNumber());
+
+		dto.setSupplierAddress(domain.getSupplierAddress());
 		dto.setSupplierCity(domain.getSupplierCity());
 		dto.setSupplierPostalCode(domain.getSupplierPostalCode());
-		dto.setSupplierProvince(domain.getSupplierProvince());		
-		
+		dto.setSupplierProvince(domain.getSupplierProvince());
+
 		dto.setShipToAddress(domain.getShippingAddress());
 		dto.setShippingCity(domain.getSupplierCity());
 		dto.setShippingPostalCode(domain.getShippingPostalCode());
 		dto.setShippingProvince(domain.getSupplierProvince());
-		
-		if ( domain.getSupplier() != null) {
+
+		if (domain.getSupplier() != null) {
 			dto.setSupplierId(domain.getSupplier().getId());
 			dto.setSupplierName(domain.getSupplier().getName());
 		}
-		if ( domain.getBusiness() != null) {
+		if (domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
 		}
-		
+
 		if (domain.getShipTo() != null) {
 			dto.setShipToId(domain.getShipTo().getId());
 		}
-		
-		if ( domain.getShippingCountry() != null ) {
+
+		if (domain.getShippingCountry() != null) {
 			dto.setShipToCountry(domain.getShippingCountry().getId());
-		}	
-		
-		if ( domain.getSupplierCountry() != null ) {
+		}
+
+		if (domain.getSupplierCountry() != null) {
 			dto.setSupplierCountry(domain.getSupplierCountry().getId());
 		}
 
@@ -72,6 +74,7 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
 		setRFQItems(domain, dto);
 		setRFQFile(domain, dto);
+		setRFQSupplier(domain, dto);
 		setStatusChangeLog(domain, dto);
 
 		return dto;
@@ -84,29 +87,53 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 		}
 
 	}
-	
-	private void setStatusChangeLog(RFQ domain, RFQDTO dto){
-		if (domain.getRfqStausChangeLogs().size() > 0) {
-			for (RFQChangeLog changeLog :domain.getRfqStausChangeLogs()) {
-			RFQChangeLogDTO changeDTO=new RFQChangeLogDTO();
-			changeDTO.setChangeUserName(changeLog.getCreatedUser().getFullName());
-			changeDTO.setStatusChangeDate(changeLog.getCreatedDate());
-			changeDTO.setDescription(changeLog.getDescription());
-			if(changeLog.getRfqStatus()!=null){
-			changeDTO.setStatusName(changeLog.getRfqStatus().getName());
+
+	private void setRFQSupplier(RFQ domain, RFQDTO dto) {
+		if (domain.getRfqSupplier().size() > 0) {
+			for (RFQSupplier rfqSupplier : domain.getRfqSupplier()) {
+				RFQSupplierDTO rfqSupplierDTO = new RFQSupplierDTO();
+				rfqSupplierDTO.setId(rfqSupplier.getId());
+				rfqSupplierDTO.setVersion(rfqSupplier.getVersion());
+				if (rfqSupplier.getSupplier() != null) {
+					rfqSupplierDTO.setSupplierName(rfqSupplier.getSupplier().getName());
+					rfqSupplierDTO.setSupplierId(rfqSupplier.getSupplier().getId());
+					rfqSupplierDTO.setSupplierAddress(rfqSupplier.getSupplier().getAddress());
+					rfqSupplierDTO.setSupplierCity(rfqSupplier.getSupplier().getCity());
+					rfqSupplierDTO.setSupplierProvince(rfqSupplier.getSupplier().getProvince());
+					rfqSupplierDTO.setSupplierPostalCode(rfqSupplier.getSupplier().getPostalcode());
+					if (rfqSupplier.getSupplier().getCountry() != null) {
+						rfqSupplierDTO.setSupplierCountry(rfqSupplier.getSupplier().getCountry().getName());
+					}
+				}
+
+				dto.getRfqSupplireDTOs().add(rfqSupplierDTO);
 			}
-			changeDTO.setId(changeLog.getId());
-			dto.getRfqStatusChangeDTOs().add(changeDTO);
-			}
-			//Collections.sort(dto.getRfqStatusChangeDTOs());
-			
+
 		}
 	}
-	
+
+	private void setStatusChangeLog(RFQ domain, RFQDTO dto) {
+		if (domain.getRfqStausChangeLogs().size() > 0) {
+			for (RFQChangeLog changeLog : domain.getRfqStausChangeLogs()) {
+				RFQChangeLogDTO changeDTO = new RFQChangeLogDTO();
+				changeDTO.setChangeUserName(changeLog.getCreatedUser().getFullName());
+				changeDTO.setStatusChangeDate(changeLog.getCreatedDate());
+				changeDTO.setDescription(changeLog.getDescription());
+				if (changeLog.getRfqStatus() != null) {
+					changeDTO.setStatusName(changeLog.getRfqStatus().getName());
+				}
+				changeDTO.setId(changeLog.getId());
+				dto.getRfqStatusChangeDTOs().add(changeDTO);
+			}
+			// Collections.sort(dto.getRfqStatusChangeDTOs());
+
+		}
+	}
+
 	private void setRFQFile(RFQ domain, RFQDTO dto) throws Exception {
 		if (domain.getRfqFiles().size() > 0) {
-			for (RFQFile rfqFile :domain.getRfqFiles()) {
-				RFQFileDTO rfqFileDTO=new RFQFileDTO();
+			for (RFQFile rfqFile : domain.getRfqFiles()) {
+				RFQFileDTO rfqFileDTO = new RFQFileDTO();
 				rfqFileDTO.setId(rfqFile.getId());
 				rfqFileDTO.setItemDescription(rfqFile.getItemDescription());
 				rfqFileDTO.setVersion(rfqFile.getVersion());
@@ -152,17 +179,17 @@ public class RFQMapper extends GenericMapper<RFQ, RFQDTO> {
 
 	}
 
-    @Override
-    public RFQDTO domainToDtoForDataTable(RFQ domain) throws Exception {
-    	RFQDTO dto = new RFQDTO();
+	@Override
+	public RFQDTO domainToDtoForDataTable(RFQ domain) throws Exception {
+		RFQDTO dto = new RFQDTO();
 		dto.setId(domain.getId());
-		dto.setCode(domain.getCode());		
+		dto.setCode(domain.getCode());
 		dto.setStatusName(domain.getRfqStatus().getName());
-		if ( domain.getSupplier() != null) {
+		if (domain.getSupplier() != null) {
 			dto.setSupplierId(domain.getSupplier().getId());
 			dto.setSupplierName(domain.getSupplier().getName());
 		}
-        return dto;
-    }
+		return dto;
+	}
 
 }

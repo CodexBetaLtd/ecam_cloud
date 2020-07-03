@@ -30,8 +30,11 @@ public class StockPropertyMapper extends BaseSearchPropertyMapper {
             	addColumns("part.code");
             	break;
 
-            case "wharehouseName":
-                addColumns("warehouse.name");
+            case "batchNo":
+            	addColumns("batchNo");
+            	break;
+            case "qtyOnHand":
+                addColumns("currentQuantity");
                 break;
 
             default:

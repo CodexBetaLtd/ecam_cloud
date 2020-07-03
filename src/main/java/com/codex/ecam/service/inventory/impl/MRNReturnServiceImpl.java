@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.inventory.MRNReturnStatus;
+import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
@@ -22,14 +23,18 @@ import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.MRNReturnDao;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnDTO;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnItemDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.mappers.inventory.mrnReturn.MRNReturnMapper;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.mrnReturn.MRNReturn;
 import com.codex.ecam.model.inventory.mrnReturn.MRNReturnItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNReturnResult;
+import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.MRNReturnService;
 import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.UniqueCodeUtil;
 
 @Service
 public class MRNReturnServiceImpl implements MRNReturnService {
@@ -55,7 +60,22 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 
 	@Override
 	public MRNReturnResult newMRN() {
-		MRNReturnResult result=new MRNReturnResult(new MRNReturn(), new MRNReturnDTO());
+		final MRNReturnResult result = new MRNReturnResult(null, null);
+		try {
+			final MRNReturnDTO dto = new MRNReturnDTO();
+			if(!AuthenticationUtil.isAuthUserAdminLevel()){
+				dto.setMrnReturnNo(getNextCode(AuthenticationUtil.getLoginUserBusiness().getId()));
+			}else{
+				dto.setMrnNo("");
+			}
+			result.setDtoEntity(dto);
+			result.setResultStatusSuccess();
+			result.addToMessageList("MRN Return generate successfully.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("ERROR! MRN Return not generated! ".concat(ex.getMessage()));
+		}
 		return result;
 	}
 
@@ -267,6 +287,16 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 		}
 		DataTablesOutput<MRNReturnDTO> out = MRNReturnMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
+	}
+
+	@Override
+	public String getNextCode(Integer businessId) {
+		if (businessId !=null) {
+			final MRNReturn lastDomain = mrnReturnDao.findLastDomainByBusiness(businessId);
+			return UniqueCodeUtil.getNextCode(AffixList.MRN_RETURN, lastDomain == null ? "" : lastDomain.getMrnReturnNo());
+		} else {
+			return "";
+		}
 	}
 
 

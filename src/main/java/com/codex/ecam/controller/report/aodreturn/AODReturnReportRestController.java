@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codex.ecam.dto.report.data.AODReturnRepDTO;
+import com.codex.ecam.dto.report.data.aodReturn.AODReturnRepDTO;
 import com.codex.ecam.dto.report.filter.AODReturnFilterDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.report.aodreturn.api.AODReturnReportService;

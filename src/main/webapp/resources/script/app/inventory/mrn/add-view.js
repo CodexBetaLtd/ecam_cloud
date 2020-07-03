@@ -39,6 +39,38 @@ var MRNAdd = function () {
         });
     };
 
+    var runMRNBusinessSelect = function(){
+    	$("#businessId").change(function() {
+			var businessId = $("#businessId option:selected").val(); 
+			setMRNCode(businessId);  
+
+		});
+    };
+    
+	var setMRNCode = function(id) {
+		
+    	$.ajax({
+            type: "GET",
+            url: "../mrn/code-by-business?businessId=" + id,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                if (result.status == "SUCCESS") {
+                	$('#mrnNo').val(result.data);
+                } else {
+                	alert(result.msg);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + " " + thrownError);
+            },
+            error: function (e) {
+                alert("Failed to load Code");
+                console.log(e);
+            }
+        });            	
+     
+};
     /*********************************************************************
      * Init Validation
      *********************************************************************/
@@ -242,6 +274,7 @@ var MRNAdd = function () {
             runMRNCustomerInput();
             runRequestedUserInput();
             runWorkOrderInput();
+            runMRNBusinessSelect();
         },
 
         mrnCustomerModalView: function () {

@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderType;
+import com.codex.ecam.listeners.inventory.receiptorder.ReceiptOrderLogListener;
+import com.codex.ecam.listeners.inventory.receiptorder.ReceiptorderPrePersistListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Currency;
 import com.codex.ecam.model.admin.User;
@@ -28,6 +31,7 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 
 @Entity
 @Table(name = "tbl_receipt_order")
+@EntityListeners( { ReceiptorderPrePersistListener.class,ReceiptOrderLogListener.class } )
 public class ReceiptOrder extends BaseModel {
 
 	private static final long serialVersionUID = 833960047762724029L;

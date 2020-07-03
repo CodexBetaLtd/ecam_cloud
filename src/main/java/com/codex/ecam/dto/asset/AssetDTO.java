@@ -44,6 +44,7 @@ public class AssetDTO extends BaseDTO {
 
 	private Integer customerId;
 	private String customerName;
+	private String assetUrl;
 
 	private Integer currentAssetEventId;
 
@@ -414,6 +415,14 @@ public class AssetDTO extends BaseDTO {
 
 	public void setSparePartDTOs(List<SparePartDTO> sparePartDTOs) {
 		this.sparePartDTOs = sparePartDTOs;
+	}
+
+	public String getAssetUrl() {
+		return assetUrl;
+	}
+
+	public void setAssetUrl(String assetUrl) {
+		this.assetUrl = assetUrl;
 	}
 
 	

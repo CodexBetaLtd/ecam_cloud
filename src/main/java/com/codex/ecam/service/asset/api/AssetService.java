@@ -92,8 +92,10 @@ public interface AssetService {
 	String assetFileUpload(MultipartFile file,String refId) throws Exception;
 
 	void assetFileDownload(Integer id,HttpServletResponse response) throws Exception;
+	void assetQRDownload(Integer id,HttpServletResponse response) throws Exception;
 
 	byte[] getAssetImageStream(Integer id, HttpServletRequest request) throws IOException;
+	byte[] getAssetQRStream(Integer id, HttpServletRequest request) throws IOException;
 
 	DataTablesOutput<AssetDTO> getMachineToolsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 

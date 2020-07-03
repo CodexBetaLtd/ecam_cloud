@@ -413,6 +413,10 @@ public class AssetController {
 	public void  downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		assetService.assetFileDownload(id,response);
 	}
+	@RequestMapping(value = "/download-qr", method = RequestMethod.GET)
+	public void  downloadQR(@RequestParam("id")Integer id, HttpServletResponse response) throws Exception {
+		assetService.assetQRDownload(id,response);
+	}
 
 	private void setCommonData(Model model, AssetCategoryType type, AssetDTO asset) {
 		model.addAttribute("asset", asset);

@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,8 @@ import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.constants.inventory.MRNType;
+import com.codex.ecam.listeners.inventory.mrn.MRNLogListener;
+import com.codex.ecam.listeners.inventory.mrn.MRNPrePersistListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.User;
 import com.codex.ecam.model.asset.Asset;
@@ -26,6 +29,7 @@ import com.codex.ecam.model.biz.customer.Customer;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 
 @Entity
+@EntityListeners( { MRNPrePersistListener.class,MRNLogListener.class } )
 @Table(name = "tbl_mrn")
 public class MRN extends BaseModel {
 

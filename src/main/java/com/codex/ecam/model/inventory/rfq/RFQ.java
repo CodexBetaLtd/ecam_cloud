@@ -20,6 +20,7 @@ import javax.persistence.Table;
 
 import com.codex.ecam.constants.inventory.RFQStatus;
 import com.codex.ecam.listeners.inventory.rfq.RFQLogListener;
+import com.codex.ecam.listeners.inventory.rfq.RFQPrePersistListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.asset.Asset;
@@ -28,7 +29,7 @@ import com.codex.ecam.model.biz.supplier.Supplier;
 
 @Entity
 @Table(name = "tbl_rfq")
-@EntityListeners( { RFQLogListener.class } )
+@EntityListeners( { RFQLogListener.class ,RFQPrePersistListener.class} )
 public class RFQ extends BaseModel {
 
 	private static final long serialVersionUID = 3167763864035252289L;
@@ -133,6 +134,9 @@ public class RFQ extends BaseModel {
 
 	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
 	private List<RFQItem> rfqItems;
+	
+	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
+	private Set<RFQSupplier> rfqSupplier;
 	
 	@OneToMany(mappedBy = "rfq", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<RFQFile> rfqFiles;
@@ -408,6 +412,16 @@ public class RFQ extends BaseModel {
 	public void setRfqStausChangeLogs(Set<RFQChangeLog> rfqStausChangeLogs) {
 		this.rfqStausChangeLogs = rfqStausChangeLogs;
 	}
+
+	public Set<RFQSupplier> getRfqSupplier() {
+		return rfqSupplier;
+	}
+
+	public void setRfqSupplier(Set<RFQSupplier> rfqSupplier) {
+		this.rfqSupplier = rfqSupplier;
+	}
+
+
 
 
 

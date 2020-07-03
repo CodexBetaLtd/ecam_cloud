@@ -6,6 +6,13 @@ var PurchaseOrderAdd = function () {
 			allowClear: true
 		});
 	};
+	
+    var runWorkOrderInput = function () {
+        $("#mrnWoNo").inputClear({
+            placeholder: "Please Specify a Work Order",
+            btnMethod: "MRNAdd.mrnWorkOrderModalView()",
+        });
+    };
 	var runBusinessSelect = function () {
 		$("#businessId").select2({
 			placeholder: "Select a Business",
@@ -94,6 +101,55 @@ var PurchaseOrderAdd = function () {
         });
     };
 
+    var runPurchaseorderBusinessSelect = function(){
+    	$("#businessId").change(function() {
+			var businessId = $("#businessId option:selected").val(); 
+			setPurchaseorderCode(businessId);  
+
+		});
+    };
+    
+    var runTaxInput = function () {
+        $("#taxName").inputClear({
+            placeholder: "Please Specify a Tax",
+            btnMethod: "PurchaseOrderAdd.poTaxLoad()",
+        });
+    };
+    var poTaxLoad=function(){
+        var $modal = $('#common-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../purchaseorder/poTaxView';
+            $modal.load(url, '', function () {
+            	dtPurchaseOrderTax.dtPOTaxList("tax_select_tbl","../restapi/tax/tabledata","");
+                $modal.modal();
+            });
+        }, 1000);
+    }
+	var setPurchaseorderCode = function(id) {
+		
+        	$.ajax({
+                type: "GET",
+                url: "../purchaseorder/code-by-business?businessId=" + id,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result) {
+                    if (result.status == "SUCCESS") {
+                    	$('#code').val(result.data);
+                    } else {
+                    	alert(result.msg);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + " " + thrownError);
+                },
+                error: function (e) {
+                    alert("Failed to load Code");
+                    console.log(e);
+                }
+            });            	
+         
+	};
     /* 
 	 *load siteList relevant to business
 	 */   
@@ -201,7 +257,14 @@ var PurchaseOrderAdd = function () {
             runSendUsingSelect();
             runAdditionalCostTypeSelect();
             runBusinessSelect();
-        }
+            runPurchaseorderBusinessSelect();
+            runTaxInput();
+            
+        },
+    
+    poTaxLoad:function(){
+    	poTaxLoad();
+    }
     };
 }();
 
@@ -271,6 +334,7 @@ var PurchaseOrderValidation = function () {
             return isCheckedAny(idList, clsList);
         },
 
+ 
 
     };
 }();

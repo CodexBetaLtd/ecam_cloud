@@ -8,12 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codex.ecam.dto.report.data.PartRepDTO;
-import com.codex.ecam.dto.report.data.ReceiptOrderRepDTO;
-import com.codex.ecam.dto.report.filter.PartFilterDTO;
+import com.codex.ecam.dto.report.data.receiptOrder.ReceiptOrderRepDTO;
 import com.codex.ecam.dto.report.filter.ReceiptOrderFilterDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.service.report.part.api.PartReportService;
 import com.codex.ecam.service.report.receiptorder.api.ReceiptOrderReportService;
 
 

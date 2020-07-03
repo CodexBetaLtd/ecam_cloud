@@ -107,6 +107,8 @@
                                     <input type="hidden" id="type" name="type" th:value="${type}" />
                                     <input type="hidden" id="version" name="version" th:field="*{version}" />
                                     <input type="hidden" th:field="*{imageLocation}">
+                                					<input type="hidden" th:field="*{assetUrl}" id="qrimage">
+                                    
 
                                     <div class="row">
                                         <div class="col-sm-6">
@@ -279,6 +281,8 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/math.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/qrcode.min.js}"></script>
+    
 
     <script type="text/javascript" th:src="@{/resources/script/app/asset/init.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/add-view.js}"></script>

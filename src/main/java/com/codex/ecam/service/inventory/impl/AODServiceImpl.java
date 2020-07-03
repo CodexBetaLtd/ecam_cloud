@@ -48,6 +48,8 @@ import com.codex.ecam.model.inventory.aod.AODItem;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
+import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
+import com.codex.ecam.model.inventory.stock.StockHistory;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
@@ -276,6 +278,9 @@ public class AODServiceImpl implements AODService {
 			updateApproveAOD(result);
 		}
 	}
+	
+
+
 	
 	private void updateApproveAOD(final AODResult result) throws AODException {
 		result.getDomainEntity().setAodStatus(AODStatus.APPROVED);

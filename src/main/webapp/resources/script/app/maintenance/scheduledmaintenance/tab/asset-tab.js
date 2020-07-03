@@ -45,7 +45,7 @@ var TabAsset = function () {
                     ButtonUtil.getCommonBtnDelete("TabAsset.removeAsset", row) +
                     "</div>" +
                     "</td></tr>";
-
+                getTaskAssetCategory(asset);
                 $('#sm-asset-tbl > tbody:last-child').append(html);
             }
         } else {
@@ -74,6 +74,49 @@ var TabAsset = function () {
         
     };
 
+    var getTaskAssetCategory=function(asset){
+		$.ajax({
+			type : "GET",
+			url: "../restapi/taskGroup/getTaskByAssetCategory?assetId=" + asset.id,
+			contentType : "application/json",
+			dataType : "json",
+			success : function(output) {
+				$.each(output, function(key, taskList) {
+					if(isTaskAlreadyAdded(taskList.id)){
+						taskList.assetId=asset.id
+						taskList.assetName=asset.name
+						scheduledTasks.push(taskList);
+					}
+				});
+				TabTask.initScheduledTaskTable();
+
+			},
+			error : function(xhr, ajaxOptions, thrownError) {
+				alert(xhr.status + " " + thrownError);
+			},
+			error : function(e) {
+				alert("Failed to load Task");
+				console.log(e);
+			}
+		});
+    }
+    
+    var removeTask=function(assetId){
+        for (var i = 0; i < tasks.length; i++) {
+            if (tasks[i].assignedAssetId == assetId) {
+                tasks.splice(i, 1);
+                TaskTab.populateTaskTable();            }
+        }
+    }
+    
+    var isTaskAlreadyAdded=function(taskId){
+        for (var i = 0; i < tasks.length; i++) {
+            if (tasks[i].id == taskId) {
+                return true;
+            }
+        }
+        return false;
+    }
     var removeAsset = function (index) {
     	if (!isAssetUsed(assets[index].id)) {
     		assets.splice(index, 1);

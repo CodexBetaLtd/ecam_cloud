@@ -4,6 +4,24 @@ var AssetAdd = function () {
         var src = "../../restapi/asset/asset-image?id=" + $("#id").val();
         CustomComponents.fileInput("assetImage", true, true, src, "Asset Image" );        
     };
+    
+    var generateQRCode=function(){
+        var src = "../../restapi/asset/asset-qr?id=" + $("#id").val();
+        $('#qrcode').append(
+        		"<img class='qr-img' src='"+src+"'>") 
+        if($("#qrimage").val()!==''){
+        	$('#qrcode').append(
+        			"<a href='../../asset/download-qr?id="+$('#id').val()+"' class='btn btn-xs btn-teal tooltips qr-btn' data-placement='top' data-original-title='Download'>" +
+        					"<i class='fa fa-qrcode'></i>" +
+        					" Download QR" +
+        					"</a>"
+            )
+        }else{
+        	$('#qrcode').append("<span class='qr-not'>QR Not Found</span>")
+        }
+    }
+    
+
   
     var initMap=function(){
         var var_location = new google.maps.LatLng(locationDetails['latitude'],locationDetails['longitude']);
@@ -372,6 +390,7 @@ var AssetAdd = function () {
             initParentAssetSelect();
             runImageInput();
             initValidator();
+            generateQRCode();
           //  initMap();
         },
     

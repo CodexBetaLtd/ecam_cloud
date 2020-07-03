@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+	<div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+        <h4 class="modal-title"> Value </h4>
+    </div>
+
+	<div class="modal-body">           
+		
+		<form id="value-add-frm">
+		
+			<input type="hidden" id="valueId">
+			<input type="hidden" id="valueVersion">
+			<input type="hidden" id="valueIndex">
+	            
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+	                	<label class="control-label"> Form <span class="symbol required"></span> </label>
+					<div class="input-group">
+						<input type="text" id="taxFromDate" name="taxFromDate"
+							data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+							class="form-control date-picker1"> <span
+							class="input-group-addon"> <i class="fa fa-calendar"></i>
+						</span>
+					</div>
+				</div>
+	            </div>
+                <div class="col-md-6">
+					<div class="form-group">
+                    	<label class="control-label"> To <span class="symbol required"></span></label>
+	                    					<div class="input-group">
+						<input type="text" id="taxToDate" name="taxToDate"
+							data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+							class="form-control date-picker2"> <span
+							class="input-group-addon"> <i class="fa fa-calendar"></i>
+						</span>
+					</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+	            <div class="col-md-6">
+	            	<div class="form-group">
+	                	<label class="control-label"> Value <span class="symbol required"></span></label>
+	                    <input id="taxVale" name="taxValue" type="text" class="form-control">
+	                </div>            	
+	            </div>			
+	        	<div class="col-md-6">
+	          		<div class="form-group">
+	                	<label class="control-label"> Current value </label>
+	             <input id="currentValue" name="currentValue" type="checkbox" class="form-control">
+	                	
+	                </div>
+	            </div>
+	        </div>
+        
+        </form>
+
+	</div>	
+
+    <div class="modal-footer">
+    	<div class="container">
+            <button id="add-tax-value-btn" type="button" class="btn btn-sm btn-blue">
+            	<i class="clip-plus-circle-2 btn-new"></i> Add
+            </button>
+            <button type="button" data-dismiss="modal" class="btn btn-sm btn-blue"> Close</button>
+        </div>
+    </div>
+
+</html>

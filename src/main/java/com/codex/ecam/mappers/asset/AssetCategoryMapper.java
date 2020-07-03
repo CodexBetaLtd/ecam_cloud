@@ -2,8 +2,10 @@ package com.codex.ecam.mappers.asset;
 
 
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
+import com.codex.ecam.dto.maintenance.task.TaskDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.asset.AssetCategory;
+import com.codex.ecam.model.asset.AssetCategoryTask;
 
 public class AssetCategoryMapper extends GenericMapper<AssetCategory, AssetCategoryDTO> {
 
@@ -39,8 +41,28 @@ public class AssetCategoryMapper extends GenericMapper<AssetCategory, AssetCateg
 			dto.setParentId(domain.getBusiness().getId());
 			dto.setParentName(domain.getBusiness().getName());
 		}
+		setTask(domain,dto);
 		dto.setVersion(domain.getVersion());
 		return dto;
+	}
+	
+	private void setTask(AssetCategory domain,AssetCategoryDTO dto){
+		for(AssetCategoryTask assetCategoryTask:domain.getTasks()){
+			TaskDTO taskDTO=new TaskDTO();
+			taskDTO.setAssetCatgoryTaskId(assetCategoryTask.getId());
+			taskDTO.setAssetCatgoryVersionId(assetCategoryTask.getVersion());
+			if(assetCategoryTask.getTask()!=null){
+				taskDTO.setId(assetCategoryTask.getTask().getId());
+				taskDTO.setVersion(assetCategoryTask.getTask().getVersion());
+				taskDTO.setName(assetCategoryTask.getTask().getName());
+				taskDTO.setDescription(assetCategoryTask.getTask().getDescription());
+				taskDTO.setEstimatedHours(assetCategoryTask.getTask().getEstimatedHours());
+				taskDTO.setTaskType(assetCategoryTask.getTask().getTaskType());
+			}
+
+
+			dto.getTasks().add(taskDTO);
+		}
 	}
 
 	@Override

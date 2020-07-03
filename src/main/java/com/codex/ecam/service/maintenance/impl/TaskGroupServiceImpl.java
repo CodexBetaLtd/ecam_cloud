@@ -5,12 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -18,14 +19,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.codex.ecam.dao.asset.AssetCategoryTaskDao;
+import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.maintenance.TaskDao;
 import com.codex.ecam.dao.maintenance.TaskGroupDao;
+import com.codex.ecam.dto.admin.UserDTO;
 import com.codex.ecam.dto.maintenance.task.TaskDTO;
 import com.codex.ecam.dto.maintenance.task.TaskGroupDTO;
 import com.codex.ecam.exception.maintenance.TaskGroupException;
+import com.codex.ecam.mappers.admin.UserMapper;
 import com.codex.ecam.mappers.maintenance.TaskGroupMapper;
 import com.codex.ecam.mappers.maintenance.TaskMapper;
+import com.codex.ecam.model.admin.User;
+import com.codex.ecam.model.admin.UserSite;
+import com.codex.ecam.model.admin.UserSiteGroup;
+import com.codex.ecam.model.asset.Asset;
+import com.codex.ecam.model.asset.AssetCategoryTask;
 import com.codex.ecam.model.maintenance.task.Task;
 import com.codex.ecam.model.maintenance.task.TaskGroup;
 import com.codex.ecam.repository.FocusDataTablesInput;
@@ -43,11 +53,16 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	private TaskGroupDao taskGroupDao;
 
 	@Autowired
+	private AssetDao assetDao;
+
+	@Autowired
 	private TaskDao taskDao;
 
 	@Autowired
 	private BusinessDao businessDao;
 
+	@Autowired
+	private AssetCategoryTaskDao assetCategoryTaskDao;
 
 	private TaskGroupDTO findDTOById(Integer id) throws TaskGroupException {
 		try {
@@ -100,7 +115,6 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 		}
 		return result;
 	}
-
 
 	@Override
 	public TaskGroupResult delete(Integer id) {
@@ -190,7 +204,8 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 		for (TaskDTO taskDTO : result.getDtoEntity().getTasks()) {
 			Task task;
 			if (taskDTO.getId() != null) {
-				task = result.getDomainEntity().getTasks().stream().filter((x) -> x.getId().equals(taskDTO.getId())).findAny().orElseGet(Task :: new);
+				task = result.getDomainEntity().getTasks().stream().filter((x) -> x.getId().equals(taskDTO.getId()))
+						.findAny().orElseGet(Task::new);
 			} else {
 				task = new Task();
 			}
@@ -202,7 +217,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 		result.getDomainEntity().setTasks(tasks);
 	}
-	
+
 	@Override
 	public DataTablesOutput<TaskGroupDTO> findAll(FocusDataTablesInput input) throws Exception {
 		try {
@@ -221,11 +236,12 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	}
 
 	@Override
-	public DataTablesOutput<TaskGroupDTO> findTaskGroupByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
+	public DataTablesOutput<TaskGroupDTO> findTaskGroupByBusiness(FocusDataTablesInput input, Integer bizId)
+			throws Exception {
 		try {
 			DataTablesOutput<TaskGroup> domainOut = new DataTablesOutput<>();
 			TaskGroupSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			Specification<TaskGroup> specification = (root, query, cb)->{
+			Specification<TaskGroup> specification = (root, query, cb) -> {
 				return cb.equal(root.get("business").get("id"), bizId);
 			};
 			domainOut = taskGroupDao.findAll(input, specification);
@@ -250,7 +266,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 		List<TaskGroupDTO> out = TaskGroupMapper.getInstance().domainToDTOList(domainOut);
 		return out;
 	}
-	
+
 	@Override
 	public DataTablesOutput<TaskDTO> findAllTasksByTaskGroup(FocusDataTablesInput input, Integer id) throws Exception {
 		Specification<Task> specification = (root, query, cb) -> cb.equal(root.get("taskGroup").get("id"), id);
@@ -262,6 +278,22 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	@Override
 	public List<TaskDTO> findAllTasksByTaskGroup(Integer id) throws Exception {
 		List<Task> domainOut = taskDao.findTaskByTaskGroup(id);
+		List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
+		return out;
+	}
+
+	public List<TaskDTO> findAllTasksByAssetCategory(Integer assetId) throws Exception {
+		Asset asset = assetDao.findOne(assetId);
+		Specification<AssetCategoryTask> specification = (root, query, cb) -> {
+			return cb.equal(root.get("assetCategory").get("id"), asset.getAssetCategory().getId());
+		};
+
+		List<AssetCategoryTask> assetCategoryTasks = assetCategoryTaskDao.findAll(specification);
+		List<Task> domainOut = new ArrayList<>();
+		for (AssetCategoryTask categoryTask : assetCategoryTasks) {
+			domainOut.add(categoryTask.getTask());
+		}
+
 		List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
 		return out;
 	}

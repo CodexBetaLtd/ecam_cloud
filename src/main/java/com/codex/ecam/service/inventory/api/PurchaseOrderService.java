@@ -9,6 +9,7 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
+import com.codex.ecam.result.purchasing.RFQResult;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +24,7 @@ public interface PurchaseOrderService {
 	
 	PurchaseOrderResult statusChange(Integer id,PurchaseOrderStatus status);
 	
-	PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds);
+	RFQResult createPurchaseOrderFromRFQItems(String rfqItemIds,String supplierIds);
 	
 	PurchaseOrderDTO createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds);
 
@@ -40,6 +41,11 @@ public interface PurchaseOrderService {
 	void purchaseOrderFileDelete(Integer id);
 	
     MRNResult generatePoFromMrn(String ids, Integer mrnId);
+    
+    String getNextCode(Integer businessId);
+    
+    PurchaseOrderResult createNewPurchaseorder();
+
     
     DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input);
 

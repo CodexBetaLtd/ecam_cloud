@@ -41,7 +41,7 @@ var TabFile = function () {
                 "<td class='hidden-xs'>" + moment(file.fileDate).format('YYYY-MM-DD') + "</td>" +
                 "<td>" + 
                 	"<div align='center'>" +
-                		ButtonUtil.getCommonBtnDownloadFile('asset/download-file?fileId=',file.id) +
+                		ButtonUtil.getCommonBtnDownloadFile('../asset/download-file?fileId=',file.id) +
                     	ButtonUtil.getCommonBtnDelete("TabFile.deleteFile", row) +
                 	"</div>" +
                 "</tr>";

@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
+import com.codex.ecam.constants.TaskType;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.result.admin.AssetCategoryResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
@@ -56,7 +57,13 @@ public class AssetCategoryController {
             return "redirect:/assetCategory/index";
         }
     }
-
+    
+	@RequestMapping(value = "/task-add-modal-view", method = RequestMethod.GET)
+	public String getTaskView(Model model) {
+		model.addAttribute("taskTypes", TaskType.getTaskTypes());
+		return "admin/assetcategory/modals/task-add-modal";
+	}
+	
     @RequestMapping(value = "/selectParent/{assetCategoryType}", method = RequestMethod.GET)
     public @ResponseBody
     List<AssetCategoryDTO> selectParent(@PathVariable("assetCategoryType") AssetCategoryType type) {
@@ -119,6 +126,7 @@ public class AssetCategoryController {
         model.addAttribute("assetCategory", dto);
         model.addAttribute("systemcodes", AssetCategoryType.getAssetCategoryTypes());
         model.addAttribute("assetCategoryParents", assetCategoryService.findByAssetCategoyType(dto.getType()));
+        model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
     }
 }

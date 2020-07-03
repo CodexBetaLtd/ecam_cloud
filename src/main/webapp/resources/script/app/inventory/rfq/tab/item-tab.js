@@ -1,8 +1,79 @@
 var TabItem = function () {
 
+	var initButtons = function () {
+		$('#btn-add-rfq-item').on('click', function () {
+			TabItem.rfqItemView();
+		});	
+		$('#btn-new-po').on('click', function () {
+			  TabItem.generatePo();
+		});	
 
+	}; 
+	
+    var runCheckboxes = function () {
+        $('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
+            checkboxClass: 'icheckbox_minimal-grey',
+            radioClass: 'iradio_minimal-grey',
+            increaseArea: '10%'
+        });
+    };
+	
+    var getSelectedItems=function(){
+    	var token = $("input[name='_csrf']").val();    	
+
+    	var checkedValues = $("input[name='selectedItems']:checkbox:checked").map(function() {
+    		if(this.value == null || this.value == "") {
+    			isSaved = false;
+    		}
+    	    return this.value;
+    	}).get();
+    	
+    	var checkedSupplires = $("input[name='selectedSuppliresItems']:checkbox:checked").map(function() {
+    		if(this.value == null || this.value == "") {
+    			isSaved = false;
+    		}
+    	    return this.value;
+    	}).get();
+    	if(checkedSupplires != null && checkedSupplires != ""){
+    		$.ajax({
+    			type: "GET",
+    			url: '../purchaseorder/addfromrfq?_csrf=' + token + '&rfqItemIds=' + checkedValues+'&supplierIds='+checkedSupplires,
+    			contentType: "application/json",
+    			dataType: "json",
+    			success: function (result) {
+   
+    				$("#common-modal").modal('toggle');
+    			    setTimeout(function () {
+    			        location.reload()
+    			    }, 0);
+     				if (result.status == "SUCCESS") {
+    					$("#message-div").html(CustomComponents.getSuccessMsgDivWithUrl(result.msgList[0],"",""));
+    				} else {
+    					$("#message-div").html(CustomComponents.getErrorMsgDiv(result.errorList[0]));
+    				}
+
+    			},
+    			error: function (xhr, ajaxOptions, thrownError) {
+    				alert(xhr.status + " " + thrownError);
+    			},
+    			error: function (e) {
+    				// alert("Failed to Create AOD.");
+    				console.log(e);
+    			}
+    			
+    		});
+			//location.reload(); 
+
+     	}else{
+    		alert("Please select at least on supplier");
+    	}
+    	
+
+    	
+    }
     var populateRFQItems = function () {
         if (items.length > 0) {
+        	console.log(items)
             var row, item;
             $("#item-tbl > tbody").html("");
             for (row = 0; row < items.length; row++) {
@@ -27,7 +98,7 @@ var TabItem = function () {
                     "<td><span>" + item.itemAssetName + "</span></td>" +
                     "<td >" + item.itemQtyRequested + "</span></td>" +
                     "<td><span>" + item.itemQuotedTotalPrice + "</td>" +
-                    "<td>" + item.itemPurchaseOrderCodes + "</span></td>" +
+                    "<td>" + setpoList(item.purchaseOrderDTOs) + "</span></td>" +
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "TabItem") + "</td>" +
                     "</tr>";
                 $('#item-tbl > tbody:last-child').append(html);
@@ -37,28 +108,55 @@ var TabItem = function () {
         }
         RFQAdd.initCheckBoxes();
     };
+    
+    var setpoList=function(poList){
+    	var html="";
+    	 for (var row = 0; row < poList.length; row++) {
+    		 html=html+"<a href='../purchaseorder/edit?id="+poList[row].id+"' target='_blank'>"+poList[row].code+"</a> "
+    		 if((row+1)!=poList.length){
+    			 html=html	 +"," ;
+ 
+    		 }
+    	 }
+    	 
+    	 return html;
+    }
 
     var rfqItemView = function () {
-        // if(!CustomValidation.validateIsNullById("#supplierId") && CustomValidation.isEmptyValueById("#supplierId")) {
-        var $modal = $('#common-modal');
+        var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../rfq/item-add-modal-view';
             $modal.load(url, '', function () {
+            	ItemAddModal.init();
                 $modal.modal();
             });
         }, 1000);
-        // } else {
-        // 	alert("Please Set Supplier First in the Shipping Tab");
-        // }
-    };
+      };
+      
+      
+      var editListItem = function (itemIndex) {
+          var $modal = $('#master-modal-datatable');
+          CustomComponents.ajaxModalLoadingProgressBar();
+          setTimeout(function () {
+              var url = '../rfq/item-add-modal-view';
+              $modal.load(url, '', function () {
+              	ItemAddModal.init();
+              	fillItemEditForm(getItemByIndex(itemIndex));
+                  $modal.modal();
+              });
+          }, 1000);
+      };
 
     var addItemToList = function (item) {
+
     	var itemObj = {}
     	if (item.itemIndex != null && item.itemIndex != "" && item.itemIndex >= 0) { 
     		itemObj = getItemByIndex(item.itemIndex);            
-    		setCommonDataToItemObj(item, itemObj);    		
-    	} else {    
+    		setCommonDataToItemObj(item, itemObj);  
+
+    	} else {   
+
     		if (items.length == 0) {
     			itemObj['itemIndex'] = 0; 
         	} else {
@@ -67,6 +165,8 @@ var TabItem = function () {
         	setCommonDataToItemObj(item, itemObj);
         	items.push(itemObj);
     	}
+    	populateRFQItems();
+
     };
     
     var setCommonDataToItemObj = function (updatedItemObj, itemObj ){
@@ -82,6 +182,7 @@ var TabItem = function () {
     	validateFieldNull( itemObj, 'itemDescription', updatedItemObj.itemDescription);
     	
     	validateFieldNull( itemObj, 'version', updatedItemObj.version);
+    	validateFieldNull( itemObj, 'purchaseOrderDTOs', updatedItemObj.purchaseOrderDTOs);
     };
     
     var getItemByIndex = function (itemIndex) {
@@ -127,21 +228,12 @@ var TabItem = function () {
         item['itemQuotedTotalPrice'] = item['itemQuotedUnitPrice'] * item['itemQuotedQty'];
         item['itemDescription'] = $('#itemDescription').val(); 
         item['version'] = $('#itemVersion').val();
+
     	addItemToList(item);
 
     };
 
-    var editListItem = function (itemIndex) {
-        var $modal = $('#common-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../rfq/item-add-modal-view';
-            $modal.load(url, '', function () {
-            	fillItemEditForm(getItemByIndex(itemIndex));
-                $modal.modal();
-            });
-        }, 1000);
-    };
+
     
     var fillItemEditForm = function (item) {
     	$('#itemId').val(item['itemId']);
@@ -184,7 +276,51 @@ var TabItem = function () {
         	items[i].itemIndex = i;
         }
     };
+    var  loadsupplies=function(){
+		var $modal = $('#common-modal');
+		CustomComponents.ajaxModalLoadingProgressBar();
+		setTimeout(function() {
+			var url = '../rfq/supplier-fetch-modal-view';
+			$modal.load(url, '', function() {
+				getAssinedSuppliers();
+				$modal.modal();
+			});
+		}, 1000);
+    }
     
+    var getAssinedSuppliers=function(){
+		if (supplires.length > 0) {
+			var row, supplier;
+			$("#supplier_fetch_tbl > tbody").html("");
+			for (row = 0; row < supplires.length; row++) {
+				 supplires[row].itemIndex=row;
+				supplier = supplires[row];
+				
+				var html = "<tr id='row_" + row + "' >"+
+							"<td>" +                    
+				"<div class='checkbox-center'>" +
+                "<input type='checkbox' name='selectedSuppliresItems' value='" + CustomValidation.nullValueReplace(supplier.supplierId)+ "' class='grey'>" +
+                "</div>"+
+                "</td>" +
+				"<td><span>" + supplier.supplierName + "</span></td>"+
+				"<td >"+ supplier.supplierAddress + "</span></td>"+
+				"<td><span>" + supplier.supplierCity + "</td>"+
+				"<td>" + supplier.supplierProvince + "</span></td>"+
+				"<td>" + supplier.supplierPostalCode + "</span></td>"+
+				"<td>" + supplier.supplierCountry + "</span></td>"+
+				"</tr>";
+				$('#supplier_fetch_tbl > tbody:last-child').append(html);
+			}
+		} else {
+			CustomComponents.emptyTableRow("supplier_fetch_tbl", 7);
+		}
+        RFQAdd.initCheckBoxes();
+		$('#btn-add-fetch-supplires').on('click', function () {    
+			getSelectedItems()
+		});	
+
+
+    }
     var generatePo = function () {
     	var isSaved = true;    	
     	var token = $("input[name='_csrf']").val();    	
@@ -194,10 +330,18 @@ var TabItem = function () {
     		}
     	    return this.value;
     	}).get();
+    	
+    	var checkedSupplires = $("input[name='selectedSuppliresItems']:checkbox:checked").map(function() {
+    		if(this.value == null || this.value == "") {
+    			isSaved = false;
+    		}
+    	    return this.value;
+    	}).get();
+    		
     	if (isSaved) {
     		if (checkedValues != null && checkedValues != "") {  
     			if (isSelecetedItemsNotInPO(checkedValues)) {
-    				$(location).attr('href', '../purchaseorder/addfromrfq?_csrf=' + token + '&rfqItemIds=' + checkedValues);
+    				loadsupplies()
     			} else {
     				alert("Please Select unassigned item to generate PO.");
     			}   		    
@@ -211,7 +355,6 @@ var TabItem = function () {
             } else {
                 alert("There are some unsaved items. Please save them before create PO");
             }
-
     	}
     };
 
@@ -231,25 +374,12 @@ var TabItem = function () {
     };
 
 
-    var getRFQItemAssetView = function () {
-        var $modal = $('#stackable-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../rfq/asset-select-modal-view';
-            $modal.load(url, '', function () {
-                dtRFQItemAsset.initRFQAssetTable();
-                $modal.modal();
-            });
-        }, 1000);
-    };
-    var setRFQItemAsset = function (obj, id, name) {
-        $("#itemAssetId").val(id);
-        $("#rfqItemAssetName").val(name);
-        $((obj).closest(".modal")).modal('toggle');
-    };
-
 
     return {
+    init:function(){
+    	populateRFQItems();
+    	initButtons();
+    },
 
         addRFQItem: function () {
             addRFQItem();
@@ -258,14 +388,6 @@ var TabItem = function () {
         addItemToList: function (item) {
         	addItemToList(item);
         },
-        assetSelectModal: function () {
-            getRFQItemAssetView();
-        },
-        setRFQItemAsset: function (obj, id, name) {
-            setRFQItemAsset(obj, id, name);
-        },
-
-
 
         removeItem: function (index) {
             removeItem(index);

@@ -1,23 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
-      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <head th:include="template/commoncss :: commoncss"></head>
 
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/dropzone.min.css}" />
 
 
 <body>
 
 	<!-- start: HEADER -->
-	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<div class="navbar navbar-inverse navbar-fixed-top"
+		th:replace="template/commonheader :: commonheader"></div>
 	<!-- end: HEADER -->
-	
+
 	<!-- start: MAIN CONTAINER -->
 	<div class="main-container">
 		<div class="navbar-content">
@@ -40,102 +48,122 @@
 
 		<!-- start: PAGE -->
 		<div class="main-content">
-			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-            <div th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog"
+				tabindex="-1"
+				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+			<div id="item-add-modal" class="modal datatable fade" role="dialog"
+				tabindex="-1"
+				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+			<div
+				th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
 
 
 			<div align='center'>
-                 <div id='model'
-   			 	class='modal fade alert-warning' tabindex='-1' data-backdrop='static' data-keyboard='false' style='display: none; width: 420px !important;'>
-                  	<div class='modal-body'>
-                  	<p style="font-size:16px"><i class="fa fa-exclamation-triangle"></i>  Submit for Approval</p>
-                  <p>Please Save Purchase order first</p>
-                  	</div>
-                 	<div class='modal-footer'>
-                  <a data-dismiss='modal' style="background-color:#8a6d3b;color:#f6f7f8; 
-					width: 73px;" class='btn btn-xs'><i class="fa fa-check-square-o"></i>
-					 ok</a> 
-              		 </div>
-               </div>
-             </div>
-			
+				<div id='model' class='modal fade alert-warning' tabindex='-1'
+					data-backdrop='static' data-keyboard='false'
+					style='display: none; width: 420px !important;'>
+					<div class='modal-body'>
+						<p style="font-size: 16px">
+							<i class="fa fa-exclamation-triangle"></i> Submit for Approval
+						</p>
+						<p>Please Save Purchase order first</p>
+					</div>
+					<div class='modal-footer'>
+						<a data-dismiss='modal'
+							style="background-color: #8a6d3b; color: #f6f7f8; width: 73px;"
+							class='btn btn-xs'><i class="fa fa-check-square-o"></i> ok</a>
+					</div>
+				</div>
+			</div>
+
 			<div class="container">
 
 				<!-- start: PAGE HEADER -->
-                <div class="row" th:replace="inventory/purchaseorder/page-header :: pageheader"></div>
+				<div class="row"
+					th:replace="inventory/purchaseorder/page-header :: pageheader"></div>
 
 				<!-- end: PAGE HEADER -->
 
 				<div class="row btn-bar">
-					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/purchaseorder/add}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_PURCHASE_ORDER_ADD.id)"
-                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
-					</a>
-					<a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
-					   data-original-title="Save"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   onclick="document.getElementById('po_add_btn').click();">
-				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
-				    </a>
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/purchaseorder/delete(id=${purchaseOrder.id})}"
-					   th:disabled="${purchaseOrder.id} == null ? 'disabled'"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   data-placement="top" data-original-title="Delete"> <i
-							class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
-					</a>
-                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/purchaseorder/}" data-placement="top"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   data-original-title="Back">
-				       <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>				       
-				    </a>
-				    <span class="visible-xs" style="padding-top: 5px"></span>
-				     <!-- Draft -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} "
-					   class="btn btn-default btn-sm active tooltips" id="submitForApprovel"
-					   th:disabled="${purchaseOrder.id} == null ? 'disabled'"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL})}"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SUBMIT_FOR_APPROVAL_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Submit
-						For Approval
+					<a class="btn btn-default btn-sm active tooltips" id="new"
+						th:href="@{/purchaseorder/add}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_PURCHASE_ORDER_ADD.id)"
+						data-placement="top" data-original-title="Add"> <i
+						class="clip-plus-circle-2  btn-new"></i> New
+					</a> <a class="btn btn-default btn-sm active tooltips" id="save"
+						data-placement="top" data-original-title="Save"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_ADD.id)"
+						onclick="document.getElementById('po_add_btn').click();"> <i
+						class="clip-checkmark-circle-2 btn-save"></i> <span
+						class="hidden-xs">Save</span>
+					</a> <a class="btn btn-default btn-sm active tooltips" id="delete"
+						th:href="@{/purchaseorder/delete(id=${purchaseOrder.id})}"
+						th:disabled="${purchaseOrder.id} == null ? 'disabled'"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_PURCHASE_ORDER_ADD.id)"
+						data-placement="top" data-original-title="Delete"> <i
+						class=" clip-cancel-circle-2 btn-delete"></i> <span
+						class="hidden-xs">Delete</span>
+					</a> <a class="btn btn-default btn-sm active tooltips" id="cancel"
+						th:href="@{/purchaseorder/}" data-placement="top"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
+						data-original-title="Back"> <i class="clip-arrow-left-2 "></i>
+						<span class="hidden-xs">Cancel</span>
+					</a> <span class="visible-xs" style="padding-top: 5px"></span>
+					
+					                    <!-- Print -->
+                    <a class="btn btn-default btn-sm active tooltips" id="printReport"
+                       th:href="@{/report/purchaseorder/printPO(id=${purchaseOrder.id})}" th:disabled="${purchaseOrder.id} == null ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_ADD.id)"
+                       data-placement="top" data-original-title="Print PO Report"> <i class="fa fa-print"></i> Print
+                    </a>
+					<!-- Draft -->
+					<a
+						th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} "
+						class="btn btn-default btn-sm active tooltips"
+						id="submitForApprovel"
+						th:disabled="${purchaseOrder.id} == null ? 'disabled'"
+						th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL})}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SUBMIT_FOR_APPROVAL_BUTTON_PURCHASE_ORDER_ADD.id)"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class="fa fa-share-square-o"></i> Submit For Approval
 					</a>
 					<!-- Waiting For Approval -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
-					   class="btn btn-default btn-sm active tooltips" id="approvedQuote"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_APPROVED_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).APPROVED})}"
-					   data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i>Approve Purchase
-						Order
+					<a
+						th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
+						class="btn btn-default btn-sm active tooltips" id="approvedQuote"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_APPROVED_BUTTON_PURCHASE_ORDER_ADD.id)"
+						th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).APPROVED})}"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class=" fa fa-reply"></i>Approve Purchase Order
+					</a> <a
+						th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
+						class="btn btn-default btn-sm active tooltips" id="rejectPO"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_REJECT_BUTTON_PURCHASE_ORDER_ADD.id)"
+						th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT})}"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class=" fa fa-reply"></i> Reject Purchase Order
+					</a> <a
+						th:if="${purchaseOrder.purchaseOrderstatus}!=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL}"
+						th:disabled="${purchaseOrder.id} == null or ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} ? 'disabled'"
+						class="btn btn-default btn-sm active tooltips" id="cancelPO"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
+						th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL})}"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class="fa fa-share-square-o"></i> Cancel Purchase Order
 					</a>
-
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).WAITING_FOR_APPROVAL}"
-					   class="btn btn-default btn-sm active tooltips" id="rejectPO"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_REJECT_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT})}"
-					   data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i> Reject Purchase
-						Order
+					<!-- reject or  cancel -->
+					<a
+						th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL} OR ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT} "
+						class="btn btn-default btn-sm active tooltips" id="backtoDraft"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_BACK_TO_DRAFT_BUTTON_PURCHASE_ORDER_ADD.id)"
+						th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT})}"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class="fa fa-share-square-o"></i> Back to draft
 					</a>
+				</div>
 
-					<a th:if="${purchaseOrder.purchaseOrderstatus}!=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL}"
-					   th:disabled="${purchaseOrder.id} == null or ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT} ? 'disabled'"
-					   class="btn btn-default btn-sm active tooltips" id="cancelPO"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PURCHASE_ORDER_CANCEL_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL})}"
-					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Cancel
-						Purchase Order
-					</a>	
-						<!-- reject or  cancel -->
-					<a th:if="${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).CANCEL} OR ${purchaseOrder.purchaseOrderstatus}==${T(com.codex.ecam.constants.PurchaseOrderStatus).REJECT} "
-					   class="btn btn-default btn-sm active tooltips" id="backtoDraft"
-					   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_BACK_TO_DRAFT_BUTTON_PURCHASE_ORDER_ADD.id)"
-					   th:href="@{/purchaseorder/statusChange(id=${purchaseOrder.id},status=${T(com.codex.ecam.constants.PurchaseOrderStatus).DRAFT})}"
-					   data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Back to
-						draft
-					</a>	    
-			    </div>
-                
-                <!-- start: PAGE CONTENT -->
-               <div class="row">
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12">
 						<div class="panel panel-default">
 							<div class="panel-heading">
@@ -146,41 +174,50 @@
 
 								<div th:replace="template/messageview :: message"></div>
 
-								<form role="form" id="po_add_frm" th:action="@{/purchaseorder/save}" th:object="${purchaseOrder}" method="post">
+								<form role="form" id="po_add_frm"
+									th:action="@{/purchaseorder/save}" th:object="${purchaseOrder}"
+									method="post">
 
 									<div th:replace="general/modal/modal-base :: modalFragment "></div>
-									<div th:replace="general/modal/modal-base :: largeModalFragment "></div>
-									<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+									<div
+										th:replace="general/modal/modal-base :: largeModalFragment "></div>
+									<div
+										th:replace="general/modal/modal-base :: stackableModalFragment "></div>
 
-                                    <input type="hidden" id="poId" name="id" th:field="*{id}"/>
-                                    <input type="hidden" id="poVersion" name="version" th:field="*{version}"/>
+									<input type="hidden" id="poId" name="id" th:field="*{id}" /> <input
+										type="hidden" id="poVersion" name="version"
+										th:field="*{version}" />
 
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">Purchase Order Status</label>
-												<p> 
-												<input type="hidden" th:field="*{purchaseOrderstatus}">
-													<b><span style="font-size: medium;" th:text="${purchaseOrder.purchaseOrderstatus.getName()}"></span></b>
+												<p>
+													<input type="hidden" th:field="*{purchaseOrderstatus}">
+													<b><span style="font-size: medium;"
+														th:text="${purchaseOrder.purchaseOrderstatus.getName()}"></span></b>
 												</p>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label class="control-label"> Code</label> 
-												<input type="text" th:field="*{code}" class="form-control">
+												<label class="control-label"> Code</label> <input
+													type="text" th:field="*{code}" class="form-control">
 											</div>
 										</div>
 									</div>
 
 									<div class="row">
-										<div class="col-md-6">
+										<div class="col-md-6"
+											sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')">
 											<div class="form-group">
-												<label class="control-label"> Billing Term <span class="symbol required"></span>
-												</label> 
-												<select id="billingTerms" th:field="*{billingTermId}" class="search-select" style="width: 100%;">
+												<label class="control-label"> Business <span
+													class="symbol required"></span>
+												</label> <select th:field="*{businessId}" class="search-select"
+													style="width: 100%;">
 													<option value="">&nbsp;</option>
-													<option th:each="billingTerm : ${billingTerms}" th:value="${billingTerm}" th:text="${billingTerm.name}"></option>
+													<option th:each="business : ${businesses}"
+														th:value="${business.id}" th:text="${business.name}"></option>
 												</select>
 											</div>
 										</div>
@@ -189,24 +226,29 @@
 												<label class="control-label"> Expected Delivery Date
 												</label>
 												<div class="input-group" id="picker-container">
-													<input type="text" th:field="*{expectedDeliveryDate}" data-date-format="dd-mm-yyyy" data-date-viewmode="years"
-														placeholder="Eg : 08-01-2020" class="form-control date-picker"> 
-														<span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+													<input type="text" th:field="*{expectedDeliveryDate}"
+														data-date-format="dd-mm-yyyy" data-date-viewmode="years"
+														placeholder="Eg : 08-01-2020"
+														class="form-control date-picker"> <span
+														class="input-group-addon"> <i
+														class="fa fa-calendar"></i></span>
 												</div>
 											</div>
 										</div>
 									</div>
-                                <div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label"> Business <span class="symbol required"></span> </label>
-                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
-                                                <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Tax </label>
+												<div class="input-group">
+													<input type="hidden" th:field="*{taxId}" id="taxId">
+													<input type="text" th:field="*{taxName}" id="taxName"
+														readonly placeholder="Please Specify a Tax">
+												</div>
+											</div>
+										</div>
+									</div>
 
 									<div class="row">
 										<div class="col-md-12">
@@ -221,47 +263,61 @@
 										<div class="col-sm-12">
 											<div class="tabbable wrapper">
 												<ul id="myTab" class="nav nav-tabs tab-bricky list">
-													<li class="active">
-														<a href="#item_tab" data-toggle="tab"> Items </a>
-													</li>
-													<li><a href="#account_tab" data-toggle="tab"> Account Details </a>
-													</li>
-													<li><a href="#additional_cost_tab" data-toggle="tab"> Additional
-														Cost </a></li>
+													<li class="active"><a href="#item_tab"
+														data-toggle="tab"> Items </a></li>
+													<li><a href="#account_tab" data-toggle="tab">
+															Account Details </a></li>
+													<li><a href="#additional_cost_tab" data-toggle="tab">
+															Additional Cost </a></li>
+													<li><a href="#tax_tab" data-toggle="tab">
+															Tax </a></li>
 													<li><a href="#shipping_reciving_tab" data-toggle="tab">
-														Shipping/Receiving </a></li>
-													<li><a href="#discussion_tab" data-toggle="tab"> Discussion </a>
-													</li>
+															Shipping/Receiving </a></li>
+													<li><a href="#discussion_tab" data-toggle="tab">
+															Discussion </a></li>
 													<li><a href="#notifications_tab" data-toggle="tab">
-														Notifications </a></li>
-													<li><a href="#files_tab" data-toggle="tab"> Files </a></li>
-													<li><a href="#change_log_tab" data-toggle="tab"> Activity Log </a>
-													</li>
+															Notifications </a></li>
+													<li><a href="#files_tab" data-toggle="tab"> Files
+													</a></li>
+													<li><a href="#change_log_tab" data-toggle="tab">
+															Activity Log </a></li>
 												</ul>
 												<div class="tab-content">
 													<div class="tab-pane in active" id="item_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/item-tab :: itemTabFragment"></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/item-tab :: itemTabFragment"></div>
 													</div>
 													<div class="tab-pane" id="account_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/account-tab :: accountTabFragment"></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/account-tab :: accountTabFragment"></div>
 													</div>
 													<div class="tab-pane" id="additional_cost_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/additional-cost-tab :: additionalTabFragment"></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/additional-cost-tab :: additionalTabFragment"></div>
+													</div>
+													<div class="tab-pane" id="tax_tab">
+														<div
+															th:replace="inventory/purchaseorder/tab/tax-tab :: taxTabFragment"></div>
 													</div>
 													<div class="tab-pane" id="shipping_reciving_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/shipping-tab :: shippingTabFragment "></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/shipping-tab :: shippingTabFragment "></div>
 													</div>
 													<div class="tab-pane" id="discussion_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/discussion-tab :: discussionTabFragment "></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/discussion-tab :: discussionTabFragment "></div>
 													</div>
 													<div class="tab-pane" id="notifications_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/notification-tab :: notificationTab "></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/notification-tab :: notificationTab "></div>
 													</div>
 													<div class="tab-pane" id="files_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/file-tab :: fileTabFragment "></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/file-tab :: fileTabFragment "></div>
 													</div>
 													<div class="tab-pane" id="change_log_tab">
-                                                        <div th:replace="inventory/purchaseorder/tab/status-change-tab :: statusChangeTabFragment "></div>
+														<div
+															th:replace="inventory/purchaseorder/tab/status-change-tab :: statusChangeTabFragment "></div>
 													</div>
 												</div>
 											</div>
@@ -291,47 +347,76 @@
 	<!-- start: MAIN JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjs"></div>
 	<!-- end: MAIN JAVASCRIPTS -->
-    
+
 	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
-     <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
-     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
-         <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script> 
-     
-    
-    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/moment.min.js}"></script>
 
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/init.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/item-tab.js}"></script>
-    <script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/tab/discussion-tab.js}"></script>
-    <script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/tab/notification-tab.js}"></script>
-    <script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
-  	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
-            
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/discussion-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/file-add-modal.js}"></script>
 
 	<script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
+		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 	<script type="text/javascript"
-            th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-workorders.js}"></script>
-            
+		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/init.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/item-tab.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/discussion-tab.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/notification-tab.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/tab/tax-tab.js}"></script>
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/modal/discussion-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/modal/file-add-modal.js}"></script>
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-workorders.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-tax.js}"></script>
+
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 	<script th:inline="javascript">
@@ -341,9 +426,11 @@
         var thymeLeafAdditionalCosts = [[${purchaseOrder.additionalCostDTOs}]];
         var thymeLeafDiscussions = [[${purchaseOrder.discussionDTOs}]];
         var thymeLeafPurchaseOrderNotifications = [[${purchaseOrder.notificationDTOs}]];
-
+        var taxes = [[${purchaseOrder.purchaseOrderTaxDTOs}]];
+        console.log(thymeLeafItems)
 
 		var items = [];
+		var poItemtax = [];
 
         var purchaseOrderNotifications = thymeLeafPurchaseOrderNotifications;
         var purchaseOrderDiscussions = thymeLeafDiscussions;
@@ -356,6 +443,7 @@
 	
 	    for (var i = 0; i < thymeLeafItems.length; i++) {
             TabItem.addItemToList(thymeLeafItems[i]);
+            
 	    };
 
         //	    for (var i = 0; i < thymeLeafadditionalCostList.length; i++) {

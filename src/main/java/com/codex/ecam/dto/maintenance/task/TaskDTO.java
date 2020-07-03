@@ -15,6 +15,9 @@ public class TaskDTO extends BaseDTO {
 	private TaskType taskType;
 	private String taskTypeName;
 	private Integer taskTypeId;
+	private Integer assetCatgoryTaskId;
+	private Integer assetCatgoryVersionId;
+
 
 	public Integer getId() {
 		return id;
@@ -81,4 +84,22 @@ public class TaskDTO extends BaseDTO {
 	public void setTaskTypeId(Integer taskTypeId) {
 		this.taskTypeId = taskTypeId;
 	}
+
+	public Integer getAssetCatgoryTaskId() {
+		return assetCatgoryTaskId;
+	}
+
+	public void setAssetCatgoryTaskId(Integer assetCatgoryTaskId) {
+		this.assetCatgoryTaskId = assetCatgoryTaskId;
+	}
+
+	public Integer getAssetCatgoryVersionId() {
+		return assetCatgoryVersionId;
+	}
+
+	public void setAssetCatgoryVersionId(Integer assetCatgoryVersionId) {
+		this.assetCatgoryVersionId = assetCatgoryVersionId;
+	}
+	
+	
 }

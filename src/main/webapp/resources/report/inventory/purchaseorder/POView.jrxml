@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 3.1.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="po-view" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="SUB_DATASET_AOD_ITEMS">
+		<field name="batchNo" class="java.lang.String">
+			<fieldDescription><![CDATA[batchNo]]></fieldDescription>
+		</field>
+		<field name="itemQuantity" class="java.lang.Double">
+			<fieldDescription><![CDATA[itemQuantity]]></fieldDescription>
+		</field>
+		<field name="itemReturnQuantity" class="java.lang.Double">
+			<fieldDescription><![CDATA[itemReturnQuantity]]></fieldDescription>
+		</field>
+		<field name="description" class="java.lang.String">
+			<fieldDescription><![CDATA[description]]></fieldDescription>
+		</field>
+		<field name="partCode" class="java.lang.String">
+			<fieldDescription><![CDATA[partCode]]></fieldDescription>
+		</field>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<field name="expectedDeliveryDate" class="java.util.Date">
+		<fieldDescription><![CDATA[expectedDeliveryDate]]></fieldDescription>
+	</field>
+	<field name="suppierName" class="java.lang.String">
+		<fieldDescription><![CDATA[suppierName]]></fieldDescription>
+	</field>
+	<field name="poStatus" class="java.lang.String">
+		<fieldDescription><![CDATA[poStatus]]></fieldDescription>
+	</field>
+	<field name="poNo" class="java.lang.String">
+		<fieldDescription><![CDATA[poNo]]></fieldDescription>
+	</field>
+	<field name="supplierNo" class="java.lang.String">
+		<fieldDescription><![CDATA[supplierNo]]></fieldDescription>
+	</field>
+	<field name="purchaseorderRepItemDTOs" class="java.util.List">
+		<fieldDescription><![CDATA[purchaseorderRepItemDTOs]]></fieldDescription>
+	</field>
+	<field name="businessName" class="java.lang.String"/>
+	<field name="businessAddress" class="java.lang.String"/>
+	<field name="purchaseorderRepTaxDTOs" class="java.util.List">
+		<fieldDescription><![CDATA[purchaseorderRepTaxDTOs]]></fieldDescription>
+	</field>
+	<variable name="itemTotalCost" class="java.lang.Double"/>
+	<variable name="totalTax" class="java.lang.Double"/>
+	<variable name="total" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{itemTotalCost}+$V{totalTax}]]></variableExpression>
+	</variable>
+	<title>
+		<band height="43">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="1" y="0" width="571" height="35"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_NAME">
+					<subreportParameterExpression><![CDATA["AOD "]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="businessName">
+					<subreportParameterExpression><![CDATA[$F{businessName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="businessAddress">
+					<subreportParameterExpression><![CDATA[$F{businessAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{purchaseorderRepItemDTOs})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"common/ReportHeaderNameLogo.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="120">
+			<frame>
+				<reportElement key="frame-1" x="0" y="1" width="572" height="105"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<staticText>
+					<reportElement key="staticText-1" x="1" y="0" width="59" height="14"/>
+					<box leftPadding="3">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Supplier Datails:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-2" x="1" y="71" width="59" height="14"/>
+					<box leftPadding="3">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Attn:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField-1" x="60" y="0" width="270" height="14">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{supplierNo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-3" x="330" y="0" width="242" height="14">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Purchaseorder Information ]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement key="textField-6" x="405" y="14" width="100" height="14"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{poNo}]]></textFieldExpression>
+				</textField>
+				<textField pattern="yyyy/MM/dd" isBlankWhenNull="true">
+					<reportElement key="textField-7" positionType="FixRelativeToBottom" x="405" y="28" width="167" height="14"/>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{expectedDeliveryDate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement key="staticText-9" x="330" y="14" width="75" height="14"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[PO No.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-10" x="330" y="28" width="75" height="14"/>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[PO Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement key="staticText-11" x="331" y="56" width="74" height="14">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box leftPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<text><![CDATA[Request By.]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement key="textField" x="60" y="14" width="270" height="14">
+						<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement verticalAlignment="Middle" lineSpacing="Single">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{suppierName}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="1" height="106"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="332" y="71" width="74" height="14"/>
+					<box leftPadding="5"/>
+					<textElement lineSpacing="Single"/>
+					<text><![CDATA[Date]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="330" y="42" width="75" height="14"/>
+					<box leftPadding="5"/>
+					<textElement lineSpacing="Single"/>
+					<text><![CDATA[Expected Delivary]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="405" y="42" width="167" height="14"/>
+					<textElement lineSpacing="Single"/>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{poStatus}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="405" y="71" width="167" height="14"/>
+					<textElement lineSpacing="Single"/>
+					<textFieldExpression class=""><![CDATA[new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="571" y="0" width="1" height="106"/>
+				</line>
+			</frame>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band/>
+	</columnHeader>
+	<detail>
+		<band height="16">
+			<subreport isUsingCache="true">
+				<reportElement x="0" y="0" width="572" height="14" isPrintInFirstWholeBand="true" isPrintWhenDetailOverflows="true">
+					<printWhenExpression><![CDATA[$F{purchaseorderRepItemDTOs}.size()>0]]></printWhenExpression>
+				</reportElement>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{purchaseorderRepItemDTOs})]]></dataSourceExpression>
+				<returnValue subreportVariable="itemSubtotal" toVariable="itemTotalCost"/>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"inventory/Purchaseorder/SubPOItemView.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="92">
+			<staticText>
+				<reportElement x="1" y="3" width="290" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<text><![CDATA[Prepaierd By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="3" width="280" height="20"/>
+				<textElement lineSpacing="Single"/>
+				<text><![CDATA[Authorized By]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="380" y="23" width="100" height="30"/>
+				<textElement textAlignment="Right" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="473" y="20" width="100" height="30"/>
+				<textElement textAlignment="Left" lineSpacing="Single"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band/>
+	</lastPageFooter>
+	<summary>
+		<band height="17">
+			<staticText>
+				<reportElement x="0" y="0" width="480" height="14"/>
+				<box rightPadding="5">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="480" y="0" width="92" height="14"/>
+				<box rightPadding="5">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" lineSpacing="Single">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

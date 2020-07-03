@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt-order-view" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="82a9d32f-2667-41e5-a2ad-8f03b09a5c73">
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 3.1.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt-order-view" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
@@ -18,14 +18,8 @@
 	<field name="orderNo" class="java.lang.String">
 		<fieldDescription><![CDATA[orderNo]]></fieldDescription>
 	</field>
-	<field name="taxes" class="java.util.List">
-		<fieldDescription><![CDATA[taxes]]></fieldDescription>
-	</field>
 	<field name="remark" class="java.lang.String">
 		<fieldDescription><![CDATA[remark]]></fieldDescription>
-	</field>
-	<field name="type" class="java.lang.String">
-		<fieldDescription><![CDATA[type]]></fieldDescription>
 	</field>
 	<field name="dateReceived" class="java.util.Date">
 		<fieldDescription><![CDATA[dateReceived]]></fieldDescription>
@@ -39,8 +33,8 @@
 	<field name="invoiceNo" class="java.lang.String">
 		<fieldDescription><![CDATA[invoiceNo]]></fieldDescription>
 	</field>
-	<field name="items" class="java.util.List">
-		<fieldDescription><![CDATA[items]]></fieldDescription>
+	<field name="itemRepDTOs" class="java.util.List">
+		<fieldDescription><![CDATA[itemRepDTOs]]></fieldDescription>
 	</field>
 	<field name="createdUser" class="java.lang.String">
 		<fieldDescription><![CDATA[createdUser]]></fieldDescription>
@@ -60,20 +54,36 @@
 	<field name="supplierAddressLine1" class="java.lang.String">
 		<fieldDescription><![CDATA[supplierAddressLine1]]></fieldDescription>
 	</field>
+	<field name="businessName" class="java.lang.String"/>
+	<field name="businessAddress" class="java.lang.String"/>
 	<variable name="REPORT_NAME" class="java.lang.String">
 		<variableExpression><![CDATA["Good Receive Note"]]></variableExpression>
 	</variable>
 	<background>
-		<band splitType="Stretch"/>
+		<band/>
 	</background>
 	<title>
-		<band height="50" splitType="Stretch"/>
+		<band height="50">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="572" height="35"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="businessName">
+					<subreportParameterExpression><![CDATA[$F{businessName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="businessAddress">
+					<subreportParameterExpression><![CDATA[$F{businessAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itemRepDTOs})]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"common/ReportHeaderNameLogo.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
 	</title>
 	<pageHeader>
-		<band height="98" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="85">
 			<staticText>
-				<reportElement x="0" y="0" width="300" height="14" isPrintWhenDetailOverflows="true" uuid="07218934-817e-4b5c-abbd-1ebed3ddc22d">
+				<reportElement x="0" y="0" width="300" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
@@ -81,181 +91,157 @@
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Supplier Information ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="390" y="14" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="7485a0f4-0a9c-4c62-92a7-99e4695d0d6e"/>
+				<reportElement x="390" y="14" width="182" height="14" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="2">
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="390" y="84" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="a80af7e1-84fe-4fae-afc7-c94a8410f4c6">
+				<reportElement x="390" y="70" width="182" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2">
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{orderNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{orderNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="390" y="56" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="e88cac71-cea4-4f1d-831e-5b9e733d84e6"/>
+				<reportElement x="390" y="56" width="182" height="14" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="2">
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{invoiceNo}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="300" y="14" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="ace96fd6-1ecf-4780-a6d4-cf22ab79ab6a">
+				<reportElement x="300" y="14" width="90" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[GRN No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="300" y="28" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="0813b455-f502-423a-a7f0-6645c2542b5a">
+				<reportElement x="300" y="28" width="90" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Order Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="300" y="56" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="e17db853-ca0f-4da0-8bd0-5a38b2dbfffa">
+				<reportElement x="300" y="56" width="90" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Invoice No]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="300" y="70" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="278efaf1-7725-4733-a84c-89f8724ca4d8">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box leftPadding="5">
-					<leftPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Purchase Type]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="300" y="84" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="d49c3481-16f1-4d51-9290-c22d74046961">
+				<reportElement x="300" y="70" width="90" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[PO No]]></text>
 			</staticText>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement x="390" y="28" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="bedda0e9-e32f-4d94-b10c-b98e0d412621"/>
+				<reportElement x="390" y="28" width="182" height="14" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="2">
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{dateOrdered}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dateOrdered}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement x="390" y="42" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="fa273a6f-50a7-4431-b607-5ac12eec0ecf"/>
+				<reportElement x="390" y="42" width="182" height="14" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="2">
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{dateReceived}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="390" y="70" width="182" height="14" isPrintWhenDetailOverflows="true" uuid="7ffdb970-001e-474e-aa43-26ae868d4e12">
-					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				</reportElement>
-				<box leftPadding="2">
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dateReceived}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="300" y="42" width="90" height="14" isPrintWhenDetailOverflows="true" uuid="479b1e6c-22d0-4682-8f04-0f5b8699377e">
+				<reportElement x="300" y="42" width="90" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Recevied Date]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="28" width="300" height="14" uuid="c6386375-5ae2-4cc4-b249-0a270da2850b"/>
+				<reportElement x="0" y="28" width="300" height="14"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{supplierAddressLine1}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplierAddressLine1}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="42" width="300" height="14" uuid="28c34c06-632d-497a-82a6-3cb835e6435a"/>
+				<reportElement x="0" y="42" width="300" height="14"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{supplierAddressLine2}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplierAddressLine2}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="56" width="300" height="14" uuid="7bb5928e-1c90-4a54-afd0-ee6873796cdd"/>
+				<reportElement x="0" y="56" width="300" height="14"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{supplierAddressLine3}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplierAddressLine3}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="300" y="0" width="272" height="14" isPrintWhenDetailOverflows="true" uuid="67c3d954-8cfa-4a5e-b392-165265e716ac">
+				<reportElement x="300" y="0" width="272" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -265,13 +251,13 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[GRN Information ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="70" width="300" height="28" isPrintWhenDetailOverflows="true" uuid="efef30b9-6a55-40e6-a9d0-737ecd89fa5f">
+				<reportElement x="0" y="70" width="300" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box leftPadding="2">
@@ -279,79 +265,81 @@
 					<leftPen lineWidth="1.0"/>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="14" width="300" height="14" uuid="1e2ab38d-b623-4ba6-b42e-286c44fdb1d0"/>
+				<reportElement x="0" y="14" width="300" height="14"/>
 				<box leftPadding="5">
 					<leftPen lineWidth="1.0"/>
 				</box>
-				<textElement verticalAlignment="Middle">
+				<textElement verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{supplierName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{supplierName}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-		</band>
+		<band/>
 	</columnHeader>
 	<detail>
-		<band height="50" splitType="Stretch">
-			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+		<band height="27">
+			<subreport>
+				<reportElement x="0" y="0" width="572" height="21"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itemRepDTOs})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"inventory/receiptOrder/SubReceiptOrderView.jasper"]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<columnFooter>
-		<band splitType="Stretch"/>
+		<band/>
 	</columnFooter>
 	<pageFooter>
-		<band splitType="Stretch"/>
+		<band/>
 	</pageFooter>
 	<summary>
-		<band height="78" splitType="Stretch">
+		<band height="78">
 			<staticText>
-				<reportElement x="0" y="26" width="80" height="14" isPrintWhenDetailOverflows="true" uuid="41caf885-4ce3-4a70-9ee9-d3740c46a43c">
+				<reportElement x="0" y="26" width="80" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Dotted"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Authorised by]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="220" y="26" width="120" height="14" isPrintWhenDetailOverflows="true" uuid="95cb7c14-bea4-4211-a8d7-40cca0507d2c">
+				<reportElement x="220" y="26" width="120" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Dotted"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Purchased From]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="450" y="26" width="120" height="14" isPrintWhenDetailOverflows="true" uuid="99f97692-5594-455f-85c9-686090534096">
+				<reportElement x="450" y="26" width="120" height="14" isPrintWhenDetailOverflows="true">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Dotted"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle" lineSpacing="Single">
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Stores Clerk]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField" x="450" y="56" width="120" height="14" uuid="2cb1e31b-60de-458d-b856-4c0fcd1cfb22">
+				<reportElement key="textField" x="450" y="56" width="120" height="14">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<box>
@@ -360,10 +348,10 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle" lineSpacing="Single">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER} +" Of " +$V{PAGE_COUNT}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page " + $V{PAGE_NUMBER} +" Of " +$V{PAGE_COUNT}]]></textFieldExpression>
 			</textField>
 		</band>
 	</summary>

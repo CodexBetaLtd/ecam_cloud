@@ -56,7 +56,12 @@ public class TaskGroupRestController {
 
     @RequestMapping(value = "/taskById", method = RequestMethod.GET)
     public TaskDTO findTaskByTaskId(@Valid Integer id) throws Exception {
-        return taskGroupService.findTasksById(id);
+    	return taskGroupService.findTasksById(id);
+    }
+    
+    @RequestMapping(value = "/getTaskByAssetCategory", method = RequestMethod.GET)
+    public List<TaskDTO> findTaskByAssetCategory(@Valid Integer assetId) throws Exception {
+        return taskGroupService.findAllTasksByAssetCategory(assetId);
     }
 
 

@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import com.codex.ecam.constants.BillingTerm;
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.listeners.inventory.purchaseorder.PurchaseOrderChangeLogListener;
+import com.codex.ecam.listeners.inventory.purchaseorder.PurchaseOrderPrePersistListener;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.admin.Currency;
@@ -31,7 +32,7 @@ import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 
 @Entity
 @Table(name = "tbl_purchase_order")
-@EntityListeners( { PurchaseOrderChangeLogListener.class } )
+@EntityListeners( { PurchaseOrderChangeLogListener.class,PurchaseOrderPrePersistListener.class } )
 public class PurchaseOrder extends BaseModel {
 
 	private static final long serialVersionUID = 3167763864035252289L;
@@ -49,7 +50,7 @@ public class PurchaseOrder extends BaseModel {
 	@JoinColumn(name = "asset_id")
 	@ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
 	private Asset asset;
-
+	
 	@JoinColumn(name = "bill_to_id")
 	@ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
 	private Asset billToFaciltiy;
@@ -184,6 +185,9 @@ public class PurchaseOrder extends BaseModel {
 	
 	@OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private List<PurchaseOrderFile> purchaseOrderFiles ;
+	
+	@OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private List<PurchaseOrderTax> purchaseOrderTaxs ;
 
 
 
@@ -550,6 +554,14 @@ public class PurchaseOrder extends BaseModel {
 
 	public void setPurchaseOrderFiles(List<PurchaseOrderFile> purchaseOrderFiles) {
 		this.purchaseOrderFiles = purchaseOrderFiles;
+	}
+
+	public List<PurchaseOrderTax> getPurchaseOrderTaxs() {
+		return purchaseOrderTaxs;
+	}
+
+	public void setPurchaseOrderTaxs(List<PurchaseOrderTax> purchaseOrderTaxs) {
+		this.purchaseOrderTaxs = purchaseOrderTaxs;
 	}
 
 	

@@ -21,15 +21,26 @@ import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.codex.ecam.constants.TAXType;
 import com.codex.ecam.constants.util.PrintType;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
-import com.codex.ecam.dto.report.data.ReceiptOrderRepDTO;
+
+import com.codex.ecam.dto.report.data.purchaseorder.PurchaseorderRepDTO;
+import com.codex.ecam.dto.report.data.purchaseorder.PurchaseorderRepItemDTO;
+import com.codex.ecam.dto.report.data.purchaseorder.PurchaseorderRepTaxDTO;
+import com.codex.ecam.dto.report.data.receiptOrder.ReceiptOrderItemRepDTO;
+import com.codex.ecam.dto.report.data.receiptOrder.ReceiptOrderRepDTO;
 import com.codex.ecam.dto.report.filter.ReceiptOrderFilterDTO;
 import com.codex.ecam.dto.report.print.ReceiptOrderPrintDTO;
 import com.codex.ecam.mappers.report.ReceiptOrderReportMapper;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderTax;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
+import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.report.receiptorder.api.ReceiptOrderReportService;
+import com.codex.ecam.util.CommonUtil;
 import com.codex.ecam.util.ReportUtil;
 import com.codex.ecam.util.search.inventory.PartSearchPropertyMapper;
 
@@ -105,4 +116,73 @@ public class ReceiptOrderReportServiceImpl implements ReceiptOrderReportService 
 		outputStream.flush();
 		outputStream.close();
 	}
+
+	@Override
+	public void printDoc(Integer id, HttpServletResponse response, HttpServletRequest request) throws Exception {
+		InputStream jasperStream;
+		OutputStream outputStream;
+		ReceiptOrderRepDTO receiptOrderRepDTO = new ReceiptOrderRepDTO();
+		final Map<String, Object> params = new HashMap<String, Object>();
+		jasperStream = ReportUtil.getInstance().getInputStream(request, "/resources/report/inventory/receiptOrder/",
+				"ReceiptOrderView.jrxml");
+		receiptOrderRepDTO = getReportData(id);
+		outputStream = ReportUtil.getInstance().getOutPutStram(response, "ReceiptOrder",
+				PrintType.PDF.getContentType(), PrintType.PDF.getExtention());
+		ArrayList<ReceiptOrderRepDTO> dataList =new ArrayList<>();
+		dataList.add(receiptOrderRepDTO);
+		String reportDir=request.getRealPath("").concat("/resources/report/");
+		params.put("SUBREPORT_DIR", reportDir);
+		ReportUtil.getInstance().generatePDF(dataList, jasperStream, params, outputStream);
+
+		outputStream.flush();
+		outputStream.close();
+	}
+	
+	
+	private ReceiptOrderRepDTO getReportData(Integer id) throws Exception {
+		final ReceiptOrder domain = receiptOrderDao.findOne(id);
+		final ReceiptOrderRepDTO repDTO = new ReceiptOrderRepDTO();
+
+		repDTO.setCode(domain.getCode());
+		if ((domain.getSupplier() != null) && (domain.getSupplier().getId() != null)) {
+			repDTO.setSupplierName(domain.getSupplier().getName());
+			repDTO.setSupplierAddressLine1(domain.getSupplier().getAddress());
+			repDTO.setSupplierAddressLine2(domain.getSupplier().getCity());
+			repDTO.setSupplierAddressLine3(domain.getSupplier().getProvince());
+			if ((domain.getSupplier().getCountry() != null) && (domain.getSupplier().getCountry().getId() != null)) {
+				repDTO.setSupplierCountry(domain.getSupplier().getCountry().getName());
+			}
+		}
+		repDTO.setDateOrdered(domain.getDateOrdered());
+		repDTO.setDateReceived(domain.getDateReceived());
+		repDTO.setInvoiceNo("");
+
+		if (domain.getBusiness() != null) {
+			repDTO.setBusinessName(domain.getBusiness().getName());
+			repDTO.setBusinessAddress(domain.getBusiness().getAddress());
+		}
+
+		List<ReceiptOrderItemRepDTO> itemList= new ArrayList<>();
+		Double itemCost=0.0;
+		for (ReceiptOrderItem receiptOrderItem : domain.getReceiptOrderItems()) {
+			ReceiptOrderItemRepDTO receiptOrderItemRepDTO = new ReceiptOrderItemRepDTO();
+			receiptOrderItemRepDTO.setGrnNo(receiptOrderItem.getReceiptOrder().getCode());
+			receiptOrderItemRepDTO.setDate(receiptOrderItem.getReceiptOrder().getDateReceived());
+		//	receiptOrderItemRepDTO.setInvoiceNo(receiptOrderItem.getReceiptOrder().getInvoiceNo());
+		//	receiptOrderItemRepDTO.setRemarks(receiptOrderItem.getReceiptOrder().getRemark());
+			receiptOrderItemRepDTO.setItemCode(receiptOrderItem.getAsset().getCode());
+			receiptOrderItemRepDTO.setItemId(receiptOrderItem.getAsset().getId());
+			receiptOrderItemRepDTO.setQuantity(receiptOrderItem.getQuantityReceived().doubleValue());
+			receiptOrderItemRepDTO.setUnitCost(receiptOrderItem.getUnitPrice().doubleValue());
+			receiptOrderItemRepDTO.setWeightedCost(0.0);        
+			receiptOrderItemRepDTO.setDescription(receiptOrderItem.getDescription());       
+	       // dto.setAmount(CommonUtil.round((receiptOrderItem.getUnitPrice() * receiptOrderItem.getQuantityReceived()), 2));
+			receiptOrderItemRepDTO.setStatus(receiptOrderItem.getReceiptOrder().getReceiptOrderStatus().getName());
+
+	        itemList.add(receiptOrderItemRepDTO);
+		}
+		repDTO.setItemRepDTOs(itemList);
+		return repDTO;
+	}
+	
 }

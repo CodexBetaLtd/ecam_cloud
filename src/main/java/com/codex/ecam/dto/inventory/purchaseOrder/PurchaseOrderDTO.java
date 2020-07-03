@@ -46,13 +46,17 @@ public class PurchaseOrderDTO extends BaseDTO {
 	private String shippingPostalCode;
 	private Integer shipToCountry;
 	private User user;
+	
+	private Integer taxId;
+	private String taxName;
 
 	private List<PurchaseOrderAdditionalCostDTO> additionalCostDTOs = new ArrayList<>();
 	private List<PurchaseOrderItemDTO> items = new ArrayList<>();
 	private List<PurchaseOrderDiscussionDTO> discussionDTOs = new ArrayList<>();
 	private List<PurchaseOrderNotificationDTO> notificationDTOs = new ArrayList<>();
 	private List<PurchaseOrderChangeLogDTO> purchaseOrderChangeLogDTOs = new ArrayList<>();
-    private List<PurchaseOrderFileDTO> purchaseOrderFileDTOs = new ArrayList<>();
+	private List<PurchaseOrderFileDTO> purchaseOrderFileDTOs = new ArrayList<>();
+    private List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -357,6 +361,31 @@ public class PurchaseOrderDTO extends BaseDTO {
 	public void setPurchaseOrderFileDTOs(List<PurchaseOrderFileDTO> purchaseOrderFileDTOs) {
 		this.purchaseOrderFileDTOs = purchaseOrderFileDTOs;
 	}
+
+	public Integer getTaxId() {
+		return taxId;
+	}
+
+	public void setTaxId(Integer taxId) {
+		this.taxId = taxId;
+	}
+
+	public String getTaxName() {
+		return taxName;
+	}
+
+	public void setTaxName(String taxName) {
+		this.taxName = taxName;
+	}
+
+	public List<PurchaseOrderTaxDTO> getPurchaseOrderTaxDTOs() {
+		return purchaseOrderTaxDTOs;
+	}
+
+	public void setPurchaseOrderTaxDTOs(List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs) {
+		this.purchaseOrderTaxDTOs = purchaseOrderTaxDTOs;
+	}
     
+	
     
 }

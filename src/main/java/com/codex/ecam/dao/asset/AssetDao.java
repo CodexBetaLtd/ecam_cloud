@@ -92,6 +92,9 @@ public interface AssetDao extends FocusDataTableRepository<Asset, Integer> {
 
     @Query("SELECT a.imageLocation FROM Asset a WHERE a.id = :id")
     String getAssetImageLocation(@Param("id") Integer id);
+    
+    @Query("SELECT a.assetUrl FROM Asset a WHERE a.id = :id")
+    String getAssetQRLocation(@Param("id") Integer id);
 
     @Query("from Asset where assetCategory.assetCategoryType = :type")
 	List<Asset> findWarehouseListByType(@Param("type") AssetCategoryType type);

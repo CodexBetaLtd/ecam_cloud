@@ -2,17 +2,19 @@ package com.codex.ecam.constants.util;
 
 public enum AffixList {
 
-    ESTIMATE(0, "estimate", "EP", "printEstimate", "newEstimate"),
-    EXPENSE(1, "expense", "EXP", "printExpense", "newExpense"),
-    AOD(2, "aod", "AOD", "printAOD", "newAOD"),
-    AOD_RETURN(3, "aodreturn", "AODREN", "printAODReturn", "newAODReturn"),
-    GRN(4, "grn", "GRN", "printGRN", "newGRN"),
+    RFQ(0, "RFQ", "RFQ", "printEstimate", "newEstimate"),
+    PURCHASEORDER(1, "Purchaseorder", "PO", "printExpense", "newExpense"),
+    RECEIPTORDER(2, "Receiptorder", "RO", "printGRN", "newGRN"),
+    AOD(3, "aod", "AOD", "printAOD", "newAOD"),
+    AOD_RETURN(4, "aodreturn", "AODRT", "printAODReturn", "newAODReturn"),
     BUSINESS(5, "business", "BIZ", "printBusiness", "newBusiness"),
     SUPPLIER(6, "supplier", "SUP", "printSupplier", "newSupplier"),
     STOCK(7, "stock", "STK", "printStock", "newStock"),
     STOCK_ADJUSTMENT(8, "stock", "STK-ADJ", "printStockAdjustment", "newStockAdjustment"),
     OTHER(9, "Other", "Oth", "printOther", "newOther"),
-    ISSUE_NOTE(10, "Issue Note", "ISN", "printOther", "newOther");
+    ISSUE_NOTE(10, "Issue Note", "ISN", "printOther", "newOther"),
+    MRN(11, "MRN", "MRN", "printOther", "newOther"),
+    MRN_RETURN(12, "MRN Return", "MRNR", "printOther", "newOther");
 
     private Integer id;
     private String name;

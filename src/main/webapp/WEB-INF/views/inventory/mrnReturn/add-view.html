@@ -82,6 +82,11 @@
                     </a>
 
                     <!--inventory-->
+                      <a class="btn btn-default btn-sm active tooltips" id="printReport"
+                       th:href="@{/report/mrnreturn/printMrnReturn(id=${mrnReturn.id})}" th:disabled="${mrnReturn.id} == null ? 'disabled'"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_PRINT_BUTTON_AOD_ADD.id)"
+                       data-placement="top" data-original-title="Print AOD Report"> <i class="fa fa-print"></i> Print
+                    </a>
                     <!-- Print -->
 <!--                     <a class="btn btn-default btn-sm active tooltips" id="printReport"
                        th:href="@{/report/mrn/mrnView(id=${mrn.id})}" th:disabled="${mrn.id} == null ? 'disabled'"

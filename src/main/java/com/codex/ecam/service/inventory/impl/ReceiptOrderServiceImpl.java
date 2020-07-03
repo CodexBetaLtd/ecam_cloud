@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
+import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.SupplierDao;
@@ -33,22 +34,28 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderItemDTO;
+import com.codex.ecam.dto.inventory.stock.StockDTO;
 import com.codex.ecam.exception.inventory.stock.StockException;
+import com.codex.ecam.mappers.inventory.stock.StockMapper;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.ReceiptOrderMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
+import com.codex.ecam.model.inventory.stock.Stock;
 import com.codex.ecam.model.inventory.stock.StockHistory;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
 import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.UniqueCodeUtil;
 import com.codex.ecam.util.VelocityEmailSender;
 import com.codex.ecam.util.search.inventory.receiptOrder.ReceiptOrderPropertyMapper;
 
@@ -57,7 +64,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Autowired
 	private ReceiptOrderDao receiptOrderDao;
-	
+
 	@Autowired
 	private PurchaseOrderItemDao purchaseOrderItemDao;
 
@@ -66,22 +73,24 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Autowired
 	private StockDao stockDao;
-	
+
 	@Autowired
 	private StockHistoryDao stockHistoryDao;
-	
+
 	@Autowired
 	private SupplierDao supplierDao;
-	
+
 	@Autowired
 	private BusinessDao businessDao;
 
 	@Autowired
 	private VelocityEmailSender velocityEmailService;
-	
+
 	@Autowired
 	private AODItemDao aodItemDao;
-
+	
+	@Autowired
+	private StockService stockService;
 
 	private ReceiptOrderDTO findDTOById(Integer id) throws Exception {
 		return ReceiptOrderMapper.getInstance().domainToDto(findEntityById(id));
@@ -91,7 +100,6 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	private ReceiptOrder findEntityById(Integer id) throws Exception {
 		return receiptOrderDao.findOne(id);
 	}
-
 
 	@Override
 	public ReceiptOrderResult findById(Integer id) throws Exception {
@@ -108,7 +116,6 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		return result;
 	}
 
-
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public ReceiptOrderResult update(ReceiptOrderDTO dto) {
 		ReceiptOrderResult result = new ReceiptOrderResult(null, dto);
@@ -119,7 +126,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		} catch (ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Receipt Order Already updated. Please Reload. ".concat(e.getMessage()));
-		}catch (Exception e) {
+		} catch (Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 			result.addToMessageList("Receipt Order Update Unsuccessful. ".concat(e.getMessage()));
@@ -137,7 +144,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		} catch (Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
-		result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
+			result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
 		}
 		return result;
 	}
@@ -154,20 +161,18 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		setSupplier(result);
 		setBusiness(result);
 		setItems(result);
-		//recievedStock(result);
+		// recievedStock(result);
 	}
-	
-
-
 
 	private void setSupplier(ReceiptOrderResult result) throws Exception {
-		if ( (result.getDtoEntity().getSupplierId() != null) && (result.getDtoEntity().getSupplierId() > 0) ) {
+		if ((result.getDtoEntity().getSupplierId() != null) && (result.getDtoEntity().getSupplierId() > 0)) {
 			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getSupplierId()));
 		}
 	}
+
 	private void setBusiness(ReceiptOrderResult result) throws Exception {
-		if ( (result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0) ) {
-				result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
+		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
@@ -177,9 +182,10 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 			Set<ReceiptOrderItem> currentItems = result.getDomainEntity().getReceiptOrderItems();
 			for (ReceiptOrderItemDTO itemDTO : result.getDtoEntity().getItems()) {
 				ReceiptOrderItem item;
-				if ( (currentItems != null) && (currentItems.size() > 0) ) {
-					Optional<ReceiptOrderItem> optionalItem = currentItems.stream().filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
-					if ( optionalItem.isPresent() ) {
+				if ((currentItems != null) && (currentItems.size() > 0)) {
+					Optional<ReceiptOrderItem> optionalItem = currentItems.stream()
+							.filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
+					if (optionalItem.isPresent()) {
 						item = optionalItem.get();
 					} else {
 						item = new ReceiptOrderItem();
@@ -191,51 +197,66 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 				items.add(item);
 			}
 		}
-		
+
 		result.getDomainEntity().setReceiptOrderItems(items);
 	}
 
-	private void createReceiptOrderItem(ReceiptOrderItemDTO dto, ReceiptOrderItem domain, ReceiptOrder receiptOrder) throws Exception {
+	private void createReceiptOrderItem(ReceiptOrderItemDTO dto, ReceiptOrderItem domain, ReceiptOrder receiptOrder)
+			throws Exception {
 		ReceiptOrderItemMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setReceiptOrder(receiptOrder);
-		if ( (dto.getItemAssetId() != null) && (dto.getItemAssetId() > 0)) {
+		if ((dto.getItemAssetId() != null) && (dto.getItemAssetId() > 0)) {
 			domain.setAsset(assetDao.findOne(dto.getItemAssetId()));
 		}
-		if ( (dto.getItemStockId() != null) && (dto.getItemStockId() > 0) ) {
+		if ((dto.getItemStockId() != null) && (dto.getItemStockId() > 0)) {
 			domain.setStock(stockDao.findOne(dto.getItemStockId()));
 		}
-		if((dto.getPoItemId() != null) && (dto.getPoItemId() > 0)){
+		if ((dto.getPoItemId() != null) && (dto.getPoItemId() > 0)) {
 			domain.setPurchaseOrderItem(purchaseOrderItemDao.findOne(dto.getPoItemId()));
 		}
-		if((dto.getIssueNoteitemId() != null) && (dto.getIssueNoteitemId() > 0)){
+		if ((dto.getIssueNoteitemId() != null) && (dto.getIssueNoteitemId() > 0)) {
 			domain.setIssueNoteItem(aodItemDao.findOne(dto.getIssueNoteitemId()));
 		}
-		
-		if(receiptOrder.getReceiptOrderStatus().equals(ReceiptOrderStatus.RECEIVED)){
-			addStockHistory(domain);
+
+		if (receiptOrder.getReceiptOrderStatus().equals(ReceiptOrderStatus.RECEIVED)) {
+			updateStock(domain);
 		}
 	}
 
+	private void updateStock(ReceiptOrderItem receiptOrderItem) {
 
-		private void addStockHistory(ReceiptOrderItem domain){
-			StockHistory stockHitory=new StockHistory();
-			stockHitory.setBeforeQuantity(BigDecimal.ZERO);
-			stockHitory.setAfterQuantity(domain.getQuantityReceived());
-			stockHitory.setQuantity(domain.getQuantityReceived());
-			stockHitory.setLastPrice(domain.getUnitPrice());
-			stockHitory.setStock(domain.getStock());
-			stockHitory.setDescription("Item recived to stock");
-			stockHitory.setReceiptOrderItem(domain);
-			stockHitory.setDate(new Date());
-			stockHitory.setIsDeleted(Boolean.FALSE);
-			stockHistoryDao.save(stockHitory);
+		Stock stock=receiptOrderItem.getStock();
+		try {
+			StockDTO stockDTO=StockMapper.getInstance().domainToDto(stock);
+			BigDecimal qty=stockDTO.getQtyOnHand().add(receiptOrderItem.getQuantityReceived());
+			stockDTO.setQtyOnHand(qty);
+			stockService.save(stockDTO);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
+		addStockHistory(receiptOrderItem);
+	}
 
+	private void addStockHistory(ReceiptOrderItem domain) {
+		StockHistory stockHitory = new StockHistory();
+		stockHitory.setBeforeQuantity(BigDecimal.ZERO);
+		stockHitory.setAfterQuantity(domain.getQuantityReceived());
+		stockHitory.setQuantity(domain.getQuantityReceived());
+		stockHitory.setLastPrice(domain.getUnitPrice());
+		stockHitory.setStock(domain.getStock());
+		stockHitory.setDescription("Item recived to stock");
+		stockHitory.setReceiptOrderItem(domain);
+		stockHitory.setDate(new Date());
+		stockHitory.setIsDeleted(Boolean.FALSE);
+		stockHistoryDao.save(stockHitory);
+	}
 
 	/*
 	 * Delete Object
-	 * */
+	 */
 
 	@Override
 	public ReceiptOrderResult delete(Integer id) {
@@ -257,25 +278,22 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		receiptOrderDao.delete(id);
 	}
 
-
-
-
-
 	@Override
 	public ReceiptOrderResult statusChange(Integer id, ReceiptOrderStatus receiptOrderStatus) {
-		
+
 		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
 		try {
-			
-			ReceiptOrderDTO dto=findDTOById(id);
+
+			ReceiptOrderDTO dto = findDTOById(id);
 			dto.setReceiptOrderStatus(receiptOrderStatus);
 			ReceiptOrder domain = findEntityById(dto.getId());
-			String  previousStatus=domain.getReceiptOrderStatus().getName();
+			String previousStatus = domain.getReceiptOrderStatus().getName();
 			result.setDtoEntity(dto);
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
-			result.addToMessageList("Receipt order Status Updated Successfully. "+previousStatus+" --> "+ receiptOrderStatus.getName());
+			result.addToMessageList("Receipt order Status Updated Successfully. " + previousStatus + " --> "
+					+ receiptOrderStatus.getName());
 		} catch (ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("Receipt order Already updated. Please Reload Receipt order.");
@@ -288,30 +306,28 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	private ReceiptOrderResult statusChange( ReceiptOrderStatus receiptOrderStatus) throws Exception {
+	private ReceiptOrderResult statusChange(ReceiptOrderStatus receiptOrderStatus) throws Exception {
 		return null;
-	
-/*		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
-		try {
-			ReceiptOrderDTO dto=findDTOById(id);
-			dto.setReceiptOrderStatus(receiptOrderStatus);
-			ReceiptOrder domain = findEntityById(dto.getId());
-			String  previousStatus=domain.getReceiptOrderStatus().getName();
-			result.setDtoEntity(dto);
-			result.setDomainEntity(domain);
-			saveOrUpdate(result);
-			result.addToMessageList("Receipt order Status Updated Successfully. "+previousStatus+" --> "+ receiptOrderStatus.getName());
-		} catch (ObjectOptimisticLockingFailureException ex) {
-			result.setResultStatusError();
-			result.addToErrorList("Receipt order Already updated. Please Reload Receipt order.");
-		} catch (Exception e) {
-			e.printStackTrace();
-			result.setResultStatusError();
-			result.addToErrorList(e.getMessage());
-		}
-		return result;*/
 
-	//	sendStatusChangeEmail(previousStatus,currentStatus);
+		/*
+		 * ReceiptOrderResult result = new ReceiptOrderResult(null, null); try {
+		 * ReceiptOrderDTO dto=findDTOById(id);
+		 * dto.setReceiptOrderStatus(receiptOrderStatus); ReceiptOrder domain =
+		 * findEntityById(dto.getId()); String
+		 * previousStatus=domain.getReceiptOrderStatus().getName();
+		 * result.setDtoEntity(dto); result.setDomainEntity(domain);
+		 * saveOrUpdate(result);
+		 * result.addToMessageList("Receipt order Status Updated Successfully. "
+		 * +previousStatus+" --> "+ receiptOrderStatus.getName()); } catch
+		 * (ObjectOptimisticLockingFailureException ex) {
+		 * result.setResultStatusError(); result.
+		 * addToErrorList("Receipt order Already updated. Please Reload Receipt order."
+		 * ); } catch (Exception e) { e.printStackTrace();
+		 * result.setResultStatusError(); result.addToErrorList(e.getMessage());
+		 * } return result;
+		 */
+
+		// sendStatusChangeEmail(previousStatus,currentStatus);
 	}
 
 	private void sendStatusChangeEmail(ReceiptOrderStatus previousStatus, ReceiptOrderStatus currentStatus) {
@@ -325,7 +341,6 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		velocityEmailService.sendEmail(velocityMail);
 	}
 
-
 	@Override
 	public DataTablesOutput<ReceiptOrderDTO> findAll(FocusDataTablesInput input) throws Exception {
 		ReceiptOrderPropertyMapper.getInstance().generateDataTableInput(input);
@@ -333,13 +348,13 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = receiptOrderDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<ReceiptOrder> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			Specification<ReceiptOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = receiptOrderDao.findAll(input, specification);
 		} else {
 			Specification<ReceiptOrder> specification = (root, query, cb) -> cb.and(
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
-					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite())
-					);
+					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 			domainOut = receiptOrderDao.findAll(input, specification);
 		}
 		DataTablesOutput<ReceiptOrderDTO> out = ReceiptOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
@@ -348,31 +363,62 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
 
 	@Override
 	public ReceiptOrderResult generateGrnFromPo(String idStr, Integer poId) {
-		
-		ReceiptOrderResult result=new ReceiptOrderResult(null, null);
-		ReceiptOrder receiptOrder =receiptOrderDao.findOne(poId);
-		ReceiptOrderDTO receiptOrderDTO=new ReceiptOrderDTO();
+
+		ReceiptOrderResult result = new ReceiptOrderResult(null, null);
+		ReceiptOrder receiptOrder = receiptOrderDao.findOne(poId);
+		ReceiptOrderDTO receiptOrderDTO = new ReceiptOrderDTO();
 		receiptOrderDTO.setReceiptOrderStatus(ReceiptOrderStatus.DRAFT);
 		receiptOrderDTO.setCode("");
 		receiptOrderDTO.setIsDeleted(Boolean.FALSE);
-		if(receiptOrder!=null && receiptOrder.getBusiness()!=null){
+		if (receiptOrder != null && receiptOrder.getBusiness() != null) {
 			receiptOrderDTO.setBusinessId(receiptOrder.getBusiness().getId());
 		}
-		if(receiptOrder!=null && receiptOrder.getSite()!=null){
-			//receiptOrderDTO.setS(receiptOrder.getSite().getId());
+		if (receiptOrder != null && receiptOrder.getSite() != null) {
+			// receiptOrderDTO.setS(receiptOrder.getSite().getId());
 		}
 
-		List<ReceiptOrderItemDTO> receiptOrderItemDTOs=new ArrayList<>();
-/*		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
-		for (Integer id : ids) {
-			PurchaseOrderItem item=purchaseOrderItemDao.findOne(id);
-			ReceiptOrderItemDTO itemDTO=new ReceiptOrderItemDTO();
-				receiptOrderItemDTOs.add(itemDTO);
-		}*/
-		receiptOrderDTO.setItems(receiptOrderItemDTOs);		
+		List<ReceiptOrderItemDTO> receiptOrderItemDTOs = new ArrayList<>();
+		/*
+		 * List<Integer> ids =
+		 * Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).
+		 * collect(Collectors.toList()); for (Integer id : ids) {
+		 * PurchaseOrderItem item=purchaseOrderItemDao.findOne(id);
+		 * ReceiptOrderItemDTO itemDTO=new ReceiptOrderItemDTO();
+		 * receiptOrderItemDTOs.add(itemDTO); }
+		 */
+		receiptOrderDTO.setItems(receiptOrderItemDTOs);
 		return null;
 	}
 
+	@Override
+	public String getNextCode(Integer businessId) {
+		if (businessId != null) {
+			final ReceiptOrder lastDomain = receiptOrderDao.findLastDomainByBusiness(businessId);
+			return UniqueCodeUtil.getNextCode(AffixList.RECEIPTORDER, lastDomain == null ? "" : lastDomain.getCode());
+		} else {
+			return "";
+		}
+	}
+
+	@Override
+	public ReceiptOrderResult createNewReceiptOrder() {
+		final ReceiptOrderResult result = new ReceiptOrderResult(null, null);
+		try {
+			final ReceiptOrderDTO dto = new ReceiptOrderDTO();
+			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
+				dto.setCode(getNextCode(AuthenticationUtil.getLoginUserBusiness().getId()));
+			} else {
+				dto.setCode("");
+			}
+			result.setDtoEntity(dto);
+			result.setResultStatusSuccess();
+			result.addToMessageList("Receipt Order generate successfully.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("ERROR! Receipt Order not generated! ".concat(ex.getMessage()));
+		}
+		return result;
+	}
 
 }
-

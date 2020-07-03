@@ -23,6 +23,7 @@ import com.codex.ecam.constants.ShippingType;
 import com.codex.ecam.constants.inventory.RFQStatus;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.admin.api.AccountService;
@@ -93,18 +94,31 @@ public class RFQController {
 
 	@RequestMapping(value = "/asset-select-modal-view", method = RequestMethod.GET)
 	public String getAssetSelectView(Model model) {
-		return "inventory/rfq/modal/asset-modal";
+		return "inventory/rfq/modal/asset-select-modal";
+	}
+	@RequestMapping(value = "/part-select-modal-view", method = RequestMethod.GET)
+	public String getPartSelectView(Model model) {
+		return "inventory/rfq/modal/part-select-modal";
 	}
 	
 	@RequestMapping(value = "/user-select-modal-view", method = RequestMethod.GET)
 	public String getUserSelectView(Model model) {
 		return "inventory/rfq/modal/user-select-modal";
 	}
+	
+	@RequestMapping(value = "/supplier-select-modal-view", method = RequestMethod.GET)
+	public String getSupplierSelectView(Model model) {
+		return "inventory/rfq/modal/supplier-select-modal";
+	}
+	@RequestMapping(value = "/supplier-fetch-modal-view", method = RequestMethod.GET)
+	public String getSupplierfetchView(Model model) {
+		return "inventory/rfq/modal/supplier-fetch-modal";
+	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String add(Model model, RedirectAttributes ra) {
 		try {
-			setCommonData(model,  new RFQDTO());
+			setCommonData(model,  rfqService.createNewRFQ().getDtoEntity());
 			return "inventory/rfq/add-view";
 		} catch (Exception ex) {
             ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
@@ -123,6 +137,14 @@ public class RFQController {
             return "redirect:/rfq/index";
         }
     }
+	
+	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+		RestResult<String> result = new RestResult<>();
+		result.setData(rfqService.getNextCode(businessId).toString());
+
+		return result ;
+	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("rfq") RFQDTO rfq, Model model) throws Exception {

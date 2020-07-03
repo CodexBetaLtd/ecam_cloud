@@ -49,7 +49,38 @@ var RFQAdd = function () {
             increaseArea: '10%'
         });
     };
+    var runRFQBusinessSelect = function(){
+    	$("#businessId").change(function() {
+			var businessId = $("#businessId option:selected").val(); 
+			setRFQCode(businessId);  
 
+		});
+    };
+    
+	var setRFQCode = function(id) {
+		
+        	$.ajax({
+                type: "GET",
+                url: "../rfq/code-by-business?businessId=" + id,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result) {
+                    if (result.status == "SUCCESS") {
+                    	$('#code').val(result.data);
+                    } else {
+                    	alert(result.msg);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + " " + thrownError);
+                },
+                error: function (e) {
+                    alert("Failed to load Code");
+                    console.log(e);
+                }
+            });            	
+         
+	};
     
     /* 
 	 *load siteList relevant to business
@@ -118,6 +149,7 @@ var RFQAdd = function () {
             runCheckboxes();
             runValidator();
             runBusinessSelect();
+            runRFQBusinessSelect();
         },
         initCheckBoxes: function () {
             runCheckboxes();

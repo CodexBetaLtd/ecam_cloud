@@ -1,6 +1,6 @@
 package com.codex.ecam.mappers.report;
 
-import com.codex.ecam.dto.report.data.ReceiptOrderRepDTO;
+import com.codex.ecam.dto.report.data.receiptOrder.ReceiptOrderRepDTO;
 import com.codex.ecam.mappers.GenericReportMapper;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 

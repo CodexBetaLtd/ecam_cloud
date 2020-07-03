@@ -49,6 +49,7 @@ public class PurchaseOrderItemDTO extends BaseDTO {
 	private Integer itemRfqItemId;
 	
 	private List<RFQItemDTO> rfqItems = new ArrayList<>();
+	private List<PurchaseOrderTaxDTO> poItemtax = new ArrayList<>();
 
     private Integer purchaseOrderId;
     private String purchaseOrderCode;
@@ -56,6 +57,7 @@ public class PurchaseOrderItemDTO extends BaseDTO {
 
 
 
+    private List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs = new ArrayList<>();
 
 
 
@@ -342,4 +344,22 @@ public class PurchaseOrderItemDTO extends BaseDTO {
     public void setPurchaseOrderId(Integer purchaseOrderId) {
         this.purchaseOrderId = purchaseOrderId;
     }
+
+	public List<PurchaseOrderTaxDTO> getPurchaseOrderTaxDTOs() {
+		return purchaseOrderTaxDTOs;
+	}
+
+	public void setPurchaseOrderTaxDTOs(List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs) {
+		this.purchaseOrderTaxDTOs = purchaseOrderTaxDTOs;
+	}
+
+	public List<PurchaseOrderTaxDTO> getPoItemtax() {
+		return poItemtax;
+	}
+
+	public void setPoItemtax(List<PurchaseOrderTaxDTO> poItemtax) {
+		this.poItemtax = poItemtax;
+	}
+    
+    
 }

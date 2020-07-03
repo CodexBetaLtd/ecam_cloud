@@ -44,6 +44,7 @@ import com.codex.ecam.model.inventory.aodRetun.AODReturnItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.AODReturnResult;
 import com.codex.ecam.service.inventory.api.AODReturnService;
+import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.CommonUtil;
 import com.codex.ecam.util.search.inventory.aodReturn.AODReturnPropertyMapper;
@@ -67,6 +68,8 @@ public class AODReturnServiceImpl implements AODReturnService {
 
 	@Autowired
 	private AssetDao assetDao;
+	@Autowired
+	private StockService stockService;
 
 	public AODReturnDTO findDTOById(Integer id) throws Exception {
 		return AODReturnMapper.getInstance().domainToDto(findEntityById(id));
@@ -364,7 +367,7 @@ public class AODReturnServiceImpl implements AODReturnService {
 	}
 
 	private void updateAODItem(AODReturnResult result) throws Exception {
-/*				for (AODReturnItem returnItem : result.getDomainEntity().getAodReturnItems()) {
+				for (AODReturnItem returnItem : result.getDomainEntity().getAodReturnItems()) {
 					try {
 						if (returnItem.getAodItem() != null) {
 							AODItem aodItem = aodItemDao.findOne(returnItem.getAodItem().getId());
@@ -372,26 +375,26 @@ public class AODReturnServiceImpl implements AODReturnService {
 							if(aodItem.getQuantity().subtract(aodItem.getReturnQuantity()).compareTo(BigDecimal.ZERO) >=0){
 								aodItem.getStock().getCurrentQuantity().add(aodItem.getReturnQuantity());	
 							}
-							Double returnQty = returnItem.getReturnQty();
-							Collections.sort(aodItem.getAodItemStocks(), (a, b) -> a.getStock().getId().compareTo(b.getStock().getId()));
-							Collections.reverse(aodItem.getAodItemStocks());
+							BigDecimal returnQty = returnItem.getReturnQty();
+							//Collections.sort(aodItem.getAodItemStocks(), (a, b) -> ((AODItem) a).getStock().getId().compareTo(b.getStock().getId()));
+							//Collections.reverse(aodItem.getAodItemStocks());
 							if ((aodItem.getAodItemStocks() != null) && (aodItem.getAodItemStocks().size() > 0)) {
-								Double totalReturnQty = aodItem.getAodItemStocks().stream().mapToDouble(obj -> obj.getReturnQuantity()).sum();
-								if (aodItem.getQuantity() < (totalReturnQty + returnQty)) {
-									throw new RuntimeException(" Total Return Item Qty is more than Total AOD Qty");
-								}
+//								Double totalReturnQty =  aodItem.getAodItemStocks().stream().mapToDouble(obj -> obj.getReturnQuantity()).sum();
+//								if (aodItem.getQuantity().compareTo(BigDecimal.valueOf(totalReturnQty).add(returnQty)) < 0) {
+//									throw new RuntimeException(" Total Return Item Qty is more than Total AOD Qty");
+//								}
 							}
 							for (AODItemStock aodItemStock : aodItem.getAodItemStocks()) {
 								if (aodItemStock.getQuantity().equals(aodItemStock.getReturnQuantity())) {
 									continue;
 								}
-								if ((aodItemStock.getQuantity() >= returnQty) && (returnQty != 0.0)) {
-									aodItemStock.setReturnQuantity(aodItemStock.getReturnQuantity() + returnQty);
+								if ((aodItemStock.getQuantity().compareTo(returnQty) >= 0) && (returnQty.equals(BigDecimal.ZERO))) {
+									aodItemStock.setReturnQuantity(aodItemStock.getReturnQuantity().add(returnQty));
 									updateStock(aodItemStock, returnQty);
-									returnQty = 0.0;
+									returnQty = BigDecimal.ZERO;
 								} else {
 									aodItemStock.setReturnQuantity(aodItemStock.getQuantity());
-									returnQty = returnQty - aodItemStock.getQuantity();
+									returnQty = returnQty.subtract(aodItemStock.getQuantity());
 									updateStock(aodItemStock, aodItemStock.getQuantity());
 								}
 							}
@@ -405,15 +408,15 @@ public class AODReturnServiceImpl implements AODReturnService {
 						result.addToErrorList("AOD Item Return value update Not Successful!");
 						logger.error(ex.getMessage());
 					}
-				}*/
+				}
 
 	}
 
-	/*   private void updateStock(AODItemStock aodItemStock, Double returnQty) throws Exception {
+	   private void updateStock(AODItemStock aodItemStock, BigDecimal returnQty) throws Exception {
         if (aodItemStock.getStock() != null) {
 			aodItemStock.setStock(stockService.dispatchedReturn(aodItemStock.getStock().getId(), returnQty));
 		}
-	}*/
+	}
 
 
 	@Override

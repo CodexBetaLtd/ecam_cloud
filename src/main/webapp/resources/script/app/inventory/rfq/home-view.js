@@ -138,9 +138,13 @@ var RFQHome = function () {
                 }, {
                     data: 'supplierName',
                     responsivePriority: 2,
+                    orderable: false,
+                    searchable: false,
                 }, {
                     data: 'statusName',
                     responsivePriority: 4,
+                    orderable: false,
+                    searchable: false,
                 }],
             aoColumnDefs: [{
                 width: "2%",

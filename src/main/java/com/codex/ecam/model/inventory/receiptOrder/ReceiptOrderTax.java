@@ -3,7 +3,7 @@ package com.codex.ecam.model.inventory.receiptOrder;
 import javax.persistence.*;
 
 import com.codex.ecam.model.BaseModel;
-import com.codex.ecam.model.biz.tax.Tax;
+import com.codex.ecam.model.admin.Tax;
 
 import java.math.BigDecimal;
 

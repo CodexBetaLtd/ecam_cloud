@@ -4,6 +4,8 @@ jQuery(document).ready(function () {
 
     RFQAdd.init();
     TabFile.init();
+    TabItem.init();
+    TabSupplier.init();
     NotificationTab.init();
 
 
@@ -51,10 +53,7 @@ jQuery(document).ready(function () {
     });
 
 
-    $(document).on('click', '#btn-new-po', function (event) {
-        event.preventDefault();
-        TabItem.generatePo();
-    });
+
 
     $(document).on('click', '#btnaddRFQ', function (event) {
         event.preventDefault();

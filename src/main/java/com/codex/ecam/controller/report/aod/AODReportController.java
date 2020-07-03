@@ -46,6 +46,11 @@ public class AODReportController {
 		aodService.print(filterDTO, response, request, PrintType.CSV);
 	}
 
+	@RequestMapping( value = "/printAod", method = RequestMethod.GET)
+	public void printPDF(@Valid Integer id, HttpServletRequest request, HttpServletResponse response) throws Exception {		
+		aodService.printDoc(id, response, request);
+	}
+	
 	private void setCommonData(Model model) {
 		model.addAttribute("filterDTO", new AODFilterDTO());
 		model.addAttribute("aodTypes", AODType.getAllAODTypes());

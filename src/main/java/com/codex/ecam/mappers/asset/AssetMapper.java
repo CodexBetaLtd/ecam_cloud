@@ -41,7 +41,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setCode(domain.getCode());
 		dto.setDescription(domain.getDescription());
 		dto.setIsOnline(domain.getIsOnline());
-
+dto.setAssetUrl(domain.getAssetUrl());
 		if (domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
 			dto.setBusinessName(domain.getBusiness().getName());

@@ -56,6 +56,18 @@ public class ReportUtil {
 			ex.printStackTrace();
 		}
 	}
+	public void generatePDF(List<?> dataList, final InputStream jasperStream,
+			final Map<String, Object> params, final OutputStream outputStream) {
+		 JRBeanCollectionDataSource beanColDataSource =new JRBeanCollectionDataSource(dataList);
+		try {
+			final JasperDesign jasperDesign = JRXmlLoader.load(jasperStream);
+			final JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+			final JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, beanColDataSource);
+			JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	public void generateCSV(final JRDataSource dataSource, final InputStream jsInputStream,
 			final Map<String, Object> params, final OutputStream outputStream) {

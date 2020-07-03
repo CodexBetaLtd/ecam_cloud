@@ -6,6 +6,7 @@ import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 
 public interface ReceiptOrderService {
@@ -23,6 +24,9 @@ public interface ReceiptOrderService {
 	DataTablesOutput<ReceiptOrderDTO> findAll(FocusDataTablesInput input) throws Exception;
 	
 	ReceiptOrderResult generateGrnFromPo(String ids, Integer poId);
+	
+    String getNextCode(Integer businessId);
 
+    ReceiptOrderResult createNewReceiptOrder();
 
 }

@@ -4,9 +4,11 @@
 <head th:include="template/commoncss :: commoncss"></head>
 
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
 
 <body>
 
@@ -54,6 +56,7 @@
                                     <li><a href="#businessSettingsTab" data-toggle="tab"> Business Settings </a></li>
                                     <li><a href="#assetCategoryTab" data-toggle="tab"> Asset category </a></li>                                   
                                     <li><a href="#siteTab" data-toggle="tab"> Site </a></li>
+                                    <li><a href="#taxTab" data-toggle="tab"> Tax </a></li>
                                     <li><a href="#backupTab" data-toggle="tab"> Backup </a></li>
                                 </ul>
 
@@ -331,6 +334,9 @@
                                     <div class="tab-pane " id="siteTab">
                                         <div th:replace="admin/cmmssetting/site/user-site-panel :: userSitePanel"></div>
                                     </div>
+                                    <div class="tab-pane " id="taxTab">
+                                        <div th:replace="admin/cmmssetting/tax/home-view :: homeview"></div>
+                                    </div>
                                     
                                     <div class="tab-pane " id="backupTab">
                                         <div th:replace="admin/cmmssetting/backup/backup-tab :: backupTabFragment"></div>
@@ -359,17 +365,31 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+        <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+   
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-
-    <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+        <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+        
+        <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
 
     <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/add-view.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/tab/task-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/assetcategory/modals/task-add-modal.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/tax/add-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/tax/home-view.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/tax/tab/value-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/admin/tax/modals/value-add-modal.js}"></script>
     
     <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/init.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/setting.js}"></script>
@@ -413,6 +433,7 @@
     <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/miscellaneousexpensetype/add-view.js}"></script>
     
     <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
 
 </body>
 

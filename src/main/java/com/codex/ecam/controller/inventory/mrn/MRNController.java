@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
@@ -15,6 +16,7 @@ import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.constants.inventory.MRNType;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -140,6 +142,14 @@ public class MRNController {
 
 		return "redirect:/mrn/index";
 	}  
+	
+	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+		RestResult<String> result = new RestResult<>();
+		result.setData(mrnService.getNextCode(businessId).toString());
+
+		return result ;
+	}
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
 	public String mrnStatusChange(Integer id, MRNStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {

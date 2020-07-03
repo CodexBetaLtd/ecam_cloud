@@ -107,7 +107,8 @@
             // processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: '../restapi/part/tabledata-by-business?bizId=' + bizId,
+//            	url: '../restapi/part/tabledata-by-business?bizId=' + bizId,
+                url: '../restapi/stock/remainStockPartList',
                 pages: 5
             }),
             columns: [{
@@ -117,16 +118,16 @@
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-                {data: 'name'},
-                {data: 'code'},
-                {data: 'brandName'},
-                {data: 'description'}
+                {data: 'partName'},
+                {data: 'partCode'},
+                {data: 'batchNo'},
+                {data: 'qtyOnHand'}
             ],
             aoColumnDefs: [{
                 targets: 5, 
                 data: "id",
                 render: function (data, type, row, meta) {
-                    var vars = [data, row.name, row.code];
+                    var vars = [row.partId, row.partName, row.partCode];
                     return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODPartSelectModal.setAODPart", data, vars);
                 }
             }],

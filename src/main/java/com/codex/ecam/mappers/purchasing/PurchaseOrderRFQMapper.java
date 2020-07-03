@@ -26,10 +26,10 @@ public class PurchaseOrderRFQMapper extends GenericMapper<RFQ, PurchaseOrderDTO>
 	//	dto.setBillingTermId();		
 		dto.setExpectedDeliveryDate(domain.getDateExpectedDelivery());
 		
-		dto.setSupplierAddress(domain.getSupplierAddress());
-		dto.setSupplierCity(domain.getSupplierCity());
-		dto.setSupplierPostalCode(domain.getSupplierPostalCode());
-		dto.setSupplierProvince(domain.getSupplierProvince());		
+//		dto.setSupplierAddress(domain.getSupplierAddress());
+//		dto.setSupplierCity(domain.getSupplierCity());
+//		dto.setSupplierPostalCode(domain.getSupplierPostalCode());
+//		dto.setSupplierProvince(domain.getSupplierProvince());		
 		
 		dto.setShipToAddress(domain.getShippingAddress());
 		dto.setShippingCity(domain.getShippingCity());

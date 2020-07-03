@@ -2,6 +2,7 @@ jQuery(document).ready(function () {
 
     Main.init();
     TabFile.init();
+    TaxTab.init();
     PurchaseOrderAdd.init();
 
     /*********************************************************************
@@ -122,11 +123,7 @@ jQuery(document).ready(function () {
         TabItem.poItemView();
     });
 
-    $(document).on('click', '#btn-add-po-item', function (event) {
-        event.preventDefault();
-        TabItem.addPOItem();
-        TabItem.populatePOItems();
-    });
+
 
     $(document).on('click', '#asset-select-modal-btn', function (event) {
         event.preventDefault();

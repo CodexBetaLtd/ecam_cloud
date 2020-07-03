@@ -1,6 +1,8 @@
 package com.codex.ecam.service.asset.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,9 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.maintenance.TaskDao;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
+import com.codex.ecam.dto.asset.SparePartDTO;
+import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
+import com.codex.ecam.dto.maintenance.task.TaskDTO;
 import com.codex.ecam.mappers.asset.AssetCategoryMapper;
+import com.codex.ecam.mappers.maintenance.TaskMapper;
+import com.codex.ecam.model.asset.AssetBusiness;
 import com.codex.ecam.model.asset.AssetCategory;
+import com.codex.ecam.model.asset.AssetCategoryTask;
+import com.codex.ecam.model.asset.SparePart;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
+import com.codex.ecam.model.maintenance.task.Task;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.AssetCategoryResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
@@ -31,16 +43,21 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
 	@Autowired
 	private BusinessDao businessDao;
+	
+	@Autowired
+	private TaskDao taskDao;
+	
 
 	@Override
 	public DataTablesOutput<AssetCategoryDTO> findAll(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<AssetCategoryDTO> out=null;
+		DataTablesOutput<AssetCategoryDTO> out = null;
 		DataTablesOutput<AssetCategory> domainOut;
 		AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
-		if(AuthenticationUtil.isAuthUserAdminLevel()){
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = assetCategoryDao.findAll(input);
 		} else {
-			Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = assetCategoryDao.findAll(input, specification);
 		}
 
@@ -85,7 +102,8 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 		AssetCategoryResult result = new AssetCategoryResult(null, dto);
 		try {
 			AssetCategory domain = assetCategoryDao.findById(dto.getId());
-			result.setDomainEntity(domain);;
+			result.setDomainEntity(domain);
+			;
 			saveOrUpdate(result);
 			result.addToMessageList("Asset Category Updated Successfully.");
 		} catch (Exception e) {
@@ -123,6 +141,49 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	private void setAssetCategoryData(AssetCategoryResult result) {
 		setParent(result.getDtoEntity(), result.getDomainEntity());
 		setBusiness(result.getDtoEntity(), result.getDomainEntity());
+		setTask(result.getDtoEntity(), result.getDomainEntity());
+	}
+
+	private void setTask(AssetCategoryDTO dto, AssetCategory domain) {
+		Set<AssetCategoryTask> assetCategoryTasks = new HashSet<>();
+		List<TaskDTO> taskDTOs = dto.getTasks();
+		if ((dto.getTasks() != null) && (dto.getTasks().size() > 0)) {
+			Set<AssetCategoryTask> currentassetCategoryTasks = domain.getTasks();
+
+			for (TaskDTO taskDTO : taskDTOs) {
+				AssetCategoryTask assetCategoryTask=new AssetCategoryTask();
+
+				if ((currentassetCategoryTasks != null) && (currentassetCategoryTasks.size() > 0)) {
+					AssetCategoryTask optional = currentassetCategoryTasks.stream().filter((x) -> x.getId().equals(taskDTO.getAssetCatgoryTaskId())).findAny().orElseGet(AssetCategoryTask :: new);
+					assetCategoryTask = optional; 
+				} else {
+					assetCategoryTask = new AssetCategoryTask();
+				}
+
+				assetCategoryTask.setAssetCategory(domain);
+				assetCategoryTask.setTask(createTask(taskDTO));
+				assetCategoryTask.setIsDeleted(false);
+				assetCategoryTasks.add(assetCategoryTask);
+			}
+			domain.setTasks(assetCategoryTasks);
+		}
+	}
+
+	private Task createTask(TaskDTO taskDTO) {
+			Task task;
+		if(taskDTO.getId()!=null){
+			task= taskDao.findOne(taskDTO.getId());
+		}else{
+			task=new Task();
+		}	
+		
+		try {
+			TaskMapper.getInstance().dtoToDomain(taskDTO, task);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		taskDao.save(task);
+		return task;
 	}
 
 	private void setParent(AssetCategoryDTO dto, AssetCategory domain) {
@@ -130,6 +191,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 			domain.setParentAssetCategory(assetCategoryDao.findOne(dto.getParentId()));
 		}
 	}
+
 	private void setBusiness(AssetCategoryDTO dto, AssetCategory domain) {
 		if ((dto.getBusinessId() != null) && (dto.getBusinessId() > 0)) {
 			domain.setBusiness(businessDao.findOne(dto.getBusinessId()));
@@ -182,23 +244,20 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	}
 
 	@Override
-	public DataTablesOutput<AssetCategoryDTO> findByAssetCategoyType(FocusDataTablesInput input, AssetCategoryType type)throws Exception {
+	public DataTablesOutput<AssetCategoryDTO> findByAssetCategoyType(FocusDataTablesInput input, AssetCategoryType type)
+			throws Exception {
 		Specification<AssetCategory> specification = null;
 
 		AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
 
-		DataTablesOutput<AssetCategoryDTO> out=null;
+		DataTablesOutput<AssetCategoryDTO> out = null;
 		DataTablesOutput<AssetCategory> domainOut;
-		if(AuthenticationUtil.isAuthUserAdminLevel()){
-			specification = (root, query, cb) -> cb.equal(root.get("assetCategoryType"), type);		}
-		else {
-			specification = (root, query, cb) ->
-			cb.and(
-					cb.equal(
-							root.get("business"), AuthenticationUtil.getLoginUserBusiness()
-							),
-					cb.equal(root.get("assetCategoryType"), type)
-					);
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			specification = (root, query, cb) -> cb.equal(root.get("assetCategoryType"), type);
+		} else {
+			specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
+					cb.equal(root.get("assetCategoryType"), type));
 
 		}
 		domainOut = assetCategoryDao.findAll(input, specification);
@@ -216,12 +275,11 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 			throws Exception {
 		Specification<AssetCategory> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("parentAssetCategory").get("id"), id),
-				cb.equal(root.get("assetCategoryType"),AssetCategoryType.WAREHOUSE)
-				);
+				cb.equal(root.get("assetCategoryType"), AssetCategoryType.WAREHOUSE));
 
 		AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
 
-		DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input,specification);
+		DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input, specification);
 		DataTablesOutput<AssetCategoryDTO> out = null;
 		try {
 			out = AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);

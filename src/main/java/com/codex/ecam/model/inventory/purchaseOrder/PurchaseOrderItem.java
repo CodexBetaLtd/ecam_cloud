@@ -3,6 +3,7 @@ package com.codex.ecam.model.inventory.purchaseOrder;
 import javax.persistence.*;
 
 import com.codex.ecam.model.BaseModel;
+import com.codex.ecam.model.admin.TaxValue;
 import com.codex.ecam.model.admin.User;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
@@ -43,7 +44,7 @@ public class PurchaseOrderItem extends BaseModel {
 	@JoinColumn(name = "parent_purchase_order_item_id")
 	@ManyToOne(targetEntity = PurchaseOrderItem.class, fetch = FetchType.LAZY)
 	private PurchaseOrderItem parentPurchaseOrderItem;
-
+	
 	@JoinColumn(name = "purchase_order_id")
 	@ManyToOne(targetEntity = PurchaseOrder.class, fetch = FetchType.LAZY)
 	private PurchaseOrder purchaseOrder;
@@ -111,6 +112,9 @@ public class PurchaseOrderItem extends BaseModel {
 	
 	@OneToMany(mappedBy = "purchaseOrderItem", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
 	private List<PurchaseOrderItemRFQItem> rfqItems = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "purchaseOrderItem", fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
+	private List<PurchaseOrderItemTax> purchaseOrderItemTaxs = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -312,4 +316,15 @@ public class PurchaseOrderItem extends BaseModel {
 		this.rfqItems = rfqItems;
 	}
 
+	public List<PurchaseOrderItemTax> getPurchaseOrderItemTaxs() {
+		return purchaseOrderItemTaxs;
+	}
+
+	public void setPurchaseOrderItemTaxs(List<PurchaseOrderItemTax> purchaseOrderItemTaxs) {
+		this.purchaseOrderItemTaxs = purchaseOrderItemTaxs;
+	}
+
+
+
+	
 }

@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.*;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.RFQResult;
@@ -76,6 +77,11 @@ public class PurchaseOrderController {
 	public String getAssetSelectView(Model model) {
 		return "inventory/purchaseorder/modal/asset-modal";
 	}
+	
+	@RequestMapping(value = "/poTaxView", method = RequestMethod.GET)
+	public String getTaxSelectView(Model model) {
+		return "inventory/purchaseorder/modal/tax-select-modal";
+	}
 
 	@RequestMapping(value = "/poWorkOrderView", method = RequestMethod.GET)
 	public String getWOSelectView(Model model) {
@@ -113,8 +119,8 @@ public class PurchaseOrderController {
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String add(Model model, RedirectAttributes ra) {
 		try {
-			PurchaseOrderDTO dto = new PurchaseOrderDTO();
-			setCommonData(model,dto);
+			setCommonData(model,  purchaseOrderService.createNewPurchaseorder().getDtoEntity());
+
 			return "inventory/purchaseorder/add-view";
 		} catch (Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
@@ -123,15 +129,14 @@ public class PurchaseOrderController {
 	}
 
 	@RequestMapping(value = "/addfromrfq", method = RequestMethod.GET)
-	public String generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("rfqItemIds") final String rfqItemIds) {
-		try {
-			PurchaseOrderDTO dto = purchaseOrderService.createPurchaseOrderFromRFQItems(rfqItemIds);
-			setCommonData(model, dto);
-			return "inventory/purchaseorder/add-view";
-		} catch (Exception ex) {
-			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
-			return "redirect:/purchaseorder/index";
+	public @ResponseBody RFQResult generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("rfqItemIds") final String rfqItemIds,@ModelAttribute("supplierIds") final String supplierIds) {
+		RFQResult rfqResult=null;
+		if ((rfqItemIds != null) && (supplierIds != null)) { 
+			 rfqResult  = purchaseOrderService.createPurchaseOrderFromRFQItems(rfqItemIds,supplierIds);
+
 		}
+		
+	return rfqResult;
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
@@ -178,6 +183,15 @@ public class PurchaseOrderController {
 		}
 		return "redirect:/purchaseorder/index";
 	}
+	
+	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+		RestResult<String> result = new RestResult<>();
+		result.setData(purchaseOrderService.getNextCode(businessId).toString());
+
+		return result ;
+	}
+
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
 	public String purchaseOrderStatusChange(Integer id, PurchaseOrderStatus status, Model model, RedirectAttributes ra) throws Exception {

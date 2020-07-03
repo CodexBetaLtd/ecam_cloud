@@ -1,87 +1,98 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title"> MRN <span th:text="#{aod.tab.item}"> </span></h4>
+	<button type="button" class="close" data-dismiss="modal"
+		aria-hidden="true">&times;</button>
+	<h4 class="modal-title">
+		MRN <span th:text="#{aod.tab.item}"> </span>
+	</h4>
 </div>
 
 <div class="modal-body" id="mrnItemModalBody">
 
-    <input type="hidden" id="itemId">
-    <input type="hidden" id="itemIndex">
-    <input type="hidden" id="itemVersion">
+	<input type="hidden" id="itemId"> <input type="hidden"
+		id="itemIndex"> <input type="hidden" id="itemVersion">
 
-    <div id="aod-item-child-modal" class="modal datatable fade" data-backdrop="static" role="dialog" tabindex="-1"
-         data-focus-on="input:first" style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
-        <div class="modal-content"></div>
-    </div>
+	<div id="aod-item-child-modal" class="modal datatable fade"
+		data-backdrop="static" role="dialog" tabindex="-1"
+		data-focus-on="input:first"
+		style="margin-bottom: 0px; bottom: auto; top: 50%; position: relative;">
+		<div class="modal-content"></div>
+	</div>
 
-    <form id="frm_mrn_item">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="tab-pane in active" id="aod_item_tab">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label"> <span th:text="#{aod.tab.item.asset}"></span> <span class="symbol required"></span></label>
-                                <div class="input-group">
-                                    <input type="hidden" id="itemPartId">
-                                    <input type="text" id="itemPartName" name="itemPartName" readonly>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label"> <span th:text="#{aod.tab.item.qty}"></span><span
-                                        class="symbol required"></span> </label>
-                                <input id="itemQuantity" name="itemQuantity" type="text" placeholder="Item Quantity"
-                                       class="form-control numericOnly">
-                            </div>
-                        </div>
+	<form id="frm_mrn_item">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="tab-pane in active" id="aod_item_tab">
+					<div class="row">
+						<div class="col-md-6 col-sm-12">
+							<div class="form-group">
+								<label class="control-label"> <span
+									th:text="#{aod.tab.item.asset}"></span> <span
+									class="symbol required"></span></label>
+								<div class="input-group">
+									<input type="hidden" id="itemPartId"> <input
+										type="text" id="itemPartName" name="itemPartName" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 col-sm-12">
+							<div class="form-group">
+								<label class="control-label"> <span
+									th:text="#{aod.tab.item.qty}"></span><span
+									class="symbol required"></span>
+								</label> <input id="itemQuantity" name="itemQuantity" type="text"
+									placeholder="Item Quantity" class="form-control numericOnly">
+							</div>
+						</div>
 
-                   </div>
-                        
-                    <div class="row">
-                         <div class="col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label"> Approved Quantity<span
-                                        class="symbol required"></span> </label>
-                                <input id="approvedItemQuantity" name="approvedItemQuantity" type="text" placeholder="Approved Item Quantity"
-                                       class="form-control numericOnly">
-                            </div>
-                        </div>
-                         <div class="col-md-6 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label"> Remaining Quantity<span
-                                        class="symbol required"></span> </label>
-                                <input id="remainingQuantity" name="remainingQuantity" type="text" placeholder="Remaining Item Quantity"
-                                       class="form-control numericOnly">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label"> <span th:text="#{aod.tab.item.description}"></span>
-                                </label><br/>
-                                <textarea id="itemDescription" placeholder="Description"
-                                          class="form-control"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6 col-sm-12">
+							<div class="form-group">
+								<label class="control-label"> Approved Quantity<span
+									class="symbol required"></span>
+								</label> <input id="approvedItemQuantity" name="approvedItemQuantity"
+									type="text" placeholder="Approved Item Quantity"
+									class="form-control numericOnly">
+							</div>
+						</div>
+						<div class="col-md-6 col-sm-12">
+							<div class="form-group">
+								<label class="control-label"> Remaining Quantity<span
+									class="symbol required"></span>
+								</label> <input id="remainingQuantity" name="remainingQuantity"
+									type="text" placeholder="Remaining Item Quantity"
+									class="form-control numericOnly">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12 col-sm-12">
+							<div class="form-group">
+								<label class="control-label"> <span
+									th:text="#{aod.tab.item.description}"></span>
+								</label><br />
+								<textarea id="itemDescription" placeholder="Description"
+									class="form-control"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
 </div>
 
 <div class="modal-footer">
-    <a type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
-        <span th:text="#{form.btn.close}"></span>
-    </a>
-    <a class="btn btn-sm btn-blue cls-addBtn-aodItem" id="btn-add-mrn-item">
-        <i class="clip-plus-circle-2 "></i> <span th:text="#{form.btn.add}"></span>
-    </a>
+	<a type="button" data-dismiss="modal" class="btn btn-sm btn-blue">
+		<span th:text="#{form.btn.close}"></span>
+	</a> <a class="btn btn-sm btn-blue cls-addBtn-aodItem"
+		id="btn-add-mrn-item"> <i class="clip-plus-circle-2 "></i> <span
+		th:text="#{form.btn.add}"></span>
+	</a>
 </div>
 </html>

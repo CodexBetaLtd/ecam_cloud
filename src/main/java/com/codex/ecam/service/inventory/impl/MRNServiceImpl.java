@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.inventory.MRNStatus;
+import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
@@ -24,14 +25,18 @@ import com.codex.ecam.dao.inventory.StockDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.mappers.inventory.mrn.MRNItemMapper;
 import com.codex.ecam.mappers.inventory.mrn.MRNMapper;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.service.inventory.api.MRNService;
 import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.UniqueCodeUtil;
 
 @Service
 public class MRNServiceImpl implements MRNService {
@@ -59,9 +64,22 @@ public class MRNServiceImpl implements MRNService {
 	
 	@Override
 	public MRNResult newMRN() {
-		// TODO Auto-generated method stub
-		
-		MRNResult result=new MRNResult(new MRN(), new MRNDTO());
+		final MRNResult result = new MRNResult(null, null);
+		try {
+			final MRNDTO dto = new MRNDTO();
+			if(!AuthenticationUtil.isAuthUserAdminLevel()){
+				dto.setMrnNo(getNextCode(AuthenticationUtil.getLoginUserBusiness().getId()));
+			}else{
+				dto.setMrnNo("");
+			}
+			result.setDtoEntity(dto);
+			result.setResultStatusSuccess();
+			result.addToMessageList("MRN generate successfully.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("ERROR! MRN not generated! ".concat(ex.getMessage()));
+		}
 		return result;
 	}
 
@@ -75,7 +93,7 @@ public class MRNServiceImpl implements MRNService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
-			result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
+			result.addToMessageList("MRN save Unsuccessful. ".concat(e.getMessage()));
 		}
 		return result;
 	}
@@ -334,6 +352,16 @@ public class MRNServiceImpl implements MRNService {
 	}
 
 
+
+
+	public String getNextCode(Integer businessId) {
+		if (businessId !=null) {
+			final MRN lastDomain = mrnDao.findLastDomainByBusiness(businessId);
+			return UniqueCodeUtil.getNextCode(AffixList.MRN, lastDomain == null ? "" : lastDomain.getMrnNo());
+		} else {
+			return "";
+		}
+	}
 
 
 

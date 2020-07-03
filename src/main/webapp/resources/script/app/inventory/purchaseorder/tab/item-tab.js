@@ -11,6 +11,8 @@ var TabItem = function () {
 
             for (row = 0; row < items.length; row++) {
                 item = items[row];
+            	console.log(items[row])
+
                 var html = "<tr id='row_" + row + "' >" +
                     "<input id='items" + row + ".itemId' name='items[" + row + "].itemId' value='" + item.itemId + "' type='hidden'>" +
                     "<input id='items" + row + ".itemAssetId' name='items[" + row + "].itemAssetId' value='" + item.itemAssetId + "' type='hidden'>" +
@@ -33,7 +35,7 @@ var TabItem = function () {
                     "<input id='items" + row + ".itemSourceAssetName' name='items[" + row + "].itemSourceAssetName' value='" + item.itemSourceAssetName + "' type='hidden'>" +
                     "<input id='items" + row + ".itemRequiredByDate' name='items[" + row + "].itemRequiredByDate' value='" + item.itemRequiredByDate + "' type='hidden'>" +
                     "<input id='items" + row + ".version' name='items[" + row + "].version' value='" + item.version + "' type='hidden' >" +
-
+                    getPOTax(row)+
                     "<td>" +
                     "<div class='checkbox-center'>" +
                     "<input type='checkbox' name='selectedItems' value='" + item.itemId + "' class='grey'>" +
@@ -47,7 +49,6 @@ var TabItem = function () {
                     "<td >" + item.itemTotalPrice + "</td>" +
                     "<td><span>" + item.itemRfqCodes + "</span></td>" +
                     "<td class='center'> " + ButtonUtil.getEditDeleteBtnFromList(row, "TabItem") + "</td>" +
-
                     // "<td class='center'>" +
                     //     "<div class='visible-md visible-lg hidden-sm hidden-xs'>" +
                     //     "<a onclick='TabItem.editItem(" + item.itemIndex + ");' class='btn btn-xs btn-teal tooltips' data-placement='top' data-original-title='Edit' >" +
@@ -72,23 +73,55 @@ var TabItem = function () {
         updateSummaryDetail();
     };
 
+    var getPOTax=function(itemIndex){
+    	var html='';
+    		var poTaxes=items[itemIndex].poItemtax
+    		var totalItemTax=0.0;
+    		var totalItemCost=0.0;
+    	for(var i=0;i<poTaxes.length;i++){
+    		var tax=poTaxes[i];
+
+		html=html+ "<input type=\"hidden\" name=\"items["+ itemIndex+ "].poTaxes["+i+"].id\" value='"+ tax.id+ "'>"
+			+ "<input type=\"hidden\" name=\"items["+ itemIndex+ "].poTaxes["+i+"].version\" value='"+ tax.version+ "'>"
+			+ "<input type=\"hidden\" name=\"items["+ itemIndex+ "].poTaxes["+i+"].valueId\" value='"+ tax.valueId+ "'>"
+			
+			if(tax.taxType=='FIX_VALUE'){
+				totalItemTax+=parseFloat(tax.value);
+			}else{
+				totalItemTax+=parseFloat(items[itemIndex].itemTotalPrice*tax.value/100)
+			}
+
+    	}
+		totalItemCost+=totalItemTax
+
+		items[itemIndex].itemTotalPrice+=totalItemCost
+		items[itemIndex].itemTaxRate=totalItemTax
+    	return html;
+    }
 
     var updateSummaryDetail = function () {
-        console.log(items);
         var subTotal = 0;
         var total = 0;
         var totalRealTax = 0;
         for (var i = 0; i < items.length; i++) {
-            subTotal = parseFloat(subTotal) + parseFloat(items[i].itemTotalPrice)
-            console.log(subTotal);
-            if (!isOverridePoItemTax) {
-                totalRealTax = parseFloat(totalRealTax) + parseFloat(( items[i].itemTotalPrice * items[i].itemTaxRate ) / 100)
-            } else {
-                totalRealTax = parseFloat(totalTax);
-            }
+            subTotal = parseFloat(subTotal + items[i].itemTotalPrice)
+//            if (!isOverridePoItemTax) {
+//                totalRealTax = parseFloat(totalRealTax) + parseFloat(( items[i].itemTotalPrice * items[i].itemTaxRate ) / 100)
+//            } else {
+//                totalRealTax = parseFloat(totalTax);
+//            }
+        }
+        
+        for(var i=0;i<taxes.length;i++){
+        	var tax=taxes[i]
+			if(tax.taxType=='FIX_VALUE'){
+				totalRealTax+=parseFloat(tax.value);
+			}else{
+				totalRealTax+=parseFloat(subTotal*tax.value/100)
+			}     		
         }
 
-        total = parseFloat(subTotal) + parseFloat(additionalTotalCost) + parseFloat(totalRealTax);
+        total = parseFloat(subTotal + additionalTotalCost + totalRealTax);
         $('#total').text(total.toFixed(2));
         $('#subTotal').text(subTotal.toFixed(2));
         $('#additionalCostTotal').text(parseFloat(additionalTotalCost).toFixed(2));
@@ -107,6 +140,7 @@ var TabItem = function () {
             setTimeout(function () {
                 var url = '../purchaseorder/itemView';
                 $modal.load(url, '', function () {
+                	
                     ItemAddModal.init();
                     $modal.modal();
                 });
@@ -142,6 +176,8 @@ var TabItem = function () {
         item['itemRequiredByDate'] = $('#itemRequiredByDate').val();
         item['itemTotalPrice'] = item['itemUnitPrice'] * item['itemQtyOnOrder'];
         item['version'] = $('#itemVersion').val();
+        item['poItemtax']=poItemtax;
+
         addItemToList(item);
     };
 
@@ -180,7 +216,9 @@ var TabItem = function () {
     	validateFieldNull( itemObj, 'itemSourceAssetName', updatedItemObj.itemSourceAssetName);
         validateFieldNull(itemObj, 'itemRequiredByDate', updatedItemObj.itemRequiredByDate);
         validateFieldNull(itemObj, 'itemTotalPrice', updatedItemObj['itemUnitPrice'] * updatedItemObj['itemQtyOnOrder']);
-    	validateFieldNull( itemObj, 'version', updatedItemObj.version);
+        validateFieldNull( itemObj, 'poItemtax', updatedItemObj.poItemtax);
+        validateFieldNull( itemObj, 'version', updatedItemObj.version);
+    	validateFieldNull( itemObj, 'poItemtax', updatedItemObj.poItemtax);
     };
 
 
@@ -302,7 +340,9 @@ var TabItem = function () {
         poItemView: function () {
             poItemView();
         },
-
+        updateSummaryDetail:function(){
+        	updateSummaryDetail();
+        },
         /***********************************************************************
          * Purchase Order Item Add
          **********************************************************************/

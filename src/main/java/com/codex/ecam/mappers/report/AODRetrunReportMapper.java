@@ -1,6 +1,6 @@
 package com.codex.ecam.mappers.report;
 
-import com.codex.ecam.dto.report.data.AODReturnRepDTO;
+import com.codex.ecam.dto.report.data.aodReturn.AODReturnRepDTO;
 import com.codex.ecam.mappers.GenericReportMapper;
 import com.codex.ecam.model.inventory.aodRetun.AODReturn;
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="valueTabFragment">
+  <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-blue btn-sm active tooltips" id="new-value-btn"
+                    data-toggle="modal" data-placement="top" data-original-title="Add New Value">
+                <i class="clip-plus-circle-2 "></i> Value
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-top: 15px;">
+            <table class="table table-striped table-bordered table-hover table-full-width" id="taxValueTbl"
+                   style="width: 100%">
+                <thead>
+                    <tr>
+                        <th> # </th>
+                        <th> From </th>
+                        <th> To</th>
+                        <th> Value </th>
+                        <th> Current Value </th>
+                        <th> More </th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

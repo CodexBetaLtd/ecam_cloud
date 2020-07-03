@@ -1,8 +1,12 @@
 package com.codex.ecam.mappers.purchasing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderChangeLogDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderTaxDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderAdditionalCost;
@@ -10,6 +14,7 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderChangeLog;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderDiscussion;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderTax;
 
 public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOrderDTO> {
 	
@@ -105,6 +110,7 @@ public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOr
 		setDiscussion(domain,dto);
 		setChangeLog(domain,dto);
 		setPurchaseOrderFile(domain,dto);
+		setPoTax(domain,dto);
 		
 		return dto;
 	}
@@ -115,11 +121,32 @@ public class PurchaseOrderMapper extends GenericMapper<PurchaseOrder, PurchaseOr
 			logDTO.setStatusChangeDate(changeLog.getCreatedDate());
 			if(changeLog.getStatus()!=null){
 				logDTO.setStatusName(changeLog.getStatus().getName());
-
+				
 			}
 			logDTO.setDescription(changeLog.getDescription());
 			dto.getPurchaseOrderChangeLogDTOs().add(logDTO);
 		}
+	}
+	
+	private void setPoTax(PurchaseOrder domain, PurchaseOrderDTO dto){
+		List<PurchaseOrderTaxDTO> list=new ArrayList<>();
+		for(PurchaseOrderTax potax:domain.getPurchaseOrderTaxs()){
+			PurchaseOrderTaxDTO purchaseOrderTaxDTO=new PurchaseOrderTaxDTO();
+			purchaseOrderTaxDTO.setId(potax.getId());
+			purchaseOrderTaxDTO.setVersion(potax.getVersion());
+			if(potax.getTaxValue()!=null){
+				purchaseOrderTaxDTO.setValueId(potax.getTaxValue().getId());
+				purchaseOrderTaxDTO.setValue(potax.getTaxValue().getValue().doubleValue());
+				if(potax.getTaxValue().getTax()!=null){
+				purchaseOrderTaxDTO.setValueName(potax.getTaxValue().getTax().getName());
+
+				purchaseOrderTaxDTO.setOrder(potax.getTaxValue().getTax().getPriorty());
+				purchaseOrderTaxDTO.setTaxType(potax.getTaxValue().getTax().getTaxType());
+				}
+			}
+			list.add(purchaseOrderTaxDTO);
+		}
+		dto.setPurchaseOrderTaxDTOs(list);
 	}
 	
 	private void setPurchaseOrderFile(PurchaseOrder domain, PurchaseOrderDTO dto) throws Exception {

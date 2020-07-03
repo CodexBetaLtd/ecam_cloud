@@ -3,7 +3,6 @@ package com.codex.ecam.dto.report.print;
 
 import java.util.List;
 
-import com.codex.ecam.dto.report.data.AODRepDTO;
 import com.codex.ecam.dto.report.data.StockAdjustmentRepDTO;
 
 import net.sf.jasperreports.engine.JRDataSource;

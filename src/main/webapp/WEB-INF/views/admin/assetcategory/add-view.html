@@ -91,6 +91,23 @@
 							</div>
 
 						</div>
+						                             <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="tabbable wrapper">
+
+                                            <ul id="myTab" class="nav nav-tabs tab-bricky list">
+                                                <li class="active"><a href="#taskTab" data-toggle="tab"> Task </a></li>
+                                            </ul>
+
+                                            <div class="tab-content">
+
+                                                <div class="tab-pane in active" id="taskTab">
+                                                    <div th:replace="admin/assetcategory/tab/task-tab :: taskTabFragment"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 						<div class="row">
 							<div class="col-md-12">
 								<div>
@@ -104,5 +121,10 @@
 		</div>
 	</div>
 	<!-- end: PAGE CONTENT-->
+	    <script th:inline="javascript">
+
+  var tasks = [[${assetCategory.tasks}]];
+    
+</script>
 
 </html>

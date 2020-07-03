@@ -1,13 +1,9 @@
 package com.codex.ecam.constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public enum TAXType {
 
-    NBT(0, "NBT"),
-    VAT(1, "VAT"),
-    NBT_SERVICE(2, "NBT Service");
+    FIX_VALUE(0, "Fix Value"),
+    PERCENTAGE(1, "Percentage");
 
     private Integer id;
     private String name;
@@ -15,21 +11,6 @@ public enum TAXType {
     TAXType(Integer id, String name) {
         setId(id);
         setName(name);
-    }
-
-    public static List<TAXType> getTAXTypes() {
-        List<TAXType> list = new ArrayList<TAXType>();
-        list.add(TAXType.NBT);
-        list.add(TAXType.VAT);
-        list.add(TAXType.NBT_SERVICE);
-        return list;
-    }
-
-    public static List<TAXType> getTypesWithoutService() {
-        List<TAXType> list = new ArrayList<TAXType>();
-        list.add(TAXType.NBT);
-        list.add(TAXType.VAT);
-        return list;
     }
 
 

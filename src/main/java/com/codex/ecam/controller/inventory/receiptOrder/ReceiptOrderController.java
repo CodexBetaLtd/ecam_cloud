@@ -1,5 +1,7 @@
 package com.codex.ecam.controller.inventory.receiptOrder;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,13 +15,11 @@ import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.constants.inventory.ReceiptOrderType;
 import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
-import com.codex.ecam.result.inventory.MRNResult;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.biz.api.SupplierService;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
-
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping(ReceiptOrderController.REQUEST_MAPPING_URL)
@@ -82,6 +82,13 @@ public class ReceiptOrderController {
         return "inventory/receiptorder/modal/purchaseorder-item-modal";
     }
 
+	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+		RestResult<String> result = new RestResult<>();
+		result.setData(receiptOrderService.getNextCode(businessId).toString());
+
+		return result ;
+	}
 
     /*********************************************************************
      * CRUD Ops
@@ -90,7 +97,7 @@ public class ReceiptOrderController {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String add(Model model, RedirectAttributes ra) {
         try {
-            setCommonData(model, new ReceiptOrderDTO());
+            setCommonData(model, receiptOrderService.createNewReceiptOrder().getDtoEntity());
             return "inventory/receiptorder/add-view";
         } catch (Exception ex) {
             ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
@@ -166,6 +173,7 @@ public class ReceiptOrderController {
 		}
 		return result;
 	}
+	
     private void setCommonData(Model model, ReceiptOrderDTO receiptOrder) {
     	model.addAttribute("receiptOrder", receiptOrder);
         model.addAttribute("types", ReceiptOrderType.getAllReceiptOrderType());

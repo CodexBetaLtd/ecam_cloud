@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.codex.ecam.constants.inventory.RFQStatus;
 import com.codex.ecam.dto.BaseDTO;
+import com.codex.ecam.dto.biz.supplier.SupplierDTO;
 
 public class RFQDTO extends BaseDTO {
 
@@ -49,6 +50,7 @@ public class RFQDTO extends BaseDTO {
     
     private List<RFQItemDTO> items = new ArrayList<>();
     private List<RFQFileDTO> rfqFileDTOs = new ArrayList<>();
+    private List<RFQSupplierDTO> rfqSupplireDTOs = new ArrayList<>();
     private List<RFQNotificationDTO> notificationDTOs = new ArrayList<>();
 	private List<RFQChangeLogDTO> rfqStatusChangeDTOs = new ArrayList<>();
 	
@@ -262,6 +264,13 @@ public class RFQDTO extends BaseDTO {
 	public void setRfqStatusChangeDTOs(List<RFQChangeLogDTO> rfqStatusChangeDTOs) {
 		this.rfqStatusChangeDTOs = rfqStatusChangeDTOs;
 	}
+	public List<RFQSupplierDTO> getRfqSupplireDTOs() {
+		return rfqSupplireDTOs;
+	}
+	public void setRfqSupplireDTOs(List<RFQSupplierDTO> rfqSupplireDTOs) {
+		this.rfqSupplireDTOs = rfqSupplireDTOs;
+	}
+
 
 	
    

@@ -1,5 +1,6 @@
 package com.codex.ecam.mappers.purchasing;
 
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQItemDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItemRFQItem;
@@ -46,17 +47,16 @@ public class RFQItemMapper extends GenericMapper<RFQItem, RFQItemDTO> {
 	
 	private void sePoItemData(RFQItem domain,  RFQItemDTO dto) throws Exception {
 		StringBuilder poCodes = new StringBuilder();
-		
-		for ( PurchaseOrderItemRFQItem rfqItem : domain.getPurchaseOrderItems()) {
-			if (poCodes.toString().isEmpty()) {
-				poCodes.append(rfqItem.getPurchaseOrderItem().getPurchaseOrder().getCode());
-			} else {
-				if(!poCodes.toString().contains(rfqItem.getPurchaseOrderItem().getPurchaseOrder().getCode())) {
-					poCodes.append("," + rfqItem.getPurchaseOrderItem().getPurchaseOrder().getCode());
-				}
+		if(domain.getPurchaseOrderItems().size()>0){
+			for ( PurchaseOrderItemRFQItem rfqItem : domain.getPurchaseOrderItems()) {
+				PurchaseOrderDTO purchaseOrderDTO=new PurchaseOrderDTO();
+				purchaseOrderDTO.setCode(rfqItem.getPurchaseOrderItem().getPurchaseOrder().getCode());
+				purchaseOrderDTO.setId(rfqItem.getPurchaseOrderItem().getPurchaseOrder().getId());
+				dto.getPurchaseOrderDTOs().add(purchaseOrderDTO);
+
 			}
 		}
-		dto.setItemPurchaseOrderCodes(poCodes.toString());
+
 	}
 
 	@Override

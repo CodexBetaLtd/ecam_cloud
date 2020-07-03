@@ -74,7 +74,22 @@ public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
+		dto.setPhone(domain.getPhone2());
+		dto.setPhone2(domain.getPhone2());
+		dto.setFax(domain.getFax());
+		dto.setWebSite(domain.getWebSite());
+		dto.setPrimaryEmail(domain.getPrimaryEmail());
+		dto.setSecondaryEmail(domain.getSecondaryEmail());
+		dto.setNotes(domain.getNotes());
+		dto.setAddress(domain.getAddress());
+		dto.setCity(domain.getCity());
+		dto.setProvince(domain.getProvince());
+		dto.setPostalCode(domain.getPostalcode());
 
+		if (domain.getCountry() != null) {
+			dto.setCountryId(domain.getCountry().getId());
+			dto.setCountryName(domain.getCountry().getName());
+		}
 		return dto;
 	}
 

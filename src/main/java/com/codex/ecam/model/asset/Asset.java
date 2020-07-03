@@ -96,6 +96,17 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="name")
 	private String name;
+	
+	@Column(name="asset_url")
+	private String assetUrl;
+
+	public String getAssetUrl() {
+		return assetUrl;
+	}
+
+	public void setAssetUrl(String assetUrl) {
+		this.assetUrl = assetUrl;
+	}
 
 	@Column(name="description")
 	private String description;

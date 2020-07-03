@@ -4,6 +4,7 @@ jQuery(document).ready(function () {
 
     Main.init();
     AssetCategoryHome.init();
+    TaxHome.init();
     MeterReadingUnitHome.init();
     MaintenanceTypeHome.init();
     PioritiesHome.init();

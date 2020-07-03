@@ -2,6 +2,7 @@ package com.codex.ecam.model.asset;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,9 +15,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.springframework.core.task.support.TaskExecutorAdapter;
+
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.maintenance.task.Task;
 
 @Entity
 @Table(name = "tbl_asset_catogery")
@@ -52,6 +56,9 @@ public class AssetCategory extends BaseModel {
 
 	@OneToMany(mappedBy = "assetCategory", fetch = FetchType.LAZY)
 	private Set<Asset> assets;
+	
+	@OneToMany(mappedBy = "assetCategory", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY,orphanRemoval=true)
+	private Set<AssetCategoryTask> tasks;
 
 	@Override
 	public Integer getId() {
@@ -118,6 +125,16 @@ public class AssetCategory extends BaseModel {
 	public void setBusiness(Business business) {
 		this.business = business;
 	}
+
+	public Set<AssetCategoryTask> getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(Set<AssetCategoryTask> tasks) {
+		updateCollection("tasks", tasks);
+	}
+	
+	
 
 
 }

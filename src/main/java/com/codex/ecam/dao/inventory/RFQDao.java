@@ -21,6 +21,10 @@ public interface RFQDao extends FocusDataTableRepository<RFQ, Integer> {
 	@Query("from RFQFile where id = :id")
 	RFQFile findByFileId(@Param("id") Integer id);
 	
+
+    @Query("select rfq from RFQ rfq where rfq.id=(select max(id) from RFQ where business.id=:businessId and year(createdDate)=year(sysdate()))")
+	RFQ findLastDomainByBusiness(@Param("businessId") Integer businessId);
+	
     @Query("from RFQNotification where rfq.id = :rfqId")
     List<RFQNotification> findByNotificationById(@Param("rfqId") Integer id);
 

@@ -23,11 +23,17 @@ import org.springframework.stereotype.Service;
 
 import com.codex.ecam.constants.util.PrintType;
 import com.codex.ecam.dao.inventory.AODReturnDao;
-import com.codex.ecam.dto.report.data.AODReturnRepDTO;
+import com.codex.ecam.dto.report.data.aodReturn.AODReturnRepDTO;
+import com.codex.ecam.dto.report.data.aodReturn.AODReturnRepItemDTO;
+import com.codex.ecam.dto.report.data.mrn.MRNRepDTO;
+import com.codex.ecam.dto.report.data.mrn.MRNRepItemDTO;
 import com.codex.ecam.dto.report.filter.AODReturnFilterDTO;
 import com.codex.ecam.dto.report.print.AODReturnPrintDTO;
 import com.codex.ecam.mappers.report.AODRetrunReportMapper;
 import com.codex.ecam.model.inventory.aodRetun.AODReturn;
+import com.codex.ecam.model.inventory.aodRetun.AODReturnItem;
+import com.codex.ecam.model.inventory.mrn.MRN;
+import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.report.aodreturn.api.AODReturnReportService;
@@ -114,5 +120,59 @@ public class AODReturnReportServiceImpl implements AODReturnReportService {
 		outputStream.close();
 
 	}
+
+	@Override
+	public void printDoc(Integer id, HttpServletResponse response, HttpServletRequest request) throws Exception {
+		InputStream jasperStream;
+		OutputStream outputStream;
+		AODReturnRepDTO aodReturnRepDTO = new AODReturnRepDTO();
+		final Map<String, Object> params = new HashMap<String, Object>();
+		jasperStream = ReportUtil.getInstance().getInputStream(request, "/resources/report/inventory/aodReturn/",
+				"AODReturnView.jrxml");
+		aodReturnRepDTO = getReportData(id);
+		outputStream = ReportUtil.getInstance().getOutPutStram(response, aodReturnRepDTO.getAodReturnNo(),
+				PrintType.PDF.getContentType(), PrintType.PDF.getExtention());
+		ArrayList<AODReturnRepDTO> dataList =new ArrayList<>();
+		dataList.add(aodReturnRepDTO);
+		String reportDir=request.getRealPath("").concat("/resources/report/");
+		params.put("SUBREPORT_DIR", reportDir);
+		ReportUtil.getInstance().generatePDF(dataList, jasperStream, params, outputStream);
+
+		outputStream.flush();
+		outputStream.close();
+	}
+	
+	private AODReturnRepDTO getReportData(Integer id) throws Exception {
+		final AODReturn domain = aodReturnDao.findOne(id);
+		final AODReturnRepDTO repDTO = new AODReturnRepDTO();
+
+		repDTO.setAodReturnNo(domain.getReturnNo());
+
+		repDTO.setAodReturnDate(domain.getReturnDate());
+		repDTO.setAodReturnStatus(domain.getAodReturnStatus().getName());
+
+		if (domain.getBusiness() != null) {
+			repDTO.setBusinessName(domain.getBusiness().getName());
+			repDTO.setBusinessAddress(domain.getBusiness().getAddress());
+		}
+
+
+		for (AODReturnItem aodReturnItem : domain.getAodReturnItems()) {
+			AODReturnRepItemDTO aodReturnRepItemDTO = new AODReturnRepItemDTO();
+			aodReturnRepItemDTO.setBatchNo(aodReturnItem.getAodItem().getBatchNo());
+			aodReturnRepItemDTO.setItemQuantity(aodReturnItem.getAodItem().getQuantity().doubleValue());
+			if (aodReturnItem.getReturnQty() != null) {
+				aodReturnRepItemDTO.setItemReturnQuantity(aodReturnItem.getReturnQty().doubleValue());
+
+			}
+			aodReturnRepItemDTO.setDescription(aodReturnItem.getDescription());
+			if (aodReturnItem.getAodItem().getPart() != null) {
+				aodReturnRepItemDTO.setPartCode(aodReturnItem.getAodItem().getPart().getCode());
+			}
+			repDTO.getAodReturnItemRepDTOs().add(aodReturnRepItemDTO);
+		}
+		return repDTO;
+	}
+	
 	
 }

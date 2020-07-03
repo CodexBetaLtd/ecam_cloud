@@ -3,110 +3,37 @@
       xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <div th:fragment="shippingTabFragment">
-	<div class="row">
-		<div class="col-md-4">
-           <div class="form-group">
-              <label class="control-label">
-              	Supplier <span class="symbol required"></span>
-              </label>
-              <select id="supplierId" th:field="*{supplierId}"class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="supplier : ${suppliers}" th:value="${supplier.id}" th:text="${supplier.name}"></option>
-              </select>
-          </div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group">
-              <label class="control-label">
-              	Ship to <span class="symbol required"></span>
-              </label>
-              <select id="shipToId" th:field="*{shipToId}" class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
-              </select>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-           <div class="form-group">
-			<label class="control-label">Supplier Address</label>
-			<textarea th:field="*{supplierAddress}" class="form-control" id="supplierAddress" ></textarea>
-          </div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group">
-				<label class="control-label">Ship Address</label>
-                <textarea th:field="*{shipToAddress}" class="form-control"  id="shipToAddress"></textarea>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-           <div class="form-group">
-				<label class="control-label">City</label>
-                <input type="text" th:field="*{supplierCity}" class="form-control" >
-          </div>
-		</div>
-			<div class="col-md-4">
-			<div class="form-group">
-				<label class="control-label">City</label>
-				<input type="text" th:field="*{shippingCity}" class="form-control" >
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-                <div class="form-group">
-				<label class="control-label">Province</label>
-                <input th:field="*{supplierProvince}" type="text" class="form-control" >
-          </div>
-		</div>
-			<div class="col-md-4">
-			<div class="form-group">
-				<label class="control-label">Province</label>
-                <input type="text" th:field="*{shippingProvince}" class="form-control" >
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-                <div class="form-group">
-				<label class="control-label">Postal Code</label>
-                <input type="text" th:field="*{supplierPostalCode}" class="form-control" >
-          </div>
-		</div>
-			<div class="col-md-4">
-			<div class="form-group">
-				<label class="control-label">Postal Code</label>
-                <input type="text" th:field="*{shippingPostalCode}" class="form-control" >
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4">
-		 	<div class="form-group">
-              <label class="control-label">
-              	Country <span class="symbol required"></span>
-              </label>
-              <select id="supplierCountry" th:field="*{supplierCountry}" class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"></option>
-              </select>
-          </div>
-		</div>
-		<div class="col-md-4">
-			<div class="form-group">
-              <label class="control-label">
-              	Country <span class="symbol required"></span>
-              </label>
-              <select  id="shipToCountry" th:field="*{shipToCountry}"class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="country : ${countries}" th:value="${country.id}" th:text="${country.name}"></option>
-              </select>
-			</div>
-		</div>
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-blue btn-sm active tooltips" id="btn-add-rfq-supplier" data-toggle="modal"
+                    data-placement="top" data-original-title="Add New Item" 
+                    th:disabled="${rfq.rfqStatus}!=${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
+                    >
+                <i class="clip-plus-circle-2 "></i> Supplier
+            </button>
+        </div>
+    </div>
 
-	</div>
+    <div class="row">
+        <div class="col-md-12 table-scroll" style="padding-top: 15px;">
+            <table class="table table-striped table-bordered table-hover table-full-width" style="width:100%;" id="rfq-supplier-tbl">
+                <thead>
+	                <tr>
+	                    <th> # </th>
+	                    <th> Name  </th>
+	                    <th> Address </th>
+	                    <th> City </th>
+	                    <th> Province </th>
+	                    <th> Postal Code </th>
+	                    <th> Country </th>
+	                    <th> More </th>
+	                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </html>

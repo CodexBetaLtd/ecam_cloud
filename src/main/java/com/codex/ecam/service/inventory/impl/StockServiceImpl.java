@@ -31,10 +31,10 @@ import com.codex.ecam.constants.TAXType;
 import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.constants.util.AffixList;
+import com.codex.ecam.dao.admin.TaxDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
-import com.codex.ecam.dao.biz.TaxDao;
 import com.codex.ecam.dao.inventory.AODItemDao;
 import com.codex.ecam.dao.inventory.AODReturnItemDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
@@ -291,22 +291,22 @@ public class StockServiceImpl implements StockService {
 	// TODO: Check again
 	private void setStockUnitCost(ReceiptOrderItem receiptOrderItem, Stock stock, BigDecimal subTotal,
 			List<ReceiptOrderTax> receiptOrderTaxes) {
-		if ((receiptOrderTaxes != null) && (receiptOrderTaxes.size() > 0)) {
+		/*	if ((receiptOrderTaxes != null) && (receiptOrderTaxes.size() > 0)) {
 			ReceiptOrderTax tax = new ReceiptOrderTax();
-			Optional<ReceiptOrderTax> optional = receiptOrderTaxes.stream()
-					.filter((x) -> x.getTax().getTaxType().getId().equals(TAXType.NBT.getId())).findAny();
+		Optional<ReceiptOrderTax> optional = receiptOrderTaxes.stream()
+				.filter((x) -> x.getTax().getId().equals(TAXType.NBT.getId())).findAny();
 			if (optional.isPresent()) {
 				tax = optional.get();
 			} else {
 				// Todo: Get the current NBT Tax
-				taxDao.findLastTaxByTaxType(TAXType.NBT);
+				//taxDao.findLastTaxByTaxType(TAXType.NBT);
 			}
 			if ((tax != null) && (tax.getId() != null)) {
 				// TODO: Round Here
 				stock.setUnitPrice(receiptOrderItem.getUnitPrice()
 						.add((tax.getTaxAmount().multiply(receiptOrderItem.getUnitPrice())).divide(subTotal)));
 			}
-		}
+		}*/
 	}
 
 	private void setAVGPrice(Asset part, Stock stock) {
@@ -391,10 +391,24 @@ public class StockServiceImpl implements StockService {
 				}else{
 					dispatchStockByItemWithoutFIFO(result, aodItem);
 				}
-				
+				addStockHistory(aodItem);
 			}
 		}
 	return result;
+	}
+	
+	private void addStockHistory(AODItem domain) {
+		StockHistory stockHitory = new StockHistory();
+		stockHitory.setBeforeQuantity(domain.getStock().getCurrentQuantity());
+		stockHitory.setAfterQuantity(domain.getStock().getLastQuantity().subtract(domain.getQuantity()));
+		stockHitory.setQuantity(domain.getQuantity());
+		stockHitory.setLastPrice(domain.getStock().getUnitPrice());
+		stockHitory.setStock(domain.getStock());
+		stockHitory.setDescription("Item dispatch from stock");
+		stockHitory.setAodItem(domain);
+		stockHitory.setDate(new Date());
+		stockHitory.setIsDeleted(Boolean.FALSE);
+		stockHistoryDao.save(stockHitory);
 	}
 
 	//first in first out
@@ -403,7 +417,7 @@ public class StockServiceImpl implements StockService {
 		final Set<AODItemStock> aodItemStocks = new HashSet<>();
 		BigDecimal itemQty = aodItem.getQuantity();
 		Integer itemCount = 0;
-		final List<Stock> stockList = stockDao.findNonEmptyStockByItemIdAndWarehouse(aodItem.getPart().getId(), aodItem.getWarehouse().getId());
+		final List<Stock> stockList = stockDao.findNonEmptyStockByItemId(aodItem.getPart().getId());
 		if (stockList != null && stockList.size() > 0) {
 			for (; itemQty.compareTo(BigDecimal.ZERO) > 0;) {
 				final AODItemStock aodItemStock = new AODItemStock();
@@ -1085,14 +1099,14 @@ public class StockServiceImpl implements StockService {
 			if (AuthenticationUtil.isAuthUserAdminLevel()) {
 				Specification<Stock> specification = (root, query, cb) -> {
 					//query.groupBy(root.get("part").get("id"));
-					return cb.gt(root.get("currentQuantity"), 0.0);
+					return cb.gt(root.get("currentQuantity"), BigDecimal.ZERO);
 				};
 				domainOut = stockDao.findAll(input, specification);
 			} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 				Specification<Stock> specification = (root, query, cb) -> {
 					//query.groupBy(root.get("part").get("id"));
 					return cb.and(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
-							cb.gt(root.get("currentQuantity"), 0.0));
+							cb.gt(root.get("currentQuantity"), BigDecimal.ZERO));
 				};
 				domainOut = stockDao.findAll(input, specification);
 			} else {
@@ -1100,7 +1114,7 @@ public class StockServiceImpl implements StockService {
 					query.groupBy(root.get("part").get("id"));
 					return cb.and(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 							cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
-							cb.gt(root.get("currentQuantity"), 0.0));
+							cb.gt(root.get("currentQuantity"), BigDecimal.ZERO));
 				};
 				domainOut = stockDao.findAll(input, specification);
 			}

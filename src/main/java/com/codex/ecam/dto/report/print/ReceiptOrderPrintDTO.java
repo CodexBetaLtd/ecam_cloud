@@ -3,7 +3,7 @@ package com.codex.ecam.dto.report.print;
 
 import java.util.List;
 
-import com.codex.ecam.dto.report.data.ReceiptOrderRepDTO;
+import com.codex.ecam.dto.report.data.receiptOrder.ReceiptOrderRepDTO;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;

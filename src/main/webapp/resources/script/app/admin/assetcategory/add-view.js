@@ -158,6 +158,7 @@ var AssetCategoryAdd = function() {
 			runParentAssetSelect();
 			runBusinessSelect();
 			initChangeFunctionToAssetCategory();
+			TaskTab.init();
 		},
 		
 		runValidator: function(){

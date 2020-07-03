@@ -24,6 +24,8 @@ public interface TaskGroupService {
 	List<TaskGroupDTO> findAll() throws Exception;
 
 	List<TaskDTO> findAllTasksByTaskGroup(Integer id) throws Exception;
+	
+	List<TaskDTO> findAllTasksByAssetCategory(Integer assetId) throws Exception;
 
 	DataTablesOutput<TaskGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
 

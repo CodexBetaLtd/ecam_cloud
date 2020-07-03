@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.net.InetAddress;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -90,12 +91,15 @@ import com.codex.ecam.service.asset.api.WarrantyService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
+import com.codex.ecam.util.QRCodeUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
+import com.google.zxing.WriterException;
 
 @Service
 public class AssetServiceImpl implements AssetService {
 
 	private final String ASSET_DEFAULT_IMAGE = "/resources/images/no_image.png";
+	private final String ASSET_NO_QR_IMAGE = "/resources/images/no_qr.png";
 	@Autowired
 	Environment environment;
 	
@@ -345,6 +349,8 @@ public class AssetServiceImpl implements AssetService {
 		addAssetToBOMGroup(result.getDomainEntity());
 		addReceiptOrder(result);
 		result.updateDtoIdAndVersion();
+		
+
 	}
 
 	private void setAssetData(AssetResult result, MultipartFile image) throws Exception {
@@ -365,8 +371,24 @@ public class AssetServiceImpl implements AssetService {
 		setAssetSparePart(result);
 		setAssetImage(result, image);
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
+		generateAssetQR(result);
 	}
 
+	private void generateAssetQR(AssetResult result)throws WriterException, IOException {
+
+		String uploadFolder = environment.getProperty("upload.asset.file.folder");
+		String uploadLocation = environment.getProperty("upload.location");
+		String host =environment.getProperty("common.url");
+		String qrCodeText = host+"/asset/machine/edit?id="+result.getDomainEntity().getId();
+		String filePath = uploadLocation+uploadFolder+"QR/ECAM-ASSET("+result.getDomainEntity().getCode()+").png";
+		int size = 500;
+		String fileType = "png";
+		File qrFile = new File(filePath);
+
+		QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
+		result.getDomainEntity().setAssetUrl(filePath);
+		System.out.println(filePath);
+	}
 	private void setAssetSparePart(AssetResult result) throws Exception {
 		Set<SparePart> spareParts = new HashSet<>();
 
@@ -1393,6 +1415,14 @@ public class AssetServiceImpl implements AssetService {
 			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
 		}
 	}
+	public void assetQRDownload(Integer id, HttpServletResponse response) throws Exception {
+		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+		if (id != null) {
+			String file = assetDao.getAssetQRLocation(id);
+			//String externalFilePath = uploadLocation + file.getFileLocation();
+			FileDownloadUtil.flushFile(file, "PNG", response);
+		}
+	}
 
 	private void setAssetFiles(AssetResult result) throws Exception {
 		Set<AssetFile> assetFiles = new HashSet<>();
@@ -1423,7 +1453,7 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public byte[] getAssetImageStream(Integer id, HttpServletRequest request) throws IOException {
-
+		
 		if (id != null) {
 			String imagePath = assetDao.getAssetImageLocation(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
@@ -1431,9 +1461,23 @@ public class AssetServiceImpl implements AssetService {
 				return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
 			}
 		}
-
+		
 		return FileDownloadUtil
 				.getByteInputStream(request.getServletContext().getRealPath("").concat(ASSET_DEFAULT_IMAGE));
+	}
+	
+	public byte[] getAssetQRStream(Integer id, HttpServletRequest request) throws IOException {
+
+		if (id != null) {
+			String imagePath = assetDao.getAssetQRLocation(id);
+			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+			if (imagePath != null) {
+				return FileDownloadUtil.getByteInputStream(imagePath);
+			}
+		}
+
+		return FileDownloadUtil
+				.getByteInputStream(request.getServletContext().getRealPath("").concat(ASSET_NO_QR_IMAGE));
 	}
 
 	@Override

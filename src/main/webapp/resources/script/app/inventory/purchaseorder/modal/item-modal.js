@@ -1,20 +1,44 @@
 var ItemAddModal = function () {
-
     /*********************************************************************
      * Assets/Part/Location/Site View
      *********************************************************************/
+var initButton=function(){
+	$('#btn-item-tax-view').on('click', function() {
+		loadTaxSelectModal();
+	});
+	
+	$('#btn-add-po-item').on('click', function() {
+		
+		poItemtax=poItemTaxes
+        TabItem.addPOItem();
+        TabItem.populatePOItems();
+        
+	});
 
-    var loadAssetSelectModal = function(tableId, URL, method) {
+}
+	var loadAssetSelectModal = function(tableId, URL, method) {
+		var $modal = $('#stackable-modal');
+		CustomComponents.ajaxModalLoadingProgressBar();
+		setTimeout(function () {
+			var url = '../purchaseorder/poAssetView';
+			$modal.load(url, '', function () {
+				// ItemAddModal.initAssetSelectTable(tableId, URL, method);
+				dtPurchaseOrderAsset.dtPOAssetList(tableId, URL, method);
+				$modal.modal();
+			});
+		}, 1000);
+	};
+    var loadTaxSelectModal = function(tableId, URL, method) {
         var $modal = $('#stackable-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../purchaseorder/poAssetView';
-            $modal.load(url, '', function () {
-                // ItemAddModal.initAssetSelectTable(tableId, URL, method);
-                dtPurchaseOrderAsset.dtPOAssetList(tableId, URL, method);
-                $modal.modal();
-            });
-        }, 1000);
+		CustomComponents.ajaxModalLoadingProgressBar();
+		setTimeout(function() {
+			var url = '../purchaseorder/poTaxView';
+			$modal.load(url, '', function() {
+				dtPurchaseOrderTax.dtPOTaxList("tax_select_tbl",
+						"../restapi/tax/tabledata", "ItemAddModal.setPOItem");
+				$modal.modal();
+			});
+		}, 1000);
     };
 	
 	var assetSelectModal = function () {
@@ -52,7 +76,46 @@ var ItemAddModal = function () {
 		$('#select-pages-open-modal').modal('toggle');
 	};
 
+var setPOItem=  function(id, name, order, value,taxType){
+	var tax = {};
+	tax['id'] = "";
+	tax['valueId'] = id;
+	tax['version'] = "";
+	tax['valueName'] = name;
+	tax['value'] = value;
+	tax['order'] = order;
+	tax['taxType'] = taxType;
+	poItemTaxes.push(tax);
+	populatePOItemTax();
+}
+var poItemTaxes=[];
 
+
+var populatePOItemTax = function() {
+	$("#po-item-tax-tbl > tbody").html("");
+	if (poItemTaxes != undefined && poItemTaxes.length > 0) {
+		var row, tax;
+		for (row = 0; row < poItemTaxes.length; row++) {        
+			tax=poItemTaxes[row]
+			var html = "<tr id='taxRow_"+ row+ "' >"
+			+ "<input type=\"hidden\" id=\"poItemTax["+ row+ "].id\" value='"+ tax.id+ "'>"
+			+ "<input type=\"hidden\" id=\"poItemTax["+ row+ "].version\" value='"+ tax.version+ "'>"
+			+ "<input type=\"hidden\" id=\"poItemTax["+ row+ "].valueId\" value='"+ tax.valueId+ "'>"	
+			+"<td><span>" + (row+1)+ "</span></td>"
+            +"<td><span>" + tax.valueName + "</span></td>"
+            +"<td><span>" + tax.value + "</span></td>" 
+            +"<td><span>" + tax.taxType + "</span></td>" 
+            +"<td >" + tax.order + "</td>" 
+			+ "<td>"+ButtonUtil.getCommonBtnDelete("TaxTab.removeTax", row) + "</td>" 
+			+ "</tr>";
+			$('#po-item-tax-tbl > tbody:last-child').append(html);
+			//updateItemTax();
+		}
+	} else {
+		CustomComponents.emptyTableRow('po-item-tax-tbl', 7);
+	}
+	//setItemTaxOverride();
+};
     /*********************************************************************
      * Set Work Order
      *********************************************************************/
@@ -110,6 +173,9 @@ var ItemAddModal = function () {
         	runAccountSelect();
         	runChargeDepartmentSelect();
         	runItemRequiredByDatePicker();
+        	initButton();
+        	
+        	populatePOItemTax();
         },
 
 
@@ -139,7 +205,9 @@ var ItemAddModal = function () {
         setSourceAsset: function(id, name){
         	setSourceAsset(id, name);
         },
-
+        setPOItem:function(id, name, order, value,taxType){
+        	setPOItem(id, name, order, value,taxType)
+        },
 
         /*********************************************************************
          * Set Work Order

@@ -24,13 +24,17 @@ import com.codex.ecam.constants.PurchaseOrderAdditionalCostType;
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.ShippingType;
+import com.codex.ecam.constants.util.AffixList;
 import com.codex.ecam.dao.admin.AccountDao;
 import com.codex.ecam.dao.admin.ChargeDepartmentDao;
 import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.CurrencyDao;
+import com.codex.ecam.dao.admin.TaxDao;
+import com.codex.ecam.dao.admin.TaxValueDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.MRNDao;
 import com.codex.ecam.dao.inventory.MRNItemDao;
 import com.codex.ecam.dao.inventory.PurchaseOrderDao;
@@ -43,10 +47,14 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDiscussionDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderNotificationDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderTaxDTO;
+import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderFileMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderRFQMapper;
+import com.codex.ecam.model.admin.TaxValue;
+import com.codex.ecam.model.biz.supplier.Supplier;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrder;
@@ -56,16 +64,23 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItemRFQItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderNotification;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderTax;
+import com.codex.ecam.model.inventory.rfq.RFQ;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
+import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
+import com.codex.ecam.util.UniqueCodeUtil;
 import com.codex.ecam.util.VelocityEmailSender;
+import com.codex.ecam.util.search.inventory.purchaseorder.PurchaseorderPropertyMapper;
+import com.codex.ecam.util.search.inventory.rfq.RFQPropertyMapper;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -87,6 +102,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Autowired
 	private CountryDao countryDao;
+
+	@Autowired
+	private SupplierDao supplierDao;
 
 	@Autowired
 	private CurrencyDao currencyDao;
@@ -111,12 +129,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Autowired
 	private PurchaseOrderItemDao poItemDao;
+	@Autowired
+	private TaxValueDao taxValueDao;
 
 	@Autowired
 	Environment environment;
 
 	@Override
 	public DataTablesOutput<PurchaseOrderDTO> findAll(FocusDataTablesInput input) throws Exception {
+		PurchaseorderPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<PurchaseOrder> domainOut;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = purchaseOrderDao.findAll(input);
@@ -234,7 +255,49 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		setDiscussion(result);
 		setNotification(result);
 		setPurchaseOrderFiles(result);
+		setTaxValue(result);
+		
 
+	}
+
+	private void setTaxValue(PurchaseOrderResult result) {
+		List<PurchaseOrderTax> taxs = new ArrayList<>();
+
+		if ((result.getDtoEntity().getPurchaseOrderTaxDTOs() != null)
+				&& (result.getDtoEntity().getPurchaseOrderTaxDTOs().size() > 0)) {
+
+			List<PurchaseOrderTax> currentTaxes = result.getDomainEntity().getPurchaseOrderTaxs();
+
+			for (PurchaseOrderTaxDTO orderTaxDTO : result.getDtoEntity().getPurchaseOrderTaxDTOs()) {
+
+				PurchaseOrderTax purchaseOrderTax;
+
+				if ((currentTaxes != null) && (currentTaxes.size() > 0)) {
+					Optional<PurchaseOrderTax> optionalTax = currentTaxes.stream()
+							.filter((x) -> x.getId() == orderTaxDTO.getId()).findAny();
+					if (optionalTax.isPresent()) {
+						purchaseOrderTax = optionalTax.get();
+					} else {
+						purchaseOrderTax = new PurchaseOrderTax();
+					}
+				} else {
+					purchaseOrderTax = new PurchaseOrderTax();
+				}
+				createPOTax(orderTaxDTO, purchaseOrderTax, result.getDomainEntity());
+				taxs.add(purchaseOrderTax);
+			}
+		}
+		result.getDomainEntity().setPurchaseOrderTaxs(taxs);
+	}
+
+	private void createPOTax(PurchaseOrderTaxDTO dto, PurchaseOrderTax domain, PurchaseOrder purchaseOrder) {
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setIsDeleted(Boolean.FALSE);
+		if(dto.getValueId()!=null){
+			domain.setTaxValue(taxValueDao.findOne(dto.getValueId()));
+		}
+			domain.setPurchaseOrder(purchaseOrder);
 	}
 
 	private void setItems(PurchaseOrderResult result) throws Exception {
@@ -298,6 +361,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			domain.setSourceAsset(assetDao.findOne(dto.getItemSourceAssetId()));
 		}
 
+	//	setPOItemTax(result);
 		if ((dto.getItemRfqItemId() != null) && (dto.getItemRfqItemId() > 0)) {
 			RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
 
@@ -309,6 +373,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			domain.getRfqItems().add(item);
 		}
 
+	}
+	private void setPOItemTax(){
+		
+	}
+	private void createPOItemTax(PurchaseOrderTaxDTO dto, PurchaseOrderTax domain, PurchaseOrder purchaseOrder) {
+		domain.setId(dto.getId());
+		domain.setVersion(dto.getVersion());
+		domain.setIsDeleted(Boolean.FALSE);
+		if(dto.getValueId()!=null){
+			domain.setTaxValue(taxValueDao.findOne(dto.getValueId()));
+		}
+			domain.setPurchaseOrder(purchaseOrder);
 	}
 
 	private void setBusiness(PurchaseOrderResult result) {
@@ -561,22 +637,33 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	@Override
-	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String rfqItemIds) {
-		String[] ids = rfqItemIds.split(",");
-		// List<Integer> list =
-		// Arrays.asList(ids).stream().mapToInt(Integer::parseInt).collect(Collectors.toList());
-		List<Integer> list = Arrays.asList(ids).stream().map(Integer::parseInt).collect(Collectors.toList());
-		return generatePurchaseOrderFromRFQItems(list);
+	public RFQResult createPurchaseOrderFromRFQItems(String rfqItemIds, String supplierIds) {
+		String[] itemIds = rfqItemIds.split(",");
+		String[] ssupplierIds = supplierIds.split(",");
+		List<Integer> supplierList = Arrays.asList(ssupplierIds).stream().map(Integer::parseInt)
+				.collect(Collectors.toList());
+		List<Integer> itemList = Arrays.asList(itemIds).stream().map(Integer::parseInt).collect(Collectors.toList());
+		return createPurchaseOrderFromRFQItems(itemList, supplierList);
+		// return null;
 	}
 
-	@Override
-	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds) {
-		return generatePurchaseOrderFromRFQItems(rfqItemIds);
+	public RFQResult createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds, List<Integer> supplierList) {
+		RFQResult result = new RFQResult(null, null);
+
+		for (Integer supplier : supplierList) {
+			List<String> msgList = new ArrayList<>();
+			msgList = generatePurchaseOrderFromRFQItems(rfqItemIds, supplier).getMsgList();
+			result.getMsgList().addAll(msgList);
+
+		}
+		return result;
 	}
 
-	protected PurchaseOrderDTO generatePurchaseOrderFromRFQItems(List<Integer> rfqItemIds) {
+	protected PurchaseOrderResult generatePurchaseOrderFromRFQItems(List<Integer> rfqItemIds, Integer supplierId) {
 		PurchaseOrderDTO dto = new PurchaseOrderDTO();
+
 		List<PurchaseOrderItemDTO> items = new ArrayList<>();
+		Supplier supplier = supplierDao.findOne(supplierId);
 		PurchaseOrderItemDTO item;
 		for (Integer id : rfqItemIds) {
 			item = new PurchaseOrderItemDTO();
@@ -589,7 +676,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit());
 			items.add(item);
 			try {
+
 				dto = PurchaseOrderRFQMapper.getInstance().domainToDto(rfqItem.getRfq());
+				dto.setCode(getNextCode(rfqItem.getRfq().getBusiness().getId()));
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -597,7 +687,32 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 		}
 		dto.setItems(items);
-		return dto;
+		dto.setSupplierId(supplier.getId());
+		dto.setSupplierName(supplier.getAddress());
+		if (supplier.getCountry() != null) {
+			dto.setSupplierCountry(supplier.getCountry().getId());
+
+		}
+
+		dto.setSupplierAddress(supplier.getAddress());
+		dto.setSupplierCity(supplier.getCity());
+		dto.setSupplierPostalCode(supplier.getPostalcode());
+		dto.setSupplierProvince(supplier.getProvince());
+		PurchaseOrderResult purchaseOrderResult = null;
+		try {
+			purchaseOrderResult = save(dto);
+			purchaseOrderResult.setStatus(ResultStatus.SUCCESS);
+			purchaseOrderResult.addToMessageList("Successfully Generated the PO  ");
+			// purchaseOrderResult.addToMessageList(purchaseOrderResult.getDomainEntity().getId().toString());
+			// purchaseOrderResult.addToMessageList(purchaseOrderResult.getDomainEntity().getCode());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			purchaseOrderResult.setStatus(ResultStatus.ERROR);
+			purchaseOrderResult.addToErrorList("Error while PO generate");
+		}
+		// return result;
+		return purchaseOrderResult;
 	}
 
 	@Override
@@ -643,7 +758,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		MRN mrn = mrnDao.findOne(mrnId);
 		PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
 		purchaseOrderDTO.setPurchaseOrderstatus(PurchaseOrderStatus.DRAFT);
-		purchaseOrderDTO.setCode("");
+		purchaseOrderDTO.setCode(getNextCode(mrn.getBusiness().getId()));
 		purchaseOrderDTO.setIsDeleted(Boolean.FALSE);
 		if (mrn != null && mrn.getBusiness() != null) {
 			purchaseOrderDTO.setBusinessId(mrn.getBusiness().getId());
@@ -690,6 +805,41 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			}
 		}
 		return poList;
+	}
+
+	@Override
+	public PurchaseOrderDTO createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public PurchaseOrderResult createNewPurchaseorder() {
+		final PurchaseOrderResult result = new PurchaseOrderResult(null, null);
+		try {
+			final PurchaseOrderDTO dto = new PurchaseOrderDTO();
+			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
+				dto.setCode(getNextCode(AuthenticationUtil.getLoginUserBusiness().getId()));
+			} else {
+				dto.setCode("");
+			}
+			result.setDtoEntity(dto);
+			result.setResultStatusSuccess();
+			result.addToMessageList("Purchaseorder generate successfully.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("ERROR! Purchaseorder not generated! ".concat(ex.getMessage()));
+		}
+		return result;
+	}
+
+	public String getNextCode(Integer businessId) {
+		if (businessId != null) {
+			final PurchaseOrder lastDomain = purchaseOrderDao.findLastDomainByBusiness(businessId);
+			return UniqueCodeUtil.getNextCode(AffixList.PURCHASEORDER, lastDomain == null ? "" : lastDomain.getCode());
+		} else {
+			return "";
+		}
 	}
 
 	/*

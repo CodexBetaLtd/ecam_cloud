@@ -1,6 +1,10 @@
 package com.codex.ecam.dto.inventory.rfq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.codex.ecam.dto.BaseDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 
 public class RFQItemDTO extends BaseDTO {
 
@@ -16,6 +20,7 @@ public class RFQItemDTO extends BaseDTO {
 
 	private Double itemQuotedUnitPrice;
 	private Double itemQuotedTotalPrice;
+	private List<PurchaseOrderDTO> purchaseOrderDTOs = new ArrayList<>();
 	
 	public Integer getItemId() {
 		return itemId;
@@ -96,5 +101,15 @@ public class RFQItemDTO extends BaseDTO {
 	public void setItemPurchaseOrderCodes(String itemPurchaseOrderCodes) {
 		this.itemPurchaseOrderCodes = itemPurchaseOrderCodes;
 	}
+
+	public List<PurchaseOrderDTO> getPurchaseOrderDTOs() {
+		return purchaseOrderDTOs;
+	}
+
+	public void setPurchaseOrderDTOs(List<PurchaseOrderDTO> purchaseOrderDTOs) {
+		this.purchaseOrderDTOs = purchaseOrderDTOs;
+	}
+	
+	
 
 }

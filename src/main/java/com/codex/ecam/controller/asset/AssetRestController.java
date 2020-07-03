@@ -27,6 +27,7 @@ public class AssetRestController {
 	public static final String REQUEST_MAPPING_URL = "restapi/asset";
 	
 	private final String ASSET_DEFAULT_IMAGE = "/resources/images/no_image.png";
+	private final String ASSET_NO_QR_IMAGE = "/resources/images/no_qr.png";
 
 	@Autowired
 	private AssetService assetService;
@@ -302,6 +303,15 @@ public class AssetRestController {
 			return assetService.getAssetImageStream(id, request);
 		} catch (Exception e) {
 			return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(ASSET_DEFAULT_IMAGE));
+		} 
+	} 
+	
+	@RequestMapping(value = "/asset-qr" , method = RequestMethod.GET)
+	public @ResponseBody byte[] getAssetQR( Integer id, HttpServletRequest request) throws IOException {
+		try {
+			return assetService.getAssetQRStream(id, request);
+		} catch (Exception e) {
+			return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(ASSET_NO_QR_IMAGE));
 		} 
 	} 
 

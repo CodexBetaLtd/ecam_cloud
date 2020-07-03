@@ -133,9 +133,11 @@ var PurchaseOrder = function () {
                 }, {
                     data: 'code'
                 }, {
-                    data: 'supplierName'
+                    data: 'supplierName',
                 }, {
-                    data: 'statusName'
+                    data: 'statusName',
+                        orderable: false,
+                        searchable: false,
                 }],
             aoColumnDefs: [{
                 width: "2%",

@@ -14,6 +14,39 @@ var MRNReturnAdd = function () {
             btnMethod: "MRNReturnAdd.mrnModalView()",
         });
     };
+    
+    var runMRNReturnBusinessSelect = function(){
+    	$("#businessId").change(function() {
+			var businessId = $("#businessId option:selected").val(); 
+			setMRNReturnCode(businessId);  
+
+		});
+    };
+    
+	var setMRNReturnCode = function(id) {
+		
+    	$.ajax({
+            type: "GET",
+            url: "../mrnReturn/code-by-business?businessId=" + id,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                if (result.status == "SUCCESS") {
+                	$('#mrnReturnNo').val(result.data);
+                } else {
+                	alert(result.msg);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + " " + thrownError);
+            },
+            error: function (e) {
+                alert("Failed to load Code");
+                console.log(e);
+            }
+        });            	
+     
+};
 
     /*********************************************************************
      * Init Custom Components
@@ -189,7 +222,7 @@ var MRNReturnAdd = function () {
             runBusinessSiteFetch();
             runBusinessSiteSelect();
             runRequestedUserInput();
-           // runWorkOrderInput();
+           runMRNReturnBusinessSelect();
         },
 
         mrnRequestUserModalView: function () {

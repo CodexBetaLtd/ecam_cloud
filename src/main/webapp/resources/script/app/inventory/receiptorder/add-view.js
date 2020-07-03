@@ -85,6 +85,39 @@ var ReceiptOrderAdd = function () {
             }
         });
     };
+    
+    var runReceiptOrdeBusinessSelect = function(){
+    	$("#businessId").change(function() {
+			var businessId = $("#businessId option:selected").val(); 
+			setReceiptOrderCode(businessId);  
+
+		});
+    };
+    
+	var setReceiptOrderCode = function(id) {
+		
+        	$.ajax({
+                type: "GET",
+                url: "../receiptorder/code-by-business?businessId=" + id,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result) {
+                    if (result.status == "SUCCESS") {
+                    	$('#code').val(result.data);
+                    } else {
+                    	alert(result.msg);
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + " " + thrownError);
+                },
+                error: function (e) {
+                    alert("Failed to load Code");
+                    console.log(e);
+                }
+            });            	
+         
+	};
 
     return {
 
@@ -94,6 +127,7 @@ var ReceiptOrderAdd = function () {
             runBusinessSelect();
             runDatePicker();
             runReceiptOrderTypeSelect();
+            runReceiptOrdeBusinessSelect();
    
         }
     };

@@ -18,6 +18,9 @@ public interface PurchaseOrderDao extends FocusDataTableRepository<PurchaseOrder
 	@Query("from PurchaseOrderFile where id = :id")
 	PurchaseOrderFile findByFileId(@Param("id") Integer id);
 	
+    @Query("select po from PurchaseOrder po where po.id=(select max(id) from PurchaseOrder where business.id=:businessId and year(createdDate)=year(sysdate()))")
+    PurchaseOrder findLastDomainByBusiness(@Param("businessId") Integer businessId);
+	
 	@Query("from PurchaseOrderItem where asset.id = :partId and purchaseOrder.receivedDate > :date")
 	List<PurchaseOrderItem> findItemOrderBeforeDate(@Param("date") Date purcahseDate,@Param("partId") Integer partId);
 

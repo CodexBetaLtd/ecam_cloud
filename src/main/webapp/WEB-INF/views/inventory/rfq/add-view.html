@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.springframework.org/security/tags"
+	xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <head th:include="template/commoncss :: commoncss"></head>
 
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dropzone.min.css}"/>
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-modal.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/bootstrap-datepicker.min.css}" />
+<link type="text/css" rel="stylesheet"
+	th:href="@{/resources/style/dropzone.min.css}" />
 
 <body>
-	
+
 	<!-- start: HEADER -->
-	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+	<div class="navbar navbar-inverse navbar-fixed-top"
+		th:replace="template/commonheader :: commonheader"></div>
 	<!-- end: HEADER -->
-	
+
 	<!-- start: MAIN CONTAINER -->
 	<div class="main-container">
 		<div class="navbar-content">
@@ -39,77 +48,96 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-        
+			<div id="common-modal" class="modal datatable fade" role="dialog"
+				tabindex="-1"
+				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+			<div id="item-add-modal" class="modal datatable fade" role="dialog"
+				tabindex="-1"
+				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+
 			<div class="container">
 
-              <div th:replace="general/modal/modal-base :: modalFragment "></div>
-              <div th:replace="general/modal/modal-base :: largeModalFragment "></div>
-              <div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
-              <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
-              
+				<div th:replace="general/modal/modal-base :: modalFragment "></div>
+				<div th:replace="general/modal/modal-base :: largeModalFragment "></div>
+				<div
+					th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+				<div
+					th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
+
 				<!-- start: PAGE HEADER -->
-                <div class="row" th:replace="inventory/rfq/page-header :: pageheader"></div>
+				<div class="row"
+					th:replace="inventory/rfq/page-header :: pageheader"></div>
 				<!-- end: PAGE HEADER -->
 
 				<div class="row btn-bar">
 
-					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/rfq/add}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
+					<a class="btn btn-default btn-sm active tooltips" id="new"
+						th:href="@{/rfq/add}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Add"> <i
+						class="clip-plus-circle-2  btn-new"></i> New
+					</a> <a class="btn btn-default btn-sm active tooltips" id="save"
+						data-placement="top" data-original-title="Save"
+						th:disabled="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).CONFIRM}? 'disabled'"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_RFQ_ADD.id)"
+						onclick="document.getElementById('rfq_add_btn').click();"> <i
+						class="clip-checkmark-circle-2 btn-save"></i> <span
+						class="hidden-xs">Save</span>
+					</a> <a class="btn btn-default btn-sm active tooltips" id="delete"
+						th:href="@{/rfq/delete(id=${rfq.id})}"
+						th:disabled="${rfq.id} == null ? 'disabled'"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Delete"> <i
+						class=" clip-cancel-circle-2 btn-delete"></i><span
+						class="hidden-xs"> Delete</span>
+					</a> <a class="btn btn-default btn-sm active tooltips" id="cancel"
+						th:href="@{/rfq/}" data-placement="top"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_RFQ_ADD.id)"
+						data-original-title="Back"> <i class="clip-arrow-left-2 "></i>
+						<span class="hidden-xs">Cancel</span>
 					</a>
-                    <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top"
-                       data-original-title="Save"
-                       th:disabled="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).CONFIRM}? 'disabled'"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_RFQ_ADD.id)"
-                       onclick="document.getElementById('rfq_add_btn').click();">
-				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
-				    </a>
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/rfq/delete(id=${rfq.id})}"
-                       th:disabled="${rfq.id} == null ? 'disabled'"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i><span class="hidden-xs"> Delete</span>
-					</a> 
-                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:href="@{/rfq/}" data-placement="top"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_RFQ_ADD.id)"
-                       data-original-title="Back">
-				       <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
-				    </a>
-				    <!-- Send -->
-				    <!-- th:href="@{/report/rfq/rfqView(id=${rfq.id})}" -->   
-                    <a th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
-                 		th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).SENT})}"
-                    	th:disabled="${rfq.id} == null ? 'disabled'"
-                       class="btn btn-default btn-sm active tooltips" 
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_REQUEST_QUOTATION_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Send RFQ
+					<!-- Send -->
+					<!-- th:href="@{/report/rfq/rfqView(id=${rfq.id})}" -->
+					<a
+						th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
+						th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).SENT})}"
+						th:disabled="${rfq.id} == null ? 'disabled'"
+						class="btn btn-default btn-sm active tooltips"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_REQUEST_QUOTATION_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class="fa fa-share-square-o"></i> Send RFQ
 					</a>
-				    <!-- Received -->
-                    <a th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).SENT}"
-                 	th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).RECEIVED})}"
-                       class="btn btn-default btn-sm active tooltips" 
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_REQUEST_QUOTATION_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Send RFQ"> <i class="fa fa-share-square-o"></i> Quotation Received
+					<!-- Received -->
+					<a
+						th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).SENT}"
+						th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).RECEIVED})}"
+						class="btn btn-default btn-sm active tooltips"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_REQUEST_QUOTATION_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class="fa fa-share-square-o"></i> Quotation Received
 					</a>
 					<!-- Confirmed -->
-                    <a th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).RECEIVED}"
-                       class="btn btn-default btn-sm active tooltips" id="reciveQute"
-                       th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).CONFIRM})}"
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_QUOTATION_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i> Quotation Confirmed
-					</a>		    
+					<a
+						th:if="${rfq.rfqStatus}==${T(com.codex.ecam.constants.inventory.RFQStatus).RECEIVED}"
+						class="btn btn-default btn-sm active tooltips" id="reciveQute"
+						th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).CONFIRM})}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_QUOTATION_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class=" fa fa-reply"></i> Quotation Confirmed
+					</a>
 					<!-- Cancelled -->
-                    <a th:if="${rfq.rfqStatus}!=${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
-                       class="btn btn-default btn-sm active tooltips" id="reciveQute"
-                       th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).CANCELLED})}"  
-                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_QUOTATION_BUTTON_RFQ_ADD.id)"
-                       data-placement="top" data-original-title="Send RFQ"> <i class=" fa fa-reply"></i> RFQ Cancelled
-					</a>		    
-			    </div>
-                
-                <!-- start: PAGE CONTENT -->
-               <div class="row">
+					<a
+						th:if="${rfq.rfqStatus}!=${T(com.codex.ecam.constants.inventory.RFQStatus).DRAFT}"
+						class="btn btn-default btn-sm active tooltips" id="reciveQute"
+						th:href="@{/rfq/status-change(id=${rfq.id},status=${T(com.codex.ecam.constants.inventory.RFQStatus).CANCELLED})}"
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_QUOTATION_BUTTON_RFQ_ADD.id)"
+						data-placement="top" data-original-title="Send RFQ"> <i
+						class=" fa fa-reply"></i> RFQ Cancelled
+					</a>
+				</div>
+
+				<!-- start: PAGE CONTENT -->
+				<div class="row">
 					<div class="col-xs-12 col-sm-12 col-md-12">
 						<div class="panel panel-default">
 							<div class="panel-heading">
@@ -120,75 +148,86 @@
 
 								<div th:replace="template/messageview :: message"></div>
 
-								<form role="form" id="rfq_add_frm" th:action="@{/rfq/save}" th:object="${rfq}" method="post">
+								<form role="form" id="rfq_add_frm" th:action="@{/rfq/save}"
+									th:object="${rfq}" method="post">
 
-                                    <input type="hidden" id="rfqId" name="id" th:field="*{id}"/>
-                                    <input type="hidden" id="rfqVversion" name="version" th:field="*{version}"/>
+									<input type="hidden" id="rfqId" name="id" th:field="*{id}" /> <input
+										type="hidden" id="rfqVversion" name="version"
+										th:field="*{version}" />
 
-                                    <div class="row">
-                                        <div class="col-md-6">
+									<div class="row">
+										<div class="col-md-6">
 											<div class="form-group">
-												<label class="control-label">RFQ Status</label>                                            												
-												<p> 
-												<input type="hidden" th:field="*{rfqStatus}">
-													<b><span style="font-size: medium;" th:text="${rfq.rfqStatus.getName()}"></span></b>
+												<label class="control-label">RFQ Status</label>
+												<p>
+													<input type="hidden" th:field="*{rfqStatus}"> <b><span
+														style="font-size: medium;"
+														th:text="${rfq.rfqStatus.getName()}"></span></b>
 												</p>
+											</div>
 										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Business <span
+													class="symbol required"></span>
+												</label> <select th:field="*{businessId}" class="search-select"
+													style="width: 100%;">
+													<option value="">&nbsp;</option>
+													<option th:each="business : ${businesses}"
+														th:value="${business.id}" th:text="${business.name}"></option>
+												</select>
+											</div>
 										</div>
-                                	<div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label"> Business <span class="symbol required"></span>
-                                            </label>
-                                            <select th:field="*{businessId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
-                                                <option th:each="business : ${businesses}" th:value="${business.id}"
-                                                        th:text="${business.name}"></option>
-                                            </select>
-                                        </div>
-                                    </div>
 									</div>
 
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-                                                <label class="control-label"> Quote </label>
-												<input type="text" th:field="*{quoteReferenceNumber}" class="form-control">
+												<label class="control-label"> Quote </label> <input
+													type="text" th:field="*{quoteReferenceNumber}"
+													class="form-control">
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-                                                <label class="control-label"> Code <span class="symbol required"></span></label>
-                                                <input type="text" th:field="*{code}" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
+												<label class="control-label"> Code <span
+													class="symbol required"></span></label> <input type="text"
+													th:field="*{code}" class="form-control">
+											</div>
+										</div>
+									</div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label"> Expected Quote Response Date
-                                                </label>
-                                                <div class="input-group" id="picker-container">
-                                                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{requiredResponseDate}" data-date-viewmode="years"
-                                                           placeholder="Eg : 08-01-2020" class="form-control date-picker">
-                                                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label"> Expected Delivery Date
-                                                </label>
-                                                <div class="input-group">
-                                                    <input type="text" data-date-format="dd-mm-yyyy" th:field="*{expectedDeliveryDate}" data-date-viewmode="years"
-                                                           placeholder="Eg : 08-01-2020"
-                                                           class="form-control date-picker">
-                                                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Expected Quote
+													Response Date </label>
+												<div class="input-group" id="picker-container">
+													<input type="text" data-date-format="dd-mm-yyyy"
+														th:field="*{requiredResponseDate}"
+														data-date-viewmode="years" placeholder="Eg : 08-01-2020"
+														class="form-control date-picker"> <span
+														class="input-group-addon"> <i
+														class="fa fa-calendar"></i></span>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="control-label"> Expected Delivery Date
+												</label>
+												<div class="input-group">
+													<input type="text" data-date-format="dd-mm-yyyy"
+														th:field="*{expectedDeliveryDate}"
+														data-date-viewmode="years" placeholder="Eg : 08-01-2020"
+														class="form-control date-picker"> <span
+														class="input-group-addon"> <i
+														class="fa fa-calendar"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
 										<div class="col-md-12">
 											<div>
 												<span class="symbol required"></span>Required Fields
@@ -200,47 +239,54 @@
 										<div class="col-sm-12">
 											<div class="tabbable wrapper">
 												<ul id="myTab" class="nav nav-tabs tab-bricky list">
-													<li class="active">
-														<a href="#item_tab" data-toggle="tab"> Items </a>
-													</li>
-													<li>
-														<a href="#shipping_reciving_tab" data-toggle="tab"> Shipping/Receiving </a>
-													</li>
-													<li>
-														<a href="#files_tab" data-toggle="tab"> Files </a>
-													</li>
-													<li>
-														<a href="#notification_tab" data-toggle="tab"> Notification </a>
-													</li>
-													<li>
-														<a href="#status_change_log_tab" data-toggle="tab"> Status Change Log </a>
-													</li>
+													<li class="active"><a href="#item_tab"
+														data-toggle="tab"> Items </a></li>
+													<li><a href="#reciving_tab" data-toggle="tab">
+															Receiving </a></li>
+													<li><a href="#shipping_tab" data-toggle="tab">
+															Shipping </a></li>
+													<li><a href="#files_tab" data-toggle="tab"> Files
+													</a></li>
+													<li><a href="#notification_tab" data-toggle="tab">
+															Notification </a></li>
+													<li><a href="#status_change_log_tab" data-toggle="tab">
+															Status Change Log </a></li>
 												</ul>
 												<div class="tab-content">
 													<div class="tab-pane in active" id="item_tab">
-                                                        <div th:replace="inventory/rfq/tab/item-tab :: itemTabFragment"></div>
-                                                    </div>
-													<div class="tab-pane" id="shipping_reciving_tab">
-                                                        <div th:replace="inventory/rfq/tab/shipping-tab :: shippingTabFragment "></div>
+														<div
+															th:replace="inventory/rfq/tab/item-tab :: itemTabFragment"></div>
+													</div>
+													<div class="tab-pane" id="reciving_tab">
+														<div
+															th:replace="inventory/rfq/tab/reciving-tab :: recivingTabFragment "></div>
+													</div>
+													<div class="tab-pane" id="shipping_tab">
+														<div
+															th:replace="inventory/rfq/tab/shipping-tab :: shippingTabFragment "></div>
 													</div>
 													<div class="tab-pane" id="preview_tab">
-                                                        <div th:replace="inventory/rfq/modal/send-rfq-modal :: invoiceFragment "></div>
+														<div
+															th:replace="inventory/rfq/modal/send-rfq-modal :: invoiceFragment "></div>
 													</div>
 													<div class="tab-pane" id="files_tab">
-                          								<div th:replace="inventory/rfq/tab/file-tab :: fileTabFragment"></div>
+														<div
+															th:replace="inventory/rfq/tab/file-tab :: fileTabFragment"></div>
 													</div>
 													<div class="tab-pane" id="notification_tab">
-                          								<div th:replace="inventory/rfq/tab/notification-tab :: notificationTab"></div>
+														<div
+															th:replace="inventory/rfq/tab/notification-tab :: notificationTab"></div>
 													</div>
 													<div class="tab-pane" id="status_change_log_tab">
-                          								<div th:replace="inventory/rfq/tab/status-change-tab :: statusChangeTabFragment"></div>
+														<div
+															th:replace="inventory/rfq/tab/status-change-tab :: statusChangeTabFragment"></div>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="row" style="visibility: hidden;">
-										<button id="rfq_add_btn" name="rfq_add_btn" type="submit" ></button>
+										<button id="rfq_add_btn" name="rfq_add_btn" type="submit"></button>
 									</div>
 								</form>
 							</div>
@@ -261,43 +307,71 @@
 	<!-- start: MAIN JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjs"></div>
 	<!-- end: MAIN JAVASCRIPTS -->
-    
+
 	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script> 
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/pdf-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
-    
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/pdf-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
 
-	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
 
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/init.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/add-view.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/item-tab.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/file-tab.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/notification-tab.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/file-add-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/notification-add-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/user-select-modal.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/rfq/init.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/resources/script/app/inventory/rfq/add-view.js}"></script>
+
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/item-tab.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/file-tab.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/supplier-tab.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/notification-tab.js}"></script>
+
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/file-add-modal.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/item-add-modal.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/notification-add-modal.js}"></script>
+
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-user.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-supplier.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-asset.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-part.js}"></script>
 
 
-<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjstables"></div>
-<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
-<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-assets.js}"></script>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+
 
 	<script th:inline="javascript">
         var items = [];
@@ -305,6 +379,7 @@
 		var thymeLeafBussiness = [[${businesses}]];
         var id = [[${rfq.id}]];
         var files = [[${rfq.rfqFileDTOs}]];
+        var supplires = [[${rfq.rfqSupplireDTOs}]];
         var notifications = [[${rfq.notificationDTOs}]];
         var status = [[${T(com.codex.ecam.constants.inventory.RFQStatus).SENT}]];
     </script>

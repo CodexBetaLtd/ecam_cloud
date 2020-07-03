@@ -6,12 +6,15 @@ import com.codex.ecam.constants.inventory.MRNReturnStatus;
 import com.codex.ecam.dto.inventory.mrnReturn.MRNReturnDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.inventory.MRNReturnResult;
+import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 
 
 public interface MRNReturnService {
 
     MRNReturnResult newMRN();
-
+    
+    String getNextCode(Integer businessId);
+    
     MRNReturnResult save(MRNReturnDTO mrnReturnDTO) throws Exception;
 
     MRNReturnResult update(MRNReturnDTO mrnReturnDTO) throws Exception;
