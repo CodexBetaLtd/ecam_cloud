@@ -417,6 +417,11 @@ public class AssetController {
 	public void  downloadQR(@RequestParam("id")Integer id, HttpServletResponse response) throws Exception {
 		assetService.assetQRDownload(id,response);
 	}
+	
+	@RequestMapping(value = "/import-assets", method = RequestMethod.GET)
+	public void  importAssets(@RequestParam("location")String location, HttpServletResponse response) throws Exception {
+		assetService.importBulkAssets(location);
+	}
 
 	private void setCommonData(Model model, AssetCategoryType type, AssetDTO asset) {
 		model.addAttribute("asset", asset);
@@ -424,7 +429,7 @@ public class AssetController {
 		model.addAttribute("categories", assetCategoryService.findByAssetCategoyType(type));
 		model.addAttribute("meterReadingUnits", meterReadingUnitsService.findAllMeterReadings());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-		model.addAttribute("suppliers", supplierService.findAllOriginalSupplierList());
+		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 		model.addAttribute("businessTypes", businessTypeService.findAll());
 		model.addAttribute("sites", assetService.findSiteByBusinessId(asset.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
 		model.addAttribute("currencies", currencyService.findAll());
