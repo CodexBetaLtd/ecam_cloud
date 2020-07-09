@@ -291,7 +291,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	private Specification<Supplier> getSystemUserBusinessSpecification(Integer businessId) {
-		Specification<Supplier> specification = (root, query, cb) -> cb.equal(root.get("id"), businessId);
+		Specification<Supplier> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), businessId);
 		return specification;
 	}
 

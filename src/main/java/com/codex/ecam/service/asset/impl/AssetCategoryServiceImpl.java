@@ -1,5 +1,6 @@
 package com.codex.ecam.service.asset.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -205,7 +206,13 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
 	@Override
 	public List<AssetCategoryDTO> findByAssetCategoyType(AssetCategoryType type) {
-		List<AssetCategory> list = assetCategoryDao.findByAssetCategoyType(type);
+		List<AssetCategory> list = new ArrayList<AssetCategory>();
+		
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			list = assetCategoryDao.findByAssetCategoyType(type);
+		} else {
+			list = assetCategoryDao.findByAssetCategoyTypeByBusiness(type,AuthenticationUtil.getLoginUserBusiness().getId());
+		}
 		try {
 			return AssetCategoryMapper.getInstance().domainToDTOList(list);
 		} catch (Exception e) {

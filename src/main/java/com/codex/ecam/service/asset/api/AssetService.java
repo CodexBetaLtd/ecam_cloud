@@ -13,6 +13,8 @@ import com.codex.ecam.result.asset.AssetResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -100,5 +102,7 @@ public interface AssetService {
 	DataTablesOutput<AssetDTO> getMachineToolsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 
 	void updateAverageMeterReadingValue(AssetMeterReading assetMeterReading); 
+	
+	void importBulkAssets(String filePath) throws Exception; 
 
 }

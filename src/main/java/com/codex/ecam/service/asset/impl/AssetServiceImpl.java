@@ -1,12 +1,15 @@
 package com.codex.ecam.service.asset.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +30,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.inventory.PartType;
@@ -102,55 +111,55 @@ public class AssetServiceImpl implements AssetService {
 	private final String ASSET_NO_QR_IMAGE = "/resources/images/no_qr.png";
 	@Autowired
 	Environment environment;
-	
+
 	@Autowired
 	private AssetDao assetDao;
-	
+
 	@Autowired
 	private AssetCategoryDao assetCategoryDao;
-	
+
 	@Autowired
 	private BusinessDao businessDao;
-	
+
 	@Autowired
 	private MeterReadingUnitDao meterReadingUnitDao;
-	
+
 	@Autowired
 	private AssetEventTypeDao assetEventTypeDao;
-	
+
 	@Autowired
 	private AssetMeterReadingDao assetMeterReadingDao;
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private WarrantyService warrantyService;
-	
+
 	@Autowired
 	private BOMGroupPartDao bomGroupPartDao;
-	
+
 	@Autowired
 	private BOMGroupDao bomGroupDao;
-	
+
 	@Autowired
 	private ReceiptOrderDao receiptOrderDao;
-	
+
 	@Autowired
 	private ReceiptOrderItemDao receiptOrderItemDao;
-	
+
 	@Autowired
 	private CurrencyDao currencyDao;
-	
+
 	@Autowired
 	private CountryDao countryDao;
-	
+
 	@Autowired
 	private AssetBrandDao assetBrandDao;
-	
+
 	@Autowired
 	private AssetModelDao assetModelDao;
-	
+
 	@Autowired
 	private SupplierDao supplierDao;
 
@@ -217,7 +226,7 @@ public class AssetServiceImpl implements AssetService {
 					assetDTO.getAssetPurchasingDetail().setOrderVersion(item.getReceiptOrder().getVersion());
 					if (item.getReceiptOrder().getSupplier() != null) {
 						assetDTO.getAssetPurchasingDetail()
-							.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
+								.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
 					}
 					if (item.getReceiptOrder().getCurrency() != null) {
 						assetDTO.getAssetPurchasingDetail()
@@ -349,7 +358,6 @@ public class AssetServiceImpl implements AssetService {
 		addAssetToBOMGroup(result.getDomainEntity());
 		addReceiptOrder(result);
 		result.updateDtoIdAndVersion();
-		
 
 	}
 
@@ -374,13 +382,14 @@ public class AssetServiceImpl implements AssetService {
 		generateAssetQR(result);
 	}
 
-	private void generateAssetQR(AssetResult result)throws WriterException, IOException {
+	private void generateAssetQR(AssetResult result) throws WriterException, IOException {
 
 		String uploadFolder = environment.getProperty("upload.asset.file.folder");
 		String uploadLocation = environment.getProperty("upload.location");
-		String host =environment.getProperty("common.url");
-		String qrCodeText = host+"/asset/machine/edit?id="+result.getDomainEntity().getId();
-		String filePath = uploadLocation+uploadFolder+"QR/ECAM-ASSET("+result.getDomainEntity().getCode()+").png";
+		String host = environment.getProperty("common.url");
+		String qrCodeText = host + "/asset/machine/edit?id=" + result.getDomainEntity().getId();
+		String filePath = uploadLocation + uploadFolder + "QR/ECAM-ASSET(" + result.getDomainEntity().getCode()
+				+ ").png";
 		int size = 500;
 		String fileType = "png";
 		File qrFile = new File(filePath);
@@ -389,6 +398,7 @@ public class AssetServiceImpl implements AssetService {
 		result.getDomainEntity().setAssetUrl(filePath);
 		System.out.println(filePath);
 	}
+
 	private void setAssetSparePart(AssetResult result) throws Exception {
 		Set<SparePart> spareParts = new HashSet<>();
 
@@ -413,18 +423,19 @@ public class AssetServiceImpl implements AssetService {
 				sparePart.setDescription(sparePartDTO.getDescription());
 				sparePart.setAsset(result.getDomainEntity());
 				sparePart.setIsDeleted(Boolean.FALSE);
-				setSparePartPart(sparePart,sparePartDTO);
+				setSparePartPart(sparePart, sparePartDTO);
 				spareParts.add(sparePart);
 			}
 		}
 		result.getDomainEntity().setSpareParts(spareParts);
 	}
-	
-	private void setSparePartPart(SparePart sparePart,SparePartDTO sparePartDTO) {
+
+	private void setSparePartPart(SparePart sparePart, SparePartDTO sparePartDTO) {
 		if ((sparePartDTO != null) && (sparePartDTO.getPartId()) != null) {
 			sparePart.setSparePart(findEntityById(sparePartDTO.getPartId()));
 		}
 	}
+
 	private void setAssetImage(AssetResult result, MultipartFile image) throws Exception {
 		if (image != null) {
 			String uploadFolder = environment.getProperty("upload.asset.file.folder");
@@ -810,33 +821,36 @@ public class AssetServiceImpl implements AssetService {
 						result.getDomainEntity());
 				updateAverageMeterReadingValue(assetMeterReading);
 				assetMeterReadings.add(assetMeterReading);
-				setMeterReadingConsumptionVariable(assetsMeterReadingDTO,assetMeterReading);
+				setMeterReadingConsumptionVariable(assetsMeterReadingDTO, assetMeterReading);
 			}
 		}
 
 		result.getDomainEntity().setAssetMeterReadings(assetMeterReadings);
 	}
-	
-	
-	private void setMeterReadingConsumptionVariable(AssetMeterReadingDTO assetsMeterReadingDTO,AssetMeterReading assetMeterReading){
+
+	private void setMeterReadingConsumptionVariable(AssetMeterReadingDTO assetsMeterReadingDTO,
+			AssetMeterReading assetMeterReading) {
 		Set<AssetMeterReadingFormulaVariable> assetMeterReadingConsumptionVariables = new HashSet<AssetMeterReadingFormulaVariable>();
-		for (AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO:assetsMeterReadingDTO.getConsumptionVariableDTO()) {
-			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable=new AssetMeterReadingFormulaVariable();
+		for (AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO : assetsMeterReadingDTO
+				.getConsumptionVariableDTO()) {
+			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable = new AssetMeterReadingFormulaVariable();
 			assetMeterReadingConsumptionVariable.setVariableName(consumptionVariableDTO.getVariable());
 			assetMeterReadingConsumptionVariable.setAssetMeterReading(assetMeterReading);
 			assetMeterReadingConsumptionVariable.setIsDeleted(Boolean.FALSE);
-			setMeterReadingVariableUnit(consumptionVariableDTO,assetMeterReadingConsumptionVariable);
+			setMeterReadingVariableUnit(consumptionVariableDTO, assetMeterReadingConsumptionVariable);
 			assetMeterReadingConsumptionVariables.add(assetMeterReadingConsumptionVariable);
 		}
 		assetMeterReading.setFormulaVariables(assetMeterReadingConsumptionVariables);
 	}
-	
-	private void setMeterReadingVariableUnit(AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO,AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable){
-		if(consumptionVariableDTO!=null && consumptionVariableDTO.getMeteReadingUnitId()!=null){
-			assetMeterReadingConsumptionVariable.setMeterReadingUnit(meterReadingUnitDao.findOne(consumptionVariableDTO.getMeteReadingUnitId()));
+
+	private void setMeterReadingVariableUnit(AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO,
+			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable) {
+		if (consumptionVariableDTO != null && consumptionVariableDTO.getMeteReadingUnitId() != null) {
+			assetMeterReadingConsumptionVariable
+					.setMeterReadingUnit(meterReadingUnitDao.findOne(consumptionVariableDTO.getMeteReadingUnitId()));
 		}
 	}
-	
+
 	@Override
 	public synchronized void updateAverageMeterReadingValue(AssetMeterReading assetMeterReading) {
 
@@ -900,27 +914,28 @@ public class AssetServiceImpl implements AssetService {
 					.equals(assetMeterReadingValueDto.getAssetMeterReadingValueIndex())) {
 				domain.setCurrentAssetMeterReadingValue(meterReadingValue);
 			}
-			updateAssetMeterReadingConsumption(assetMeterReadingValueDto,meterReadingValue);
+			updateAssetMeterReadingConsumption(assetMeterReadingValueDto, meterReadingValue);
 			assetMeterReadingValues.add(meterReadingValue);
 		}
 	}
 
-	
-	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,AssetMeterReadingValue meterReadingValue) throws Exception {
-		List<AssetMeterReadingFormulaValue> valueConsumptions = new ArrayList<>() ;
-	for(AssetMeterReadingConsumptionValueDTO assetMeterReadingValueConsumptionDTO:meterReadingValueDTO.getValueConsumptionDTO()){
-			
-		AssetMeterReadingFormulaValue consumption= new AssetMeterReadingFormulaValue();
+	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,
+			AssetMeterReadingValue meterReadingValue) throws Exception {
+		List<AssetMeterReadingFormulaValue> valueConsumptions = new ArrayList<>();
+		for (AssetMeterReadingConsumptionValueDTO assetMeterReadingValueConsumptionDTO : meterReadingValueDTO
+				.getValueConsumptionDTO()) {
+
+			AssetMeterReadingFormulaValue consumption = new AssetMeterReadingFormulaValue();
 			consumption.setMeterReadingIndex(meterReadingValueDTO.getAssetMeterReadingValueIndex());
-		//	consumption.setVariable(assetMeterReadingValueConsumptionDTO.getVariable());
+			// consumption.setVariable(assetMeterReadingValueConsumptionDTO.getVariable());
 			consumption.setIsDeleted(Boolean.FALSE);
 			consumption.setValue(assetMeterReadingValueConsumptionDTO.getValue());
 			consumption.setAssetMeterReadingValue(meterReadingValue);
 			valueConsumptions.add(consumption);
 		}
-	meterReadingValue.setAssetMeterReadingFormulaValues(valueConsumptions);
+		meterReadingValue.setAssetMeterReadingFormulaValues(valueConsumptions);
 	}
-	
+
 	private List<AssetMeterReadingValueDTO> getMeterReadingValuesByMeterReading(AssetResult result,
 			AssetMeterReadingDTO assetMeterReadingDTO) {
 		List<AssetMeterReadingValueDTO> assetMeterReadingValueDtos = new ArrayList<>();
@@ -1415,11 +1430,13 @@ public class AssetServiceImpl implements AssetService {
 			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
 		}
 	}
+
 	public void assetQRDownload(Integer id, HttpServletResponse response) throws Exception {
 		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (id != null) {
 			String file = assetDao.getAssetQRLocation(id);
-			//String externalFilePath = uploadLocation + file.getFileLocation();
+			// String externalFilePath = uploadLocation +
+			// file.getFileLocation();
 			FileDownloadUtil.flushFile(file, "PNG", response);
 		}
 	}
@@ -1453,7 +1470,7 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public byte[] getAssetImageStream(Integer id, HttpServletRequest request) throws IOException {
-		
+
 		if (id != null) {
 			String imagePath = assetDao.getAssetImageLocation(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
@@ -1461,11 +1478,11 @@ public class AssetServiceImpl implements AssetService {
 				return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
 			}
 		}
-		
+
 		return FileDownloadUtil
 				.getByteInputStream(request.getServletContext().getRealPath("").concat(ASSET_DEFAULT_IMAGE));
 	}
-	
+
 	public byte[] getAssetQRStream(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
@@ -1515,33 +1532,79 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
-		
+
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
 		Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.equal(root.get("business").get("id"), bizId));
-		
+
 		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
 		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		
+
 		return out;
 	}
+
 	@Override
-	public DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
+	public DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer bizId)
+			throws Exception {
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
 		Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
-				cb.isNotNull(root.get("partType")),
-				cb.equal(root.get("partType"), PartType.REPAIRABLE),
+				cb.isNotNull(root.get("partType")), cb.equal(root.get("partType"), PartType.REPAIRABLE),
 				cb.equal(root.get("business").get("id"), bizId)
-				
-				);
+
+		);
 
 		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
 		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
+	}
+
+	public void importBulkAssets(String filePath) throws Exception {
+		// TODO Auto-generated method stub
+		String excelFilePath = "C:\\Users\\hp\\Desktop\\Asset template.xlsx";
+		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+
+		Workbook workbook = new XSSFWorkbook(inputStream);
+		Sheet firstSheet = workbook.getSheetAt(0);
+		Iterator<Row> iterator = firstSheet.iterator();
+
+		while (iterator.hasNext()) {
+			Row nextRow = iterator.next();
+			int rowIndex = nextRow.getRowNum();
+			if (rowIndex != 0) {
+				Iterator<Cell> cellIterator = nextRow.cellIterator();
+
+				while (cellIterator.hasNext()) {
+					Cell cell = cellIterator.next();
+					int columnIndex = cell.getColumnIndex();
+					switch (columnIndex) {
+					case 0:
+						System.out.print("Asset No - " + cell.getStringCellValue());
+						break;
+					case 1:
+						System.out.print("Asset Group Code - " + cell.getStringCellValue());
+						break;
+					case 2:
+						System.out.print("Short Description - " + cell.getStringCellValue());
+						break;
+					case 3:
+						System.out.print("Parent Asset - " + cell.getStringCellValue());
+						break;
+					default:
+						break;
+					}
+					System.out.print(" ___ ");
+				}
+				System.out.println();
+			}
+
+		}
+
+		workbook.close();
+		inputStream.close();
 	}
 
 }
