@@ -44,6 +44,11 @@
                               File
                           </a>
                       </li>
+                                            <li>
+                          <a href="#qr_tab"  data-toggle="tab">
+                              QR Code
+                          </a>
+                      </li>
                   </ul>
                   <div class="tab-content">
                       <div class="tab-pane in active" id="general_tab">
@@ -69,6 +74,9 @@
                       </div>
                        <div class="tab-pane" id="file_tab">
                           <div th:replace="asset/tab/file-tab :: fileTabFragment"></div>
+                      </div>
+                                             <div class="tab-pane" id="qr_tab">
+                          <div th:replace="asset/tab/qr-tab :: QRTabFragment"></div>
                       </div>
 
                   </div>

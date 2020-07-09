@@ -49,15 +49,15 @@
                        th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_MACHINE_VIEW.id)"
                        data-placement="top" data-original-title="Add">
-				    	<i class="clip-plus-circle-2  btn-new" ></i> Machine
+				    	<i class="clip-plus-circle-2  btn-new" ></i> Hotel Asset
 				    </a>
 
-                    <a class="btn btn-default btn-sm active tooltips" id="newTools"
+<!--                     <a class="btn btn-default btn-sm active tooltips" id="newTools"
                        th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).TOOLS})}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_TOOL_VIEW.id)"
                        data-placement="top" data-original-title="Add">
 				    	<i class="clip-plus-circle-2  btn-new" ></i> Tools
-				    </a>
+				    </a> -->
 				                                      
 				    <a class="btn btn-default btn-sm active tooltips" id="save" th:disabled="disabled" data-placement="top" data-original-title="Save"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_VIEW.id)">
@@ -73,12 +73,12 @@
                        data-placement="top" data-original-title="Back" >
 				        <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
 				    </a>
-                    <a class="btn btn-default btn-sm active tooltips" id="btn-import" 
+<!--                     <a class="btn btn-default btn-sm active tooltips" id="btn-import" 
                        data-placement="top" data-original-title="Back"                        
                        th:href="@{/asset/import-assets(location='locatiom')}"
                        >
 				        <i class="fa fa-upload"></i> <span class="hidden-xs">Import</span>
-				    </a>
+				    </a> -->
 				    
 			    </div>
                 
@@ -87,7 +87,7 @@
 					<div class="col-xs-12 col-sm-12 col-md-12">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-						      <i class="clip-cube"></i> Machine/Tools
+						      <i class="clip-cube"></i> Hotel Asset
 						       <div class="panel-tools">
 						       		<a class="btn btn-xs btn-link machine-datatable" href="#"> <i class="fa fa-table"></i> </a>
 						           	<a class="btn btn-xs btn-link machine-treeview" href="#"> <i class="fa fa-sitemap"></i> </a>

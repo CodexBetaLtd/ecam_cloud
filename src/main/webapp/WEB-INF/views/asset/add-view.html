@@ -63,7 +63,7 @@
                 	th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}"
                    th:href="@{/asset/machine/add(type=${T(com.codex.ecam.constants.AssetCategoryType).EQUIPMENTS_OR_MACHINES})}"
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_MACHINE_ADD.id)"
-                   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> Machine
+                   data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> Hotel Asset
                 </a>
                 <a class="btn btn-default btn-sm active tooltips" id="new-tools-btn"
                 	th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}"
