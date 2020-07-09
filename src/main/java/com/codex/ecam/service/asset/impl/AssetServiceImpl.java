@@ -356,7 +356,7 @@ public class AssetServiceImpl implements AssetService {
 		setAssetData(result, image);
 		assetDao.save(result.getDomainEntity());
 		addAssetToBOMGroup(result.getDomainEntity());
-		addReceiptOrder(result);
+		//addReceiptOrder(result);
 		result.updateDtoIdAndVersion();
 
 	}
@@ -377,7 +377,10 @@ public class AssetServiceImpl implements AssetService {
 		setModel(result);
 		setAssetFiles(result);
 		setAssetSparePart(result);
-		setAssetImage(result, image);
+		if(image.getSize()>0){
+			setAssetImage(result, image);
+		}
+		
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
 		generateAssetQR(result);
 	}
