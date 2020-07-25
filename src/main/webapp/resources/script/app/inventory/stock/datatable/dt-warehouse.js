@@ -189,7 +189,7 @@ var dtWarehouse = function () {
             }
             var id=$('#businessId').val()
             if (url == null) {
-                url = "../restapi/wearhouse/warehousebylevel?businessId="+id;
+                url = "../restapi/wearhouse/tabledata";
             }
             getWarehouseDataTable(tableId, url, func);
         }

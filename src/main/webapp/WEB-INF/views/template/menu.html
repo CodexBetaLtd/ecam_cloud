@@ -98,13 +98,13 @@
                 <a th:href="@{/rfq/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).RFQ.id)">
                     <i class="icon-custom icon-rfq"></i> <span class="title">RFQ</span>
                 </a>
-            </li>
+            </li>-->
 
             <li>
                 <a th:href="@{/purchaseorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).PURCHASE_ORDER.id)">
                     <i class="icon-custom icon-work-order-rfq"></i> <span class="title">Purchase Order</span>
                 </a>
-            </li> -->
+            </li> 
 
             <li>
                 <a th:href="@{/receiptorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).RECEIPT_ORDER.id)">
@@ -308,6 +308,11 @@
             <li>
                 <a th:href="@{/report/bincard/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD_RETURN_REPORT.id)">
                     <i class="fa fa-clipboard"></i> <span class="title"> Bin Card </span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/report/asset/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD_RETURN_REPORT.id)">
+                    <i class="fa fa-clipboard"></i> <span class="title"> Asset List Report </span>
                 </a>
             </li>
 

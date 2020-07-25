@@ -255,6 +255,7 @@ dto.setAssetUrl(domain.getAssetUrl());
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
+		dto.setDescription(domain.getDescription());
 		setLocationString(dto, domain);
 		dto.setAssetCategoryName(domain.getAssetCategory().getName());
 

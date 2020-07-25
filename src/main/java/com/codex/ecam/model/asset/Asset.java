@@ -216,6 +216,7 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	
 	@Transient
 	private Integer childCount;
+
 	
 	public Integer getId() {
 		return id;
@@ -634,6 +635,7 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	public void setSpareParts(Set<SparePart> spareParts) {
 		updateCollection("spareParts", spareParts);
 	}
+
 	
 	
 	

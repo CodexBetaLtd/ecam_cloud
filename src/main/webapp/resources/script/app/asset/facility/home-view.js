@@ -139,10 +139,10 @@
      			data : 'code',
      			responsivePriority: 2   
      		},{
-     			data : 'assetCategoryName',
+     			data : 'description',
      			responsivePriority: 2   
      		},{
-     			data : 'businessName',
+     			data : 'assetCategoryName',
      			responsivePriority: 2   
      		}],
             aoColumnDefs: [{

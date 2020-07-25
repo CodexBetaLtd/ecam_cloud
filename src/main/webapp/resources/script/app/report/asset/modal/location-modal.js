@@ -1,4 +1,4 @@
-﻿var MachineTreeView = function () {
+﻿var dtLocation = function () {
 	
 	//
 	// Pipelining function for DataTables. To be used to the `ajax` option of DataTables
@@ -116,46 +116,27 @@
 	    } );
 	} );
 	
-    var initMachineTreeView = function () {
-    	
-    	$('#machine_tbl').dataTable().fnDestroy(); 
-    	
-        var oTable = $('#machine_tbl').DataTable({
-        	responsive: true, 
-        	destroy:true,
+    var initAssetDataTable = function (func) {
+        var oTable = $('#location_select_tbl').dataTable({
+        	responsive: true,
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
-            	url: "../../restapi/asset/parent-facilities",
+                url: "../../restapi/asset/facility-tabledata",
             	pages: 5
-            } ), 
-            "treeGrid": {
-                'left': 12, 
-                'childrenUrl': true, 
-            },
-            columns : [ 
-            {
-        		visible: false,
-        		orderable: false,
+            } ),            
+            columns : [ {
+                orderable: false,
                 searchable: false, 
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
-                }, 
+                },
                 responsivePriority: 1   
             },{
-            	className: 'treegrid-control',
-            	data: 'name', 
-            	render: function ( data, type, row, meta )  { 
-            		if (row.childCount > 0) {    
-            			return '<a class="parent" href="../../restapi/asset/machine-childrens?id=' + row.id +'"></a><span> <i class="fa fa-caret-right node-expand"></i> </span>' + data;
-            		}
-            		return '<span class="tree-node">-' + data +'</span>';
-            	},
-                orderable: false,
-                searchable: false,
+     			data : 'code',
      			responsivePriority: 1   
      		},{
-     			data : 'code',
+     			data : 'name',
      			responsivePriority: 2   
      		},{
      			data : 'description',
@@ -166,9 +147,10 @@
      		}],
             aoColumnDefs: [{
             	targets: 5, //index of column starting from 0
-            	data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) {
-                	return ButtonUtil.getHomeBtnWithURL("../asset/machine", data);
+                data: "id", //this name should exist in your JSON response
+                render: function ( data, type, row, meta ) {
+                	var vars=[data,row.name];
+                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars); 
                 }
             }],
             oLanguage: {
@@ -189,28 +171,25 @@
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination', 
-            bInfo: false,
-            searching: false,
-            
+            sPaging: 'pagination'
         });
-        $('#machine_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#location_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
-        $('#machine_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#location_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
         // modify table per page dropdown
-        $('#machine_tbl_wrapper .dataTables_length select').select2();
+        $('#location_select_tbl_wrapper .dataTables_length select').select2();
         // initialzie select2 dropdown
-        $('#machine_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#location_select_tbl_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });    
-    };   
+        });        
+    };    
     
     return {
         //main function to initiate template pages
-        init: function () {
-        	initMachineTreeView(); 
+        init: function (func) {
+        	initAssetDataTable(func);
         }	
     };
 }();

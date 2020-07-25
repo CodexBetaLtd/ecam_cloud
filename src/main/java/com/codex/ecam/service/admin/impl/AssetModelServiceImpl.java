@@ -19,9 +19,11 @@ import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.mappers.admin.AssetModelMapper;
 import com.codex.ecam.model.admin.AssetBrand;
 import com.codex.ecam.model.admin.AssetModel;
+import com.codex.ecam.model.asset.AssetCategory;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.AssetModelResult;
 import com.codex.ecam.service.admin.api.AssetModelService;
+import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.search.asset.AssetModelSearchPropertyMapper;
 
 @Service
@@ -112,8 +114,18 @@ public class AssetModelServiceImpl implements AssetModelService{
 	@Override
 	public DataTablesOutput<AssetModelDTO> findAll(FocusDataTablesInput input) throws Exception {
 		AssetModelSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<AssetModel> domain = assetModelDao.findAll(input);
+		DataTablesOutput<AssetModel>  domain = null;
 		DataTablesOutput<AssetModelDTO> dto = null;
+		
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			domain = assetModelDao.findAll(input);
+		} else {
+//			Specification<AssetModel> specification = (root, query, cb) -> cb.equal(root.get("business"),
+//					AuthenticationUtil.getLoginUserBusiness());
+//			domain = assetModelDao.findAll(input, specification);
+			domain = assetModelDao.findAll(input);
+
+		}
 		try {
 			dto = AssetModelMapper.getInstance().domainToDTODataTablesOutput(domain);
 		} catch (Exception e) {

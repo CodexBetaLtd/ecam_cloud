@@ -22,6 +22,7 @@ import com.codex.ecam.model.inventory.stock.Stock;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.asset.WareHouseResult;
 import com.codex.ecam.service.biz.api.WareHouseService;
+import com.codex.ecam.util.AuthenticationUtil;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -146,9 +147,29 @@ public class WareHouseServiceImpl implements WareHouseService {
 	}
 
 	@Override
-    public DataTablesOutput<WareHouseDTO> findWearHouseByType(FocusDataTablesInput input, AssetCategoryType type) throws Exception {
-        Specification<Asset> specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
-        DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
+    public DataTablesOutput<WareHouseDTO> findWearHouseByType(FocusDataTablesInput input, final AssetCategoryType type) throws Exception {
+        DataTablesOutput<Asset> domainOut =null;
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			Specification<Asset> specification = (root, query, cb) -> cb
+					.equal(root.get("assetCategory").get("assetCategoryType"), type);
+			domainOut = wareHouseDao.findAll(input, specification);
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			Specification<Asset> specification = (root, query, cb) -> {
+				return cb.and(
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								type),
+						cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+			};
+			domainOut = wareHouseDao.findAll(input, specification);
+		} else {
+			Specification<Asset> specification = (root, query, cb) -> {
+				return cb.and(
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								type),
+						cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness()));
+			};
+			domainOut = wareHouseDao.findAll(input, specification);
+		}
 		DataTablesOutput<WareHouseDTO> out = WarehouseMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}

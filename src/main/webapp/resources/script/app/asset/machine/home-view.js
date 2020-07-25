@@ -140,18 +140,15 @@
      			data : 'code',
      			responsivePriority: 4   
      		},{
-     			data : 'assetCategoryName',
+     			data : 'description',
      			responsivePriority: 4   
      		},{ 
-     			data : 'customerName',
-     			responsivePriority: 4   
-     		},{
-     			data : 'businessName',
+     			data : 'assetCategoryName',
      			responsivePriority: 4   
      		}],
             aoColumnDefs: [{
             	orderData: [1,5],
-            	targets: 6, //index of column starting from 0
+            	targets: 5, //index of column starting from 0
                 data: "id", //this name should exist in your JSON response
                 render: function ( data, type, full, meta ) {
                 	return ButtonUtil.getHomeBtnWithURL("../asset/machine", data);

@@ -98,4 +98,16 @@ public interface AssetDao extends FocusDataTableRepository<Asset, Integer> {
 
     @Query("from Asset where assetCategory.assetCategoryType = :type")
 	List<Asset> findWarehouseListByType(@Param("type") AssetCategoryType type);
+    
+    @Query("select count(asset.assetCategory.id) as assetCount , asset from Asset asset where asset.business.id=:id group by asset.assetCategory.id ")
+    List<Object> getAssetCountByCategory(@Param("id") Integer id);
+    
+    @Query("select count(asset.assetCategory.id) as assetCount , asset from Asset asset where asset.business.id=:businessId and asset.model.id=:modelId group by asset.assetCategory.id ")
+    List<Object> getAssetCountByCategoryAndModel(@Param("businessId") Integer businessId,@Param("modelId") Integer modelId);
+    
+    @Query("select count(asset.assetCategory.id) as assetCount , asset from Asset asset where asset.business.id=:businessId and asset.site.id=:locationId group by asset.assetCategory.id ")
+    List<Object> getAssetCountByCategoryAndLocation(@Param("businessId") Integer businessId,@Param("locationId") Integer locationId);
+    
+    @Query("select count(asset.assetCategory.id) as assetCount , asset from Asset asset where asset.business.id=:businessId and asset.site.id=:locationId and asset.model.id=:modelId group by asset.assetCategory.id ")
+    List<Object> getAssetCountByCategoryAndLocationAndModel(@Param("businessId") Integer businessId,@Param("locationId") Integer locationId,@Param("modelId") Integer modelId);
 }

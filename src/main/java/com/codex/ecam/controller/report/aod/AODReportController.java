@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.codex.ecam.constants.inventory.AODStatus;
 import com.codex.ecam.constants.inventory.AODType;
-import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.util.PrintType;
 import com.codex.ecam.dto.report.filter.AODFilterDTO;
-import com.codex.ecam.dto.report.filter.PartFilterDTO;
-import com.codex.ecam.dto.report.filter.ReceiptOrderFilterDTO;
 import com.codex.ecam.service.report.aod.api.AODReportService;
-import com.codex.ecam.service.report.part.api.PartReportService;
 
 
 @Controller

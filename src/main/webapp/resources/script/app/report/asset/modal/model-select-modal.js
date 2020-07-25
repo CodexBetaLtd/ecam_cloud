@@ -1,11 +1,14 @@
-var dtReceiptStock = function () {
-	
-	$.fn.dataTable.pipeline = function (opts) {
+var AssetModelSelectModal = function() {	
+    
+
+    $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
         var conf = $.extend({
             pages: 5, // number of pages to cache
             url: '', // script url
             data: null, // function or object with parameters to send to the
+            // server
+            // matching how `ajax.data` works in DataTables
             method: 'GET' // Ajax HTTP method
         }, opts);
 
@@ -23,15 +26,22 @@ var dtReceiptStock = function () {
             var requestEnd = requestStart + requestLength;
 
             if (settings.clearCache) {
+                // API requested that the cache be cleared
                 ajax = true;
                 settings.clearCache = false;
-            } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
+            } else if (cacheLower < 0 || requestStart < cacheLower
+                || requestEnd > cacheUpper) {
+                // outside cached data - need to make a request
                 ajax = true;
-            } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)
-                    || JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns)
-                    || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)) {
-                    ajax = true;
-                }
+            } else if (JSON.stringify(request.order) !== JSON
+                    .stringify(cacheLastRequest.order)
+                || JSON.stringify(request.columns) !== JSON
+                    .stringify(cacheLastRequest.columns)
+                || JSON.stringify(request.search) !== JSON
+                    .stringify(cacheLastRequest.search)) {
+                // properties changed (ordering, columns, searching)
+                ajax = true;
+            }
 
             // Store the request for checking next time around
             cacheLastRequest = $.extend(true, {}, request);
@@ -52,12 +62,19 @@ var dtReceiptStock = function () {
                 request.start = requestStart;
                 request.length = requestLength * conf.pages;
 
+                // Provide the same `data` options as DataTables.
                 if ($.isFunction(conf.data)) {
+                    // As a function it is executed with the data object as an
+                    // arg
+                    // for manipulation. If an object is returned, it is used as
+                    // the
+                    // data object to submit
                     var d = conf.data(request);
                     if (d) {
                         $.extend(request, d);
                     }
                 } else if ($.isPlainObject(conf.data)) {
+                    // As an object, the data given extends the default
                     $.extend(request, conf.data);
                 }
 
@@ -97,80 +114,75 @@ var dtReceiptStock = function () {
         });
     });
 
-    var getStockDataTable = function (tableId, url, method, partId) {
-    	console.log(tableId)
-        var oTable = $('#' + tableId).dataTable({
+
+    var runDataTable = function (func) {
+    	var oTable = $('#model_select_tbl').dataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: url,
-                pages : 5,
-//                data : function ( d ) {
-//                    d.partId = partId;
-//                }
+            	url: "../../restapi/lookuptable/tabledataassetmodel",
+                pages: 5
             }),
-            columns: [
-                {
-                    orderable: false,
-                    searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                }, {
-                    data: 'site'
-                }, {
-                    data: 'minQty'
-                }, {
-                    data: 'qtyOnHand'
-                }, {
-                    data: 'partName'
-                }],
-            aoColumnDefs: [{
-                width: "2%",
+            columns: [{
+                orderable: false,
                 searchable: false,
-                targets: 5,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                    return tblButton(rowData, tableId, url, method);
+                width: "45px",
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            }],
-            oLanguage: {
-                sLengthMenu: "Show _MENU_ Rows",
+            },
+                {
+            		data: 'brandName',
+	                searchable: false,
+	                orderable: false
+                },
+                {
+                	data: 'modelName'
+                },
+            ],
+            aoColumnDefs: [{
+            	targets: 3, //index of column starting from 0
+                data: "modelId", //this name should exist in your JSON response
+                render: function ( data, type, row, meta ) {
+                	var vars=[data,row.modelName];
+                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars); 
+                }
+            }],nguage: {
+                sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
                 oPaginate: {
                     sPrevious: "&laquo;",
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[1, 'asc']],
-            aLengthMenu: [[5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]],
+            aaSorting: [
+                [1, 'asc']
+            ],
+            aLengthMenu: [
+                [5, 10, 15, 20, -1],
+                [5, 10, 15, 20, "All"] // change per page values here
+            ],
+
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
             bLengthChange: false
         });
-        $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#' + tableId + '_wrapper .dataTables_length select').select2();
-        $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
+
+        $('#model_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#model_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#model_select_tbl_wrapper .dataTables_length select').select2();
+        $('#model_select_tbl_column_toggler input[type="checkbox"]').change(function () {
+
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+
     };
-
-
-    var tblButton = function (rowData, tableId, URL, method) {
-        return ButtonUtil.getCommonBtnSelect(method, rowData.id, rowData.stockNo);
-
-     ///   return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.stockNo + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
-    };
-
+    
     return {
-        getStockDataTable: function (tableId, url, method, partId) {
-        	console.log(url)
-            getStockDataTable(tableId, url, method, partId);
-        },
+    	runDataTable: function (func) {
+            runDataTable(func);
+        }
     };
 }();

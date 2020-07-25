@@ -60,6 +60,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 			Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = assetCategoryDao.findAll(input, specification);
+
 		}
 
 		try {

@@ -684,7 +684,7 @@ input[type="checkbox"][readonly] {
   }
   
   ol li:before {
-  content: counter(level1) " "; /*Instead of ". " */
+  /*content: counter(level1); Instead of ". " */
   counter-increment: level1;
 }
 .qr-img{

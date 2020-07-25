@@ -930,8 +930,7 @@ public class StockServiceImpl implements StockService {
 		DataTablesOutput<Stock> domainOut;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			Specification<Stock> specification = (root, query, cb) -> 
-			cb.and(cb.equal(root.get("part").get("id"), partId),
-					cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
+			cb.and(cb.equal(root.get("part").get("id"), partId));
 			domainOut = stockDao.findAll(input, specification);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			Specification<Stock> specification = (root, query, cb) -> {
@@ -939,8 +938,8 @@ public class StockServiceImpl implements StockService {
 				return cb.and(
 						// cb.equal(root.get("business"),
 						// AuthenticationUtil.getLoginSite().getSite().getAssetBusinesses()),
-						cb.equal(root.get("part").get("id"), partId),
-						cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
+						cb.equal(root.get("part").get("id"), partId));
+						//cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			};
 			domainOut = stockDao.findAll(input, specification);
 		} else {
@@ -950,7 +949,7 @@ public class StockServiceImpl implements StockService {
 						// cb.equal(root.get("business"),
 						// AuthenticationUtil.getLoginSite().getSite().getAssetBusinesses()),
 						// cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
-						cb.equal(root.get("part").get("id"), partId),cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
+						cb.equal(root.get("part").get("id"), partId));
 			};
 			domainOut = stockDao.findAll(input, specification);
 		}

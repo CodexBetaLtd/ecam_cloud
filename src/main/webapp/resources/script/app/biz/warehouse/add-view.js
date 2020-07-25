@@ -127,9 +127,7 @@ var WearHouseAdd = function () {
                 address: {
                 	required: true
                 },
-                assetCategoryName: {
-                	required: true
-                },
+
                 parentAssetCategoryName: {
                     required: true
                 }
@@ -141,7 +139,6 @@ var WearHouseAdd = function () {
                 businessTypeId: "Please Select a Business Type",
                 siteId: "Please Select a Site",
                 addressLine1: "Please specify address ",
-                assetCategoryName: "Please specify warehouse category ",
             	parentAssetCategoryName: "Please specify parent warehouse category "
             },
             invalidHandler: function (event, validator) { //display error alert on form submit
