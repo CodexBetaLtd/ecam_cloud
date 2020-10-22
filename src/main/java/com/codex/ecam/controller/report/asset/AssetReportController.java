@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.codex.ecam.constants.util.PrintType;
 import com.codex.ecam.dto.report.filter.AssetFilterDTO;
 import com.codex.ecam.service.report.asset.api.AssetReportService;
+import com.codex.ecam.util.AuthenticationUtil;
 
 
 @Controller
@@ -57,5 +58,6 @@ public class AssetReportController {
 	
 	private void setCommonData(Model model) {
 		model.addAttribute("filterDTO", new AssetFilterDTO());
+		model.addAttribute("currency", AuthenticationUtil.getLoginUserBusiness().getCurrency().getSymbol());
 	}
 }

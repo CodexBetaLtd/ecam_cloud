@@ -7,6 +7,7 @@
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/tag-editor/bootstrap-tagsinput.css}"/>
 
 
 <body>
@@ -99,7 +100,7 @@
 										<div class="modal-content"></div>
 									</div>
 
-									<div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL')">
+<!-- 									<div class="row" sec:authorize="hasAnyAuthority('ADMIN_LEVEL')">
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="control-label">
@@ -113,7 +114,7 @@
 												</select>
 											</div>
 										</div>
-									</div>
+									</div> -->
 
 
 									<div class="row">
@@ -125,7 +126,7 @@
 												<div class="input-group">
 													<input type="hidden" th:field="*{receivedUserId}"
 														   id="receivedUserId">
-                                                    <input type="text" th:field="*{receiverName}"
+                                                    <input type="text" style="width: 450px;" th:field="*{receiverName}"
                                                            id="receivedUserName" readonly>
 												</div>
 											</div>
@@ -195,8 +196,10 @@
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-	<script type="text/javascript"
-			th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/tag-editor/jquery.caret.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/tag-editor/bootstrap-tagsinput.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/tag-editor/typehead.js}"></script>
 	<!-- end: MAIN JAVASCRIPTS -->
 
     <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
@@ -216,7 +219,11 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/notification/datatable/dt-users.js}"></script>
 	<!-- end: REQUIRED JS ; THIS PAGE ONLY -->
 
+<script th:inline="javascript">
 
+	var notifyUsers = [[${notificationDTO.notifyUserDTo}]];
+
+</script>
 </body>
 
 </html>

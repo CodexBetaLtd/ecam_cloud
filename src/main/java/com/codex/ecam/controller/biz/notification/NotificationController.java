@@ -46,8 +46,14 @@ public class NotificationController extends AdminBaseController {
 
     @RequestMapping(value = "/inbox", method = RequestMethod.GET)
     public String inbox(Model model) {
+    	model.addAttribute("folderType", "Inbox");
+    	return "biz/notification/inbox-view";
+    }
+    
+    @RequestMapping(value = "/system-inbox", method = RequestMethod.GET)
+    public String systemInbox(Model model) {
         model.addAttribute("folderType", "Inbox");
-        return "biz/notification/inbox-view";
+        return "biz/notification/system-inbox-view";
     }
 
     @RequestMapping(value = "/outbox", method = RequestMethod.GET)
@@ -131,14 +137,20 @@ public class NotificationController extends AdminBaseController {
     @RequestMapping(value = "/preview", method = {RequestMethod.GET})
     public String findUserPreviewById(Integer id, Model model, RedirectAttributes ra) {
         try {
-            NotificationResult result = notificationService.findNotificationById(id);
+            NotificationResult result = notificationService.openMessage(id);
             setCommonData(model, result.getDtoEntity());
             if (result.getStatus().equals(ResultStatus.ERROR)) {
                 ra.addFlashAttribute("error", result.getErrorList());
             } else {
                 ra.addFlashAttribute("success", result.getMsgList());
             }
-            return "biz/notification/notification-preview";
+            if(result.getDtoEntity().getSystemMessage()){
+                return "biz/notification/notification-preview";
+
+            }else{
+                return "biz/notification/message-preview";
+
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             return "redirect:/notification/inbox";

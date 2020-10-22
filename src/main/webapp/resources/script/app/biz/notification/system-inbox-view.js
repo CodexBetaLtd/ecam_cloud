@@ -117,7 +117,7 @@ var InboxNotification = function () {
             "processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline({
-                url: "../restapi/notification/inbox",
+                url: "../restapi/notification/system-inbox",
                 pages: 5
             }),
             columns: [
@@ -186,7 +186,7 @@ var InboxNotification = function () {
     var getTableRaw = function (dataSet) {
         return "" +
             "<div class='messages-item'> " +
-            getNotificationButtonSet(dataSet.id) +
+           // getNotificationButtonSet(dataSet.id) +
             "<span title='Mark as starred' class='messages-item-star'>" +
             "<i class='fa fa-star'></i>" +
             "</span> " +

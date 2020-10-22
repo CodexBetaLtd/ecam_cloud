@@ -5,6 +5,8 @@ var $windowWidth;
 var $windowHeight;
 var $pageArea;
 var isMobile = false;
+ var messagesList = []; 
+ var notificationList = [];
 // Debounce Function
 (function ($, sr) {
     // debouncing function from John Hann
@@ -771,6 +773,53 @@ var Main = function () {
         })
 
     };
+    
+    var notificationInit=function(){
+    	  var sock = new SockJS('http://localhost:8090/ws-notification');
+          sock.onopen = function() {
+              console.log('open');
+             // sock.send('test');
+          };
+
+          sock.onmessage = function(e) {
+              console.log('message', e.data);
+              sock.close();
+          };
+
+          sock.onclose = function() {
+              console.log('close');
+          }; 
+
+  		stompClient = Stomp.over(sock);
+
+  		stompClient.connect({}, function(frame) {
+
+  		stompClient.subscribe('/topic/message', function(obj) {
+  			var notification=JSON.parse(obj['body']);
+ 			var html="";
+  				html= html+'<li >'+
+                '<a href="">'+
+                '<div class="clearfix">'+
+                    '<div class="thread-image">'+
+                        '<img alt="" src="./assets/images/avatar-2.jpg">'+
+                    '</div>'+
+                    '<div class="thread-content">'+
+                        '<span class="author"> '+notification.userName+'</span>'+
+                        '<span class="preview">'+notification.content+'</span>'+
+                        '<span class="time"> '+notification.notifyTime+'</span>'+
+                    '</div>'+
+                '</div>'+
+            '</a>'+
+        '</li>';
+  			$("#notifyList").append(html);
+  			var count = $('#notifyList').children().length
+  			console.log(count)
+  			$(".msg-count").text(count);
+  		});
+
+
+  		}); 
+    }
 
     
 //  function to set scroll tab
@@ -805,6 +854,10 @@ var Main = function () {
             runLayoutMenu();
             activeMenu();
             runScrollTab(); 
+            Message.init();
+            Notification.init();
+            
+            //notificationInit();
         },
 
         runCheckBoxStyle: function () {

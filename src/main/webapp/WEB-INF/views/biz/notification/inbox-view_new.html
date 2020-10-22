@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml"
+      class="no-js">
+
+<head th:include="template/commoncss :: commoncss"></head>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}" />
+
+<body>
+    <!-- start: HEADER -->
+    <div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
+    <!-- end: HEADER -->
+    
+    <!-- start: MAIN CONTAINER -->
+    <div class="main-container">
+    
+      	<!-- start: NAV-BAR -->
+        <div class="navbar-content">
+            <!-- start: SIDEBAR -->
+            <div class="main-navigation navbar-collapse collapse">
+            
+                <!-- start: MAIN MENU TOGGLER BUTTON -->
+                <div class="navigation-toggler">
+                    <i class="clip-chevron-left"></i>
+                    <i class="clip-chevron-right"></i>
+                </div>
+                <!-- end: MAIN MENU TOGGLER BUTTON -->
+                
+                <!-- start: MAIN NAVIGATION MENU -->
+                <ul class="main-navigation-menu" th:replace="template/menu :: menu"></ul>
+            </div>
+            <!-- end: SIDEBAR -->
+        </div>
+  		<!-- end: NAV-BAR -->
+	  
+
+
+        <!-- start: PAGE -->
+        <div class="main-content">
+            <div class="container">
+            
+            
+            
+                <!-- start: PAGE HEADER -->
+				<div class="row" th:replace="biz/notification/common/page-header :: notificationPageheader"></div>
+                <!-- end: PAGE HEADER -->
+
+				<div th:replace="general/modal/modal-base :: modalFragment "></div> 
+
+				<div class="row btn-bar" >
+                    <a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/notification/new}"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_NOTIFICTION_INBOX_VIEW.id)"
+                       data-placement="top" data-original-title="Add">
+						<i class="clip-plus-circle-2  btn-new" ></i> New
+					</a>
+                    <a class="btn btn-default btn-sm active tooltips" id="save"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_NOTIFICTION_INBOX_VIEW.id)"
+                       th:disabled="disabled" data-placement="top" data-original-title="Save">
+
+						<i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Send</span>
+
+					</a>
+                    <a class="btn btn-default btn-sm active tooltips" id="delete"
+                       sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_NOTIFICTION_INBOX_VIEW.id)"
+                       th:disabled="disabled" data-placement="top" data-original-title="Delete">
+						<i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs"> Delete</span>
+					</a>
+                    <a class="btn btn-default btn-sm active tooltips" id="cancel" th:disabled="disabled" data-placement="top" data-original-title="Back">
+						<i class="clip-arrow-left-2 "></i> <span class="hidden-xs"> Cancel</span>
+					</a>
+				</div>
+
+				<!-- start: PAGE CONTENT -->
+				                <div class="row">
+                    <div class="col-md-12">
+                        <!-- start: INBOX PANEL -->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <i class="fa fa-envelope-o"></i> Inbox
+                                <div class="panel-tools">
+                                    <a class="btn btn-xs btn-link panel-collapse collapses" href="#">
+                                    </a>
+                                    <a class="btn btn-xs btn-link panel-config" href="#panel-config" data-toggle="modal">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <a class="btn btn-xs btn-link panel-refresh" href="#">
+                                        <i class="fa fa-refresh"></i>
+                                    </a>
+                                    <a class="btn btn-xs btn-link panel-expand" href="#">
+                                        <i class="fa fa-resize-full"></i>
+                                    </a>
+                                    <a class="btn btn-xs btn-link panel-close" href="#">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="panel-body messages">
+                                <ul class="messages-list">
+                                    <li class="messages-search">
+                                        <form action="#" class="form-inline">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" placeholder="Search messages...">
+                                                <div class="input-group-btn">
+                                                    <button class="btn btn-primary" type="button">
+                                                        <i class="fa fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </li>
+                                    <li class="messages-item">
+                                        <span title="Mark as starred" class="messages-item-star"><i class="fa fa-star"></i></span>
+                                        <img alt="" src="assets/images/avatar-1.jpg" class="messages-item-avatar">
+                                        <span class="messages-item-from">Peter Clark</span>
+                                        <div class="messages-item-time">
+                                            <span class="text">10:23 PM</span>
+                                            <div class="messages-item-actions">
+                                                <a data-toggle="dropdown" title="Reply" href="#"><i class="fa fa-mail-reply"></i></a>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Move to folder" href="#"><i class="fa fa-folder-open"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-pencil"></i> Mark as Read
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-ban"></i> Spam
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-trash-o"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Attach to tag" href="#"><i class="fa fa-tag"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon red"></i>Important</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon teal"></i>Work</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon green"></i>Home</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="messages-item-subject">Lorem ipsumdolor sit amet ...</span>
+                                        <span class="messages-item-preview">Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do antera ...</span>
+                                    </li>
+                                    <li class="messages-item active starred">
+                                        <span title="Remove star" class="messages-item-star"><i class="fa fa-star"></i></span>
+                                        <img alt="" src="assets/images/avatar-2.jpg" class="messages-item-avatar">
+                                        <span class="messages-item-from">Nicole Bell</span>
+                                        <div class="messages-item-time">
+                                            <span class="text">08:46 PM</span>
+                                            <div class="messages-item-actions">
+                                                <a data-toggle="dropdown" title="Reply" href="#"><i class="fa fa-mail-reply"></i></a>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Move to folder" href="#"><i class="fa fa-folder-open"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-pencil"></i> Mark as Read
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-ban"></i> Spam
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-trash-o"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Attach to tag" href="#"><i class="fa fa-tag"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon red"></i>Important</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon teal"></i>Work</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon green"></i>Home</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="messages-item-subject">Duis autem vel eum iriure ...</span>
+                                        <span class="messages-item-preview">Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do antera ...</span>
+                                    </li>
+                                    <li class="messages-item">
+                                        <span title="Mark as starred" class="messages-item-star"><i class="fa fa-star"></i></span>
+                                        <span class="messages-item-attachment"><i class="fa fa-paperclip"></i></span>
+                                        <img alt="" src="assets/images/avatar-3.jpg" class="messages-item-avatar">
+                                        <span class="messages-item-from">Steven Thompson</span>
+                                        <div class="messages-item-time">
+                                            <span class="text">04:03 PM</span>
+                                            <div class="messages-item-actions">
+                                                <a data-toggle="dropdown" title="Reply" href="#"><i class="fa fa-mail-reply"></i></a>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Move to folder" href="#"><i class="fa fa-folder-open"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-pencil"></i> Mark as Read
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-ban"></i> Spam
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-trash-o"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Attach to tag" href="#"><i class="fa fa-tag"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon red"></i>Important</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon teal"></i>Work</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon green"></i>Home</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="messages-item-subject">Lorem ipsumdolor sit amet ...</span>
+                                        <span class="messages-item-preview">Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do antera ...</span>
+                                    </li>
+                                    <li class="messages-item">
+                                        <span title="Mark as starred" class="messages-item-star"><i class="fa fa-star"></i></span>
+                                        <img alt="" src="assets/images/avatar-1.jpg" class="messages-item-avatar">
+                                        <span class="messages-item-from">Peter Clark</span>
+                                        <div class="messages-item-time">
+                                            <span class="text">11:16 AM</span>
+                                            <div class="messages-item-actions">
+                                                <a data-toggle="dropdown" title="Reply" href="#"><i class="fa fa-mail-reply"></i></a>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Move to folder" href="#"><i class="fa fa-folder-open"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-pencil"></i> Mark as Read
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-ban"></i> Spam
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#">
+                                                                <i class="fa fa-trash-o"></i> Delete
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="dropdown">
+                                                    <a data-toggle="dropdown" title="Attach to tag" href="#"><i class="fa fa-tag"></i></a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon red"></i>Important</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon teal"></i>Work</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#"><i class="tag-icon green"></i>Home</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="messages-item-subject">Duis autem vel eum iriure ...</span>
+                                        <span class="messages-item-preview">Lorem ipsum dolor sit amet, consec tetur adipisicing elit, sed do antera ...</span>
+                                    </li>
+                                </ul>
+                                <div class="messages-content">
+                                    <div class="message-header">
+                                        <div class="message-time">
+                                            11 NOV 2014, 11:46 PM
+                                        </div>
+                                        <div class="message-from">
+                                            Nicole Bell &lt;nicole@example.com&gt;
+                                        </div>
+                                        <div class="message-to">
+                                            To: Peter Clark
+                                        </div>
+                                        <div class="message-subject">
+                                            New frontend layout
+                                        </div>
+                                        <div class="message-actions">
+                                            <a title="Move to trash" href="#"><i class="fa fa-trash-o"></i></a>
+                                            <a title="Reply" href="#"><i class="fa fa-reply"></i></a>
+                                            <a title="Reply to all" href="#"><i class="fa fa-reply-all"></i></a>
+                                            <a title="Forward" href="#"><i class="fa fa-long-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="message-content">
+                                        <p>
+                                            <strong>Lorem ipsum</strong> dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci
+                                            tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+                                        </p>
+                                        <p>
+                                            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait
+                                            nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit
+                                            eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
+                                        </p>
+                                        <p>
+                                            Claritas est etiam processus dynamicus, qui sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quam nunc putamus parum claram, anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem
+                                            modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ut blandit ligula. In accumsan mauris at augue feugiat consequat. Aenean
+                                            consequat sem sed velit sagittis dignissim. Phasellus quis convallis est. Praesent porttitor mauris nec lectus mollis, eget sodales libero venenatis. Cras eget vestibulum turpis. In hac habitasse platea dictumst.
+                                            Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam turpis velit, tempor vitae libero ac, fermentum laoreet dolor.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end: INBOX PANEL -->
+                    </div>
+                </div>
+				<!-- end: PAGE CONTENT --> 
+			
+			</div>
+        </div>
+        <!-- end: PAGE -->
+        
+  	</div>
+    <!-- end: MAIN CONTAINER -->
+   
+
+   
+   
+    <!-- start: FOOTER -->
+   	<div class="row" th:replace="template/footer :: footer"></div>
+    <!-- end: FOOTER -->
+    
+    <!-- start: MAIN JAVASCRIPTS -->
+    <div th:include="template/commonjs :: commonjs"></div>
+
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
+
+	<!-- end: MAIN JAVASCRIPTS -->
+
+    <script type="text/javascript" th:src="@{//cdn.ckeditor.com/4.8.0/standard/ckeditor.js}"></script>
+    <!--<script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>-->
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/notification/inbox-view.js}"></script>
+    	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
+
+    <script>
+        jQuery(document).ready(function() {
+            Main.init();
+            InboxNotification.initInbox();
+
+			/* $('#tbl_notification_list tbody').on('click', 'tr', function () {
+			 var data = table.row( this ).data();
+			 alert( 'You clicked on '+data[0]+'\'s row' );
+			 } );*/
+
+			/*$(document).on('click', '.clsNotificationPreview', function () {
+                InboxNotification.previewNotification(this);
+			 });*/
+        });
+    </script>
+
+</body>
+
+</html>

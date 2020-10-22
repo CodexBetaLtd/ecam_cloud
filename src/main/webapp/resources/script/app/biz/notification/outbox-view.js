@@ -238,9 +238,9 @@ var OutboxNotification = function () {
 
     var getReceiver = function (dataSet) {
         if (dataSet.systemMessage == true || dataSet.systemMessage == "true" || dataSet.systemMessage === 'true') {
-            return "<span class='messages-item-from'> <strong> To :  [" + dataSet.receiverName + "] </strong></span>";
+            return "<span class='messages-item-from'> <strong> To :  [" + dataSet.receivedUserName + "] </strong></span>";
         } else {
-            return "<span class='messages-item-from'> <strong> To : </strong> " + dataSet.receiverName + "</span>";
+            return "<span class='messages-item-from'> <strong> To : </strong> " + dataSet.receivedUserName + "</span>";
         }
     };
 

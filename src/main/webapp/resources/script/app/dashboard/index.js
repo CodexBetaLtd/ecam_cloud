@@ -25,6 +25,9 @@
 			loadLowStockItemDataTable();
         });	
 	}
+	
+	
+
 	var loadOpenWODataTable=function(){
 		
         var $modal = $('#common-modal');

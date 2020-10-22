@@ -13,6 +13,7 @@ import com.codex.ecam.service.dashboard.api.WorkOrderComparisonService;
 import com.codex.ecam.service.inventory.api.StockService;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerCountService;
 import com.codex.ecam.service.maintenance.api.WorkOrderService;
+import com.codex.ecam.service.notification.api.NotificationService;
 import com.codex.ecam.util.AuthenticationUtil;
 
 @Controller
@@ -34,6 +35,9 @@ public class HomeController {
 	
 	@Autowired
 	private AppService appService;
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 
 	@RequestMapping(value = { "/session-expire-redirect"}, method = RequestMethod.GET)
@@ -92,6 +96,7 @@ public class HomeController {
 			model.addAttribute("workOderRequestCount", 71);
 			model.addAttribute("highPriorityWorkOrder", workoderService.findAllHighPriorityWorkOderCount());
 			model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
+			//model.addAttribute("messageList", notificationService.findAllListInboxNotificationByUser());
 		} catch (Exception e) { 
 			e.printStackTrace();
 		} 

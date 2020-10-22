@@ -1,6 +1,8 @@
 package com.codex.ecam.dto.biz.notification;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.codex.ecam.constants.NotificationType;
 import com.codex.ecam.dto.BaseDTO;
@@ -40,7 +42,7 @@ public class NotificationDTO extends BaseDTO {
 	private Date notificationDateTime;
 
 
-
+List<NotificationUserDTO> notifyUserDTo =new ArrayList<>();
 
 
 	public Integer getId() {
@@ -234,4 +236,14 @@ public class NotificationDTO extends BaseDTO {
 	public void setNotificationDateTime(Date notificationDateTime) {
 		this.notificationDateTime = notificationDateTime;
 	}
+
+	public List<NotificationUserDTO> getNotifyUserDTo() {
+		return notifyUserDTo;
+	}
+
+	public void setNotifyUserDTo(List<NotificationUserDTO> notifyUserDTo) {
+		this.notifyUserDTo = notifyUserDTo;
+	}
+	
+	
 }

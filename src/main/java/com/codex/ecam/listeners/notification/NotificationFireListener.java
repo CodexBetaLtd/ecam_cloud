@@ -26,9 +26,9 @@ public class NotificationFireListener {
 
     private void fireInboxNotification(Notification entity) throws Exception {
         try {
-            if (entity.getNotificationType().compareTo(NotificationType.INBOX_NOTIFICATION) == 0 && entity.getReceiver().getEmailNotification()) {
-                notificationService.fireInboxNotification(entity);
-            }
+//            if (entity.getNotificationType().compareTo(NotificationType.INBOX_NOTIFICATION) == 0 && entity.getReceiver().getEmailNotification()) {
+//                notificationService.fireInboxNotification(entity);
+//            }
         } catch (Exception e) {
             throw new NotificationException();
         }

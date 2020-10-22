@@ -28,7 +28,7 @@ import org.thymeleaf.templateresolver.ITemplateResolver;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan("com.codex.ecam.controller, com.codex.ecam.dao, com.codex.ecam.service")
+@ComponentScan("com.codex.ecam.controller, com.codex.ecam.dao, com.codex.ecam.service,com.codex.ecam.util")
 @PropertySource({"classpath:lang/focus_en.properties", "classpath:application.properties"})
 public class WebMvcConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 

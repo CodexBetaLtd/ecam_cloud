@@ -1,6 +1,20 @@
 package com.codex.ecam.model.biz.notification;
 
-import javax.persistence.*;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.codex.ecam.constants.NotificationType;
 import com.codex.ecam.listeners.notification.NotificationFireListener;
@@ -51,14 +65,13 @@ public class Notification extends BaseModel{
 
 	@Column(name="notification_type")
 	private NotificationType notificationType;
-
-	@ManyToOne(targetEntity=User.class, fetch=FetchType.LAZY)
-	@JoinColumn(name="recipient_id")
-	private User receiver;
 	
 	@ManyToOne(targetEntity=User.class, fetch=FetchType.LAZY)
 	@JoinColumn(name="sender_id")
 	private User sender;
+	
+	@OneToMany(mappedBy = "notification", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<NotificationRecipientUser> recipients;
 
 
     public Integer getId() {
@@ -109,14 +122,6 @@ public class Notification extends BaseModel{
 		this.notificationType = notificationType;
 	}
 
-	public User getReceiver() {
-		return receiver;
-	}
-
-	public void setReceiver(User receiver) {
-		this.receiver = receiver;
-	}
-
 	public User getSender() {
 		return sender;
 	}
@@ -156,4 +161,21 @@ public class Notification extends BaseModel{
 	public void setSite(Asset site) {
 		this.site = site;
 	}
+
+	public Boolean getIsSystemMessage() {
+		return isSystemMessage;
+	}
+
+	public void setIsSystemMessage(Boolean isSystemMessage) {
+		this.isSystemMessage = isSystemMessage;
+	}
+
+	public Set<NotificationRecipientUser> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(Set<NotificationRecipientUser> recipients) {
+		updateCollection("recipients", recipients);	}
+	
+	
 }

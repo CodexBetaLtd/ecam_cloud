@@ -152,7 +152,7 @@
     <!-- MENU : Notification -->
     <li>
         <a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).MENU_PREFIX + T(com.codex.ecam.constants.Menu).NOTIFICATIONS.id)">
-            <i class="icon-custom icon-notify"></i> <span class="title"> Notification </span>
+            <i class="icon-custom icon-notify"></i> <span class="title"> Message </span>
             <i class="icon-arrow"></i> <span class="selected"></span>
         </a>
         <ul class="sub-menu">
@@ -175,6 +175,11 @@
             <li>
                 <a th:href="@{/notification/trash}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).THRASH.id)">
                     <i class="clip-remove "></i> <span class="title">Trash</span>
+                </a>
+            </li>
+               <li>
+                <a th:href="@{/notification/system-inbox}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).THRASH.id)">
+                    <i class="fa fa-exclamation-circle"></i> <span class="title">Notification</span>
                 </a>
             </li>
         </ul>
