@@ -103,6 +103,8 @@ public interface AssetService {
 
 	void updateAverageMeterReadingValue(AssetMeterReading assetMeterReading); 
 	
-	void importBulkAssets(String filePath) throws Exception; 
+	void importBulkAssets(MultipartFile file,Integer bussinessId) ;
+
+	 
 
 }

@@ -1,33 +1,60 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags"
+      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
-	<meta th:name="_csrf" th:content="${_csrf.token}"/>
-	<meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
 
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Import Asset </h4>
-    </div>
-    <div class="modal-body">
-		<form id="file_add_frm">
-	        <div class="row">
-	            <div class="col-md-12">
-	                <div class="form-group">
-	                    <label class="control-label"> Description <span class="symbol required"></span></label>
-	                    <textarea id="fileDescription" name="fileDescription" class="form-control" placeholder="Insert the File Description" ></textarea>
-	                </div>
-	            </div>
-	        </div>
-        </form>
-        <span id="dropZoneText" class="required"style="display: none; color:#a94442">Please Upload a file</span>
-         <form class="dropzone" th:action="@{/asset/upload-file} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" id="uploadedFile" method="post" enctype="multipart/form-data">
-  
-         </form>
-        
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-blue" id="btn-add-file" ><i class="clip-checkmark-circle-2"></i>Add
-        </button>
-        <button type="button" data-dismiss="modal" class="btn btn-blue">Close</button>
-    </div>
+<meta th:name="_csrf" th:content="${_csrf.token}" />
+<meta th:name="_csrf_header" th:content="${_csrf.headerName}" />
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal"
+		aria-hidden="true">&times;</button>
+	<h4 class="modal-title">Import Asset</h4>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<span id="import-message"></span>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<span id="dropZoneText" class="required" style=""></span><img
+				id="uploadingGif" src="../../resources/images/loading.gif"><img
+				id="crossImg" width='20px' src="../../resources/images/cross.png"><img
+				width='20px' id="tickGif" src="../../resources/images/tick.gif">
+			<form class="dropzone"
+				th:action="@{/asset/import-assets} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}"
+				id="uploadedFile" method="post" enctype="multipart/form-data">
+
+			</form>
+		</div>
+		<div class="col-md-6">
+
+			<div class="form-group" sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SYSTEM_LEVEL')">
+				<label class="control-label"> Business <span
+					class="symbol required"></span>
+				</label> <select id="businessId" class="search-select"
+					style="width: 100%;">
+					<option value="">&nbsp;</option>
+					<option th:each="business : ${businesses}"
+						th:value="${business.id}" th:text="${business.name}"></option>
+				</select>
+			</div>
+			<b>Instruction Asset For Import</b>
+			<ul>
+				<li>Use 10MB Maximum file size</li>
+				<li>.xl,.xlsx,.csv format files only allow to Upload</li>
+				<li>Use Template as <a>link</a></li>
+
+			</ul>
+
+		</div>
+	</div>
+
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn btn-blue" id="btn-import-assets">
+		<i class="clip-checkmark-circle-2"></i>Finish
+	</button>
+	<button type="button" data-dismiss="modal" class="btn btn-blue">Close</button>
+</div>
 </html>

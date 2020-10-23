@@ -311,6 +311,11 @@ public class AssetController {
 	public String getEventHistoryTableView(Model model) {
 		return "asset/modals/asset-event-history-modal";
 	}
+	@RequestMapping(value = "/assetimportview", method = RequestMethod.GET)
+	public String getAssetImportView(Model model) throws Exception {
+		model.addAttribute("businesses", businessService.findAll());
+		return "asset/modals/asset-import-modal";
+	}
 	
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String addForm(Model model, AssetCategoryType type, RedirectAttributes ra) {
@@ -418,9 +423,9 @@ public class AssetController {
 		assetService.assetQRDownload(id,response);
 	}
 	
-	@RequestMapping(value = "/import-assets", method = RequestMethod.GET)
-	public void  importAssets(@RequestParam("location")String location, HttpServletResponse response) throws Exception {
-		assetService.importBulkAssets(location);
+	@RequestMapping(value = "/import-assets", method = RequestMethod.POST)
+	public void  importAssets(@RequestParam("fileData")MultipartFile file,@RequestParam("bussinessId")Integer bussinessId, HttpServletResponse response) throws Exception {
+		assetService.importBulkAssets(file,bussinessId);
 	}
 
 	private void setCommonData(Model model, AssetCategoryType type, AssetDTO asset) {
