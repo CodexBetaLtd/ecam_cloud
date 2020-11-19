@@ -1563,7 +1563,6 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	public void importBulkAssets(String filePath) throws Exception {
-		// TODO Auto-generated method stub
 		String excelFilePath = "C:\\Users\\hp\\Desktop\\Asset template.xlsx";
 		FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
 

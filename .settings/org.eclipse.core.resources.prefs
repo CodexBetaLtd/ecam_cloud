@@ -1,10 +1,13 @@
 eclipse.preferences.version=1
+encoding//src/main/webapp/resources/report/asset/AssetView.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/common/ReportHeaderNameLogo.jrxml=UTF-8
+encoding//src/main/webapp/resources/report/inventory/aod/AodView.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/aod/summary/AodSummary.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/aod/summary/AodView.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/aodReturn/AodReturnView.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/aodReturn/summary/AodReturnSummary.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/mrn/MRNView.jrxml=UTF-8
+encoding//src/main/webapp/resources/report/inventory/mrn/summary/AodSummary.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/part/PartView_1.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/receiptOrder/ReceiptOrderView.jrxml=UTF-8
 encoding//src/main/webapp/resources/report/inventory/receiptOrder/summary/ReceiptOrderSummary.jrxml=UTF-8

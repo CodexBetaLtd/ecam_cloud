@@ -1,7 +1,10 @@
 package com.codex.ecam.service.log.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier; 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codex.ecam.constants.LogType;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dao.maintenance.WorkOrderLogDao;
+import com.codex.ecam.dto.biz.notification.NotificationDTO;
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderLogDTO;
 import com.codex.ecam.mappers.maintenance.workorder.WorkOrderLogMapper;
 import com.codex.ecam.model.BaseModel;
@@ -19,6 +23,8 @@ import com.codex.ecam.model.maintenance.workorder.WorkOrderLog;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.log.LogSupport;
 import com.codex.ecam.service.log.api.WorkOrderLogService;
+import com.codex.ecam.service.notification.api.NotificationService;
+import com.codex.ecam.util.AuthenticationUtil;
 
 @Service
 @Qualifier("woLogService")
@@ -29,6 +35,9 @@ public class WorkOrderLogServiceImpl implements LogSupport, WorkOrderLogService 
 
 	@Autowired
 	private WorkOrderDao workOrderDao;
+	
+	@Autowired
+	private NotificationService notificationService;
 
 	@Override
 	public void createPersistLog(BaseModel model, String notes) {
@@ -81,5 +90,26 @@ public class WorkOrderLogServiceImpl implements LogSupport, WorkOrderLogService 
 		final DataTablesOutput<WorkOrderLogDTO> out = WorkOrderLogMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
+	
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	private void notifyWorkorderUser (WorkOrder workorder,String note){
+		NotificationDTO dto=new NotificationDTO();
+		List<String> workorderUserList=new ArrayList<>();
+		//if(workorder.getWorkOrderNotifications().!=null && workorder.getAssetUsers().size()>0){
+		if(workorder.getCompletedByUser()!=null){
+		workorderUserList.add(workorder.getCompletedByUser().getId().toString());
+		}
+		if(workorder.getCompletedByUser()!=null){
+			workorderUserList.add(workorder.getCompletedByUser().getId().toString());
+		}
+		if(workorderUserList.size()>0){
+				String res = String.join(",", workorderUserList);
+				dto.setReceiverName(res);
+				dto.setSubject(workorder.getCode()+" work order change identifyed ");
+				dto.setContent(note+" Changes Excute by "+AuthenticationUtil.getAuthenticatedUser().getUserCredential().getUserName());
+				dto.setIsSystemMessage(Boolean.TRUE);
+				notificationService.saveNotification(dto);
 
+		}
+	}
 }

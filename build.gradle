@@ -50,6 +50,9 @@ dependencies {
 	compile "org.apache.commons:commons-lang3:3.4"
 	compile group: 'org.apache.velocity', name: 'velocity', version: '1.7'
 	
+
+compile 'org.apache.httpcomponents:httpclient:4.5.12'		
+	
     compile ("com.zaxxer:HikariCP:2.4.5") {
         exclude group: "org.javassist", module: "javassist"
     }

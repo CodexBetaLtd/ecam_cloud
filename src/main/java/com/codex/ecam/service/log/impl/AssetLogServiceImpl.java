@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier; 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,11 +26,6 @@ import com.codex.ecam.service.log.LogSupport;
 import com.codex.ecam.service.log.api.AssetLogService;
 import com.codex.ecam.service.notification.api.NotificationService;
 import com.codex.ecam.util.AuthenticationUtil;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 
 @Service
 @Qualifier("assetLogService")
@@ -110,7 +105,7 @@ public class AssetLogServiceImpl implements LogSupport, AssetLogService {
 				String res = String.join(",", assetUserList);
 				dto.setReceiverName(res);
 				dto.setSubject(asset.getCode()+" asset change identifyed ");
-				dto.setContent(note+"Changes Excute by "+AuthenticationUtil.getAuthenticatedUser().getUserCredential().getUserName());
+				dto.setContent(note+" Changes Excute by "+AuthenticationUtil.getAuthenticatedUser().getUserCredential().getUserName());
 				dto.setIsSystemMessage(Boolean.TRUE);
 				notificationService.saveNotification(dto);
 
