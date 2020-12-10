@@ -2,7 +2,6 @@ package com.codex.ecam.service.asset.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,12 +13,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.net.InetAddress;
 
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -31,13 +34,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.codex.ecam.constants.AssetCategoryType;
+import com.codex.ecam.constants.SMTriggerType;
 import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.admin.AssetBrandDao;
@@ -56,6 +54,8 @@ import com.codex.ecam.dao.inventory.BOMGroupDao;
 import com.codex.ecam.dao.inventory.BOMGroupPartDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
+import com.codex.ecam.dao.maintenance.ScheduledMaintenanceAssetDao;
+import com.codex.ecam.dao.maintenance.ScheduledMaintenanceDao;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetEventDTO;
@@ -95,11 +95,16 @@ import com.codex.ecam.model.inventory.bom.BOMGroup;
 import com.codex.ecam.model.inventory.bom.BOMGroupPart;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
+import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenance;
+import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanceAsset;
+import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanceTrigger;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.asset.AssetResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.asset.api.WarrantyService;
+import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceService;
+import com.codex.ecam.service.maintenance.api.ScheduledService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
@@ -168,6 +173,14 @@ public class AssetServiceImpl implements AssetService {
 	
 	@Autowired
 	AssetCategoryService assetCategoryService;
+	
+	@Autowired
+	ScheduledMaintenanceAssetDao scheduledMaintenanceAssetDao;
+	
+	@Autowired
+	ScheduledService scheduledService;
+	
+	
 	
 
 	@Override
@@ -363,8 +376,9 @@ public class AssetServiceImpl implements AssetService {
 		setAssetData(result, image);
 		assetDao.save(result.getDomainEntity());
 		addAssetToBOMGroup(result.getDomainEntity());
-		addReceiptOrder(result);
+	//	addReceiptOrder(result);
 		result.updateDtoIdAndVersion();
+		scheduledTriggers(result);
 
 	}
 
@@ -387,7 +401,26 @@ public class AssetServiceImpl implements AssetService {
 		setAssetImage(result, image);
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
 		generateAssetQR(result);
+		
 	}
+	
+private void scheduledTriggers(AssetResult result){
+	scheduledService.notifyAssetTrigger(result.getDomainEntity(),SMTriggerType.METER_READING_TRIGGER);
+
+//	Set<ScheduledMaintenanceAsset> maintenanceAssets=result.getDomainEntity().getAssetScheduledMaintenances();
+//	List<ScheduledMaintenance> scheduledMaintenances=scheduledMaintenanceAssetDao.findByAsset(result.getDomainEntity());
+//	for(ScheduledMaintenance scheduledMaintenance:scheduledMaintenances){
+//		for(ScheduledMaintenanceTrigger scheduledMaintenanceTrigger:scheduledMaintenance.getScheduledMaintenanceTriggers()){
+//			scheduledService.createWorkOrderFromTriggerType(scheduledMaintenanceTrigger, scheduledMaintenanceTrigger.getTriggerType());
+//		}
+//	}
+}
+
+private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
+
+	
+
+}
 
 	private void generateAssetQR(AssetResult result) throws WriterException, IOException {
 
@@ -921,10 +954,13 @@ public class AssetServiceImpl implements AssetService {
 					.equals(assetMeterReadingValueDto.getAssetMeterReadingValueIndex())) {
 				domain.setCurrentAssetMeterReadingValue(meterReadingValue);
 			}
+			autotriggerSchedule(meterReadingValue);
 			updateAssetMeterReadingConsumption(assetMeterReadingValueDto, meterReadingValue);
 			assetMeterReadingValues.add(meterReadingValue);
 		}
 	}
+	
+
 
 	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,
 			AssetMeterReadingValue meterReadingValue) throws Exception {
@@ -1569,7 +1605,7 @@ public class AssetServiceImpl implements AssetService {
 		return out;
 	}
 
-	public void importBulkAssets(MultipartFile fileData,Integer bussinessId) {
+	public void importBulkAssets(MultipartFile fileData,Integer bussinessId) throws Exception {
 
 		 FileInputStream inputStream=(FileInputStream) fileData.getInputStream();
 

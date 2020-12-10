@@ -115,10 +115,19 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 		domain.setScheduleIsFixed(dto.getScheduleIsFixed());
 		domain.setTtOccurenceType(dto.getTtOccurenceType());
 		domain.setTtMonth(dto.getTtMonth());
-		domain.setConditionValue(dto.getEveryValue());
+		if(dto.getEveryValue()!=null){
+			domain.setConditionValue(dto.getEveryValue());
+		}
+		if(dto.getMrtConditionValue()!=null){
+			domain.setConditionValue(dto.getMrtConditionValue());
+		}
 		domain.setTtDayOfMonth(dto.getTtDayOfMonth());
-		domain.setTtEndDate(DateUtil.getDateObj(dto.getTtEndDate()));
-		domain.setTtStartDate(DateUtil.getDateObj(dto.getTtStartDate()));
+		if(dto.getTtEndDate()!=null){
+			domain.setTtEndDate(DateUtil.getDateObj(dto.getTtEndDate()));
+		}
+		if(dto.getTtStartDate()!=null){
+			domain.setTtStartDate(DateUtil.getDateObj(dto.getTtStartDate()));
+		}
 		domain.setLastTriggeredDate(dto.getLastTriggeredDate());
 		domain.setMrtLogicType(dto.getMrtLogicType());
 		domain.setMrtNextMeterReading(dto.getMrtNextMeterReading());

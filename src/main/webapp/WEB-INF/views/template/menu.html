@@ -45,6 +45,11 @@
                     <i class="icon-custom icon-work-order"></i> <span class="title">Work Order</span>
 				</a>
 			</li>
+			<li>
+				<a th:href="@{/exworkorder/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).WORK_ORDER.id)">
+                    <i class="icon-custom icon-work-order"></i> <span class="title">Ex Workorder</span>
+				</a>
+			</li> 
             <li>
                 <a th:href="@{/scheduledmaintenance/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).SCHEDULED_MAINTENANCE.id)">
                     <i class="icon-custom icon-shedule-maintain"></i> <span class="title">Scheduled Maintenance</span>

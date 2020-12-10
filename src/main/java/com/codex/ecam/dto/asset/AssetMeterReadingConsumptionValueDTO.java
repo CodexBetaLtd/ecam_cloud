@@ -6,7 +6,7 @@ public class AssetMeterReadingConsumptionValueDTO extends BaseDTO {
 
     private Integer assetMeterReadingValueId;
     private String variable;
-    private Double value;
+    private Double value=0.0;
     
 	public Integer getAssetMeterReadingValueId() {
 		return assetMeterReadingValueId;

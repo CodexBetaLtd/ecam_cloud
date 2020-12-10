@@ -33,6 +33,7 @@ import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanc
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 import com.codex.ecam.model.maintenance.workorder.WorkOrderLog;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerService;
 import com.codex.ecam.service.maintenance.api.ScheduledService;
@@ -148,12 +149,15 @@ public class ScheduledMaintenanceTriggerServiceImpl implements ScheduledMaintena
 
 	@Override
 	public WorkOrder createWorkOrderFromTrigger(ScheduledMaintenanceTrigger smt) throws Exception {
-
 		WorkOrder wo = ScheduledMaintenanceTriggerToWorkOrderMapper.getInstance().createWorkOrderFromTrigger(smt);
-		wo.setCode("123");
+		String code=workOrderService.findCurrentWorkOrderCode(smt.getAsset().getBusiness().getId()).getData();
+		wo.setCode(code);
 
 		if ( smt.getTriggerType().equals( SMTriggerType.TIME_TRIGGER )) {
 			scheduledService.setNextCalendarEvent(smt, smt.getTtNextCalenderEvent().getScheduledDate());
+		}
+		if ( smt.getTriggerType().equals( SMTriggerType.METER_READING_TRIGGER )) {
+			scheduledService.setNextMeterReading(smt);
 		}
 
 		return wo;

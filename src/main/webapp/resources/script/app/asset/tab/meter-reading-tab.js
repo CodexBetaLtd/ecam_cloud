@@ -237,7 +237,10 @@ var TabMeterReading = function () {
         assetMeterReading['consumptionFormula'] = $("#formula").val();
         assetMeterReading['meterReadingConsumptionValues'] = "";
         assetMeterReading['consumptionVariableDTO'] = [];
-        addMeterReadingConunsumptionVariables(assetMeterReading);
+        if(assetMeterReading['isMultipleMeterReading'] ){
+            addMeterReadingConunsumptionVariables(assetMeterReading);
+
+        }
         addAssetMeterReadingToList(assetMeterReading);
         resetAssetMeterReadingHtmlTable();
         $('#master-modal-datatable').modal('toggle');
@@ -331,6 +334,7 @@ var TabMeterReading = function () {
     
     
     var setMeterReadingValriableToList=function(index,assetMeterReading){
+    	console.log(assetMeterReading)
     	var html="";
     	var consumptionVariables=assetMeterReading['consumptionVariableDTO'];
         if (consumptionVariables.length > 0) {

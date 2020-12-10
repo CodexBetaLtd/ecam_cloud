@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.ResultStatus;
+import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTriggerType;
 import com.codex.ecam.dao.admin.AccountDao;
 import com.codex.ecam.dao.admin.ChargeDepartmentDao;
@@ -50,6 +51,8 @@ import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenan
 import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenancePartMapper;
 import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenanceTaskMapper;
 import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenanceTriggerMapper;
+import com.codex.ecam.model.asset.AssetMeterReading;
+import com.codex.ecam.model.asset.AssetMeterReadingValue;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.maintenance.CalendarEvent;
 import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenance;
@@ -422,8 +425,29 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 	private void setAssetMeterReading(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		if ((dto.getMrtAssetMeterReadingId() != null) && (dto.getMrtAssetMeterReadingId() > 0)) {
-			domain.setMrtAssetMeterReading(assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId()));
+			AssetMeterReading assetMeterReading=assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
+
+			domain.setMrtAssetMeterReading(assetMeterReading);
+			Double mrtNextMeterReading=0.0;
+			if(domain.getTriggerType().equals(SMTriggerType.METER_READING_TRIGGER)){
+				if(domain.getMrtType().equals(SMMeterReadingType.EVERY)){
+					mrtNextMeterReading=dto.getMrtStartMeterReading()+dto.getMrtEveryValue();
+				}else if(domain.getMrtType().equals(SMMeterReadingType.WHEN)){
+					mrtNextMeterReading=dto.getMrtConditionValue();
+				}
+			}
+
+			domain.setMrtNextMeterReading(mrtNextMeterReading);
+			setMeterReadingData(dto,domain);
 		}
+	}
+	
+	private void setMeterReadingData(ScheduledMaintenanceTriggerDTO dto,ScheduledMaintenanceTrigger domain){
+		domain.setMrtLogicType(dto.getMrtLogicType());
+		domain.setMrtType(dto.getMrtType());
+		domain.setMrtEndMeterReading(dto.getMrtEndMeterReading());
+		domain.setMrtStartMeterReading(dto.getMrtStartMeterReading());
+
 	}
 
 	private void setAssetEventTypeAsset(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {

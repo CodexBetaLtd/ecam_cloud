@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.MeterReadingLogicType;
+import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTriggerType;
 import com.codex.ecam.constants.WorkOrderStatus;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceTriggerDao;
@@ -102,7 +103,7 @@ public class ScheduledServiceImpl implements ScheduledService {
 		}
 	}
 
-	private void createWorkOrderFromTriggerType(ScheduledMaintenanceTrigger smt, SMTriggerType triggerType) {
+	public void createWorkOrderFromTriggerType(ScheduledMaintenanceTrigger smt, SMTriggerType triggerType) {
 
 		if( smt.getTriggerType().equals(triggerType) && isAllSMWorkOrdersClosed( smt.getScheduledMaintenanceTasks() ) ){
 
@@ -207,35 +208,57 @@ public class ScheduledServiceImpl implements ScheduledService {
 	private boolean isNextMeterReadingEventFired(ScheduledMaintenanceTrigger tr) {
 
 		Double currentValue = tr.getMrtAssetMeterReading().getCurrentAssetMeterReadingValue().getMeterReadingValue();
+		if(tr.getMrtType().equals(SMMeterReadingType.WHEN)){
+			if (tr.getMrtLogicType().equals(MeterReadingLogicType.GREATER_THAN)) {
 
-		if (tr.getMrtLogicType().equals(MeterReadingLogicType.GREATER_THAN)) {
+				if (currentValue > tr.getConditionValue()) {
 
-			if (currentValue > tr.getConditionValue()) {
+					return true;
+				}
 
-				return true;
-			}
+			} else if (tr.getMrtLogicType().equals(MeterReadingLogicType.LESS_THAN)) {
 
-		} else if (tr.getMrtLogicType().equals(MeterReadingLogicType.LESS_THAN)) {
+				if (currentValue < tr.getConditionValue()) {
 
-			if (currentValue < tr.getConditionValue()) {
+					return true;
+				}
 
-				return true;
-			}
+			} else if (tr.getMrtLogicType().equals(MeterReadingLogicType.GREATER_THAN_EQUAL)) {
 
-		} else {
+				if (currentValue >= tr.getConditionValue()) {
 
+					return true;
+				}
+
+			} 
+			else if (tr.getMrtLogicType().equals(MeterReadingLogicType.LESS_THAN_EQUAL)) {
+
+				if (currentValue <= tr.getConditionValue()) {
+
+					return true;
+				}
+
+			} 
+		}else if(tr.getMrtType().equals(SMMeterReadingType.EVERY)){
 			if (currentValue.equals(tr.getMrtNextMeterReading())) {
 				Double nextValue = tr.getMrtNextMeterReading() + tr.getConditionValue();
 
-				if (nextValue <= tr.getMrtEndMeterReading()) {
+				if(!tr.getNoEndValue()){
+					if (nextValue <= tr.getMrtEndMeterReading()) {
+						tr.setMrtNextMeterReading(nextValue);
+					} else {
+						tr.setMrtNextMeterReading(null);
+					}
+				}else{
 					tr.setMrtNextMeterReading(nextValue);
-				} else {
-					tr.setMrtNextMeterReading(null);
+
 				}
+
 
 				return true;
 			}
 		}
+
 
 		return false;
 	}
@@ -268,4 +291,8 @@ public class ScheduledServiceImpl implements ScheduledService {
 		scheduledMaintenanceTriggerDao.save(smt);
 	}
 
+	public void setNextMeterReading(ScheduledMaintenanceTrigger smt) {
+;
+		scheduledMaintenanceTriggerDao.save(smt);
+	}
 }

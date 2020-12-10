@@ -45,6 +45,9 @@ public class Supplier extends BaseModel {
 
 	@Column(name="city")
 	private String city;
+	
+	@Column(name="is_service_provider")
+	private Boolean isServiceProvider;
 
 	@Column(name="code")
 	private String code;
@@ -235,6 +238,14 @@ public class Supplier extends BaseModel {
 
 	public void setWebSite(String webSite) {
 		this.webSite = webSite;
+	}
+
+	public Boolean getIsServiceProvider() {
+		return isServiceProvider;
+	}
+
+	public void setIsServiceProvider(Boolean isServiceProvider) {
+		this.isServiceProvider = isServiceProvider;
 	}
 
 }

@@ -6,7 +6,10 @@ import java.util.List;
 public enum MeterReadingLogicType {
 	
 	GREATER_THAN(1, "Greater Than"),
-	LESS_THAN(2, "Less Than");
+	LESS_THAN(2, "Less Than"),
+	GREATER_THAN_EQUAL(3, "Greater Than or Equal"),
+	LESS_THAN_EQUAL(4, "Less Than or Equal");
+	
 
     private Integer id;
     private String name;
@@ -21,6 +24,8 @@ public enum MeterReadingLogicType {
 
         list.add(GREATER_THAN);
         list.add(LESS_THAN);
+        list.add(GREATER_THAN_EQUAL);
+        list.add(LESS_THAN_EQUAL);
 
         return list;
     }

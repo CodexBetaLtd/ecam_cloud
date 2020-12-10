@@ -43,6 +43,7 @@ public class SupplierDTO extends BaseDTO {
     private Integer countryId;
     private Integer businessId;
     private String businessName;
+    private Boolean isServiceProvider;
     private List<SupplierContactDTO> supplierContactDTOs = new ArrayList<>();
 
 
@@ -268,6 +269,14 @@ public class SupplierDTO extends BaseDTO {
 
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
+	}
+
+	public Boolean getIsServiceProvider() {
+		return isServiceProvider;
+	}
+
+	public void setIsServiceProvider(Boolean isServiceProvider) {
+		this.isServiceProvider = isServiceProvider;
 	}
 	
 	

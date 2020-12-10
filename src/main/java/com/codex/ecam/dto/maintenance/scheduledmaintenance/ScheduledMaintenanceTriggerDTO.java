@@ -18,7 +18,7 @@ public class ScheduledMaintenanceTriggerDTO extends BaseDTO {
 	private Integer assetId;
 	private String assetName;
 	private String summary;
-	private SMTriggerType triggerType;
+	private SMTriggerType triggerType=SMTriggerType.TIME_TRIGGER;
 	private Integer scheduledMaintenanceId;
 	private String scheduleDescription;
 
@@ -47,7 +47,7 @@ public class ScheduledMaintenanceTriggerDTO extends BaseDTO {
 
 	// meter reading trigger properties
 	private Integer mrtAssetMeterReadingId;
-	private SMMeterReadingType mrtType;
+	private SMMeterReadingType mrtType=SMMeterReadingType.EVERY;
 	private MeterReadingLogicType mrtLogicType;
 	private String mrtLogicTypeName;
 	private Double mrtStartMeterReading;

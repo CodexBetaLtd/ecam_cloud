@@ -15,7 +15,11 @@ public interface ScheduledService {
 	void notifyAssetTrigger(Asset asset, SMTriggerType triggerType);
 
 	void setNextCalendarEvent(ScheduledMaintenanceTrigger smt, Date startDate);
+	
+	 void setNextMeterReading(ScheduledMaintenanceTrigger smt);
 
 	boolean isAllSMWorkOrdersClosed(Set<ScheduledMaintenanceTask> smTasks);
+	
+	void createWorkOrderFromTriggerType(ScheduledMaintenanceTrigger smt, SMTriggerType triggerType);
 
 }

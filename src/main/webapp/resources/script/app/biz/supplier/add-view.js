@@ -28,6 +28,23 @@ var SupplierBusinessAdd = function () {
         });
     };
 
+    var runProviderSwitch = function () {
+        var state = false;
+        if ($('#isProvider').val() == 'true') {
+            state = true;
+        }
+        $('#isProvider').bootstrapSwitch({
+            onText: "Supplier",
+            offText: "Provider",
+            state: state
+        }).on('switchChange.bootstrapSwitch', function (event, state) {
+            if ($('#isProvider').val() == 'true') {
+                $('#isProvider').val('false');
+            } else {
+                $('#isProvider').val('true');
+            }
+        });
+    };
     var runValidator = function () {
         var form = $('#supplierBusinessAddForm');
         var errorHandler = $('.errorHandler', form);
@@ -114,11 +131,12 @@ var SupplierBusinessAdd = function () {
 
     return {
         init: function () {
-            runValidator();
+           // runValidator();
             runCurrencySelect();
             initDropDownBusiness();
             runClassificationSelect();
             runCountrySelect();
+            runProviderSwitch();
         }
     };
 }();

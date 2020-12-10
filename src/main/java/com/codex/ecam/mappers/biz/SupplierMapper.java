@@ -36,7 +36,7 @@ public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 		dto.setCity(domain.getCity());
 		dto.setProvince(domain.getProvince());
 		dto.setPostalCode(domain.getPostalcode());
-
+dto.setIsServiceProvider(domain.getIsServiceProvider());
 		if (domain.getCountry() != null) {
 			dto.setCountryId(domain.getCountry().getId());
 		}
@@ -63,6 +63,8 @@ public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 		domain.setCity(dto.getCity());
 		domain.setProvince(dto.getProvince());
 		domain.setPostalcode(dto.getPostalCode());
+		domain.setIsServiceProvider(dto.getIsServiceProvider());
+
 
 		setCommanDomainFields(dto, domain);
 
