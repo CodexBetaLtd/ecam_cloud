@@ -707,6 +707,22 @@ margin-right: auto;
 text-align: center;
 font-weight: bold;
 }
+
+.badge{
+	background-color: #ED3C40 !important;
+}
+
+.clip-notification-2{
+	color: #272727!important;
+}
+
+.no-overflow {
+  display: block;
+  white-space: nowrap;
+  width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /*body { zoom: 5; }
 /* body {
     zoom: 1;

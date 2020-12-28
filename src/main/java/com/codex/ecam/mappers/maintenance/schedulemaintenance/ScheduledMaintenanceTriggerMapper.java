@@ -98,7 +98,7 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 			break;
 
 		case METER_READING_TRIGGER:
-			dto.setNextTrigger("" + domain.getMrtNextMeterReading() + " " + domain.getMrtAssetMeterReading().getMeterReadingUnit());
+			dto.setNextTrigger("" + domain.getMrtNextMeterReading() + " " + domain.getMrtAssetMeterReading().getMeterReadingUnit().getSymbol());
 			break;
 
 		default:

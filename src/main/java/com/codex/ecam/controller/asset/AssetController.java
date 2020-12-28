@@ -1,5 +1,6 @@
 package com.codex.ecam.controller.asset;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.biz.api.BusinessTypeService;
 import com.codex.ecam.service.biz.api.SupplierService;
+import com.codex.ecam.util.AzureEventHubUtil;
+import com.codex.ecam.util.SendGridUtil;
 
 @Controller
 @RequestMapping(AssetController.REQUEST_MAPPING_URL)
@@ -80,13 +83,16 @@ public class AssetController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
-		return "asset/home-view";
+
+	return "asset/home-view";
 	}
 
 	@RequestMapping(value = "/machine", method = RequestMethod.GET)
 	public String indexMachine(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
 		model.addAttribute("error", error);
+
+
 		return "asset/machine/home-view";
 	}
 	
@@ -110,6 +116,7 @@ public class AssetController {
 			@ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
 		model.addAttribute("error", error);
+
 		return "asset/machine/home-view :: tableDiv";
 	}
 	

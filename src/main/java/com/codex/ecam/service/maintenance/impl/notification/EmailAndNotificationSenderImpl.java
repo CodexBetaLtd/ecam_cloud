@@ -9,6 +9,7 @@ import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dto.biz.notification.NotificationDTO;
 import com.codex.ecam.service.maintenance.api.EmailAndNotificationSender;
 import com.codex.ecam.service.notification.api.NotificationService;
+import com.codex.ecam.util.SendGridUtil;
 
 @Service
 public class EmailAndNotificationSenderImpl implements EmailAndNotificationSender {
@@ -24,11 +25,18 @@ public class EmailAndNotificationSenderImpl implements EmailAndNotificationSende
     public void sendMail(Integer userId, String subject, String msg) {
         try {
             String email = userDao.findOne(userId).getEmailAddress();
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject(subject);
-            message.setText(msg);
-            mailSender.send(message);
+//            SimpleMailMessage message = new SimpleMailMessage();
+//            message.setTo(email);
+//            message.setSubject(subject);
+//            message.setText(msg);
+//            mailSender.send(message);
+            if(email!=null){
+        		SendGridUtil.sendSimpleMessae(subject,msg,email);
+
+            }else{
+        		SendGridUtil.sendSimpleMessae(subject,msg,"yapaslk93@gmail.com");
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -48,6 +56,5 @@ public class EmailAndNotificationSenderImpl implements EmailAndNotificationSende
         }
 
     }
-
-
+    
 }

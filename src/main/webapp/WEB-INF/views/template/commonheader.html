@@ -1,104 +1,146 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:sec="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 
 <!-- start: HEADER -->
-<div class="navbar navbar-inverse navbar-fixed-top" th:fragment="commonheader">
-    <!-- start: LOADING PROGRESS BAR-->
-    <div id="loader" class="progress progress-striped active loadprogress">
-    <img th:src="@{/resources/images/eCAM.gif}">
-        <!--<div class="progress-bar loadprogress-bar" role="progressbar" aria-valuenow="100"
+<div class="navbar navbar-inverse navbar-fixed-top"
+	th:fragment="commonheader">
+	<!-- start: LOADING PROGRESS BAR-->
+	<div id="loader" class="progress progress-striped active loadprogress">
+		<img th:src="@{/resources/images/eCAM.gif}">
+		<!--<div class="progress-bar loadprogress-bar" role="progressbar" aria-valuenow="100"
              aria-valuemin="0" aria-valuemax="100">
         </div>-->
-    </div>
-    <!-- END: LOADING PROGRESS BAR--->
-        <!-- start: TOP NAVIGATION CONTAINER -->
-        <div class="container">
-            <div class="navbar-header">
-            <div class="navbar-tools visible-xs">
-                <!-- start: TOP NAVIGATION MENU -->
-                <ul class="nav navbar-right">   
-                                   
-                    <!-- start: USER DROPDOWN -->
-                    <li class="dropdown current-user">
+	</div>
+	<!-- END: LOADING PROGRESS BAR--->
+	<!-- start: TOP NAVIGATION CONTAINER -->
+	<div class="container">
+		<div class="navbar-header">
+			<div class="navbar-tools visible-xs">
+				<!-- start: TOP NAVIGATION MENU -->
+				<ul class="nav navbar-right">
+
+					<!-- start: USER DROPDOWN -->
+					<li class="dropdown current-user"><a data-toggle="dropdown"
+						data-hover="dropdown" class="dropdown-toggle"
+						data-close-others="true" href="#"> <span class="username"
+							th:text="${T(com.codex.ecam.util.AuthenticationUtil).getUserName()}"></span>
+							<i class="clip-chevron-down"></i>
+					</a>
+						<ul class="dropdown-menu">
+							<li><a th:href="@{/profile/myaccount}"> <i
+									class="clip-user-2"></i> &nbsp;My Profile
+							</a></li>
+							<li sec:authorize="hasAnyAuthority('GENERAL_LEVEL')"><a
+								th:href="@{/}"> <i class="clip-bubble-4"></i> &nbsp;Switch
+									Site / Business
+							</a></li>
+							<li class="divider"></li>
+							<li><a th:href="@{/logout}"> <i class="clip-exit"></i>
+									&nbsp;Log Out
+							</a></li>
+						</ul></li>
+					<!-- end: USER DROPDOWN -->
+
+				</ul>
+				<!-- end: TOP NAVIGATION MENU -->
+			</div>
+			<!-- start: RESPONSIVE MENU TOGGLER -->
+			<button data-target=".navbar-collapse" data-toggle="collapse"
+				class="navbar-toggle" type="button">
+				<span class="clip-list-2"></span>
+			</button>
+			<!-- end: RESPONSIVE MENU TOGGLER -->
+
+			<!-- start: LOGO -->
+			<a class="navbar-brand" th:href="@{/}"> <img
+				th:src="@{/resources/images/ecam_logo.png}"
+				style="padding: 0px; margin: -12px; height: auto; width: 106px; margin-left: unset;">
+
+			</a>
+			<!-- end: LOGO -->
+
+		</div>
+
+		<div class="navbar-tools hidden-xs">
+			<!-- start: TOP NAVIGATION MENU -->
+			<ul class="nav navbar-right">
+			                    <!-- start: NOTIFICATION DROPDOWN -->
+                    <li class="dropdown">
                         <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" data-close-others="true" href="#">
-                            <span class="username" th:text="${T(com.codex.ecam.util.AuthenticationUtil).getUserName()}" ></span>
-                            <i class="clip-chevron-down"></i>
+                            <i class="fa fa-bell"></i>
+                            <span class="badge notif-count"> 0</span>
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu notifications">
                             <li>
-                                <a th:href="@{/profile/myaccount}">
-                                    <i class="clip-user-2"></i> &nbsp;My Profile
-                                </a>
+                                <span class="dropdown-menu-title"> You have <span class="notif-count">0</span> notifications</span>
                             </li>
-                            <li sec:authorize="hasAnyAuthority('GENERAL_LEVEL')">
-                                <a th:href="@{/}">
-                                    <i class="clip-bubble-4"></i> &nbsp;Switch Site / Business
-                                </a>
-                            </li>
-                            <li class="divider"></li>
                             <li>
-                                <a th:href="@{/logout}">
-                                    <i class="clip-exit"></i> &nbsp;Log Out
-                                </a>
+                                <div class="drop-down-wrapper">
+                                    <ul id="notificationList">
+                                        
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="view-all">
+                                <a th:href="@{/notification/inbox}">
+                                See all notifications <i class="fa fa-arrow-circle-o-right"></i>
+                            </a>
                             </li>
                         </ul>
-                     </li>
-                     <!-- end: USER DROPDOWN -->
-                     
-                </ul>
-                <!-- end: TOP NAVIGATION MENU -->
-            </div>
-                <!-- start: RESPONSIVE MENU TOGGLER -->
-                <button data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
-	                <span class="clip-list-2"></span>
-	            </button>
-                <!-- end: RESPONSIVE MENU TOGGLER -->
-                
-                <!-- start: LOGO -->
-                <a class="navbar-brand" th:href="@{/}">
-              <img th:src="@{/resources/images/ecam_logo.png}" style="padding:0px;margin:-12px;height:auto;width:106px;margin-left: unset;">
-                
-                </a>
-                <!-- end: LOGO -->
-                
-            </div>
-            
-            <div class="navbar-tools hidden-xs">
-                <!-- start: TOP NAVIGATION MENU -->
-                <ul class="nav navbar-right">   
-                                   
-                    <!-- start: USER DROPDOWN -->
-                    <li class="dropdown current-user">
-                        <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" data-close-others="true" href="#">
-                            <span class="username" th:text="${T(com.codex.ecam.util.AuthenticationUtil).getUserName()}" ></span>
-                            <i class="clip-chevron-down"></i>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a th:href="@{/profile/myaccount}">
-                                    <i class="clip-user-2"></i> &nbsp;My Profile
-                                </a>
-                            </li>
-                            <li sec:authorize="hasAnyAuthority('GENERAL_LEVEL')">
-                                <a th:href="@{/}">
-                                    <i class="clip-bubble-4"></i> &nbsp;Switch Site / Business
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a th:href="@{/logout}">
-                                    <i class="clip-exit"></i> &nbsp;Log Out
-                                </a>
-                            </li>
-                        </ul>
-                     </li>
-                     <!-- end: USER DROPDOWN -->
-                     
-                </ul>
-                <!-- end: TOP NAVIGATION MENU -->
-            </div>
-            
-        </div>
-        <!-- end: TOP NAVIGATION CONTAINER -->
-    </div>
+                    </li>
+                    <!-- end: NOTIFICATION DROPDOWN -->
+                    <!-- start: MESSAGE DROPDOWN -->
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-close-others="true" data-hover="dropdown"
+					data-toggle="dropdown" href="#"> <i class="clip-bubble-3"></i>
+						<span class="badge msg-count">0</span>
+				</a>
+					<ul class="dropdown-menu posts">
+						<li><span class="dropdown-menu-title"> You have <span
+								class="msg-count">0</span> messages
+						</span></li>
+						<li>
+							<div class="drop-down-wrapper">
+								<ul id="messageList">
+
+
+								</ul>
+							</div>
+						</li>
+						<li class="view-all"><a th:href="@{/notification/inbox}">
+								See all messages <i class="fa fa-arrow-circle-o-right"></i>
+						</a></li>
+					</ul></li>
+				<!-- end: MESSAGE DROPDOWN -->
+				<!-- start: USER DROPDOWN -->
+				<li class="dropdown current-user"><a data-toggle="dropdown"
+					data-hover="dropdown" class="dropdown-toggle"
+					data-close-others="true" href="#"> <span class="username"
+						th:text="${T(com.codex.ecam.util.AuthenticationUtil).getUserName()}"></span>
+						<i class="clip-chevron-down"></i>
+				</a>
+					<ul class="dropdown-menu">
+						<li><a th:href="@{/profile/myaccount}"> <i
+								class="clip-user-2"></i> &nbsp;My Profile
+						</a></li>
+						<li sec:authorize="hasAnyAuthority('GENERAL_LEVEL')"><a
+							th:href="@{/}"> <i class="clip-bubble-4"></i> &nbsp;Switch
+								Site / Business
+						</a></li>
+						<li class="divider"></li>
+						<li><a th:href="@{/logout}"> <i class="clip-exit"></i>
+								&nbsp;Log Out
+						</a></li>
+					</ul></li>
+				<!-- end: USER DROPDOWN -->
+
+			</ul>
+			<!-- end: TOP NAVIGATION MENU -->
+		</div>
+
+	</div>
+	<!-- end: TOP NAVIGATION CONTAINER -->
+</div>
 </html>

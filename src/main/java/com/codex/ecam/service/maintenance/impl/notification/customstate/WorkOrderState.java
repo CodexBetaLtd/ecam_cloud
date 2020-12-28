@@ -13,7 +13,35 @@ public class WorkOrderState {
 	EmailNotificationSubject emailNotificationSubject = null;
 	EmailAndNotificationSender emailAndNotificationSender;
 
+	public void setNotificationOnAsigned(WorkOrderDTO workOrderDTO, EmailAndNotificationSender emailAndNotificationSender) {
+		List<Integer> assignmentNotifyUserList =
+				workOrderDTO.getNotifications().stream()
+				.filter(p -> p.getNotifyOnAssignment() == Boolean.TRUE)
+				.map(p -> p.getUserId())
+				.collect(Collectors.toList());
+		workOrderDTO.setAssignmentNotifyUserList(assignmentNotifyUserList);
+		WorkOrderContext workOrderContext = new WorkOrderContext(workOrderDTO);
 
+		workOrderContext.setState(new OnAssignmentState(emailNotificationSubject, emailAndNotificationSender));
+		workOrderContext.upDateStateAction();
+		System.out.println("*** On Assigend ***");
+
+	}
+	
+	public void setNotificationOnTaskComplete(WorkOrderDTO workOrderDTO, EmailAndNotificationSender emailAndNotificationSender) {
+		List<Integer> taskCompletionNotifyUserList =
+				workOrderDTO.getNotifications().stream()
+				.filter(p -> p.getNotifyOnCompletion() == Boolean.TRUE)
+				.map(p -> p.getUserId())
+				.collect(Collectors.toList());
+		workOrderDTO.setTaskCompletionNotifyUserList(taskCompletionNotifyUserList);
+		WorkOrderContext workOrderContext = new WorkOrderContext(workOrderDTO);
+
+		workOrderContext.setState(new OnAssignmentState(emailNotificationSubject, emailAndNotificationSender));
+		workOrderContext.upDateStateAction();
+		System.out.println("*** On Assigend ***");
+
+	}
 	public void setNotificationStateType(WorkOrderDTO workOrderDTO, EmailAndNotificationSender emailAndNotificationSender) {
 
 		List<Integer> statusChangeNotifyUserList =
@@ -21,14 +49,6 @@ public class WorkOrderState {
 				.filter(p -> p.getNotifyOnStatusChange() == Boolean.TRUE)
 				.map(p -> p.getUserId())
 				.collect(Collectors.toList());
-
-
-		List<Integer> assignmentNotifyUserList =
-				workOrderDTO.getNotifications().stream()
-				.filter(p -> p.getNotifyOnAssignment() == Boolean.TRUE)
-				.map(p -> p.getUserId())
-				.collect(Collectors.toList());
-
 
 		List<Integer> completionNotifyUserList =
 				workOrderDTO.getNotifications().stream()
@@ -42,17 +62,11 @@ public class WorkOrderState {
 				.map(p -> p.getUserId())
 				.collect(Collectors.toList());
 
-		List<Integer> taskCompletionNotifyUserList =
-				workOrderDTO.getNotifications().stream()
-				.filter(p -> p.getNotifyOnCompletion() == Boolean.TRUE)
-				.map(p -> p.getUserId())
-				.collect(Collectors.toList());
+
 
 		workOrderDTO.setStatusChangeNotifyUserList(statusChangeNotifyUserList);
-		workOrderDTO.setAssignmentNotifyUserList(assignmentNotifyUserList);
 		workOrderDTO.setCompletionNotifyUserList(completionNotifyUserList);
 		workOrderDTO.setOnlineOfflineNotifyUserList(onlineOfflineNotifyUserList);
-		workOrderDTO.setTaskCompletionNotifyUserList(taskCompletionNotifyUserList);
 
 
 		WorkOrderContext workOrderContext = new WorkOrderContext(workOrderDTO);
@@ -82,9 +96,7 @@ public class WorkOrderState {
         System.out.println("*** On Online Offline ***");
 		 */
 
-		workOrderContext.setState(new OnAssignmentState(emailNotificationSubject, emailAndNotificationSender));
-		workOrderContext.upDateStateAction();
-		System.out.println("*** On Completion ***");
+
 
 
 	}

@@ -4,6 +4,6 @@ import com.codex.ecam.dto.maintenance.workOrder.WorkOrderDTO;
 
 public interface State {
 
-    void stateAction(WorkOrderDTO workOrderDTO);
+	void stateAction(WorkOrderDTO workOrderDTO);
 
 }

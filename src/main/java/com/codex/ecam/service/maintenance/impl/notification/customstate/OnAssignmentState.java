@@ -23,4 +23,7 @@ public class OnAssignmentState implements State {
         emailNotificationSubject.registerObserver(onAssignmentObserver);
         emailNotificationSubject.setWorkOrderDTO(workOrderDTO);
     }
+
+
+
 }

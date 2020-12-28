@@ -23,8 +23,8 @@ public class OnStatusChangeObserver implements EmailNotificationObserver {
 	public void onStatusChange(WorkOrderDTO workOrderDTO) {
 		try {
 			for (Integer userId : workOrderDTO.getStatusChangeNotifyUserList()) {
-				String subject = "Work Order On Status Change";
-				String message = " Work Order On Status Change Email Body";
+				String subject = "Work Order Status Change "+workOrderDTO.getCode();
+				String message = " Work Order Status Change from "+ workOrderDTO.getPreviousWorkOrderStatus().getName()+" to "+workOrderDTO.getWorkOrderStatus().getName() ;
 				emailAndNotificationSender.sendMail(userId, subject, message);
 				emailAndNotificationSender.sendNotification(userId, subject, message);
 			}

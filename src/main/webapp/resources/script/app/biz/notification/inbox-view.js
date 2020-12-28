@@ -149,7 +149,7 @@ var InboxNotification = function () {
                 }
             },
             aaSorting: [
-                [1, 'asc']
+                [1, 'desc']
             ],
             aLengthMenu: [
                 [5, 10, 15, 20, -1],

@@ -184,7 +184,6 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		WorkOrderMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setWorkOrderData(result);
 		workOrderDao.save(result.getDomainEntity());
-		stateChange(result.getDtoEntity());
 		result.addToMessageList(getMessageByAction(result));
 		result.updateDtoIdAndVersion();
 	}
@@ -311,6 +310,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 					workOrderNotification = new WorkOrderNotification();
 				}
 				createNotification(workOrderNotification, workOrderNotificationDTO, result.getDomainEntity());
+				if(workOrderNotificationDTO.getId()==null){
+					stateChange(result.getDtoEntity());
+				}
 				workOrderNotifications.add(workOrderNotification);
 			}
 		}
@@ -322,6 +324,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 			throws Exception {
 		WorkOrderNotificationMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setUser(dto.getUserId() != null ? userDao.findOne(dto.getUserId()) : null);
+
 		domain.setWorkOrder(workOrder);
 	}
 
@@ -472,7 +475,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private void stateChange(WorkOrderDTO workOrderDTO) {
 		WorkOrderState workOrderState = new WorkOrderState();
-		workOrderState.setNotificationStateType(workOrderDTO, emailAndNotificationSender);
+		workOrderState.setNotificationOnAsigned(workOrderDTO, emailAndNotificationSender);
 	}
 
 	private void setWorkOrderTaskPart(WorkOrderResult result, WorkOrderTaskDTO taskDto, WorkOrderTask task) throws Exception {
@@ -722,7 +725,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	
 	@Override
 	public WorkOrderResult statusChange(Integer id, WorkOrderStatus status, String date, String note) throws Exception {
-		WorkOrderResult result = new WorkOrderResult(workOrderDao.findOne(id), new WorkOrderDTO());
+
+		WorkOrderResult result = new WorkOrderResult(workOrderDao.findOne(id), findById(id));
 		try {
 			setStatusChangeData(result, status, date, note); 
 			result.setResultStatusSuccess();
@@ -747,10 +751,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		workOrderNote.setNotes(note);
 		workOrderNote.setNoteDate(DateUtil.getDateObj(date));
 		workOrderNote.setWorkOrder(result.getDomainEntity());
+		
 		workOrderNote.setWorkOrderStatus(status);
 		workOrderNote.setIsDeleted(false);
 		result.getDomainEntity().getWorkOrderNotes().add(workOrderNote);
 		result.getDomainEntity().setCurrentStatus(workOrderNote);
+		WorkOrderState workOrderState = new WorkOrderState();
+		result.getDtoEntity().setPreviousWorkOrderStatus(result.getDtoEntity().getWorkOrderStatus());
+		result.getDtoEntity().setWorkOrderStatus(status);
+		workOrderState.setNotificationStateType(result.getDtoEntity(), emailAndNotificationSender);
 	}
 
 	private void updatePartStocks(WorkOrderResult result, WorkOrderStatus status) {

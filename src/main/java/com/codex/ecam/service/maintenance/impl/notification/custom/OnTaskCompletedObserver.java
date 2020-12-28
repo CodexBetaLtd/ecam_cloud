@@ -1,6 +1,7 @@
 package com.codex.ecam.service.maintenance.impl.notification.custom;
 
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderDTO;
+import com.codex.ecam.dto.maintenance.workOrder.WorkOrderNotificationDTO;
 import com.codex.ecam.service.maintenance.api.EmailAndNotificationSender;
 
 public class OnTaskCompletedObserver implements EmailNotificationObserver {
@@ -20,11 +21,12 @@ public class OnTaskCompletedObserver implements EmailNotificationObserver {
 
 	public void onTaskCompleted(WorkOrderDTO workOrderDTO){
 		try {
-			//            String email = "";
-			//            String subject = "Work Order Task Completed";
-			//            String message = " Work Order Task Completed Email Body";
-			//            emailAndNotificationSender.sendMail(subject,message);
-			//            emailAndNotificationSender.sendNotification(subject,message);
+			            String subject = "Work Order Task Completed";
+			            String message = " Work Order Task Completed Email Body";
+			            for(WorkOrderNotificationDTO dto:workOrderDTO.getNotifications()){
+				            emailAndNotificationSender.sendMail(dto.getUserId(),subject,message);
+				            emailAndNotificationSender.sendNotification(dto.getUserId(),subject,message);
+			            }
 		}catch (Exception ex){
 			ex.printStackTrace();
 			throw new RuntimeException();
