@@ -18,6 +18,5 @@ pipelines:
           name: Deploy to azure
           trigger: manual
           script:
-            - bash ./gradlew build -x test 
-            - bash curl -X POST -u $AWS_USER:$AWS_PW https://ecam-sajith.scm.azurewebsites.net/api/wardeploy --data-binary ./build/libs/ECAM.war
+            - curl -X POST -u $AWS_USER:$AWS_PW https://ecam-sajith.scm.azurewebsites.net/api/wardeploy --data-binary ./build/libs/ECAM.war
             
