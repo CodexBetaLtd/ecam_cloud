@@ -11,12 +11,10 @@ pipelines:
             - gradle
           script:
             - echo "------- AZURE BUILD ----------"                       
-            - echo $AWS_PW
-            - echo $AWS_USER
             - bash ./gradlew build -x test 
       - step:
           name: Deploy to azure
           trigger: manual
           script:
-            - curl -X POST -u $AWS_USER:$AWS_PW https://ecam-sajith.scm.azurewebsites.net/api/wardeploy --data-binary ./build/libs/ECAM.war
+            - curl -X POST -u $AZURE_USER:$AZURE_PW https://$AZURE_SITE.scm.azurewebsites.net/api/wardeploy --data-binary ./build/libs/ECAM.war
             
