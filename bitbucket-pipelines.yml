@@ -10,4 +10,5 @@ pipelines:
           script:
             - echo "------- AZURE BUILD ----------"                       
             - bash ./gradlew build -x test 
+            - bash ./azure.deploy.sh
             
