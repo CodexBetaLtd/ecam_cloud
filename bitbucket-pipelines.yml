@@ -9,5 +9,5 @@ pipelines:
       - step:
           script:
             - echo "------- AZURE BUILD ----------"                       
-            - bash gradle build -x test 
+            - bash ./gradlew build -x test 
             
