@@ -7,6 +7,8 @@ pipelines:
   branches:  # Pipelines that run automatically on a commit to a branch
     azure:
       - step:
+          caches:
+            - gradle
           script:
             - echo "------- AZURE BUILD ----------"                       
             - bash ./gradlew build -x test 
