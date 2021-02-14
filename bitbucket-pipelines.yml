@@ -4,15 +4,15 @@ pipelines:
       - step:
           script:
             - echo "--------- ECAM ---------"
-            - echo $AWS_PW
-            - echo $AWS_USER
-  branches:  # Pipelines that run automatically on a commit to a branch
+ branches:  # Pipelines that run automatically on a commit to a branch
     azure:
       - step:
           caches:
             - gradle
           script:
             - echo "------- AZURE BUILD ----------"                       
+            - echo $AWS_PW
+            - echo $AWS_USER
             - bash ./gradlew build -x test 
       - step:
           name: Deploy to azure
