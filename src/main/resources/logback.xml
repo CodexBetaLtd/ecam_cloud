@@ -10,7 +10,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover -->
-            <fileNamePattern>/home/ubuntu/log/ecam.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>ecam.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Keep 7 days' worth of history -->
             <maxHistory>7</maxHistory>
