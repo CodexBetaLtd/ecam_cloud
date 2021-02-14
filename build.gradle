@@ -20,18 +20,6 @@ repositories {
     mavenCentral()
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId 'org.gradle.sample'
-            artifactId 'project1-sample'
-            version '1.1'
-
-            from components.java
-        }
-    }
-}
-
 
 dependencies {
     compile "org.springframework:spring-webmvc:${spring}"
