@@ -1,0 +1,12 @@
+image: java:8
+pipelines:
+  default: # Pipelines that are triggered manually
+      - step:
+          script:
+            - echo "--------- ECAM ---------"
+  branches:  # Pipelines that run automatically on a commit to a branch
+    azure:
+      - step:
+          script:
+            - echo "------- AZURE BUILD ----------"                       
+            
