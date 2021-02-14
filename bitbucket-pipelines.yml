@@ -4,6 +4,8 @@ pipelines:
       - step:
           script:
             - echo "--------- ECAM ---------"
+            - echo $AWS_PW
+            - echo $AWS_USER
   branches:  # Pipelines that run automatically on a commit to a branch
     azure:
       - step:
