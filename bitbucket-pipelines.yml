@@ -4,7 +4,7 @@ pipelines:
       - step:
           script:
             - echo "--------- ECAM ---------"
- branches:  # Pipelines that run automatically on a commit to a branch
+  branches:  # Pipelines that run automatically on a commit to a branch
     azure:
       - step:
           caches:
