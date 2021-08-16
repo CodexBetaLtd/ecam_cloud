@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.MeterReadingLogicType;
 import com.codex.ecam.constants.ResultStatus;
+import com.codex.ecam.constants.SMABCTriggerType;
 import com.codex.ecam.constants.TaskType;
 import com.codex.ecam.constants.WorkOrderStatus;
 import com.codex.ecam.constants.util.Months;
@@ -103,6 +104,7 @@ public class ScheduledMaintenanceController {
 	public String getScheduleAddView(Model model) {
 		model.addAttribute("months", Months.getMonths());
 		model.addAttribute("meterReadingLogicTypes", MeterReadingLogicType.getMeterReadingLogics());
+		model.addAttribute("abcTriggerTypes", SMABCTriggerType.getSMABCTriggerTypeList());
 		return "maintenance/scheduledmaintenance/modal/trigger-add-modal";
 	}
 

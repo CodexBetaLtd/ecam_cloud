@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
+
+<head th:include="template/commoncss :: commoncss">
+
+</head>
+
+<body class="login example2">
+<div class="loader" ><img alt="" th:src="@{/resources/images/please_wait.gif}"></div>
+<div class="main-login col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 custom-meter-reading-add">
+
+    <div class="logo">FOCUS</div>
+
+    <!-- start: FORGOT BOX -->
+    <div class="box-forgot">
+    
+        <h2>Meter Reading Add</h2>
+        <p style="font-size: 19px;">
+            Enter your vehicle end meter value for update meter reading.
+        </p>
+
+        <form class="form-forgot" id="reservationDoneForm" role="form" th:action="@{/reservationdone/update-end-meter}" method="post">
+            <fieldset>
+                <div th:replace="template/messageview :: message"></div>
+                
+                <div class="row custom-meter-reading-add-row">
+					<div class="col-md-4 col-sm-4 col-xs-4">
+						<div class="form-group custom-lg-input">
+							<label class="control-label"> Vehicle No <span class="symbol required"></span></label>
+							 <div class="ui-widget">
+							  <input type="hidden" name="vehicleId" id="vehicleId" >
+							 <input type="search" placeholder="Insert vehicle No"name="vehicleNo" class="form-control input-lg" id="vehicleNo" >
+							 </div>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-4 col-xs-4">
+						<div class="form-group custom-lg-input">
+							<label class="control-label">End Meter <span class="symbol required"></span></label>
+							 <input type="number" placeholder="Insert the End meter" name="endMeter" class="form-control input-lg" id="endMeter" >
+							 <input type="hidden" class="form-control" id="startMeter" >
+						</div>
+					</div>
+					<div class="col-md-1 col-sm-1 col-xs-1" style="padding-top: 45px;">
+	                    <button id="submit" class="btn btn-matrix btn-lg">  Add Meter <i class="fa fa-sign-out"></i> </button>
+                	</div>
+	           		<div class="row" style="visibility: hidden;">
+						<button id="btn_submit" type="submit"></button>
+					</div>
+				</div>
+
+
+            </fieldset>
+        </form>
+        <div class="row matrix-box-bottom">
+           	    <!-- start: COPYRIGHT -->
+		    <div class="copyright">
+		        <script>
+		            document.write(new Date().getFullYear())
+		        </script> &copy; FOCUS by 
+		    </div>
+        	<img src="http://focus.neolithtech.com/img/partners/matrix-logo.png"  class="matrix-img">
+     
+    <!-- end: COPYRIGHT -->
+        </div>
+    </div>
+    <!-- end: FORGOT BOX -->
+
+
+</div>
+
+<div th:include="template/commonjs :: commonjs"></div>
+<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+<script type="text/javascript" th:src="@{//code.jquery.com/ui/1.10.4/jquery-ui.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/reservation-done.min.js}"></script>
+<script> 
+    jQuery(document).ready(function () {
+        Main.init();
+    	ReservationDone.init();
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org" class="no-js">
+<div class="row none row col-md-12" id="divabcTrigger"
+	th:fragment="abcTrigger">
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label class="control-label">Asset Meter Reading <span
+								class="symbol required"></span></label> <select
+								id="mrtAssetMeterReadingId2" name="mrtAssetMeterReadingId2"
+								class="search-select" style="width: 100%;">
+								<option value="">&nbsp;</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label class="control-label">Type <span
+								class="symbol required"></span></label> <select id="abcTypes" name="abcTypes" class="search-select"
+								style="width: 100%;">
+								<option value="">&nbsp;</option>
+								<option th:each="type : ${abcTriggerTypes}" th:value="${type}"
+									th:text="${type.name}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div  id="divEvery">
+					<div class="row">
+							<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">Start At <span
+									class="symbol required"></span>
+								</label> <input id="mrtStartMeterReading1" name="mrtStartMeterReading1"
+									placeholder="Insert Start Meter Reading" type="text"
+									class="form-control">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label"> Ending by </label> <input
+									id="mrtEndMeterReading1" name="mrtEndMeterReading1"
+									placeholder="Insert Ending Meter Reading" type="text"
+									class="form-control">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div >
+					<div class="row">
+						<div class="col-md-6"></div>
+						<div class="col-md-6">
+							<label class="radio-inline"> <input type="checkbox"
+								id="mrtNoEndReading1" class="grey">No Ending Meter
+								Reading
+							</label>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+</html>

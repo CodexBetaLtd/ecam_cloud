@@ -55,7 +55,6 @@ import com.codex.ecam.dao.inventory.BOMGroupPartDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceAssetDao;
-import com.codex.ecam.dao.maintenance.ScheduledMaintenanceDao;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetEventDTO;
@@ -95,15 +94,11 @@ import com.codex.ecam.model.inventory.bom.BOMGroup;
 import com.codex.ecam.model.inventory.bom.BOMGroupPart;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
-import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenance;
-import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanceAsset;
-import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanceTrigger;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.asset.AssetResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.asset.api.WarrantyService;
-import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceService;
 import com.codex.ecam.service.maintenance.api.ScheduledService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
@@ -170,18 +165,15 @@ public class AssetServiceImpl implements AssetService {
 
 	@Autowired
 	private SupplierDao supplierDao;
-	
+
 	@Autowired
 	AssetCategoryService assetCategoryService;
-	
+
 	@Autowired
 	ScheduledMaintenanceAssetDao scheduledMaintenanceAssetDao;
-	
+
 	@Autowired
 	ScheduledService scheduledService;
-	
-	
-	
 
 	@Override
 	public DataTablesOutput<AssetDTO> findAll(FocusDataTablesInput input) throws Exception {
@@ -376,7 +368,7 @@ public class AssetServiceImpl implements AssetService {
 		setAssetData(result, image);
 		assetDao.save(result.getDomainEntity());
 		addAssetToBOMGroup(result.getDomainEntity());
-	//	addReceiptOrder(result);
+		// addReceiptOrder(result);
 		result.updateDtoIdAndVersion();
 		scheduledTriggers(result);
 
@@ -396,16 +388,17 @@ public class AssetServiceImpl implements AssetService {
 		setBrand(result);
 		setLocation(result);
 		setModel(result);
-		setAssetFiles(result);
+		// setAssetFiles(result);
 		setAssetSparePart(result);
-		setAssetImage(result, image);
+		// setAssetImage(result, image);
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
-		generateAssetQR(result);
-		
+		// generateAssetQR(result);
+
 	}
-	
-private void scheduledTriggers(AssetResult result){
-	scheduledService.notifyAssetTrigger(result.getDomainEntity(),SMTriggerType.METER_READING_TRIGGER);
+
+	private void scheduledTriggers(AssetResult result) {
+		scheduledService.notifyAssetTrigger(result.getDomainEntity(), SMTriggerType.METER_READING_TRIGGER);
+		scheduledService.notifyAssetTrigger(result.getDomainEntity(), SMTriggerType.ABC_METER_READING_TRIGGER);
 
 //	Set<ScheduledMaintenanceAsset> maintenanceAssets=result.getDomainEntity().getAssetScheduledMaintenances();
 //	List<ScheduledMaintenance> scheduledMaintenances=scheduledMaintenanceAssetDao.findByAsset(result.getDomainEntity());
@@ -414,13 +407,11 @@ private void scheduledTriggers(AssetResult result){
 //			scheduledService.createWorkOrderFromTriggerType(scheduledMaintenanceTrigger, scheduledMaintenanceTrigger.getTriggerType());
 //		}
 //	}
-}
+	}
 
-private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
+	private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue) {
 
-	
-
-}
+	}
 
 	private void generateAssetQR(AssetResult result) throws WriterException, IOException {
 
@@ -959,8 +950,6 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 			assetMeterReadingValues.add(meterReadingValue);
 		}
 	}
-	
-
 
 	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,
 			AssetMeterReadingValue meterReadingValue) throws Exception {
@@ -1474,6 +1463,7 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 		}
 	}
 
+	@Override
 	public void assetQRDownload(Integer id, HttpServletResponse response) throws Exception {
 		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (id != null) {
@@ -1526,6 +1516,7 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 				.getByteInputStream(request.getServletContext().getRealPath("").concat(ASSET_DEFAULT_IMAGE));
 	}
 
+	@Override
 	public byte[] getAssetQRStream(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
@@ -1605,22 +1596,23 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 		return out;
 	}
 
-	public void importBulkAssets(MultipartFile fileData,Integer bussinessId) throws Exception {
+	@Override
+	public void importBulkAssets(MultipartFile fileData, Integer bussinessId) throws Exception {
 
-		 FileInputStream inputStream=(FileInputStream) fileData.getInputStream();
+		FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
 
 		Workbook workbook = new XSSFWorkbook(inputStream);
 		Sheet location = workbook.getSheetAt(0);
-		
+
 		Iterator<Row> iterator = location.iterator();
-		List<Asset> assetList=new ArrayList<>();
+		List<Asset> assetList = new ArrayList<>();
 		System.out.println("location");
 		while (iterator.hasNext()) {
 			Row nextRow = iterator.next();
 			int rowIndex = nextRow.getRowNum();
 			if (rowIndex != 0) {
 				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				AssetDTO assetDTO=new AssetDTO();
+				AssetDTO assetDTO = new AssetDTO();
 				while (cellIterator.hasNext()) {
 					Cell cell = cellIterator.next();
 					int columnIndex = cell.getColumnIndex();
@@ -1631,29 +1623,31 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 						break;
 					case 1:
 						System.out.print("Asset Group Code - " + cell.getStringCellValue());
-						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),AssetCategoryType.LOCATIONS_OR_FACILITIES).getId());
-						
+						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),
+								AssetCategoryType.LOCATIONS_OR_FACILITIES).getId());
+
 						break;
 					case 2:
 						System.out.print("Short Description - " + cell.getStringCellValue());
 						assetDTO.setName(cell.getStringCellValue());
 						assetDTO.setDescription(cell.getStringCellValue());
-						
+
 						break;
 					case 3:
 						System.out.print("Parent Asset - " + cell.getStringCellValue());
-						if(cell.getStringCellValue()!=null){
-							Asset parentAsset=assetDao.findByAssetByCode(cell.getStringCellValue());
-							if(parentAsset!=null){
+						if (cell.getStringCellValue() != null) {
+							Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
+							if (parentAsset != null) {
 								assetDTO.setParentAssetId(parentAsset.getId());
-								
+
 							}
-							
-						}else{
-							//asset.setParentAsset(parentAsset);
+
+						} else {
+							// asset.setParentAsset(parentAsset);
 						}
 						break;
-					case 5:System.out.print("Asset Type - " + cell.getCellType());
+					case 5:
+						System.out.print("Asset Type - " + cell.getCellType());
 //					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
 //						break;
 					default:
@@ -1661,18 +1655,17 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 					}
 					System.out.print(" ___ ");
 				}
-				if(AuthenticationUtil.isAuthUserAdminLevel()){
+				if (AuthenticationUtil.isAuthUserAdminLevel()) {
 					assetDTO.setBusinessId(bussinessId);
-				}else{
+				} else {
 					assetDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
 
 				}
-				//save(assetDTO, null);
-				
-				
+				// save(assetDTO, null);
+
 				System.out.println();
 			}
-			
+
 		}
 		Sheet machine = workbook.getSheetAt(1);
 		System.out.println("machine");
@@ -1683,7 +1676,7 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 			int rowIndex = nextRow.getRowNum();
 			if (rowIndex != 0) {
 				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				AssetDTO assetDTO=new AssetDTO();
+				AssetDTO assetDTO = new AssetDTO();
 				while (cellIterator.hasNext()) {
 					Cell cell = cellIterator.next();
 					int columnIndex = cell.getColumnIndex();
@@ -1694,7 +1687,8 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 						break;
 					case 1:
 						System.out.print("Asset Group Code - " + cell.getStringCellValue());
-						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),AssetCategoryType.EQUIPMENTS_OR_MACHINES).getId());
+						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),
+								AssetCategoryType.EQUIPMENTS_OR_MACHINES).getId());
 
 						break;
 					case 2:
@@ -1705,18 +1699,19 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 						break;
 					case 3:
 						System.out.print("Parent Asset - " + cell.getStringCellValue());
-						if(cell.getStringCellValue()!=null){
-							Asset parentAsset=assetDao.findByAssetByCode(cell.getStringCellValue());
-							if(parentAsset!=null){
+						if (cell.getStringCellValue() != null) {
+							Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
+							if (parentAsset != null) {
 								assetDTO.setParentAssetId(parentAsset.getId());
 
 							}
 
-						}else{
-							//asset.setParentAsset(parentAsset);
+						} else {
+							// asset.setParentAsset(parentAsset);
 						}
 						break;
-				case 5:System.out.print("Asset Type - " + cell.getCellType());
+					case 5:
+						System.out.print("Asset Type - " + cell.getCellType());
 //					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
 //						break;
 					default:
@@ -1724,13 +1719,13 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 					}
 					System.out.print(" ___ ");
 				}
-				if(AuthenticationUtil.isAuthUserAdminLevel()){
+				if (AuthenticationUtil.isAuthUserAdminLevel()) {
 					assetDTO.setBusinessId(bussinessId);
-				}else{
+				} else {
 					assetDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
 
-				}				save(assetDTO, null);
-				
+				}
+				save(assetDTO, null);
 
 				System.out.println();
 			}
@@ -1739,26 +1734,24 @@ private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue){
 
 		workbook.close();
 		inputStream.close();
-		///assetDao.save(assetList);
+		/// assetDao.save(assetList);
 	}
-	
-	private AssetCategory findParentAssetCategoryByCode(String code,AssetCategoryType assetCategoryType){
-		AssetCategoryDTO assetCategoryDTO=new AssetCategoryDTO();
-		AssetCategory assetCategory=assetCategoryDao.findByAssetCategoryByCode(code);
-				if(assetCategory !=null){
-				}else{
-					assetCategory=new AssetCategory();
-					assetCategoryDTO.setName(code);
-					assetCategoryDTO.setDescription(code);
-					assetCategoryDTO.setType(assetCategoryType);
-					assetCategoryDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
-					assetCategory=assetCategoryService.save(assetCategoryDTO).getDomainEntity();
-				}
-				
-				return assetCategory;
-		
+
+	private AssetCategory findParentAssetCategoryByCode(String code, AssetCategoryType assetCategoryType) {
+		AssetCategoryDTO assetCategoryDTO = new AssetCategoryDTO();
+		AssetCategory assetCategory = assetCategoryDao.findByAssetCategoryByCode(code);
+		if (assetCategory != null) {
+		} else {
+			assetCategory = new AssetCategory();
+			assetCategoryDTO.setName(code);
+			assetCategoryDTO.setDescription(code);
+			assetCategoryDTO.setType(assetCategoryType);
+			assetCategoryDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
+			assetCategory = assetCategoryService.save(assetCategoryDTO).getDomainEntity();
+		}
+
+		return assetCategory;
+
 	}
-	
-	
 
 }

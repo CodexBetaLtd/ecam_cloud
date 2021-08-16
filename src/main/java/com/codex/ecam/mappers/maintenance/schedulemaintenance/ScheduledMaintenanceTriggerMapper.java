@@ -34,8 +34,12 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 		dto.setTtDayOfMonth(domain.getTtDayOfMonth());
 		dto.setTtEndDate(domain.getTtEndDate());
 		dto.setTtStartDate(domain.getTtStartDate());
+		dto.setSmabcTriggerType(domain.getSmabcTriggerType());
 		dto.setLastTriggeredDate(domain.getLastTriggeredDate());
 		dto.setMrtNextMeterReading(domain.getMrtNextMeterReading());
+//		if(domain.getAmrtNextMeterReading()!=null && domain.getBmrtNextMeterReading()!=null && domain.getCmrtNextMeterReading()!=null){
+//			dto.setMrtNextMeterReading(getNextTriggerFromABC(domain));
+//		}
 		dto.setMrtStartMeterReading(domain.getMrtStartMeterReading());
 		dto.setMrtEndMeterReading(domain.getMrtEndMeterReading());
 		dto.setMrtType(domain.getMrtType());
@@ -87,6 +91,17 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 
 		return dto;
 	}
+	
+	private Double getNextTriggerFromABC(ScheduledMaintenanceTrigger domain){
+		Double nextTrigger=0.0;
+	       double [] arr = new double [] {domain.getAmrtNextMeterReading(), domain.getBmrtNextMeterReading(), domain.getCmrtNextMeterReading()};  
+	       nextTrigger= arr[0];  
+	        for (int i = 0; i < arr.length; i++) {  
+	           if(arr[i] <nextTrigger)  
+	        	   nextTrigger = arr[i];  
+	        } 
+		return nextTrigger;
+			}
 
 	private void setNextTriggerDetail(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		switch (domain.getTriggerType()) {
@@ -96,9 +111,13 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 				dto.setNextTrigger(DateUtil.getCommonDateString(domain.getTtNextCalenderEvent().getScheduledDate()));
 			}
 			break;
-
+			
 		case METER_READING_TRIGGER:
 			dto.setNextTrigger("" + domain.getMrtNextMeterReading() + " " + domain.getMrtAssetMeterReading().getMeterReadingUnit().getSymbol());
+			break;
+
+		case ABC_METER_READING_TRIGGER:
+			dto.setNextTrigger("" + dto.getMrtNextMeterReading() + " " + domain.getMrtAssetMeterReading().getMeterReadingUnit().getSymbol());
 			break;
 
 		default:

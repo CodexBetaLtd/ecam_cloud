@@ -16,7 +16,8 @@ public interface ScheduledService {
 
 	void setNextCalendarEvent(ScheduledMaintenanceTrigger smt, Date startDate);
 	
-	 void setNextMeterReading(ScheduledMaintenanceTrigger smt);
+	void setNextMeterReading(ScheduledMaintenanceTrigger smt);
+	 void setNextABCMeterReading(ScheduledMaintenanceTrigger smt);
 
 	boolean isAllSMWorkOrdersClosed(Set<ScheduledMaintenanceTask> smTasks);
 	

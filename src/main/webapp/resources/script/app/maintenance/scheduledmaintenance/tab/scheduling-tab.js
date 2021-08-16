@@ -67,6 +67,7 @@ var TabScheduling = function () {
         CustomValidation.validateFieldNull(triggerObj, 'mrtConditionValue', trigger.mrtConditionValue);
         CustomValidation.validateFieldNull(triggerObj, 'etAssetEventTypeAssetId', trigger.etAssetEventTypeAssetId);
         CustomValidation.validateFieldNull(triggerObj, 'etAssetEventTypeAssetName', trigger.etAssetEventTypeAssetName);
+        CustomValidation.validateFieldNull(triggerObj, 'smabcTriggerType', trigger.smabcTriggerType);
 
         createSummary(triggerObj);
 
@@ -119,6 +120,7 @@ var TabScheduling = function () {
                     "<input id='triggers" + row + ".mrtEveryValue' name='triggers[" + row + "].mrtEveryValue' value='" + CustomValidation.nullValueReplace(trigger.mrtEveryValue) + "' type='hidden' >" +
                     "<input id='triggers" + row + ".etAssetEventTypeAssetId' name='triggers[" + row + "].etAssetEventTypeAssetId' value='" + CustomValidation.nullValueReplace(trigger.etAssetEventTypeAssetId) + "' type='hidden' >" +
                     "<input id='triggers" + row + ".etAssetEventTypeAssetName' name='triggers[" + row + "].etAssetEventTypeAssetName' value='" + CustomValidation.nullValueReplace(trigger.etAssetEventTypeAssetName) + "' type='hidden' >" +
+                    "<input id='triggers" + row + ".smabcTriggerType' name='triggers[" + row + "].smabcTriggerType' value='" + CustomValidation.nullValueReplace(trigger.smabcTriggerType) + "' type='hidden' >" +
                     "<td>" +
                     "<div class='checkbox-center'>" +
                     "<input type='checkbox' name='selectedTriggers' value='" + trigger.id + "' class='grey'>" +
@@ -184,6 +186,7 @@ var TabScheduling = function () {
         trigger['mrtConditionValue'] = "";
         trigger['etAssetEventTypeAssetId'] = "";
         trigger['etAssetEventTypeAssetName'] = "";
+        trigger['smabcTriggerType'] = "";
     };
 
     var addTrigger = function () {
@@ -221,11 +224,27 @@ var TabScheduling = function () {
         trigger['mrtLogicType'] = $('#mrtLogicType').val();
         trigger['mrtLogicTypeName'] = $('#mrtLogicType').select2('data')[0].text;
         trigger['mrtNextMeterReading'] = $('#mrtNextMeterReading').val();
+        if($('#mrtAssetMeterReadingId').val()==""){
+            trigger['mrtAssetMeterReadingId'] = $('#mrtAssetMeterReadingId2').val();
+        }
         trigger['mrtStartMeterReading'] = $('#mrtStartMeterReading').val();
+        if($('#mrtStartMeterReading').val()==""){
+            trigger['mrtStartMeterReading'] = $('#mrtStartMeterReading1').val();
+        }
         trigger['mrtEndMeterReading'] = $('#mrtEndMeterReading').val();
+        if($('#mrtEndMeterReading').val()==""){
+            trigger['mrtEndMeterReading'] = $('#mrtEndMeterReading1').val();
+        }
         trigger['mrtNoEndReading'] = $('input[id=mrtNoEndReading]:checked').val();
+        if($('input[id=mrtNoEndReading]:checked').val()){
+            trigger['mrtNoEndReading'] = $('input[id=mrtNoEndReading1]:checked').val();
+        }
         trigger['mrtConditionValue'] = $('#mrtConditionValue').val();
         trigger['mrtEveryValue'] = $('#mrtEveryValue').val();
+        if($('#mrtEveryValue').val()==""){
+            trigger['mrtEveryValue'] = $('#mrtEveryValue1').val();
+        }
+        trigger['smabcTriggerType'] = $('#abcTypes').val();
 
         if (triggerType == 'TIME_TRIGGER') {
 
@@ -267,7 +286,7 @@ var TabScheduling = function () {
             trigger['etAssetEventTypeAssetName'] = $('#etAssetEventTypeAssetId').select2('data')[0].text;
 
         }
-
+console.log(trigger)
         addTriggerToList(trigger);
         initTriggerHtmlTable();
 
@@ -442,8 +461,24 @@ var TabScheduling = function () {
             }
 
         } else if (trigger.triggerType == "EVENT_TRIGGER") {
+        	
+        	summary = "Event Trigger - When Occur " + trigger.etAssetEventTypeAssetName;
+        	
+        }
+         else if (trigger.triggerType == "ABC_METER_READING_TRIGGER") {
 
-            summary = "Event Trigger - When Occur " + trigger.etAssetEventTypeAssetName;
+           summary = "ABC Meter Reading Trigger";
+
+            //if (trigger.mrtType == "EVERY") {
+
+                summary += " - " + trigger.smabcTriggerType;
+            
+
+//            } else if (trigger.mrtType == "WHEN") {
+//
+//                summary += " - When meter reading " + trigger.mrtLogicTypeName + " " + trigger.everyValue;
+//
+//            }
 
         }
 

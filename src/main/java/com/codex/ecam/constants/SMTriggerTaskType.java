@@ -1,16 +1,15 @@
 package com.codex.ecam.constants;
 
-public enum SMTriggerType {
+public enum SMTriggerTaskType {
 	
-	TIME_TRIGGER(1, "Time Trigger"),
-    METER_READING_TRIGGER(2, "Meter Reading Trigger"),
-    EVENT_TRIGGER(3, "Event Trigger"),
-    ABC_METER_READING_TRIGGER(4, "ABC Meter Reading Trigger");
+	A_TASK(1, "A Labour Task"),
+    B_TASK(2, "B Labour Task"),
+    C_TASK(3, "C Labour Task");
 
     private Integer id;
     private String name;
 
-    SMTriggerType(Integer id, String name){
+    SMTriggerTaskType(Integer id, String name){
         setId(id);
         setName(name);
     }

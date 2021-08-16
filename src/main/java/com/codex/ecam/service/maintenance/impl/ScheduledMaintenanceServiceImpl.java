@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.ResultStatus;
+import com.codex.ecam.constants.SMABCTriggerType;
 import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTriggerType;
 import com.codex.ecam.dao.admin.AccountDao;
@@ -216,6 +217,7 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		smt.setTtNextCalenderEvent(event);
 	}
 
+
 	private boolean isPropertyChange(ScheduledMaintenanceTrigger trigger) {
 		if ( (trigger.getId() == null) || trigger.getIsPropertyChange() ) {
 			return true;
@@ -270,9 +272,11 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		setAsset(dto, domain);
 		setAssetEventTypeAsset(dto, domain);
 		setAssetMeterReading(dto, domain);
+		setABCMeterReading(dto,domain);
 
 		return domain;
 	}
+	
 
 	private void setScheduledMaintenanceTask(ScheduledMaintenanceResult result, ScheduledMaintenanceTrigger trigger) throws Exception {
 
@@ -423,6 +427,36 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		smAsset.setIsDeleted(false);
 	}
 
+	private void setABCMeterReading(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
+		if ((dto.getMrtAssetMeterReadingId() != null) && (dto.getMrtAssetMeterReadingId() > 0)) {
+			AssetMeterReading assetMeterReading=assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
+			
+			domain.setMrtAssetMeterReading(assetMeterReading);
+			Double mrtNextMeterReading=0.0;
+			Double amrtNextMeterReading=0.0;
+			Double bmrtNextMeterReading=0.0;
+			Double cmrtNextMeterReading=0.0;
+			if(domain.getTriggerType().equals(SMTriggerType.ABC_METER_READING_TRIGGER)){
+				domain.setSmabcTriggerType(dto.getSmabcTriggerType());
+
+				if(domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_1)){
+					amrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getaValue();
+					bmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getbValue();
+					cmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getcValue();
+				}else if(domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_2)){
+					amrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getaValue();
+					bmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getbValue();
+					cmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getcValue();				}
+			}
+			
+			//domain.setMrtNextMeterReading(mrtNextMeterReading);
+			domain.setAmrtNextMeterReading(amrtNextMeterReading);
+			domain.setBmrtNextMeterReading(bmrtNextMeterReading);
+			domain.setCmrtNextMeterReading(cmrtNextMeterReading);
+			setMeterReadingData(dto,domain);
+		}
+	}
+	
 	private void setAssetMeterReading(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		if ((dto.getMrtAssetMeterReadingId() != null) && (dto.getMrtAssetMeterReadingId() > 0)) {
 			AssetMeterReading assetMeterReading=assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());

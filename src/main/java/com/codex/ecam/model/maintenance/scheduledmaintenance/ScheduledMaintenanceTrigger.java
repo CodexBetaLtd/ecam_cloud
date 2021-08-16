@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.codex.ecam.constants.MeterReadingLogicType;
+import com.codex.ecam.constants.SMABCTriggerType;
 import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTimeScheduleOccurenceType;
 import com.codex.ecam.constants.SMTriggerType;
@@ -57,6 +58,10 @@ public class ScheduledMaintenanceTrigger extends BaseModel {
 	@JoinColumn(name = "asset_id")
 	@ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
 	private Asset asset;
+	
+	@JoinColumn(name = "parent_trigger_id")
+	@ManyToOne(targetEntity = ScheduledMaintenanceTrigger.class, fetch = FetchType.LAZY)
+	private ScheduledMaintenanceTrigger parentTigger;
 
 	@JoinColumn(name = "mrt_asset_meter_reading_id")
 	@ManyToOne(targetEntity = AssetMeterReading.class, fetch = FetchType.LAZY)
@@ -127,6 +132,15 @@ public class ScheduledMaintenanceTrigger extends BaseModel {
 
 	@Column(name = "mrt_next_meter_reading")
 	private Double mrtNextMeterReading;
+	
+	@Column(name = "a_mrt_next_meter_reading")
+	private Double amrtNextMeterReading;
+	
+	@Column(name = "b_mrt_next_meter_reading")
+	private Double bmrtNextMeterReading;
+	
+	@Column(name = "c_mrt_next_meter_reading")
+	private Double cmrtNextMeterReading;
 
 	@Column(name = "mrt_start_meter_reading")
 	private Double mrtStartMeterReading;
@@ -136,6 +150,9 @@ public class ScheduledMaintenanceTrigger extends BaseModel {
 
 	@Column(name = "mrt_logic_type_id")
 	private MeterReadingLogicType mrtLogicType;
+	
+	@Column(name = "mrt_abc_type_id")
+	private SMABCTriggerType smabcTriggerType;
 
 	@Column(name = "last_triggered_date")
 	private Date lastTriggeredDate;
@@ -428,8 +445,51 @@ public class ScheduledMaintenanceTrigger extends BaseModel {
 		return scheduledMaintenanceTasks;
 	}
 
+	public SMABCTriggerType getSmabcTriggerType() {
+		return smabcTriggerType;
+	}
+
+	public void setSmabcTriggerType(SMABCTriggerType smabcTriggerType) {
+		this.smabcTriggerType = smabcTriggerType;
+	}
+	
+	
+
+	public ScheduledMaintenanceTrigger getParentTigger() {
+		return parentTigger;
+	}
+
+	public void setParentTigger(ScheduledMaintenanceTrigger parentTigger) {
+		this.parentTigger = parentTigger;
+	}
+
 	public void setScheduledMaintenanceTasks(Set<ScheduledMaintenanceTask> scheduledMaintenanceTasks) {
 		updateCollection("scheduledMaintenanceTasks", scheduledMaintenanceTasks);
 	}
 
+	public Double getAmrtNextMeterReading() {
+		return amrtNextMeterReading;
+	}
+
+	public void setAmrtNextMeterReading(Double amrtNextMeterReading) {
+		this.amrtNextMeterReading = amrtNextMeterReading;
+	}
+
+	public Double getBmrtNextMeterReading() {
+		return bmrtNextMeterReading;
+	}
+
+	public void setBmrtNextMeterReading(Double bmrtNextMeterReading) {
+		this.bmrtNextMeterReading = bmrtNextMeterReading;
+	}
+
+	public Double getCmrtNextMeterReading() {
+		return cmrtNextMeterReading;
+	}
+
+	public void setCmrtNextMeterReading(Double cmrtNextMeterReading) {
+		this.cmrtNextMeterReading = cmrtNextMeterReading;
+	}
+
+	
 }

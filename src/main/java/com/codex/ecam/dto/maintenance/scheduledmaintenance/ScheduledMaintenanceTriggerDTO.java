@@ -3,6 +3,7 @@ package com.codex.ecam.dto.maintenance.scheduledmaintenance;
 import java.util.Date;
 
 import com.codex.ecam.constants.MeterReadingLogicType;
+import com.codex.ecam.constants.SMABCTriggerType;
 import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTimeScheduleOccurenceType;
 import com.codex.ecam.constants.SMTriggerType;
@@ -56,6 +57,8 @@ public class ScheduledMaintenanceTriggerDTO extends BaseDTO {
 	private Double mrtNextMeterReading;
 	private Double mrtConditionValue;
 	private Double mrtEveryValue;
+	
+	private SMABCTriggerType smabcTriggerType=SMABCTriggerType.TYPE_1;
 
 	// event trigger properties
 	private Integer etAssetEventTypeAssetId;
@@ -382,4 +385,14 @@ public class ScheduledMaintenanceTriggerDTO extends BaseDTO {
 	public void setNextTrigger(String nextTrigger) {
 		this.nextTrigger = nextTrigger;
 	}
+
+	public SMABCTriggerType getSmabcTriggerType() {
+		return smabcTriggerType;
+	}
+
+	public void setSmabcTriggerType(SMABCTriggerType smabcTriggerType) {
+		this.smabcTriggerType = smabcTriggerType;
+	}
+	
+	
 }

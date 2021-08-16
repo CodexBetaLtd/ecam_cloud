@@ -12,7 +12,7 @@ import javax.persistence.criteria.Predicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,6 @@ import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanc
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 import com.codex.ecam.model.maintenance.workorder.WorkOrderLog;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerService;
 import com.codex.ecam.service.maintenance.api.ScheduledService;
@@ -159,6 +158,10 @@ public class ScheduledMaintenanceTriggerServiceImpl implements ScheduledMaintena
 		if ( smt.getTriggerType().equals( SMTriggerType.METER_READING_TRIGGER )) {
 			scheduledService.setNextMeterReading(smt);
 		}
+		if ( smt.getTriggerType().equals( SMTriggerType.ABC_METER_READING_TRIGGER )) {
+			scheduledService.setNextABCMeterReading(smt);
+		}
+
 
 		return wo;
 	}
@@ -170,6 +173,14 @@ public class ScheduledMaintenanceTriggerServiceImpl implements ScheduledMaintena
 
 		if ( smt.getTriggerType().equals( SMTriggerType.TIME_TRIGGER )) {
 			scheduledService.setNextCalendarEvent(smt, new Date());
+		}
+		
+		if ( smt.getTriggerType().equals( SMTriggerType.METER_READING_TRIGGER )) {
+			scheduledService.setNextMeterReading(smt);
+		}
+		
+		if ( smt.getTriggerType().equals( SMTriggerType.ABC_METER_READING_TRIGGER )) {
+			scheduledService.setNextABCMeterReading(smt);
 		}
 
 		return wo;

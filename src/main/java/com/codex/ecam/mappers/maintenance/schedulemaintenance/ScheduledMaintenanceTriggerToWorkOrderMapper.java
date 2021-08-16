@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.codex.ecam.constants.SMABCTriggerType;
+import com.codex.ecam.constants.SMTriggerTaskType;
+import com.codex.ecam.constants.SMTriggerType;
+import com.codex.ecam.constants.SMTriggerTypeMeterReading;
 import com.codex.ecam.constants.WorkOrderStatus;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenance;
@@ -108,15 +112,64 @@ public class ScheduledMaintenanceTriggerToWorkOrderMapper {
 	private Set<WorkOrderTask> createWoTasksFromTrigger(WorkOrder wo, ScheduledMaintenanceTrigger trigger) {
 
 		Set<WorkOrderTask> woTasks = new HashSet<>();
-
+		
 		if ((trigger.getScheduledMaintenanceTasks() != null) && (trigger.getScheduledMaintenanceTasks().size() > 0)) {
-			createWorkOrderTasksFromTaskTriggers(wo, woTasks, trigger.getScheduledMaintenanceTasks(), trigger.getAsset());
+			if(trigger.getTriggerType().equals(SMTriggerType.ABC_METER_READING_TRIGGER)){
+				Double currentValue = trigger.getMrtAssetMeterReading().getCurrentAssetMeterReadingValue().getMeterReadingValue();
+				;
+				SMTriggerTypeMeterReading triggerTypeMeterReading=SMTriggerTypeMeterReading.processMeterReadingToCurrentTrigger(currentValue, trigger.getSmabcTriggerType());
+					if(triggerTypeMeterReading.getSmTriggerTaskType().equals(SMTriggerTaskType.A_TASK)){
+						getATasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+					}else if(triggerTypeMeterReading.getSmTriggerTaskType().equals(SMTriggerTaskType.B_TASK)){
+						getATasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+						getBTasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+					}else if(triggerTypeMeterReading.getSmTriggerTaskType().equals(SMTriggerTaskType.C_TASK)){
+						getATasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+						getBTasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+						getCTasks(wo,woTasks,trigger.getScheduledMaintenanceTasks(),trigger.getAsset());
+					}
+
+				//createWorkOrderTasksFromTaskABCTriggers(wo, woTasks, trigger.getScheduledMaintenanceTasks(), trigger.getAsset());
+
+			}else{
+				createWorkOrderTasksFromTaskTriggers(wo, woTasks, trigger.getScheduledMaintenanceTasks(), trigger.getAsset());
+			}
 		}
 
 		return woTasks;
 	}
 
+	private void getATasks(WorkOrder workOrder,Set<WorkOrderTask> woTasks,Set<ScheduledMaintenanceTask> scheduledMaintenanceTasks, Asset asset){
+		for(ScheduledMaintenanceTask task: scheduledMaintenanceTasks){
+			if(task.getTaskGroup().getName().equals("A service")){
+				woTasks.add(createWorkOrderTaskFromTaskTrigger(workOrder,task, asset));
+			}
+		}
+	}
+	private void getBTasks(WorkOrder workOrder,Set<WorkOrderTask> woTasks,Set<ScheduledMaintenanceTask> scheduledMaintenanceTasks, Asset asset){
+		for(ScheduledMaintenanceTask task: scheduledMaintenanceTasks){
+			if(task.getTaskGroup().getName().equals("B service")){
+				woTasks.add(createWorkOrderTaskFromTaskTrigger(workOrder,task, asset));
+			}
+		}
+	}
+	private void getCTasks(WorkOrder workOrder,Set<WorkOrderTask> woTasks,Set<ScheduledMaintenanceTask> scheduledMaintenanceTasks, Asset asset){
+		for(ScheduledMaintenanceTask task: scheduledMaintenanceTasks){
+			if(task.getTaskGroup().getName().equals("C service")){
+				woTasks.add(createWorkOrderTaskFromTaskTrigger(workOrder,task, asset));
+			}
+		}
+}
+	
+
 	private void createWorkOrderTasksFromTaskTriggers(WorkOrder wo, Set<WorkOrderTask> woTasks, Set<ScheduledMaintenanceTask> smTasks, Asset asset) {
+		WorkOrderTask woTask;
+		for (ScheduledMaintenanceTask task : smTasks) {
+			woTask = createWorkOrderTaskFromTaskTrigger(wo, task, asset);
+			woTasks.add(woTask);
+		}
+	}
+	private void createWorkOrderTasksFromTaskABCTriggers(WorkOrder wo, Set<WorkOrderTask> woTasks, Set<ScheduledMaintenanceTask> smTasks, Asset asset) {
 		WorkOrderTask woTask;
 		for (ScheduledMaintenanceTask task : smTasks) {
 			woTask = createWorkOrderTaskFromTaskTrigger(wo, task, asset);

@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.constants.MeterReadingLogicType;
+import com.codex.ecam.constants.SMABCTriggerType;
 import com.codex.ecam.constants.SMMeterReadingType;
 import com.codex.ecam.constants.SMTriggerType;
+import com.codex.ecam.constants.SMTriggerTypeMeterReading;
 import com.codex.ecam.constants.WorkOrderStatus;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceTriggerDao;
 import com.codex.ecam.dao.maintenance.WorkOrderDao;
@@ -172,6 +174,9 @@ public class ScheduledServiceImpl implements ScheduledService {
 		case METER_READING_TRIGGER:
 			isConditionMet =  isNextMeterReadingEventFired(trigger);
 			break;
+		case ABC_METER_READING_TRIGGER:
+			isConditionMet =  isNextABCMeterReadingEventFired(trigger);
+			break;
 
 		default:
 			break;
@@ -201,6 +206,20 @@ public class ScheduledServiceImpl implements ScheduledService {
 		if (tr.getEtAssetEventTypeAsset().equals(tr.getAsset().getCurrentAssetEvent().getAssetEventTypeAsset())) {
 			return true;
 		}
+
+		return false;
+	}
+	
+	private boolean isNextABCMeterReadingEventFired(ScheduledMaintenanceTrigger tr) {
+
+		Double currentValue = tr.getMrtAssetMeterReading().getCurrentAssetMeterReadingValue().getMeterReadingValue();
+//			if(currentValue.equals(tr.getAmrtNextMeterReading())||currentValue.equals(tr.getBmrtNextMeterReading())||currentValue.equals(tr.getCmrtNextMeterReading()) ){
+//				return true;
+//			}
+		
+			if(currentValue.equals(SMTriggerTypeMeterReading.processMeterReadingToCurrent(currentValue,tr.getSmabcTriggerType()))){
+				return true;	
+			}
 
 		return false;
 	}
@@ -295,4 +314,30 @@ public class ScheduledServiceImpl implements ScheduledService {
 ;
 		scheduledMaintenanceTriggerDao.save(smt);
 	}
+
+	@Override
+	public void setNextABCMeterReading(ScheduledMaintenanceTrigger smt) {
+		Double currentValue = smt.getMrtAssetMeterReading().getCurrentAssetMeterReadingValue().getMeterReadingValue();
+		Double nextTriggerValue=0.0;
+		SMTriggerTypeMeterReading smTriggerTypeMeterReading=SMTriggerTypeMeterReading.processMeterReadingToCurrentTrigger(currentValue, smt.getSmabcTriggerType());
+		SMTriggerTypeMeterReading smTriggerTypeMeterReadingNext=SMTriggerTypeMeterReading.findNextTriggerByIndex(smTriggerTypeMeterReading);
+		nextTriggerValue=currentValue-smTriggerTypeMeterReading.getMeterReadingValue()+smTriggerTypeMeterReadingNext.getMeterReadingValue();
+	if (smTriggerTypeMeterReading.equals(SMTriggerTypeMeterReading.T1_C1)) {
+		nextTriggerValue=smt.getMrtNextMeterReading()+smTriggerTypeMeterReadingNext.getMeterReadingValue();
+	} else if (smTriggerTypeMeterReading.equals(SMTriggerTypeMeterReading.T2_C2)) {
+		nextTriggerValue=smt.getMrtNextMeterReading()+smTriggerTypeMeterReadingNext.getMeterReadingValue();
+	}
+		
+		smt.setMrtNextMeterReading(nextTriggerValue);
+		
+
+		
+		scheduledMaintenanceTriggerDao.save(smt);
+		
+	}
+	
+	
+	
+	
+	
 }

@@ -44,7 +44,14 @@ var TriggerAddModal = function () {
     };
 
     var initAssetMeterReadingSelect = function () {
-        $("#mrtAssetMeterReadingId").select2({
+    	$("#mrtAssetMeterReadingId").select2({
+    		placeholder: "Select a Asset Meter Reading",
+    		allowClear: true,
+    		dropdownParent: $("#trigger-modal")
+    	});
+    };
+    var initAssetMeterReadingSelect2 = function () {
+        $("#mrtAssetMeterReadingId2").select2({
             placeholder: "Select a Asset Meter Reading",
             allowClear: true,
             dropdownParent: $("#trigger-modal")
@@ -52,16 +59,31 @@ var TriggerAddModal = function () {
     };
 
     var initMeterReadingLogicSelect = function () {
-        $("#mrtLogicType").select2({
-            placeholder: "Select a Condition",
+    	$("#mrtLogicType").select2({
+    		placeholder: "Select a Condition",
+    		allowClear: true,
+    		dropdownParent: $("#trigger-modal")
+    	});
+    };
+    
+    var initMeterReadingABCTypeSelect = function () {
+        $("#abcTypes").select2({
+            placeholder: "Select a Type",
             allowClear: true,
             dropdownParent: $("#trigger-modal")
         });
     };
 
     var initAssetEventTypeAssetSelect = function () {
-        $("#etAssetEventTypeAssetId").select2({
-            placeholder: "Select a Asset Event",
+    	$("#etAssetEventTypeAssetId").select2({
+    		placeholder: "Select a Asset Event",
+    		allowClear: true,
+    		dropdownParent: $("#trigger-modal")
+    	});
+    };
+    var initABCTypeSelect = function () {
+        $("#parentTrigerId").select2({
+            placeholder: "Select a Parent Trigger Type",
             allowClear: true,
             dropdownParent: $("#trigger-modal")
         });
@@ -114,11 +136,16 @@ var TriggerAddModal = function () {
             contentType: "application/json",
             dataType: "json",
             success: function (output) {
-                $('#mrtAssetMeterReadingId').append($('<option>', {value: ""}).text(""));
+            	$('#mrtAssetMeterReadingId').append($('<option>', {value: ""}).text(""));
+            	$.each(output, function (key, meterReading) {
+            		$('#mrtAssetMeterReadingId').append($('<option>', {value: meterReading.meterReadingId}).text(meterReading.meterReadingViewName));
+            	});
+            	$('#mrtAssetMeterReadingId').trigger("change")
+                $('#mrtAssetMeterReadingId2').append($('<option>', {value: ""}).text(""));
                 $.each(output, function (key, meterReading) {
-                    $('#mrtAssetMeterReadingId').append($('<option>', {value: meterReading.meterReadingId}).text(meterReading.meterReadingViewName));
+                    $('#mrtAssetMeterReadingId2').append($('<option>', {value: meterReading.meterReadingId}).text(meterReading.meterReadingViewName));
                 });
-                $('#mrtAssetMeterReadingId').trigger("change")
+                $('#mrtAssetMeterReadingId2').trigger("change")
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + " " + thrownError);
@@ -239,9 +266,15 @@ var TriggerAddModal = function () {
     	
         if ( triggerType == 'METER_READING_TRIGGER' ) {
         	addMeterReadingTriggerRules();
-        } else if( triggerType == 'TIME_TRIGGER') { 
+        } 
+        else if( triggerType == 'TIME_TRIGGER') { 
         	addTimeTriggerRules(); 
-        } else { 
+        } 
+        else if( triggerType == 'ABC_METER_READING_TRIGGER') { 
+        	addABCMeterReadingTriggerRules(); 
+        } 
+        
+        else { 
             setRules(triggerType); 
         }
 
@@ -253,15 +286,26 @@ var TriggerAddModal = function () {
     	
     	if ( mrtType == 'EVERY' ) {		
     		var mrtNoEndReading = $('#mrtNoEndReading').iCheck('update')[0].checked;
+    		
+    		if (!mrtNoEndReading) {
+    			setInputRule('mrtEndMeterReading', 'Please Specify a End Meter Reading Value');
+    		}
+    		setRules(mrtType);
+    		
+    	} else if ( mrtType == 'WHEN' ){				
+    		setRules(mrtType);
+    	}
+    	
+    };
+    var addABCMeterReadingTriggerRules = function() {
+    	
+    		var mrtNoEndReading = $('#mrtNoEndReading1').iCheck('update')[0].checked;
 
 	        if (!mrtNoEndReading) {
-	            setInputRule('mrtEndMeterReading', 'Please Specify a End Meter Reading Value');
+	            setInputRule('mrtEndMeterReading1', 'Please Specify a End Meter Reading Value');
 	        }
-	        setRules(mrtType);
+	       setRules("ABC");
     	        
-		} else if ( mrtType == 'WHEN' ){				
-			setRules(mrtType);
-		}
     	
     };
     
@@ -325,6 +369,11 @@ var TriggerAddModal = function () {
             	setInputRule('mrtAssetMeterReadingId', 'Please Specify a Asset Meter Reading');
             	setInputRule('mrtEveryValue', 'Please Specify a Meter Reading Value');
             	setInputRule('mrtStartMeterReading', 'Please Specify a Start Meter Reading Value');
+            	break;
+            case 'ABC':
+            	setInputRule('mrtAssetMeterReadingId2', 'Please Specify a Asset Meter Reading');
+            	setInputRule('abcTypes', 'Please Specify a ABC Type');
+            	setInputRule('mrtStartMeterReading1', 'Please Specify a Start Meter Reading Value');
             	break;
             	
             case 'WHEN':
@@ -426,6 +475,7 @@ var TriggerAddModal = function () {
         $('#byTimeScheduleTrigger').on('ifChecked', function () {
             hideDiv('#byMeterReadingTrigger', "#divByMeterReadingTrigger");
             hideDiv('#byEventTrigger', "#divByEventTrigger");
+            hideDiv('#byABCTrigger', "#divabcTrigger");
             showDiv('#byTimeScheduleTrigger', "#divByTimeSchedule");
             showDiv('#hourlyRadioBtn', "#divHourly");
             $('#ttScheduleIsFixed').iCheck('check');
@@ -434,15 +484,24 @@ var TriggerAddModal = function () {
         $('#byMeterReadingTrigger').on('ifChecked', function () {
             hideDiv('#byTimeScheduleTrigger', "#divByTimeSchedule");
             hideDiv('#byEventTrigger', "#divByEventTrigger");
+            hideDiv('#byABCTrigger', "#divabcTrigger");
             showDiv('#byMeterReadingTrigger', "#divByMeterReadingTrigger");
             showDiv('#everyRadioBtn', "#divEvery");
             $('#mrtIsFixed').iCheck('check');
         });
 
         $('#byEventTrigger').on('ifChecked', function () {
+        	hideDiv('#byTimeScheduleTrigger', "#divByTimeSchedule");
+        	hideDiv('#byMeterReadingTrigger', "#divByMeterReadingTrigger");
+        	hideDiv('#byABCTrigger', "#divabcTrigger");
+        	showDiv('#byEventTrigger', "#divByEventTrigger");
+        	$('#inputbyTimeSchedule').iCheck('uncheck');
+        });
+        $('#byABCTrigger').on('ifChecked', function () {
             hideDiv('#byTimeScheduleTrigger', "#divByTimeSchedule");
             hideDiv('#byMeterReadingTrigger', "#divByMeterReadingTrigger");
-            showDiv('#byEventTrigger', "#divByEventTrigger");
+            hideDiv('#byEventTrigger', "#divByEventTrigger");
+            showDiv('#byABCTrigger', "#divabcTrigger");
             $('#inputbyTimeSchedule').iCheck('uncheck');
         });
 
@@ -512,11 +571,17 @@ var TriggerAddModal = function () {
 
         /* No Meter Reading */
         $('#mrtNoEndReading').on('ifChecked', function () {
-            $("#mrtEndMeterReading").prop('disabled', true);
+        	$("#mrtEndMeterReading").prop('disabled', true);
+        });
+        $('#mrtNoEndReading1').on('ifChecked', function () {
+            $("#mrtEndMeterReading1").prop('disabled', true);
         });
 
         $('#mrtNoEndReading').on('ifUnchecked', function () {
-            $("#mrtEndMeterReading").prop('disabled', false);
+        	$("#mrtEndMeterReading").prop('disabled', false);
+        });
+        $('#mrtNoEndReading1').on('ifUnchecked', function () {
+            $("#mrtEndMeterReading1").prop('disabled', false);
         });
 
     };
@@ -526,11 +591,14 @@ var TriggerAddModal = function () {
             initYearlyMonthSelect();
             initAssetMeterReadingSelect();
             initMeterReadingLogicSelect();
+            initAssetMeterReadingSelect2();
+            initMeterReadingABCTypeSelect();
             initAssetEventTypeAssetSelect();
             initDatePicker();
             initTriggerAssetSelect();
             initSchedulingRadio();
             initSchedulingView();
+            initABCTypeSelect();
             initButtons();
             initDivs();
             initValidator();

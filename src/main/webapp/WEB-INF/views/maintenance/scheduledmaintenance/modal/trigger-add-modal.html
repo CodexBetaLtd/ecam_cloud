@@ -60,11 +60,18 @@
 	                                Event Trigger
 	                            </label>
 	                        </div>
+	                        <div class="radio-inline">
+	                            <label>
+	                                <input type="radio" value="ABC_METER_READING_TRIGGER" name="smTriggerType" id="byABCTrigger" class="grey">
+	                                ABC Meter Reading Trigger
+	                            </label>
+	                        </div>
 	                    </div>
 	                </div>
 	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-event-trigger:: ByEventTrigger"></div>
 	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-meter-reading-trigger:: ByMeterReadingTrigger"></div>
 	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/by-time-schedule:: ByTimeSchedule"></div>
+	                <div th:replace="maintenance/scheduledmaintenance/modal/schedulingmodalcomponents/abc-trigger:: abcTrigger"></div>
 	            </div>
 	        </div> 
 	    </form>
