@@ -37,7 +37,7 @@ public class DatabaseConfiguration {
 	public DataSource getDataSource() {
 		HikariConfig dataSourceConfig = new HikariConfig();
 		dataSourceConfig.setDriverClassName(environment.getProperty("jdbc.driverClassName"));
-		dataSourceConfig.setJdbcUrl(getJDBCUrl());
+		dataSourceConfig.setJdbcUrl(getJDBCUrl() + "?characterEncoding=utf-8");
 		dataSourceConfig.setUsername(environment.getProperty("jdbc.user"));
 		dataSourceConfig.setPassword(environment.getProperty("jdbc.password"));
 		return new HikariDataSource(dataSourceConfig);
