@@ -494,8 +494,18 @@ public class AssetServiceImpl implements AssetService {
 //				+ File.separator + getFileName(image);
 		final String key = environment.getProperty("upload.location.s3")
 				+ environment.getProperty("upload.location.asset.image.s3") + dto.getId() + "/" + getFileName(image);
-
-		amazonS3ObjectUtil.uploadS3Object(key, image);
+		try {
+			if (dto.getImageLocation() != null) {
+				amazonS3ObjectUtil.deleteS3Object(dto.getImageLocation());
+			}
+			amazonS3ObjectUtil.uploadS3Object(key, image);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return key;
 	}
