@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codex.ecam.constants.TAXType;
 import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.StockType;
 import com.codex.ecam.constants.util.AffixList;
@@ -104,7 +103,7 @@ public class StockServiceImpl implements StockService {
 
 	@Autowired
 	private TaxDao taxDao;
-	
+
 	@Autowired
 	private UserDao userDao;
 
@@ -208,7 +207,7 @@ public class StockServiceImpl implements StockService {
 //		dto.setQtyOnHand(remainQuantity);
 //		save(dto);
 //	}
-	
+
 //	private StockDTO getFIFOStock(Integer partId){
 //		Stock stock=stockDao.findStockByFIFO(partId);
 //		try {
@@ -226,7 +225,8 @@ public class StockServiceImpl implements StockService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public StockResult stockReceived(ReceiptOrderItem receiptOrderItem, BigDecimal subTotal, List<ReceiptOrderTax> receiptOrderTaxes) {
+	public StockResult stockReceived(ReceiptOrderItem receiptOrderItem, BigDecimal subTotal,
+			List<ReceiptOrderTax> receiptOrderTaxes) {
 		StockResult result = new StockResult(new Stock(), new StockDTO());
 		result.setDomainEntity(new Stock());
 		try {
@@ -243,15 +243,17 @@ public class StockServiceImpl implements StockService {
 		return result;
 	}
 
-	private void setStockDomainData(StockResult result, ReceiptOrderItem receiptOrderItem, BigDecimal subTotal, List<ReceiptOrderTax> receiptOrderTaxes) throws Exception {
+	private void setStockDomainData(StockResult result, ReceiptOrderItem receiptOrderItem, BigDecimal subTotal,
+			List<ReceiptOrderTax> receiptOrderTaxes) throws Exception {
 		setBusinessSite(result.getDomainEntity(), receiptOrderItem);
 		setReceiptOrderToStock(result.getDomainEntity(), receiptOrderItem);
-		setStockUnitCost(receiptOrderItem, result.getDomainEntity(), subTotal, receiptOrderTaxes); /* Set Stock Unit Price */
+		setStockUnitCost(receiptOrderItem, result.getDomainEntity(), subTotal,
+				receiptOrderTaxes); /* Set Stock Unit Price */
 		setAVGPrice(receiptOrderItem.getAsset(), result.getDomainEntity()); /* Set AVG Price */
 		setStockHistory(result.getDomainEntity());
 		if ((result.getDomainEntity() != null) && (result.getDomainEntity().getId() == null)) {
 			setNextCode(result.getDomainEntity());
-		} 
+		}
 	}
 
 	private void setBusinessSite(Stock stock, ReceiptOrderItem receiptOrderItem) {
@@ -291,22 +293,18 @@ public class StockServiceImpl implements StockService {
 	// TODO: Check again
 	private void setStockUnitCost(ReceiptOrderItem receiptOrderItem, Stock stock, BigDecimal subTotal,
 			List<ReceiptOrderTax> receiptOrderTaxes) {
-		/*	if ((receiptOrderTaxes != null) && (receiptOrderTaxes.size() > 0)) {
-			ReceiptOrderTax tax = new ReceiptOrderTax();
-		Optional<ReceiptOrderTax> optional = receiptOrderTaxes.stream()
-				.filter((x) -> x.getTax().getId().equals(TAXType.NBT.getId())).findAny();
-			if (optional.isPresent()) {
-				tax = optional.get();
-			} else {
-				// Todo: Get the current NBT Tax
-				//taxDao.findLastTaxByTaxType(TAXType.NBT);
-			}
-			if ((tax != null) && (tax.getId() != null)) {
-				// TODO: Round Here
-				stock.setUnitPrice(receiptOrderItem.getUnitPrice()
-						.add((tax.getTaxAmount().multiply(receiptOrderItem.getUnitPrice())).divide(subTotal)));
-			}
-		}*/
+		/*
+		 * if ((receiptOrderTaxes != null) && (receiptOrderTaxes.size() > 0)) {
+		 * ReceiptOrderTax tax = new ReceiptOrderTax(); Optional<ReceiptOrderTax>
+		 * optional = receiptOrderTaxes.stream() .filter((x) ->
+		 * x.getTax().getId().equals(TAXType.NBT.getId())).findAny(); if
+		 * (optional.isPresent()) { tax = optional.get(); } else { // Todo: Get the
+		 * current NBT Tax //taxDao.findLastTaxByTaxType(TAXType.NBT); } if ((tax !=
+		 * null) && (tax.getId() != null)) { // TODO: Round Here
+		 * stock.setUnitPrice(receiptOrderItem.getUnitPrice()
+		 * .add((tax.getTaxAmount().multiply(receiptOrderItem.getUnitPrice())).divide(
+		 * subTotal))); } }
+		 */
 	}
 
 	private void setAVGPrice(Asset part, Stock stock) {
@@ -344,7 +342,7 @@ public class StockServiceImpl implements StockService {
 			}
 		}
 		domain.setStockNo(CommonUtil.setNextCode(AffixList.STOCK.getCode(), nextNo.toString()));
-	} 
+	}
 
 	private void updateItemAVGPrice(Stock stock) throws Exception {
 		if ((stock.getPart() != null) && (stock.getPart().getId() != null)) {
@@ -354,49 +352,50 @@ public class StockServiceImpl implements StockService {
 
 	/****************************************
 	 * Stock Dispatch
-	 * @return 
+	 * 
+	 * @return
 	 *****************************************/
-
-	
 
 	private StockResult dispatchStockByItemWithoutFIFO(StockResult result, AODItem aodItem) throws Exception {
 		setStockData(result, aodItem);
 		stockDao.save(result.getDomainEntity());
-		result.setResultStatusSuccess();  
+		result.setResultStatusSuccess();
 		return result;
 	}
 
 	private void setStockData(StockResult result, AODItem aodItem) throws StockQuantityExceedException {
 		if (aodItem.getStock() != null) {
 			Stock stock = stockDao.findOne(aodItem.getStock().getId());
-			
-			if (stock.getCurrentQuantity().compareTo(aodItem.getQuantity()) == 0 || stock.getCurrentQuantity().compareTo(aodItem.getQuantity()) == 1) {				
+
+			if (stock.getCurrentQuantity().compareTo(aodItem.getQuantity()) == 0
+					|| stock.getCurrentQuantity().compareTo(aodItem.getQuantity()) == 1) {
 				BigDecimal remainingQty = (stock.getCurrentQuantity().subtract(aodItem.getQuantity()));
 				stock.setCurrentQuantity(remainingQty);
 			} else {
-				result.setResultStatusError(); 
-				throw new StockQuantityExceedException("Stock has not required quantity for AOD item :- " + aodItem.getPart().getName() + " .");
+				result.setResultStatusError();
+				throw new StockQuantityExceedException(
+						"Stock has not required quantity for AOD item :- " + aodItem.getPart().getName() + " .");
 			}
 			result.setDomainEntity(stock);
 		}
 	}
-	
+
 	@Override
 	public StockResult dispatchStock(final AOD aod) throws Exception {
 		final StockResult result = new StockResult(null, null);
 		if (aod.getAodItemList() != null && aod.getAodItemList().size() > 0) {
 			for (final AODItem aodItem : aod.getAodItemList()) {
-				if(aod.getBusiness().getIsFIFO()){
+				if (aod.getBusiness().getIsFIFO()) {
 					dispatchStockByItemWithFIFO(result, aodItem);
-				}else{
+				} else {
 					dispatchStockByItemWithoutFIFO(result, aodItem);
 				}
 				addStockHistory(aodItem);
 			}
 		}
-	return result;
+		return result;
 	}
-	
+
 	private void addStockHistory(AODItem domain) {
 		StockHistory stockHitory = new StockHistory();
 		stockHitory.setBeforeQuantity(domain.getStock().getCurrentQuantity());
@@ -411,7 +410,7 @@ public class StockServiceImpl implements StockService {
 		stockHistoryDao.save(stockHitory);
 	}
 
-	//first in first out
+	// first in first out
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void dispatchStockByItemWithFIFO(final StockResult result, final AODItem aodItem) throws StockException {
 		final Set<AODItemStock> aodItemStocks = new HashSet<>();
@@ -422,13 +421,16 @@ public class StockServiceImpl implements StockService {
 			for (; itemQty.compareTo(BigDecimal.ZERO) > 0;) {
 				final AODItemStock aodItemStock = new AODItemStock();
 				BigDecimal tempItemQty = BigDecimal.ZERO;
-				if (itemQty.compareTo(BigDecimal.ZERO) > 0 && itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) >= 0) {
+				if (itemQty.compareTo(BigDecimal.ZERO) > 0
+						&& itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) >= 0) {
 					tempItemQty = stockList.get(itemCount).getCurrentQuantity();
 					itemQty = itemQty.subtract(tempItemQty);
 					stockList.get(itemCount).setCurrentQuantity(BigDecimal.ZERO);
 					addStockHistory(stockList.get(itemCount), stockList.get(itemCount).getCurrentQuantity());
-				} else if (itemQty.compareTo(BigDecimal.ZERO) > 0 && itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) < 0) {
-					stockList.get(itemCount).setCurrentQuantity(stockList.get(itemCount).getCurrentQuantity().subtract(itemQty));
+				} else if (itemQty.compareTo(BigDecimal.ZERO) > 0
+						&& itemQty.compareTo(stockList.get(itemCount).getCurrentQuantity()) < 0) {
+					stockList.get(itemCount)
+							.setCurrentQuantity(stockList.get(itemCount).getCurrentQuantity().subtract(itemQty));
 					addStockHistory(stockList.get(itemCount), itemQty);
 					tempItemQty = itemQty;
 					itemQty = BigDecimal.ZERO;
@@ -441,12 +443,12 @@ public class StockServiceImpl implements StockService {
 				itemCount++;
 			}
 			aodItem.setAodItemStocks(aodItemStocks);
-			//            aodItemDao.save(aodItem);
+			// aodItemDao.save(aodItem);
 		} else {
-			throw new StockException("ERROR! STOCK Empty for AOD Item :- ".concat(aodItem.getPart().getName()).concat(" ."));
+			throw new StockException(
+					"ERROR! STOCK Empty for AOD Item :- ".concat(aodItem.getPart().getName()).concat(" ."));
 		}
 	}
-
 
 	private void addStockHistory(final Stock stock, final BigDecimal qty) {
 		final StockHistory stockHistory = new StockHistory();
@@ -459,7 +461,8 @@ public class StockServiceImpl implements StockService {
 		StockHistory tempLastHistory = new StockHistory();
 		stockHistory.setStock(stock);
 		stockHistory.setQuantity(qty);
-		final Optional<StockHistory> lastObj = stock.getStockHistoryList().stream().reduce((first, second) -> first.getId() > second.getId() ? first : second);
+		final Optional<StockHistory> lastObj = stock.getStockHistoryList().stream()
+				.reduce((first, second) -> first.getId() > second.getId() ? first : second);
 		if (lastObj.isPresent()) {
 			tempLastHistory = lastObj.get();
 			stockHistory.setBeforeQuantity(tempLastHistory.getAfterQuantity());
@@ -525,7 +528,7 @@ public class StockServiceImpl implements StockService {
 		setStockAdjustment(stock);
 		stock.setCurrentQuantity(newQty);
 		setStockAdjustmentStockHistory(stock, newQty, oldQty);
-		//stock.setAvgPrice(getAVGPrice(stock.getPart().getId()));
+		// stock.setAvgPrice(getAVGPrice(stock.getPart().getId()));
 		stock.setAvgPrice(BigDecimal.ZERO);
 		stockDao.save(stock);
 	}
@@ -551,7 +554,7 @@ public class StockServiceImpl implements StockService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void updateItemAVGPrice(Integer partId) throws Exception {
-		//updateAVGPrice(partId);
+		// updateAVGPrice(partId);
 	}
 
 	private void updateAVGPrice(Integer partId) throws Exception {
@@ -647,7 +650,8 @@ public class StockServiceImpl implements StockService {
 			if (stock.getReceiptOrderItem() != null) {
 				stockDTO.setReceiptOrderId(stock.getReceiptOrderItem().getReceiptOrder().getId());
 				stockDTO.setReceiptOrderCode(stock.getReceiptOrderItem().getReceiptOrder().getCode());
-				stockDTO.setStockTransactionDescription("GRN Item with no ".concat(stock.getReceiptOrderItem().getReceiptOrder().getCode()));
+				stockDTO.setStockTransactionDescription(
+						"GRN Item with no ".concat(stock.getReceiptOrderItem().getReceiptOrder().getCode()));
 			}
 			stockDTO.setStockNo(stock.getStockNo());
 			stockDTO.setQtyOnHand(stock.getCurrentQuantity());
@@ -724,7 +728,7 @@ public class StockServiceImpl implements StockService {
 				List<Predicate> predicates = new ArrayList<>();
 				if ((stockViewFilterDTO != null) && (stockViewFilterDTO.getSiteId() != null)) {
 					predicates
-					.add(cb.equal(root.get("site").get("aodReturn").get("id"), stockViewFilterDTO.getSiteId()));
+							.add(cb.equal(root.get("site").get("aodReturn").get("id"), stockViewFilterDTO.getSiteId()));
 				}
 				if ((stockViewFilterDTO != null) && (stockViewFilterDTO.getWarehouseId() != null)) {
 					predicates.add(cb.equal(root.get("aodItem").get("warehouse").get("id"),
@@ -929,8 +933,8 @@ public class StockServiceImpl implements StockService {
 		StockPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<Stock> domainOut;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			Specification<Stock> specification = (root, query, cb) -> 
-			cb.and(cb.equal(root.get("part").get("id"), partId),
+			Specification<Stock> specification = (root, query, cb) -> cb.and(
+					cb.equal(root.get("part").get("id"), partId),
 					cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			domainOut = stockDao.findAll(input, specification);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
@@ -950,7 +954,8 @@ public class StockServiceImpl implements StockService {
 						// cb.equal(root.get("business"),
 						// AuthenticationUtil.getLoginSite().getSite().getAssetBusinesses()),
 						// cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
-						cb.equal(root.get("part").get("id"), partId),cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
+						cb.equal(root.get("part").get("id"), partId),
+						cb.equal(root.get("part").get("partType"), PartType.REPAIRABLE));
 			};
 			domainOut = stockDao.findAll(input, specification);
 		}
@@ -995,22 +1000,20 @@ public class StockServiceImpl implements StockService {
 		// return cb.equal(joinAssetConsumeRef.get("part").get("id"), assetId);
 		// };
 
-		/*		specification = (root, query, cb) -> {
-			Expression<Integer> exp = root.get("part").get("id");
-			Join<Stock, Asset> joinAsset = root.join("part");
-			Join<Asset, AssetConsumingReference> joinAssetConsumeRef = joinAsset.join("assetConsumingReferences");
-//			query.groupBy(root.get("id"));
-			return cb.in(exp);
-		};*/
-
+		/*
+		 * specification = (root, query, cb) -> { Expression<Integer> exp =
+		 * root.get("part").get("id"); Join<Stock, Asset> joinAsset = root.join("part");
+		 * Join<Asset, AssetConsumingReference> joinAssetConsumeRef =
+		 * joinAsset.join("assetConsumingReferences"); // query.groupBy(root.get("id"));
+		 * return cb.in(exp); };
+		 */
 
 		/*
-		if (partIdList.size()> 0)
-			domainOut = stockDao.findAll(input, applicantsMatchMobility(partIdList));
-		else
-			stockDao.findAll(input);
+		 * if (partIdList.size()> 0) domainOut = stockDao.findAll(input,
+		 * applicantsMatchMobility(partIdList)); else stockDao.findAll(input);
 		 */
-		domainOut = partIdList.size() > 0 ? stockDao.findAll(input, applicantsMatchMobility(partIdList)) : new DataTablesOutput<>();
+		domainOut = partIdList.size() > 0 ? stockDao.findAll(input, applicantsMatchMobility(partIdList))
+				: new DataTablesOutput<>();
 		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 	}
 
@@ -1025,7 +1028,8 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public DataTablesOutput<StockDTO> findStockByAssetTemp(FocusDataTablesInput input, Integer assetId) throws Exception {
+	public DataTablesOutput<StockDTO> findStockByAssetTemp(FocusDataTablesInput input, Integer assetId)
+			throws Exception {
 		DataTablesOutput<Stock> domainOut;
 		StockPropertyMapper.getInstance().generateDataTableInput(input);
 		Specification<Stock> specification;
@@ -1036,7 +1040,8 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public DataTablesOutput<StockDTO> findStockByUserLevel(FocusDataTablesInput input, Integer assetId) throws Exception {
+	public DataTablesOutput<StockDTO> findStockByUserLevel(FocusDataTablesInput input, Integer assetId)
+			throws Exception {
 		DataTablesOutput<Stock> domainOut;
 		StockPropertyMapper.getInstance().generateDataTableInput(input);
 		Specification<Stock> specification;
@@ -1098,13 +1103,13 @@ public class StockServiceImpl implements StockService {
 			DataTablesOutput<Stock> domainOut;
 			if (AuthenticationUtil.isAuthUserAdminLevel()) {
 				Specification<Stock> specification = (root, query, cb) -> {
-					//query.groupBy(root.get("part").get("id"));
+					// query.groupBy(root.get("part").get("id"));
 					return cb.gt(root.get("currentQuantity"), BigDecimal.ZERO);
 				};
 				domainOut = stockDao.findAll(input, specification);
 			} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 				Specification<Stock> specification = (root, query, cb) -> {
-					//query.groupBy(root.get("part").get("id"));
+					// query.groupBy(root.get("part").get("id"));
 					return cb.and(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 							cb.gt(root.get("currentQuantity"), BigDecimal.ZERO));
 				};
@@ -1172,19 +1177,18 @@ public class StockServiceImpl implements StockService {
 	/*********************************************************************
 	 * [COMMON] Set STOCK History
 	 *********************************************************************/
-/*	private void addStockHistory(Stock stock, StockHistory stockHistory, BigDecimal qty) {
-		StockHistory tempLastHistory = new StockHistory();
-		stockHistory.setStock(stock);
-		stockHistory.setQuantity(qty);
-		Optional<StockHistory> lastObj = stock.getStockHistoryList().stream().reduce((first, second) -> second);
-		if (lastObj.isPresent()) {
-			tempLastHistory = lastObj.get();
-			stockHistory.setBeforeQuantity(tempLastHistory.getAfterQuantity());
-		}
-		stockHistory.setAfterQuantity(stock.getCurrentQuantity());
-		stockHistory.setDate(new Date());
-		stock.getStockHistoryList().add(stockHistory);
-	}*/
+	/*
+	 * private void addStockHistory(Stock stock, StockHistory stockHistory,
+	 * BigDecimal qty) { StockHistory tempLastHistory = new StockHistory();
+	 * stockHistory.setStock(stock); stockHistory.setQuantity(qty);
+	 * Optional<StockHistory> lastObj =
+	 * stock.getStockHistoryList().stream().reduce((first, second) -> second); if
+	 * (lastObj.isPresent()) { tempLastHistory = lastObj.get();
+	 * stockHistory.setBeforeQuantity(tempLastHistory.getAfterQuantity()); }
+	 * stockHistory.setAfterQuantity(stock.getCurrentQuantity());
+	 * stockHistory.setDate(new Date());
+	 * stock.getStockHistoryList().add(stockHistory); }
+	 */
 
 	/*********************************************************************
 	 *********************************************************************
@@ -1205,7 +1209,7 @@ public class StockServiceImpl implements StockService {
 	@Override
 	public StockResult save(StockDTO dto) {
 		StockResult result = createPartResult(dto);
-		try{
+		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
 		} catch (ObjectOptimisticLockingFailureException e) {
@@ -1219,10 +1223,10 @@ public class StockServiceImpl implements StockService {
 
 		return result;
 	}
-	
+
 	private StockResult createPartResult(StockDTO dto) {
 		StockResult result;
-		
+
 		if ((dto.getId() != null) && (dto.getId() > 0)) {
 			result = new StockResult(stockDao.findOne(dto.getId()), dto);
 		} else {
@@ -1239,11 +1243,11 @@ public class StockServiceImpl implements StockService {
 			return "Stock Updated Successfully.";
 		}
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveOrUpdate(StockResult result) throws Exception {
 		try {
-		StockMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
+			StockMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 			saveUpdateData(result);
 			stockDao.save(result.getDomainEntity());
 			result.setDtoEntity(findById(result.getDomainEntity().getId()));
@@ -1259,8 +1263,8 @@ public class StockServiceImpl implements StockService {
 			result.addToErrorList(ex.getMessage());
 		}
 	}
-	
-	private void saveUpdateData(StockResult result) throws Exception { 
+
+	private void saveUpdateData(StockResult result) throws Exception {
 		setBusiness(result);
 		setWarehouse(result);
 		setPart(result);
@@ -1272,44 +1276,50 @@ public class StockServiceImpl implements StockService {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
+
 	private void setWarehouse(StockResult result) {
 		if (result.getDtoEntity().getWarehouseId() != null) {
 			result.getDomainEntity().setWarehouse(assetDao.findOne(result.getDtoEntity().getWarehouseId()));
 		}
 	}
+
 	private void setPart(StockResult result) {
 		if (result.getDtoEntity().getPartId() != null) {
 			result.getDomainEntity().setPart(assetDao.findOne(result.getDtoEntity().getPartId()));
 		}
-	} 
+	}
 
 	private void setNotifications(StockResult result) throws Exception {
-		 Set<StockNotification> stockNotifications = new HashSet<>();
-		 List<StockNotificationDTO> stockNotificationDTOs = result.getDtoEntity().getStockNotificationDTOs();
-		 
-		 if (stockNotificationDTOs != null && stockNotificationDTOs.size() > 0) {
-			 Set<StockNotification> currentNotifications = result.getDomainEntity().getStockNotifications();
-			 StockNotification stockNotification = new StockNotification();
-			 for (StockNotificationDTO stockNotificationDTO : stockNotificationDTOs) {
-				 if (currentNotifications != null && currentNotifications.size() > 0) {
-					 stockNotification = currentNotifications.stream().filter((x) -> x.getId().equals(stockNotificationDTO.getId())).findAny().orElseGet(StockNotification :: new);
-				 }else {
-					 stockNotification = new StockNotification();
-				 }
-				 createStockNotification(stockNotificationDTO, stockNotification, result.getDomainEntity());
-				 stockNotifications.add(stockNotification);
+		Set<StockNotification> stockNotifications = new HashSet<>();
+		List<StockNotificationDTO> stockNotificationDTOs = result.getDtoEntity().getStockNotificationDTOs();
+
+		if (stockNotificationDTOs != null && stockNotificationDTOs.size() > 0) {
+			Set<StockNotification> currentNotifications = result.getDomainEntity().getStockNotifications();
+			StockNotification stockNotification = new StockNotification();
+			for (StockNotificationDTO stockNotificationDTO : stockNotificationDTOs) {
+				if (currentNotifications != null && currentNotifications.size() > 0) {
+					stockNotification = currentNotifications.stream()
+							.filter((x) -> x.getId().equals(stockNotificationDTO.getId())).findAny()
+							.orElseGet(StockNotification::new);
+				} else {
+					stockNotification = new StockNotification();
+				}
+				createStockNotification(stockNotificationDTO, stockNotification, result.getDomainEntity());
+				stockNotifications.add(stockNotification);
 			}
-		 }
-		 
-		 result.getDomainEntity().setStockNotifications(stockNotifications);
+		}
+
+		result.getDomainEntity().setStockNotifications(stockNotifications);
 	}
 
-	private void createStockNotification(StockNotificationDTO stockNotificationDTO, StockNotification stockNotification, Stock domainEntity) throws Exception {
+	private void createStockNotification(StockNotificationDTO stockNotificationDTO, StockNotification stockNotification,
+			Stock domainEntity) throws Exception {
 		StockNotificationMapper.getInstance().dtoToDomain(stockNotificationDTO, stockNotification);
 		stockNotification.setStock(domainEntity);
-		stockNotification.setUser(stockNotificationDTO.getUserId() != null ? userDao.findOne(stockNotificationDTO.getUserId()) : null);
+		stockNotification.setUser(
+				stockNotificationDTO.getUserId() != null ? userDao.findOne(stockNotificationDTO.getUserId()) : null);
 	}
-	
+
 	@Override
 	public StockResult findByIdWithOpenPOs(Integer id) {
 		return null;
@@ -1335,7 +1345,7 @@ public class StockServiceImpl implements StockService {
 	@Override
 	public Stock findOne(Integer id) throws Exception {
 		try {
-			return stockDao.findOne(id); 
+			return stockDao.findOne(id);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
@@ -1344,10 +1354,10 @@ public class StockServiceImpl implements StockService {
 
 	@Override
 	public Integer findMinimumStock() {
-		 return (int) stockDao.count(getAllLoWStockItem());
+		return (int) stockDao.count(getAllLoWStockItem());
 	}
-	
-	private Specification<Stock> getAllLoWStockItem(){
+
+	private Specification<Stock> getAllLoWStockItem() {
 		Specification<Stock> specification;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			specification = (root, query, cb) -> {
@@ -1362,15 +1372,15 @@ public class StockServiceImpl implements StockService {
 		} else {
 			specification = (root, query, cb) -> {
 				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getLowStockItemPredicate( root, cb);
+				Predicate predicate2 = getLowStockItemPredicate(root, cb);
 				return cb.and(predicate, predicate2);
 			};
-			
+
 		}
 		return specification;
-		
+
 	}
-	
+
 	private Predicate getLowStockItemPredicate(Root<Stock> root, CriteriaBuilder cb) {
 		return cb.ge(root.get("minQuantity"), root.get("currentQuantity"));
 	}
@@ -1379,55 +1389,57 @@ public class StockServiceImpl implements StockService {
 	public DataTablesOutput<StockDTO> findLowStockPartItem(FocusDataTablesInput input) throws Exception {
 		StockPartPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<Stock> domainOut;
-		Specification<Stock> specification = (root, query, cb) ->getLowStockItemPredicate(root,cb);
-		domainOut=stockDao.findAll(input,specification);
+		Specification<Stock> specification = getAllLoWStockItem();
+		domainOut = stockDao.findAll(input, specification);
 		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		
+
 	}
+
+	@Override
 	public DataTablesOutput<StockDTO> findStock(FocusDataTablesInput input) throws Exception {
 		StockPropertyMapper.getInstance().generateDataTableInput(input);
 		DataTablesOutput<Stock> domainOut;
-		domainOut=stockDao.findAll(input);
+		domainOut = stockDao.findAll(input);
 		return StockMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 	}
 
 	@Override
 	public StockDTO createNewStock(Integer partId) {
-		StockDTO dto=new StockDTO();
-		Asset asset=assetDao.findOne(partId);
-		
+		StockDTO dto = new StockDTO();
+		Asset asset = assetDao.findOne(partId);
+
 		dto.setPartId(asset.getId());
 		dto.setPartName(asset.getName());
 		dto.setPartCode(asset.getCode());
-		if(AuthenticationUtil.isAuthUserSystemLevel()){
+		if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			dto.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
 		}
-		
-		if(asset.getPartType()!=null){
-			setStockType(dto,asset.getPartType());
-		}else{
-			setStockType(dto,PartType.NORMAL);
+
+		if (asset.getPartType() != null) {
+			setStockType(dto, asset.getPartType());
+		} else {
+			setStockType(dto, PartType.NORMAL);
 		}
 		return dto;
 	}
-	
-	private void setStockType(StockDTO dto,PartType partType){
+
+	private void setStockType(StockDTO dto, PartType partType) {
 		switch (partType) {
 		case NORMAL:
 			dto.setStockType(StockType.NORMAL);
 			break;
-		case  REPAIRABLE:
+		case REPAIRABLE:
 			dto.setStockType(StockType.REFURBISH);
 			break;
-		case  OTHER:
-			 dto.setStockType(StockType.OTHER);
+		case OTHER:
+			dto.setStockType(StockType.OTHER);
 			break;
 
-		default:dto.setStockType(StockType.NORMAL);
+		default:
+			dto.setStockType(StockType.NORMAL);
 			break;
 		}
 	}
-	
 
 }

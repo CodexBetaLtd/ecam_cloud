@@ -1,5 +1,16 @@
 package com.codex.ecam.service.inventory.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +61,9 @@ import com.codex.ecam.service.inventory.api.PartService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
 import com.codex.ecam.util.search.inventory.PartSearchPropertyMapper;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class PartServiceImpl implements PartService {
@@ -101,6 +105,9 @@ public class PartServiceImpl implements PartService {
 	@Autowired
 	private Environment environment;
 
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
+
 	@Override
 	public PartDTO findById(Integer id) {
 		Asset part = partDao.findOne(id);
@@ -118,7 +125,8 @@ public class PartServiceImpl implements PartService {
 		try {
 			result.setDtoEntity(withOpenPOs(id));
 			result.setResultStatusSuccess();
-			result.addToMessageList("Part ".concat(result.getDtoEntity().getCode()).concat(" ").concat("Found Successfully."));
+			result.addToMessageList(
+					"Part ".concat(result.getDtoEntity().getCode()).concat(" ").concat("Found Successfully."));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
@@ -130,7 +138,8 @@ public class PartServiceImpl implements PartService {
 
 	private PartDTO withOpenPOs(Integer id) throws Exception {
 		PartDTO partDTO = findById(id);
-		List<PurchaseOrderItem> orderItems = purchaseOrderItemDao.findOpenPOItemListByAsset(partDTO.getId(), PurchaseOrderStatus.DRAFT.getId());
+		List<PurchaseOrderItem> orderItems = purchaseOrderItemDao.findOpenPOItemListByAsset(partDTO.getId(),
+				PurchaseOrderStatus.DRAFT.getId());
 		partDTO.setOpenPOs(PurchaseOrderItemMapper.getInstance().domainToDTOList(orderItems));
 
 		return partDTO;
@@ -155,7 +164,7 @@ public class PartServiceImpl implements PartService {
 	@Override
 	public PartResult save(PartDTO dto, MultipartFile image) throws Exception {
 		PartResult result = createPartResult(dto);
-		try{
+		try {
 			saveOrUpdate(result, image);
 			result.addToMessageList(getMessageByAction(dto));
 		} catch (ObjectOptimisticLockingFailureException e) {
@@ -222,53 +231,79 @@ public class PartServiceImpl implements PartService {
 		setPartImage(result, image);
 		setPartcode(result);
 	}
-	
-	private void setPartcode(PartResult result){
-		if(result.getDtoEntity().getCode()!=null && result.getDtoEntity().getPartType()!=null){
-			if(result.getDtoEntity().getPartType().equals(PartType.REPAIRABLE)){
-				result.getDomainEntity().setCode(result.getDtoEntity().getCode()+"-R");
+
+	private void setPartcode(PartResult result) {
+		if (result.getDtoEntity().getCode() != null && result.getDtoEntity().getPartType() != null) {
+			if (result.getDtoEntity().getPartType().equals(PartType.REPAIRABLE)) {
+				result.getDomainEntity().setCode(result.getDtoEntity().getCode() + "-R");
 			}
 		}
 	}
 
-	private void setPartNotification(PartResult result)throws Exception {
-        Set<PartNotification> partNotifications = new HashSet<>();
-        List<PartNotificationDTO> partNotificationDTOs = result.getDtoEntity().getPartNotificationDTOs();
+	private void setPartNotification(PartResult result) throws Exception {
+		Set<PartNotification> partNotifications = new HashSet<>();
+		List<PartNotificationDTO> partNotificationDTOs = result.getDtoEntity().getPartNotificationDTOs();
 
-        if ((partNotificationDTOs != null) && (partNotificationDTOs.size() > 0)) {
-            Set<PartNotification> currentPartNotifications = result.getDomainEntity().getPartNotifications();
-            PartNotification partNotification = new PartNotification();
+		if ((partNotificationDTOs != null) && (partNotificationDTOs.size() > 0)) {
+			Set<PartNotification> currentPartNotifications = result.getDomainEntity().getPartNotifications();
+			PartNotification partNotification = new PartNotification();
 
-            for (PartNotificationDTO partNotificationDTO : partNotificationDTOs) {
-                if ((currentPartNotifications != null) && (currentPartNotifications.size() > 0)) {
-                    partNotification = currentPartNotifications.stream().filter((x) -> x.getId().equals(partNotificationDTO.getId())).findAny().orElseGet(PartNotification::new);
-                }else {
+			for (PartNotificationDTO partNotificationDTO : partNotificationDTOs) {
+				if ((currentPartNotifications != null) && (currentPartNotifications.size() > 0)) {
+					partNotification = currentPartNotifications.stream()
+							.filter((x) -> x.getId().equals(partNotificationDTO.getId())).findAny()
+							.orElseGet(PartNotification::new);
+				} else {
 					partNotification = new PartNotification();
-                }
-                createNotification(result.getDomainEntity(), partNotificationDTO, partNotification);
-                partNotifications.add(partNotification);
-            }
-        }
-        result.getDomainEntity().setPartNotifications(partNotifications);
-    }
+				}
+				createNotification(result.getDomainEntity(), partNotificationDTO, partNotification);
+				partNotifications.add(partNotification);
+			}
+		}
+		result.getDomainEntity().setPartNotifications(partNotifications);
+	}
 
-    private void createNotification(Asset domainEntity, PartNotificationDTO partNotificationDTO, PartNotification partNotification) throws Exception {
-        PartNotificationMapper.getInstance().dtoToDomain(partNotificationDTO, partNotification);
-        partNotification.setPart(domainEntity);
-		partNotification.setUser(partNotificationDTO.getUserId() != null ? userDao.findOne(partNotificationDTO.getUserId()) : null);
-    }
+	private void createNotification(Asset domainEntity, PartNotificationDTO partNotificationDTO,
+			PartNotification partNotification) throws Exception {
+		PartNotificationMapper.getInstance().dtoToDomain(partNotificationDTO, partNotification);
+		partNotification.setPart(domainEntity);
+		partNotification.setUser(
+				partNotificationDTO.getUserId() != null ? userDao.findOne(partNotificationDTO.getUserId()) : null);
+	}
 
 	private void setPartImage(PartResult result, MultipartFile image) throws Exception {
-		if ( image != null ) {
-			String uploadFolder = environment.getProperty("upload.part.file.folder");
+		if (image != null) {
+			String uploadFolder = environment.getProperty("upload.asset.file.folder");
 			String uploadLocation = environment.getProperty("upload.location");
 			try {
-				String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(), result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
-				result.getDomainEntity().setImageLocation(fileLocation);
+				String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
+						result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
+				result.getDomainEntity().setImageLocation(saveImageS3Bucket(result.getDtoEntity(), image));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private String saveImageS3Bucket(PartDTO dto, MultipartFile image) throws IOException {
+
+		// s3 key for storage
+//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
+//				+ File.separator + getFileName(image);
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.part.image.s3") + dto.getId() + "/" + getFileName(image);
+
+		amazonS3ObjectUtil.uploadS3Object(key, image);
+
+		return key;
+	}
+
+	private String getFileName(MultipartFile file) {
+		final String fileName = FilenameUtils.getBaseName(file.getOriginalFilename()).replace(" ", "_");
+		final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		final String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+
+		return fileName + "_" + timeStamp + "." + extension;
 	}
 
 	private void setBusiness(PartResult result) {
@@ -291,7 +326,8 @@ public class PartServiceImpl implements PartService {
 
 	private void setPartCategory(PartResult result) throws Exception {
 		if ((result.getDtoEntity().getPartCategoryId() != null) && (result.getDtoEntity().getPartCategoryId() > 0)) {
-			result.getDomainEntity().setAssetCategory(assetCategoryDao.findOne(result.getDtoEntity().getPartCategoryId()));
+			result.getDomainEntity()
+					.setAssetCategory(assetCategoryDao.findOne(result.getDtoEntity().getPartCategoryId()));
 		}
 	}
 
@@ -300,7 +336,8 @@ public class PartServiceImpl implements PartService {
 		for (AssetUserDTO assetUserDTO : result.getDtoEntity().getAssetUserDTOs()) {
 			AssetUser assetUser;
 			if (assetUserDTO.getId() != null) {
-				assetUser = result.getDomainEntity().getAssetUsers().stream().filter((x) -> x.getId().equals(assetUserDTO.getId())).findAny().orElseGet(AssetUser :: new);
+				assetUser = result.getDomainEntity().getAssetUsers().stream()
+						.filter((x) -> x.getId().equals(assetUserDTO.getId())).findAny().orElseGet(AssetUser::new);
 			} else {
 				assetUser = new AssetUser();
 			}
@@ -315,7 +352,8 @@ public class PartServiceImpl implements PartService {
 	}
 
 	private void setAssetConsumeReferences(PartResult result) throws Exception {
-		if ((result.getDtoEntity().getAssetConsumeRefs() != null) && (result.getDtoEntity().getAssetConsumeRefs().size() > 0)) {
+		if ((result.getDtoEntity().getAssetConsumeRefs() != null)
+				&& (result.getDtoEntity().getAssetConsumeRefs().size() > 0)) {
 			Set<AssetConsumingReference> assetConsumeRefs = new HashSet<>();
 			for (AssetConsumingReferenceDTO assetConsumeRefDTO : result.getDtoEntity().getAssetConsumeRefs()) {
 				AssetConsumingReference assetConsumeRef = findAssetConsumingRefByAssetIdAndBomGroupPartId(
@@ -349,7 +387,8 @@ public class PartServiceImpl implements PartService {
 					}
 				}
 				if ((assetId == null) && (bomGroupPartId != null)) {
-					if (consumingRef.getBomGroupAsset().getId().equals(bomGroupPartId) && (consumingRef.getAsset() == null)) {
+					if (consumingRef.getBomGroupAsset().getId().equals(bomGroupPartId)
+							&& (consumingRef.getAsset() == null)) {
 						assetConsumeRef = consumingRef;
 						break;
 					}
@@ -359,7 +398,8 @@ public class PartServiceImpl implements PartService {
 		return assetConsumeRef;
 	}
 
-	private void createAssetConsumeReference(AssetConsumingReferenceDTO dto, Asset part, AssetConsumingReference domain) throws Exception {
+	private void createAssetConsumeReference(AssetConsumingReferenceDTO dto, Asset part, AssetConsumingReference domain)
+			throws Exception {
 		AssetConsumingReferenceMapper.getInstance().dtoToDomain(dto, domain);
 		if ((dto.getBomGroupPartId() != null) && (dto.getBomGroupPartId() > 0)) {
 			domain.setBomGroupAsset(bomGroupPartDao.findOne(dto.getBomGroupPartId()));
@@ -374,8 +414,10 @@ public class PartServiceImpl implements PartService {
 		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getStockDTOs() != null)) {
 			for (StockDTO dto : result.getDtoEntity().getStockDTOs()) {
 				Stock stock = new Stock();
-				if ((dto.getId() != null) && (result.getDomainEntity().getStocks() != null) && (result.getDomainEntity().getStocks().size() > 0)) {
-					stock = result.getDomainEntity().getStocks().stream().filter((x) -> x.getId().equals(dto.getId())).findAny().orElseGet(Stock::new);
+				if ((dto.getId() != null) && (result.getDomainEntity().getStocks() != null)
+						&& (result.getDomainEntity().getStocks().size() > 0)) {
+					stock = result.getDomainEntity().getStocks().stream().filter((x) -> x.getId().equals(dto.getId()))
+							.findAny().orElseGet(Stock::new);
 				} else {
 					stock = new Stock();
 					stock.setStockNo("");
@@ -392,29 +434,34 @@ public class PartServiceImpl implements PartService {
 	private void setStockNotification(StockDTO dto, Stock stock, PartResult result) throws Exception {
 		Set<StockNotification> stockNotifications = new HashSet<>();
 
-        if ((dto.getStockNotificationDTOs() != null) && (dto.getStockNotificationDTOs().size() > 0)) {
+		if ((dto.getStockNotificationDTOs() != null) && (dto.getStockNotificationDTOs().size() > 0)) {
 
 			Set<StockNotification> currentNotifications = stock.getStockNotifications();
 			StockNotification stockNotification = new StockNotification();
 
-			for ( StockNotificationDTO stockNotificationDTO : dto.getStockNotificationDTOs() ) {
-                if ((stockNotificationDTO.getId() != null) && (currentNotifications != null) && (currentNotifications.size() > 0)) {
-                    stockNotification = currentNotifications.stream().filter((x) -> x.getId().equals(stockNotificationDTO.getId())).findAny().orElseGet(StockNotification::new);
-                } else {
+			for (StockNotificationDTO stockNotificationDTO : dto.getStockNotificationDTOs()) {
+				if ((stockNotificationDTO.getId() != null) && (currentNotifications != null)
+						&& (currentNotifications.size() > 0)) {
+					stockNotification = currentNotifications.stream()
+							.filter((x) -> x.getId().equals(stockNotificationDTO.getId())).findAny()
+							.orElseGet(StockNotification::new);
+				} else {
 					stockNotification = new StockNotification();
 				}
 
-                createStockNotification(stockNotificationDTO, stockNotification, stock);
-                stockNotifications.add(stockNotification);
+				createStockNotification(stockNotificationDTO, stockNotification, stock);
+				stockNotifications.add(stockNotification);
 			}
 		}
 		stock.setStockNotifications(stockNotifications);
 	}
 
-    private void createStockNotification(StockNotificationDTO stockNotificationDTO, StockNotification stockNotification, Stock domainEntity) throws Exception {
-        StockNotificationMapper.getInstance().dtoToDomain(stockNotificationDTO, stockNotification);
+	private void createStockNotification(StockNotificationDTO stockNotificationDTO, StockNotification stockNotification,
+			Stock domainEntity) throws Exception {
+		StockNotificationMapper.getInstance().dtoToDomain(stockNotificationDTO, stockNotification);
 		stockNotification.setStock(domainEntity);
-		stockNotification.setUser(stockNotificationDTO.getUserId() != null ? userDao.findOne(stockNotificationDTO.getUserId()) : null);
+		stockNotification.setUser(
+				stockNotificationDTO.getUserId() != null ? userDao.findOne(stockNotificationDTO.getUserId()) : null);
 	}
 
 	private void setStockPart(StockDTO dto, Stock stock, PartResult result) throws Exception {
@@ -436,19 +483,22 @@ public class PartServiceImpl implements PartService {
 	public List<PartDTO> findAll() throws Exception {
 		List<Asset> domainOut;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			Specification<Asset> specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES);
+			Specification<Asset> specification = (root, query, cb) -> cb
+					.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES);
 			domainOut = partDao.findAll(specification);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			Specification<Asset> specification = (root, query, cb) -> {
 				return cb.and(
-						cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								AssetCategoryType.PARTS_AND_SUPPLIES),
 						cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
 			};
 			domainOut = partDao.findAll(specification);
 		} else {
 			Specification<Asset> specification = (root, query, cb) -> {
 				return cb.and(
-						cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
+						cb.equal(root.get("assetCategory").get("assetCategoryType"),
+								AssetCategoryType.PARTS_AND_SUPPLIES),
 						cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness()));
 			};
 			domainOut = partDao.findAll(specification);
@@ -487,6 +537,7 @@ public class PartServiceImpl implements PartService {
 		return out;
 	}
 
+	@Override
 	public DataTablesOutput<PartDTO> findAllSparePart(FocusDataTablesInput input) throws Exception {
 		DataTablesOutput<Asset> domainOut;
 		PartSearchPropertyMapper.getInstance().generateDataTableInput(input);
@@ -520,27 +571,30 @@ public class PartServiceImpl implements PartService {
 		DataTablesOutput<PartDTO> out = PartMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
+
 	@Override
 	public byte[] getPartImageStream(Integer id, HttpServletRequest request) throws IOException {
 		if (id != null) {
 			String imagePath = partDao.getAssetImageLocation(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
-				return FileDownloadUtil.getByteInputStream( uploadLocation + imagePath );
+				// return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
+				return amazonS3ObjectUtil.downloadByteArray(imagePath);
+
 			}
 		}
 
-		return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(PART_DEFAULT_IMAGE) );
+		return FileDownloadUtil
+				.getByteInputStream(request.getServletContext().getRealPath("").concat(PART_DEFAULT_IMAGE));
 	}
 
 	@Override
 	public DataTablesOutput<PartDTO> getPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<Asset>  specification = (root, query, cb) ->
-		cb.and(
+		Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
-				cb.equal(root.get("business").get("id"), bizId) );
+				cb.equal(root.get("business").get("id"), bizId));
 
 		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
 		DataTablesOutput<PartDTO> out = PartMapper.getInstance().domainToDTODataTablesOutput(domainOut);

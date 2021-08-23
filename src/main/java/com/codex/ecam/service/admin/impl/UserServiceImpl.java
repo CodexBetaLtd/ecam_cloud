@@ -1,40 +1,5 @@
 package com.codex.ecam.service.admin.impl;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.dao.DataIntegrityViolationException; 
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.codex.ecam.dao.admin.*;
-import com.codex.ecam.dao.asset.AssetDao;
-import com.codex.ecam.dao.biz.BusinessDao;
-import com.codex.ecam.dto.admin.UserCertificationDTO;
-import com.codex.ecam.dto.admin.UserDTO;
-import com.codex.ecam.dto.admin.UserGroupDTO;
-import com.codex.ecam.dto.admin.cmmssetting.UserSiteDTO;
-import com.codex.ecam.mappers.admin.UserCertificationMapper;
-import com.codex.ecam.mappers.admin.UserMapper;
-import com.codex.ecam.model.admin.*;
-import com.codex.ecam.params.VelocityMail;
-import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.admin.UserResult;
-import com.codex.ecam.service.admin.api.UserService;
-import com.codex.ecam.util.AuthenticationUtil;
-import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.VelocityEmailSender;
-import com.codex.ecam.util.search.admin.UserSearchPropertyMapper;
-
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.servlet.http.HttpServletRequest;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,9 +8,54 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.codex.ecam.dao.admin.CertificationDao;
+import com.codex.ecam.dao.admin.UserCredentialDao;
+import com.codex.ecam.dao.admin.UserDao;
+import com.codex.ecam.dao.admin.UserGroupDao;
+import com.codex.ecam.dao.admin.UserJobTitleDao;
+import com.codex.ecam.dao.admin.UserSkillLevelDao;
+import com.codex.ecam.dao.asset.AssetDao;
+import com.codex.ecam.dao.biz.BusinessDao;
+import com.codex.ecam.dto.admin.UserCertificationDTO;
+import com.codex.ecam.dto.admin.UserDTO;
+import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.cmmssetting.UserSiteDTO;
+import com.codex.ecam.mappers.admin.UserCertificationMapper;
+import com.codex.ecam.mappers.admin.UserMapper;
+import com.codex.ecam.model.admin.User;
+import com.codex.ecam.model.admin.UserCertification;
+import com.codex.ecam.model.admin.UserCredential;
+import com.codex.ecam.model.admin.UserSite;
+import com.codex.ecam.model.admin.UserSiteGroup;
+import com.codex.ecam.params.VelocityMail;
+import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.admin.UserResult;
+import com.codex.ecam.service.admin.api.UserService;
+import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.FileDownloadUtil;
+import com.codex.ecam.util.VelocityEmailSender;
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
+import com.codex.ecam.util.search.admin.UserSearchPropertyMapper;
+
 @Service
 public class UserServiceImpl implements UserService {
-	
+
 	private final String USER_DEFAULT_IMAGE = "/resources/images/user-default.png";
 
 	@Autowired
@@ -77,10 +87,12 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private VelocityEmailSender velocityEmailSender;
-	
+
 	@Autowired
 	private Environment environment;
 
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
 
 	private void setUserData(User domain, UserDTO dto) throws Exception {
 		setAssignedUserSites(domain, dto);
@@ -106,7 +118,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResult save(UserDTO dto) throws Exception {
 		UserResult result = createUserResult(dto);
-		try{
+		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
 		} catch (ObjectOptimisticLockingFailureException e) {
@@ -183,7 +195,8 @@ public class UserServiceImpl implements UserService {
 		if ((result.getDtoEntity().getId() != null) && (result.getDtoEntity().getId() > 0)) {
 			userCredentials = userCredentialDao.findOne(result.getDtoEntity().getUserCredentialDTO().getId());
 			if (result.getDtoEntity().getChangePassword() == true) {
-				userCredentials.setPassword(passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
+				userCredentials.setPassword(
+						passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
 				sendEmailToUser(result);
 			}
 			userCredentials.setUserName(result.getDtoEntity().getUserCredentialDTO().getUserName());
@@ -199,18 +212,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setUserName(UserCredential userCredential, UserResult result) {
-		if ( result.getDtoEntity().getUserCredentialDTO().getUserName() != null ) {
+		if (result.getDtoEntity().getUserCredentialDTO().getUserName() != null) {
 			userCredential.setUserName(result.getDtoEntity().getUserCredentialDTO().getUserName());
 		} else {
-			userCredential.setUserName(getSystemUserName(result.getDtoEntity().getFullName()));			
+			userCredential.setUserName(getSystemUserName(result.getDtoEntity().getFullName()));
 		}
 	}
 
 	private void setPassword(UserCredential userCredential, UserResult result) {
 		if (result.getDtoEntity().getUserCredentialDTO().getPassword() != null) {
-			userCredential.setPassword(passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
+			userCredential
+					.setPassword(passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
 		} else {
-			userCredential.setPassword(passwordEncoder.encode(getSystemPassword())); 
+			userCredential.setPassword(passwordEncoder.encode(getSystemPassword()));
 		}
 	}
 
@@ -258,9 +272,11 @@ public class UserServiceImpl implements UserService {
 			UserSite userSite;
 
 			if (site.getSiteId() != null) {
-				if (result.getDomainEntity().getUserSites() != null && result.getDomainEntity().getUserSites().size() > 0) {					
-					userSite = result.getDomainEntity().getUserSites().stream().filter((x) -> x.getId().equals(site.getSiteId())).findAny().orElseGet(UserSite :: new);
-				} else {					
+				if (result.getDomainEntity().getUserSites() != null
+						&& result.getDomainEntity().getUserSites().size() > 0) {
+					userSite = result.getDomainEntity().getUserSites().stream()
+							.filter((x) -> x.getId().equals(site.getSiteId())).findAny().orElseGet(UserSite::new);
+				} else {
 					userSite = new UserSite();
 				}
 			} else {
@@ -283,13 +299,16 @@ public class UserServiceImpl implements UserService {
 			UserCertification userCertification;
 
 			if (userCertificationDTO.getId() != null) {
-				userCertification = result.getDomainEntity().getUserCertifications().stream().filter((x) -> x.getId().equals(userCertificationDTO.getId())).findAny().orElseGet(UserCertification :: new);
+				userCertification = result.getDomainEntity().getUserCertifications().stream()
+						.filter((x) -> x.getId().equals(userCertificationDTO.getId())).findAny()
+						.orElseGet(UserCertification::new);
 			} else {
 				userCertification = new UserCertification();
 			}
 
 			UserCertificationMapper.getInstance().dtoToDomain(userCertificationDTO, userCertification);
-			userCertification.setCertification(certificationDao.findById(userCertificationDTO.getCertificationTypeId()));
+			userCertification
+					.setCertification(certificationDao.findById(userCertificationDTO.getCertificationTypeId()));
 			userCertification.setUser(result.getDomainEntity());
 			userCertifications.add(userCertification);
 		}
@@ -299,7 +318,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setAssignedUserSites(User domain, UserDTO dto) {
-		List<Integer> assignedUserSites = domain.getUserSites().stream().map(e -> e.getSite().getId()).collect(Collectors.toList());
+		List<Integer> assignedUserSites = domain.getUserSites().stream().map(e -> e.getSite().getId())
+				.collect(Collectors.toList());
 		dto.setAssignedUserSites(assignedUserSites);
 	}
 
@@ -318,7 +338,8 @@ public class UserServiceImpl implements UserService {
 	public UserDTO findUserById(Integer userId) throws Exception {
 		User user = findEntityById(userId);
 		UserDTO dto = UserMapper.getInstance().domainToDto(user);
-		List<Integer> assignedUserSites = user.getUserSites().stream().map(e -> e.getSite().getId()).collect(Collectors.toList());
+		List<Integer> assignedUserSites = user.getUserSites().stream().map(e -> e.getSite().getId())
+				.collect(Collectors.toList());
 		dto.setAssignedUserSites(assignedUserSites);
 
 		return dto;
@@ -327,13 +348,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public DataTablesOutput<UserDTO> findAll(FocusDataTablesInput input) throws Exception {
 		DataTablesOutput<User> domainOut;
-		
+
 		UserSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		
-		if(AuthenticationUtil.isAuthUserAdminLevel()){
+
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = userDao.findAll(input);
 		} else {
-			Specification<User> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			Specification<User> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = userDao.findAll(input, specification);
 		}
 
@@ -407,7 +429,8 @@ public class UserServiceImpl implements UserService {
 		try {
 			DataTablesOutput<User> domainOut = new DataTablesOutput<>();
 			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
-				domainOut = userDao.findAll(input, findAllUserByBusinessSpec(AuthenticationUtil.getLoginUserBusiness().getId()));
+				domainOut = userDao.findAll(input,
+						findAllUserByBusinessSpec(AuthenticationUtil.getLoginUserBusiness().getId()));
 			} else {
 				domainOut = userDao.findAll(input);
 			}
@@ -423,9 +446,9 @@ public class UserServiceImpl implements UserService {
 		Specification<User> spec = (root, query, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 //			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
-            predicates.add(cb.equal(root.get("business").get("id"), id));
+			predicates.add(cb.equal(root.get("business").get("id"), id));
 //			}
-            return cb.and(predicates.toArray(new Predicate[0]));
+			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 		return spec;
 	}
@@ -459,16 +482,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public byte[] getUserAvatar(Integer id, HttpServletRequest request) throws IOException { 
+	public byte[] getUserAvatar(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
 			String imagePath = userDao.getUserAvatarPath(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
-				return FileDownloadUtil.getByteInputStream( uploadLocation + imagePath );
+				// return FileDownloadUtil.getByteInputStream( uploadLocation + imagePath );
+				return amazonS3ObjectUtil.downloadByteArray(imagePath);
+
 			}
-		} 
-		
-		return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(USER_DEFAULT_IMAGE) );
+		}
+
+		return FileDownloadUtil
+				.getByteInputStream(request.getServletContext().getRealPath("").concat(USER_DEFAULT_IMAGE));
 	}
 }

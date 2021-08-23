@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ import com.codex.ecam.dao.admin.AccountDao;
 import com.codex.ecam.dao.admin.ChargeDepartmentDao;
 import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.CurrencyDao;
-import com.codex.ecam.dao.admin.TaxDao;
 import com.codex.ecam.dao.admin.TaxValueDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetDao;
@@ -48,12 +47,10 @@ import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderItemDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderNotificationDTO;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderTaxDTO;
-import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderFileMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderMapper;
 import com.codex.ecam.mappers.purchasing.PurchaseOrderRFQMapper;
-import com.codex.ecam.model.admin.TaxValue;
 import com.codex.ecam.model.biz.supplier.Supplier;
 import com.codex.ecam.model.inventory.mrn.MRN;
 import com.codex.ecam.model.inventory.mrn.MRNItem;
@@ -65,22 +62,18 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderItemRFQItem;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderNotification;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderTax;
-import com.codex.ecam.model.inventory.rfq.RFQ;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.inventory.api.PurchaseOrderService;
 import com.codex.ecam.util.AuthenticationUtil;
-import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.UniqueCodeUtil;
 import com.codex.ecam.util.VelocityEmailSender;
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.inventory.purchaseorder.PurchaseorderPropertyMapper;
-import com.codex.ecam.util.search.inventory.rfq.RFQPropertyMapper;
 
 @Service
 public class PurchaseOrderServiceImpl implements PurchaseOrderService {
@@ -135,6 +128,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Autowired
 	Environment environment;
 
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
+
 	@Override
 	public DataTablesOutput<PurchaseOrderDTO> findAll(FocusDataTablesInput input) throws Exception {
 		PurchaseorderPropertyMapper.getInstance().generateDataTableInput(input);
@@ -155,6 +151,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		return out;
 	}
 
+	@Override
 	public DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input) {
 		DataTablesOutput<PurchaseOrderItem> domainOut;
 		Specification<PurchaseOrderItem> specification;
@@ -256,7 +253,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		setNotification(result);
 		setPurchaseOrderFiles(result);
 		setTaxValue(result);
-		
 
 	}
 
@@ -294,10 +290,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setIsDeleted(Boolean.FALSE);
-		if(dto.getValueId()!=null){
+		if (dto.getValueId() != null) {
 			domain.setTaxValue(taxValueDao.findOne(dto.getValueId()));
 		}
-			domain.setPurchaseOrder(purchaseOrder);
+		domain.setPurchaseOrder(purchaseOrder);
 	}
 
 	private void setItems(PurchaseOrderResult result) throws Exception {
@@ -361,7 +357,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			domain.setSourceAsset(assetDao.findOne(dto.getItemSourceAssetId()));
 		}
 
-	//	setPOItemTax(result);
+		// setPOItemTax(result);
 		if ((dto.getItemRfqItemId() != null) && (dto.getItemRfqItemId() > 0)) {
 			RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
 
@@ -374,17 +370,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		}
 
 	}
-	private void setPOItemTax(){
-		
+
+	private void setPOItemTax() {
+
 	}
+
 	private void createPOItemTax(PurchaseOrderTaxDTO dto, PurchaseOrderTax domain, PurchaseOrder purchaseOrder) {
 		domain.setId(dto.getId());
 		domain.setVersion(dto.getVersion());
 		domain.setIsDeleted(Boolean.FALSE);
-		if(dto.getValueId()!=null){
+		if (dto.getValueId() != null) {
 			domain.setTaxValue(taxValueDao.findOne(dto.getValueId()));
 		}
-			domain.setPurchaseOrder(purchaseOrder);
+		domain.setPurchaseOrder(purchaseOrder);
 	}
 
 	private void setBusiness(PurchaseOrderResult result) {
@@ -717,20 +715,23 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public void purchaseOrderFileDownload(Integer id, HttpServletResponse response) throws IOException {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (id != null) {
 			PurchaseOrderFile file = purchaseOrderDao.findByFileId(id);
-			String externalFilePath = uploadLocation + file.getFileLocation();
-			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
+			int index = file.getFileLocation().lastIndexOf("\\");
+			String fileName = file.getFileLocation().substring(index + 1);
+			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
+
 		}
 	}
 
 	@Override
 	public String purchaseOrderFileUpload(MultipartFile fileData, String refId) {
-		String uploadFolder = environment.getProperty("upload.purchaseorder.file.folder");
-		String uploadLocation = environment.getProperty("upload.location");
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.purchaseorder.file.s3") + refId + "/"
+				+ fileData.getOriginalFilename();
 		try {
-			return FileUploadUtil.createFile(fileData, refId, uploadFolder, uploadLocation);
+			amazonS3ObjectUtil.uploadS3Object(key, fileData);
+			return key;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -813,6 +814,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		return null;
 	}
 
+	@Override
 	public PurchaseOrderResult createNewPurchaseorder() {
 		final PurchaseOrderResult result = new PurchaseOrderResult(null, null);
 		try {
@@ -833,6 +835,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		return result;
 	}
 
+	@Override
 	public String getNextCode(Integer businessId) {
 		if (businessId != null) {
 			final PurchaseOrder lastDomain = purchaseOrderDao.findLastDomainByBusiness(businessId);
@@ -846,16 +849,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	 * @Override public PurchaseOrderDTO createPurchaseOrderFromRFQItems(String
 	 * rfqItemIds) { PurchaseOrderDTO dto = new PurchaseOrderDTO();
 	 * List<PurchaseOrderItemDTO> items = new ArrayList<>(); String[] ids =
-	 * rfqItemIds.split(","); PurchaseOrderItemDTO item; for ( String id : ids )
-	 * { item = new PurchaseOrderItemDTO(); RFQItem rfqItem =
+	 * rfqItemIds.split(","); PurchaseOrderItemDTO item; for ( String id : ids ) {
+	 * item = new PurchaseOrderItemDTO(); RFQItem rfqItem =
 	 * rfqItemDao.findOne(Integer.parseInt(id));
 	 * item.setItemAssetId(rfqItem.getAsset().getId());
 	 * item.setItemAssetName(rfqItem.getAsset().getName());
 	 * item.setItemRfqItemId(rfqItem.getId());
 	 * item.setItemRfqCodes(rfqItem.getRfq().getCode());
 	 * item.setItemQtyOnOrder(rfqItem.getQuoted());
-	 * item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit()); items.add(item);
-	 * } dto.setItems(items); return dto; }
+	 * item.setItemUnitPrice(rfqItem.getQuotedPricePerUnit()); items.add(item); }
+	 * dto.setItems(items); return dto; }
 	 */
 
 }

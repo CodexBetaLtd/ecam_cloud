@@ -3,7 +3,9 @@ package com.codex.ecam.service.asset.impl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,6 +20,7 @@ import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -104,6 +107,7 @@ import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
 import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.QRCodeUtil;
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
 import com.google.zxing.WriterException;
 
@@ -174,6 +178,9 @@ public class AssetServiceImpl implements AssetService {
 
 	@Autowired
 	ScheduledService scheduledService;
+
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
 
 	@Override
 	public DataTablesOutput<AssetDTO> findAll(FocusDataTablesInput input) throws Exception {
@@ -388,11 +395,11 @@ public class AssetServiceImpl implements AssetService {
 		setBrand(result);
 		setLocation(result);
 		setModel(result);
-		// setAssetFiles(result);
+		setAssetFiles(result);
 		setAssetSparePart(result);
-		// setAssetImage(result, image);
+		setAssetImage(result, image);
 		warrantyService.setWarranties(result.getDtoEntity().getWarranties(), result.getDomainEntity());
-		// generateAssetQR(result);
+		generateAssetQR(result);
 
 	}
 
@@ -415,17 +422,16 @@ public class AssetServiceImpl implements AssetService {
 
 	private void generateAssetQR(AssetResult result) throws WriterException, IOException {
 
-		String uploadFolder = environment.getProperty("upload.asset.file.folder");
-		String uploadLocation = environment.getProperty("upload.location");
+		String uploadFolder = environment.getProperty("upload.location.asset.qr.s3");
+		String uploadLocation = environment.getProperty("upload.location.s3");
 		String host = environment.getProperty("common.url");
 		String qrCodeText = host + "/asset/machine/edit?id=" + result.getDomainEntity().getId();
-		String filePath = uploadLocation + uploadFolder + "QR/ECAM-ASSET(" + result.getDomainEntity().getCode()
-				+ ").png";
+		String filePath = uploadLocation + uploadFolder + "ECAM-ASSET(" + result.getDomainEntity().getCode() + ").png";
 		int size = 500;
 		String fileType = "png";
 		File qrFile = new File(filePath);
-
-		QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
+		InputStream inputStream = QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
+		amazonS3ObjectUtil.uploadS3Object(filePath, inputStream);
 		result.getDomainEntity().setAssetUrl(filePath);
 		System.out.println(filePath);
 	}
@@ -474,11 +480,32 @@ public class AssetServiceImpl implements AssetService {
 			try {
 				String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
 						result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
-				result.getDomainEntity().setImageLocation(fileLocation);
+				result.getDomainEntity().setImageLocation(saveImageS3Bucket(result.getDtoEntity(), image));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private String saveImageS3Bucket(AssetDTO dto, MultipartFile image) throws IOException {
+
+		// s3 key for storage
+//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
+//				+ File.separator + getFileName(image);
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.asset.image.s3") + dto.getId() + "/" + getFileName(image);
+
+		amazonS3ObjectUtil.uploadS3Object(key, image);
+
+		return key;
+	}
+
+	private String getFileName(MultipartFile file) {
+		final String fileName = FilenameUtils.getBaseName(file.getOriginalFilename()).replace(" ", "_");
+		final String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		final String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
+
+		return fileName + "_" + timeStamp + "." + extension;
 	}
 
 	private AssetResult createAssetResult(AssetDTO dto) {
@@ -1443,10 +1470,11 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public String assetFileUpload(MultipartFile file, String refId) throws Exception {
-		String uploadFolder = environment.getProperty("upload.asset.file.folder");
-		String uploadLocation = environment.getProperty("upload.location");
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.asset.file.s3") + refId + "/" + file.getOriginalFilename();
 		try {
-			return FileUploadUtil.createFile(file, refId, uploadFolder, uploadLocation);
+			amazonS3ObjectUtil.uploadS3Object(key, file);
+			return key;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -1455,22 +1483,22 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public void assetFileDownload(Integer refId, HttpServletResponse response) throws Exception {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (refId != null) {
 			AssetFile file = assetDao.findByFileId(refId);
-			String externalFilePath = uploadLocation + file.getFileLocation();
-			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
+			int index = file.getFileLocation().lastIndexOf("\\");
+			String fileName = file.getFileLocation().substring(index + 1);
+			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
+
 		}
 	}
 
 	@Override
 	public void assetQRDownload(Integer id, HttpServletResponse response) throws Exception {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (id != null) {
 			String file = assetDao.getAssetQRLocation(id);
-			// String externalFilePath = uploadLocation +
-			// file.getFileLocation();
-			FileDownloadUtil.flushFile(file, "PNG", response);
+			int index = file.lastIndexOf("\\");
+			String fileName = file.substring(index + 1);
+			amazonS3ObjectUtil.downloadToResponse(file, fileName, response);
 		}
 	}
 
@@ -1508,7 +1536,8 @@ public class AssetServiceImpl implements AssetService {
 			String imagePath = assetDao.getAssetImageLocation(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
-				return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
+				// return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
+				return amazonS3ObjectUtil.downloadByteArray(imagePath);
 			}
 		}
 
@@ -1523,7 +1552,8 @@ public class AssetServiceImpl implements AssetService {
 			String imagePath = assetDao.getAssetQRLocation(id);
 			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
-				return FileDownloadUtil.getByteInputStream(imagePath);
+				return amazonS3ObjectUtil.downloadByteArray(imagePath);
+				// return FileDownloadUtil.getByteInputStream(imagePath);
 			}
 		}
 

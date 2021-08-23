@@ -63,11 +63,9 @@ import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.RFQResult;
 import com.codex.ecam.service.inventory.api.RFQService;
 import com.codex.ecam.util.AuthenticationUtil;
-import com.codex.ecam.util.CommonUtil;
-import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.UniqueCodeUtil;
 import com.codex.ecam.util.VelocityEmailSender;
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.inventory.rfq.RFQPropertyMapper;
 
 @Service
@@ -106,6 +104,9 @@ public class RFQServiceImpl implements RFQService {
 
 	@Autowired
 	private VelocityEmailSender velocityEmailService;
+
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
 
 	@Override
 	public RFQDTO findById(Integer id) throws Exception {
@@ -234,15 +235,16 @@ public class RFQServiceImpl implements RFQService {
 		RFQPropertyMapper.getInstance().generateDataTableInput(dataTablesInput);
 
 		DataTablesOutput<RFQ> domainOut;
-	if (AuthenticationUtil.isAuthUserAdminLevel()) {
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = rfqDao.findAll(dataTablesInput);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<RFQ> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			Specification<RFQ> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = rfqDao.findAll(dataTablesInput, specification);
 		} else {
 			Specification<RFQ> specification = (root, query, cb) -> cb.and(
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
-					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()) );
+					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 			domainOut = rfqDao.findAll(dataTablesInput, specification);
 		}
 		DataTablesOutput<RFQDTO> out = RFQMapper.getInstance().domainToDTODataTablesOutput(domainOut);
@@ -387,9 +389,8 @@ public class RFQServiceImpl implements RFQService {
 
 			for (RFQSupplierDTO rfqSupplierDTO : rfqSupplierDTOs) {
 				if ((currentRFQSuppliers != null) && (currentRFQSuppliers.size() > 0)) {
-					rfqSupplier = currentRFQSuppliers.stream()
-							.filter((x) -> x.getId().equals(rfqSupplierDTO.getId())).findAny()
-							.orElseGet(RFQSupplier::new);
+					rfqSupplier = currentRFQSuppliers.stream().filter((x) -> x.getId().equals(rfqSupplierDTO.getId()))
+							.findAny().orElseGet(RFQSupplier::new);
 				} else {
 					rfqSupplier = new RFQSupplier();
 				}
@@ -399,9 +400,8 @@ public class RFQServiceImpl implements RFQService {
 		}
 		result.getDomainEntity().setRfqSupplier(rfqSuppliers);
 	}
-	
-	
-	private void createSupplier(RFQ domainEntity, RFQSupplierDTO rfqSupplierDTO,RFQSupplier rfqSupplier) {
+
+	private void createSupplier(RFQ domainEntity, RFQSupplierDTO rfqSupplierDTO, RFQSupplier rfqSupplier) {
 		rfqSupplier.setRfq(domainEntity);
 		rfqSupplier.setIsDeleted(Boolean.FALSE);
 		rfqSupplier.setSupplier(
@@ -539,10 +539,11 @@ public class RFQServiceImpl implements RFQService {
 	 ************************************/
 	@Override
 	public String rfqFileUpload(MultipartFile file, String refId) throws Exception {
-		String uploadFolder = environment.getProperty("upload.rfq.file.folder");
-		String uploadLocation = environment.getProperty("upload.location");
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.rfq.file.s3") + refId + "/" + file.getOriginalFilename();
 		try {
-			return FileUploadUtil.createFile(file, refId, uploadFolder, uploadLocation);
+			amazonS3ObjectUtil.uploadS3Object(key, file);
+			return key;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -554,11 +555,12 @@ public class RFQServiceImpl implements RFQService {
 	 ************************************/
 	@Override
 	public void rfqFileDownload(Integer id, HttpServletResponse response) throws Exception {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 		if (id != null) {
 			RFQFile file = rfqDao.findByFileId(id);
-			String externalFilePath = uploadLocation + file.getFileLocation();
-			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
+			int index = file.getFileLocation().lastIndexOf("\\");
+			String fileName = file.getFileLocation().substring(index + 1);
+			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
+
 		}
 
 	}
@@ -625,9 +627,9 @@ public class RFQServiceImpl implements RFQService {
 		final RFQResult result = new RFQResult(null, null);
 		try {
 			final RFQDTO dto = new RFQDTO();
-			if(!AuthenticationUtil.isAuthUserAdminLevel()){
+			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 				dto.setCode(getNextCode(AuthenticationUtil.getLoginUserBusiness().getId()));
-			}else{
+			} else {
 				dto.setCode("");
 			}
 			result.setDtoEntity(dto);
@@ -641,11 +643,10 @@ public class RFQServiceImpl implements RFQService {
 		return result;
 	}
 
-
 	@Override
 
 	public String getNextCode(Integer businessId) {
-		if (businessId !=null) {
+		if (businessId != null) {
 			final RFQ lastDomain = rfqDao.findLastDomainByBusiness(businessId);
 			return UniqueCodeUtil.getNextCode(AffixList.RFQ, lastDomain == null ? "" : lastDomain.getCode());
 		} else {

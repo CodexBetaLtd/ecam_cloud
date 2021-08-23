@@ -120,7 +120,7 @@ var ExWorkOrderHome = function () {
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/exworkorder/tableData",
+                url: "../restapi/exworkorder/tabledata",
                 pages: 5
             }),
             columns: [

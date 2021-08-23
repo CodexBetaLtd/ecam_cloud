@@ -1,6 +1,5 @@
 package com.codex.ecam.service.maintenance.impl;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -53,7 +52,6 @@ import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenan
 import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenanceTaskMapper;
 import com.codex.ecam.mappers.maintenance.schedulemaintenance.ScheduledMaintenanceTriggerMapper;
 import com.codex.ecam.model.asset.AssetMeterReading;
-import com.codex.ecam.model.asset.AssetMeterReadingValue;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.model.maintenance.CalendarEvent;
 import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenance;
@@ -70,10 +68,9 @@ import com.codex.ecam.result.maintenance.ScheduledMaintenanceResult;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceService;
 import com.codex.ecam.service.maintenance.api.ScheduledMaintenanceTriggerService;
 import com.codex.ecam.util.AuthenticationUtil;
-import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.SchedulingUtil;
-import com.codex.ecam.util.search.scheduledmaintenance.ScheduledMaintenanceSearchPropertyMapper; 
+import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
+import com.codex.ecam.util.search.scheduledmaintenance.ScheduledMaintenanceSearchPropertyMapper;
 
 @Service
 public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceService {
@@ -123,7 +120,9 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 	private StockDao stockDao;
 	@Autowired
 	private WorkOrderDao workORderDao;
-	
+
+	@Autowired
+	private AmazonS3ObjectUtil amazonS3ObjectUtil;
 
 	@Autowired
 	Environment environment;
@@ -188,7 +187,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 		ScheduledMaintenance sm = result.getDomainEntity();
 
-		if (sm.getIsRunning() && (sm.getScheduledMaintenanceTriggers() != null) && (sm.getScheduledMaintenanceTriggers().size() > 0)) {
+		if (sm.getIsRunning() && (sm.getScheduledMaintenanceTriggers() != null)
+				&& (sm.getScheduledMaintenanceTriggers().size() > 0)) {
 
 			for (ScheduledMaintenanceTrigger smt : sm.getScheduledMaintenanceTriggers()) {
 				if (smt.getTriggerType().equals(SMTriggerType.TIME_TRIGGER) && isPropertyChange(smt)) {
@@ -217,9 +217,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		smt.setTtNextCalenderEvent(event);
 	}
 
-
 	private boolean isPropertyChange(ScheduledMaintenanceTrigger trigger) {
-		if ( (trigger.getId() == null) || trigger.getIsPropertyChange() ) {
+		if ((trigger.getId() == null) || trigger.getIsPropertyChange()) {
 			return true;
 		}
 		return false;
@@ -246,14 +245,16 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 		if ((result.getDtoEntity().getTriggers() != null) && (result.getDtoEntity().getTriggers().size() > 0)) {
 
-			Set<ScheduledMaintenanceTrigger> currentTriggers = result.getDomainEntity().getScheduledMaintenanceTriggers();
+			Set<ScheduledMaintenanceTrigger> currentTriggers = result.getDomainEntity()
+					.getScheduledMaintenanceTriggers();
 
 			ScheduledMaintenanceTrigger trigger;
 
 			for (ScheduledMaintenanceTriggerDTO dto : result.getDtoEntity().getTriggers()) {
 
 				if ((currentTriggers != null) && (currentTriggers.size() > 0)) {
-					trigger = currentTriggers.stream().filter((x) -> x.getId().equals(dto.getId())).findAny().orElseGet(ScheduledMaintenanceTrigger :: new);
+					trigger = currentTriggers.stream().filter((x) -> x.getId().equals(dto.getId())).findAny()
+							.orElseGet(ScheduledMaintenanceTrigger::new);
 				} else {
 					trigger = new ScheduledMaintenanceTrigger();
 				}
@@ -266,29 +267,32 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		result.getDomainEntity().setScheduledMaintenanceTriggers(list);
 	}
 
-	private ScheduledMaintenanceTrigger createScheduleMaintenaceTrigger(ScheduledMaintenance scheduledMaintenance, ScheduledMaintenanceTrigger domain, ScheduledMaintenanceTriggerDTO dto) throws Exception {
+	private ScheduledMaintenanceTrigger createScheduleMaintenaceTrigger(ScheduledMaintenance scheduledMaintenance,
+			ScheduledMaintenanceTrigger domain, ScheduledMaintenanceTriggerDTO dto) throws Exception {
 		ScheduledMaintenanceTriggerMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setScheduledMaintenance(scheduledMaintenance);
 		setAsset(dto, domain);
 		setAssetEventTypeAsset(dto, domain);
 		setAssetMeterReading(dto, domain);
-		setABCMeterReading(dto,domain);
+		setABCMeterReading(dto, domain);
 
 		return domain;
 	}
-	
 
-	private void setScheduledMaintenanceTask(ScheduledMaintenanceResult result, ScheduledMaintenanceTrigger trigger) throws Exception {
+	private void setScheduledMaintenanceTask(ScheduledMaintenanceResult result, ScheduledMaintenanceTrigger trigger)
+			throws Exception {
 
 		Set<ScheduledMaintenanceTask> taskList = new HashSet<>();
 
-		if ((result.getDtoEntity().getScheduledTasks() != null) && (result.getDtoEntity().getScheduledTasks().size() > 0)) {
+		if ((result.getDtoEntity().getScheduledTasks() != null)
+				&& (result.getDtoEntity().getScheduledTasks().size() > 0)) {
 
 			for (ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO : result.getDtoEntity().getScheduledTasks()) {
 
-				if ( scheduledMaintenanceTaskDTO.getTriggerIndex().equals(trigger.getTriggerIndex()) ) {
+				if (scheduledMaintenanceTaskDTO.getTriggerIndex().equals(trigger.getTriggerIndex())) {
 
-					ScheduledMaintenanceTask scheduledMaintenanceTask = createScheduledTask(result, scheduledMaintenanceTaskDTO, trigger);
+					ScheduledMaintenanceTask scheduledMaintenanceTask = createScheduledTask(result,
+							scheduledMaintenanceTaskDTO, trigger);
 					setPartToScheduledMaintenanceTask(result, scheduledMaintenanceTaskDTO, scheduledMaintenanceTask);
 					taskList.add(scheduledMaintenanceTask);
 
@@ -299,12 +303,17 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		trigger.setScheduledMaintenanceTasks(taskList);
 	}
 
-	private ScheduledMaintenanceTask createScheduledTask(ScheduledMaintenanceResult result, ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO, ScheduledMaintenanceTrigger trigger) throws Exception {
+	private ScheduledMaintenanceTask createScheduledTask(ScheduledMaintenanceResult result,
+			ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO, ScheduledMaintenanceTrigger trigger)
+			throws Exception {
 
 		ScheduledMaintenanceTask scheduledMaintenanceTask;
 
-		if ((trigger.getScheduledMaintenanceTasks() != null) && (trigger.getScheduledMaintenanceTasks().size() > 0) && (scheduledMaintenanceTaskDTO.getId() != null)) {
-			scheduledMaintenanceTask = trigger.getScheduledMaintenanceTasks().stream().filter((x) -> x.getId().equals(scheduledMaintenanceTaskDTO.getId())).findAny().orElseGet(ScheduledMaintenanceTask :: new);
+		if ((trigger.getScheduledMaintenanceTasks() != null) && (trigger.getScheduledMaintenanceTasks().size() > 0)
+				&& (scheduledMaintenanceTaskDTO.getId() != null)) {
+			scheduledMaintenanceTask = trigger.getScheduledMaintenanceTasks().stream()
+					.filter((x) -> x.getId().equals(scheduledMaintenanceTaskDTO.getId())).findAny()
+					.orElseGet(ScheduledMaintenanceTask::new);
 		} else {
 			scheduledMaintenanceTask = new ScheduledMaintenanceTask();
 		}
@@ -317,7 +326,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		return scheduledMaintenanceTask;
 	}
 
-	private void setPartToScheduledMaintenanceTask(ScheduledMaintenanceResult result, ScheduledMaintenanceTaskDTO smTaskDto, ScheduledMaintenanceTask smTask) throws Exception {
+	private void setPartToScheduledMaintenanceTask(ScheduledMaintenanceResult result,
+			ScheduledMaintenanceTaskDTO smTaskDto, ScheduledMaintenanceTask smTask) throws Exception {
 		Set<ScheduledMaintenancePart> parts = new HashSet<>();
 
 		if ((result.getDtoEntity().getParts() != null) && (result.getDtoEntity().getParts().size() > 0)) {
@@ -326,10 +336,12 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 			for (ScheduledMaintenancePartDTO partDTO : result.getDtoEntity().getParts()) {
 
-				if ( partDTO.getPartTaskIndex().equals(smTaskDto.getIndex()) ) {
+				if (partDTO.getPartTaskIndex().equals(smTaskDto.getIndex())) {
 					ScheduledMaintenancePart part;
 					if ((currentParts != null) && (currentParts.size() > 0)) {
-						part = currentParts.stream().filter((x) -> x.getStock().getId().equals(partDTO.getPartStockId())).findAny().orElseGet(ScheduledMaintenancePart :: new);
+						part = currentParts.stream()
+								.filter((x) -> x.getStock().getId().equals(partDTO.getPartStockId())).findAny()
+								.orElseGet(ScheduledMaintenancePart::new);
 					} else {
 						part = new ScheduledMaintenancePart();
 					}
@@ -342,7 +354,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		smTask.setScheduledMaintenanceParts(parts);
 	}
 
-	private void createScheduledMaintenanceTaskPart(ScheduledMaintenancePartDTO dto, ScheduledMaintenancePart domain , ScheduledMaintenance scheduledMaintenance, ScheduledMaintenanceTask smTask) throws Exception {
+	private void createScheduledMaintenanceTaskPart(ScheduledMaintenancePartDTO dto, ScheduledMaintenancePart domain,
+			ScheduledMaintenance scheduledMaintenance, ScheduledMaintenanceTask smTask) throws Exception {
 		ScheduledMaintenancePartMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setScheduledMaintenanceTask(smTask);
 		domain.setIsDeleted(false);
@@ -362,14 +375,17 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 		if ((smNotificationDTOs != null) && (smNotificationDTOs.size() > 0)) {
 
-			Set<ScheduledMaintenanceNotification> currentSmNotifications = result.getDomainEntity().getScheduledMaintenanceNotifications();
+			Set<ScheduledMaintenanceNotification> currentSmNotifications = result.getDomainEntity()
+					.getScheduledMaintenanceNotifications();
 			ScheduledMaintenanceNotification smNotification;
 
 			for (ScheduledMaintenanceNotificationDTO smNotificationDto : smNotificationDTOs) {
 
 				smNotification = new ScheduledMaintenanceNotification();
 				if ((currentSmNotifications != null) && (currentSmNotifications.size() > 0)) {
-					smNotification = currentSmNotifications.stream().filter((x) -> x.getId().equals(smNotificationDto.getId())).findAny().orElseGet(ScheduledMaintenanceNotification :: new);
+					smNotification = currentSmNotifications.stream()
+							.filter((x) -> x.getId().equals(smNotificationDto.getId())).findAny()
+							.orElseGet(ScheduledMaintenanceNotification::new);
 				} else {
 					smNotification = new ScheduledMaintenanceNotification();
 				}
@@ -381,19 +397,22 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		result.getDomainEntity().setScheduledMaintenanceNotifications(smNotifications);
 	}
 
-	private void createNotification(ScheduledMaintenanceNotification domain, ScheduledMaintenanceNotificationDTO dto, ScheduledMaintenance scheduledMaintenance) throws Exception {
+	private void createNotification(ScheduledMaintenanceNotification domain, ScheduledMaintenanceNotificationDTO dto,
+			ScheduledMaintenance scheduledMaintenance) throws Exception {
 		ScheduledMaintenanceNotificationMapper.getInstance().dtoToDomain(dto, domain);
 		domain.setUser(dto.getUserId() != null ? userDao.findOne(dto.getUserId()) : null);
 		domain.setScheduledMaintenance(scheduledMaintenance);
 	}
 
-	private void setScheduledTaskTaskGroup(ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO, ScheduledMaintenanceTask scheduledMaintenanceTask) {
+	private void setScheduledTaskTaskGroup(ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO,
+			ScheduledMaintenanceTask scheduledMaintenanceTask) {
 		if (scheduledMaintenanceTaskDTO.getTaskGroupId() != null) {
 			scheduledMaintenanceTask.setTaskGroup(taskGroupDao.findOne(scheduledMaintenanceTaskDTO.getTaskGroupId()));
 		}
 	}
 
-	private void setScheduledTaskAssignedUser(ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO, ScheduledMaintenanceTask scheduledMaintenanceTask) {
+	private void setScheduledTaskAssignedUser(ScheduledMaintenanceTaskDTO scheduledMaintenanceTaskDTO,
+			ScheduledMaintenanceTask scheduledMaintenanceTask) {
 		if (scheduledMaintenanceTaskDTO.getUserId() != null) {
 			scheduledMaintenanceTask.setAssignedUser(userDao.findOne(scheduledMaintenanceTaskDTO.getUserId()));
 		}
@@ -409,7 +428,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 			ScheduledMaintenanceAsset smAsset;
 			for (AssetDTO asset : result.getDtoEntity().getAssets()) {
 				if ((currentAssets != null) && (currentAssets.size() > 0)) {
-					smAsset = currentAssets.stream().filter((x) -> x.getId().equals(asset.getId())).findAny().orElseGet(ScheduledMaintenanceAsset :: new);
+					smAsset = currentAssets.stream().filter((x) -> x.getId().equals(asset.getId())).findAny()
+							.orElseGet(ScheduledMaintenanceAsset::new);
 				} else {
 					smAsset = new ScheduledMaintenanceAsset();
 				}
@@ -420,8 +440,8 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		result.getDomainEntity().setScheduledMaintenanceAssets(list);
 	}
 
-
-	private void createScheduledMaintenaceAsset(ScheduledMaintenance scheduledMaintenance, AssetDTO asset, ScheduledMaintenanceAsset smAsset) {
+	private void createScheduledMaintenaceAsset(ScheduledMaintenance scheduledMaintenance, AssetDTO asset,
+			ScheduledMaintenanceAsset smAsset) {
 		smAsset.setAsset(assetDao.findOne(asset.getId()));
 		smAsset.setScheduledMaintenance(scheduledMaintenance);
 		smAsset.setIsDeleted(false);
@@ -429,54 +449,55 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 	private void setABCMeterReading(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		if ((dto.getMrtAssetMeterReadingId() != null) && (dto.getMrtAssetMeterReadingId() > 0)) {
-			AssetMeterReading assetMeterReading=assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
-			
+			AssetMeterReading assetMeterReading = assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
+
 			domain.setMrtAssetMeterReading(assetMeterReading);
-			Double mrtNextMeterReading=0.0;
-			Double amrtNextMeterReading=0.0;
-			Double bmrtNextMeterReading=0.0;
-			Double cmrtNextMeterReading=0.0;
-			if(domain.getTriggerType().equals(SMTriggerType.ABC_METER_READING_TRIGGER)){
+			Double mrtNextMeterReading = 0.0;
+			Double amrtNextMeterReading = 0.0;
+			Double bmrtNextMeterReading = 0.0;
+			Double cmrtNextMeterReading = 0.0;
+			if (domain.getTriggerType().equals(SMTriggerType.ABC_METER_READING_TRIGGER)) {
 				domain.setSmabcTriggerType(dto.getSmabcTriggerType());
 
-				if(domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_1)){
-					amrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getaValue();
-					bmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getbValue();
-					cmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_1.getcValue();
-				}else if(domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_2)){
-					amrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getaValue();
-					bmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getbValue();
-					cmrtNextMeterReading=dto.getMrtStartMeterReading()+SMABCTriggerType.TYPE_2.getcValue();				}
+				if (domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_1)) {
+					amrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_1.getaValue();
+					bmrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_1.getbValue();
+					cmrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_1.getcValue();
+				} else if (domain.getSmabcTriggerType().equals(SMABCTriggerType.TYPE_2)) {
+					amrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_2.getaValue();
+					bmrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_2.getbValue();
+					cmrtNextMeterReading = dto.getMrtStartMeterReading() + SMABCTriggerType.TYPE_2.getcValue();
+				}
 			}
-			
-			//domain.setMrtNextMeterReading(mrtNextMeterReading);
+
+			// domain.setMrtNextMeterReading(mrtNextMeterReading);
 			domain.setAmrtNextMeterReading(amrtNextMeterReading);
 			domain.setBmrtNextMeterReading(bmrtNextMeterReading);
 			domain.setCmrtNextMeterReading(cmrtNextMeterReading);
-			setMeterReadingData(dto,domain);
+			setMeterReadingData(dto, domain);
 		}
 	}
-	
+
 	private void setAssetMeterReading(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		if ((dto.getMrtAssetMeterReadingId() != null) && (dto.getMrtAssetMeterReadingId() > 0)) {
-			AssetMeterReading assetMeterReading=assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
+			AssetMeterReading assetMeterReading = assetMeterReadingDao.findOne(dto.getMrtAssetMeterReadingId());
 
 			domain.setMrtAssetMeterReading(assetMeterReading);
-			Double mrtNextMeterReading=0.0;
-			if(domain.getTriggerType().equals(SMTriggerType.METER_READING_TRIGGER)){
-				if(domain.getMrtType().equals(SMMeterReadingType.EVERY)){
-					mrtNextMeterReading=dto.getMrtStartMeterReading()+dto.getMrtEveryValue();
-				}else if(domain.getMrtType().equals(SMMeterReadingType.WHEN)){
-					mrtNextMeterReading=dto.getMrtConditionValue();
+			Double mrtNextMeterReading = 0.0;
+			if (domain.getTriggerType().equals(SMTriggerType.METER_READING_TRIGGER)) {
+				if (domain.getMrtType().equals(SMMeterReadingType.EVERY)) {
+					mrtNextMeterReading = dto.getMrtStartMeterReading() + dto.getMrtEveryValue();
+				} else if (domain.getMrtType().equals(SMMeterReadingType.WHEN)) {
+					mrtNextMeterReading = dto.getMrtConditionValue();
 				}
 			}
 
 			domain.setMrtNextMeterReading(mrtNextMeterReading);
-			setMeterReadingData(dto,domain);
+			setMeterReadingData(dto, domain);
 		}
 	}
-	
-	private void setMeterReadingData(ScheduledMaintenanceTriggerDTO dto,ScheduledMaintenanceTrigger domain){
+
+	private void setMeterReadingData(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		domain.setMrtLogicType(dto.getMrtLogicType());
 		domain.setMrtType(dto.getMrtType());
 		domain.setMrtEndMeterReading(dto.getMrtEndMeterReading());
@@ -516,13 +537,15 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 	private void setChargeDepartment(ScheduledMaintenanceResult result) {
 		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getChargeDepartmentId() != null)) {
-			result.getDomainEntity().setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
+			result.getDomainEntity()
+					.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
 		}
 	}
 
 	private void setMaintenanceType(ScheduledMaintenanceResult result) {
 		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMaintenanceTypeId() != null)) {
-			result.getDomainEntity().setMaintenanceType(maintenanceTypeDao.findOne(result.getDtoEntity().getMaintenanceTypeId()));
+			result.getDomainEntity()
+					.setMaintenanceType(maintenanceTypeDao.findOne(result.getDtoEntity().getMaintenanceTypeId()));
 		}
 	}
 
@@ -571,40 +594,49 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = scheduledMaintenanceDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("business"),
+					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = scheduledMaintenanceDao.findAll(input, specification);
 		} else {
-			Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+			Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("site"),
+					AuthenticationUtil.getLoginSite().getSite());
 			domainOut = scheduledMaintenanceDao.findAll(input, specification);
 		}
-		DataTablesOutput<ScheduledMaintenanceDTO> out = ScheduledMaintenanceMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		DataTablesOutput<ScheduledMaintenanceDTO> out = ScheduledMaintenanceMapper.getInstance()
+				.domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
-	public DataTablesOutput<ScheduledMaintenanceDTO> findAllByProjectId(FocusDataTablesInput input, Integer id) throws Exception {
-		Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("project").get("id"), id);
+	public DataTablesOutput<ScheduledMaintenanceDTO> findAllByProjectId(FocusDataTablesInput input, Integer id)
+			throws Exception {
+		Specification<ScheduledMaintenance> specification = (root, query, cb) -> cb.equal(root.get("project").get("id"),
+				id);
 		DataTablesOutput<ScheduledMaintenance> domainOut = scheduledMaintenanceDao.findAll(input, specification);
-		DataTablesOutput<ScheduledMaintenanceDTO> out = ScheduledMaintenanceMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		DataTablesOutput<ScheduledMaintenanceDTO> out = ScheduledMaintenanceMapper.getInstance()
+				.domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
-	public void scheduledMaintenanceFileDownload(Integer refId,HttpServletResponse response) throws Exception {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
-		if ( refId != null ) {
+	public void scheduledMaintenanceFileDownload(Integer refId, HttpServletResponse response) throws Exception {
+		if (refId != null) {
 			ScheduledMaintenanceFile file = scheduledMaintenanceDao.findByFileId(refId);
-			String externalFilePath = uploadLocation + file.getFileLocation();
-			FileDownloadUtil.flushFile(externalFilePath, file.getFileType(), response);
+			int index = file.getFileLocation().lastIndexOf("\\");
+			String fileName = file.getFileLocation().substring(index + 1);
+			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
+
 		}
 	}
 
 	@Override
-	public String scheduledMaintenanceFileUpload(MultipartFile file,String refId) throws Exception {
-		String uploadFolder = environment.getProperty("upload.scheduledMaintenance.file.folder");
-		String uploadLocation = environment.getProperty("upload.location");
+	public String scheduledMaintenanceFileUpload(MultipartFile file, String refId) throws Exception {
+		final String key = environment.getProperty("upload.location.s3")
+				+ environment.getProperty("upload.location.scheduledmaintenance.file.s3") + refId + "/"
+				+ file.getOriginalFilename();
 		try {
-			return FileUploadUtil.createFile(file,refId,uploadFolder,uploadLocation);
+			amazonS3ObjectUtil.uploadS3Object(key, file);
+			return key;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -614,21 +646,25 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 	private void setScheduledMaintenanceFiles(ScheduledMaintenanceResult result) throws Exception {
 		Set<ScheduledMaintenanceFile> scheduledMaintenanceFiles = new HashSet<>();
 
-		if ( (result.getDtoEntity().getFiles() != null) && (result.getDtoEntity().getFiles().size() > 0) ) {
+		if ((result.getDtoEntity().getFiles() != null) && (result.getDtoEntity().getFiles().size() > 0)) {
 
-			Set<ScheduledMaintenanceFile> currentScheduledMaintenanceFiles = result.getDomainEntity().getScheduledMaintenanceFiles();
+			Set<ScheduledMaintenanceFile> currentScheduledMaintenanceFiles = result.getDomainEntity()
+					.getScheduledMaintenanceFiles();
 
 			for (ScheduledMaintenanceFileDTO scheduledMaintenanceFileDTO : result.getDtoEntity().getFiles()) {
 
 				ScheduledMaintenanceFile scheduledMaintenanceFile;
 
-				if ( scheduledMaintenanceFileDTO.getId() != null ) {
-					scheduledMaintenanceFile = currentScheduledMaintenanceFiles.stream().filter((x) -> x.getId().equals(scheduledMaintenanceFileDTO.getId())).findAny().orElseGet(ScheduledMaintenanceFile :: new);
+				if (scheduledMaintenanceFileDTO.getId() != null) {
+					scheduledMaintenanceFile = currentScheduledMaintenanceFiles.stream()
+							.filter((x) -> x.getId().equals(scheduledMaintenanceFileDTO.getId())).findAny()
+							.orElseGet(ScheduledMaintenanceFile::new);
 				} else {
 					scheduledMaintenanceFile = new ScheduledMaintenanceFile();
 				}
 
-				ScheduledMaintenanceFileMapper.getInstance().dtoToDomain(scheduledMaintenanceFileDTO, scheduledMaintenanceFile);
+				ScheduledMaintenanceFileMapper.getInstance().dtoToDomain(scheduledMaintenanceFileDTO,
+						scheduledMaintenanceFile);
 				scheduledMaintenanceFile.setScheduledMaintenance(result.getDomainEntity());
 
 				scheduledMaintenanceFiles.add(scheduledMaintenanceFile);
@@ -643,11 +679,12 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 	public RestResult<String> findCurrentScheduledMaintenanceCode(Integer businessId) {
 		RestResult<String> result = new RestResult<>();
 		try {
-			if ( (businessId != null) && (businessId > 0) ) {
+			if ((businessId != null) && (businessId > 0)) {
 
 				Business business = businessDao.findById(businessId);
 
-				List<ScheduledMaintenance> lastInsertSm = scheduledMaintenanceDao.findLastInsertSmByBusiness(businessId);
+				List<ScheduledMaintenance> lastInsertSm = scheduledMaintenanceDao
+						.findLastInsertSmByBusiness(businessId);
 
 				StringBuilder code = new StringBuilder("SM/" + String.format("%03d", business.getId()));
 
