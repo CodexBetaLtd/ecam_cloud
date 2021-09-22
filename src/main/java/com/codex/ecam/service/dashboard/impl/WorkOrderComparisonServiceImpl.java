@@ -1,7 +1,9 @@
 package com.codex.ecam.service.dashboard.impl;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -16,16 +18,16 @@ import com.codex.ecam.dao.maintenance.WorkOrderDao;
 import com.codex.ecam.dto.dashboard.WorkOrderComparisonChartDataDTO;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 import com.codex.ecam.service.dashboard.api.WorkOrderComparisonService;
-import com.codex.ecam.util.AuthenticationUtil; 
+import com.codex.ecam.util.AuthenticationUtil;
 
 @Service
 public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonService {
 
 	@Autowired
 	private WorkOrderDao workOrderDao;
-	
+
 	private Calendar getStartCalendar() {
-		Calendar cal = Calendar.getInstance();  
+		final Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
@@ -35,148 +37,131 @@ public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonServic
 	}
 
 	private Calendar getEndCalendar() {
-		Calendar cal = Calendar.getInstance();  
+		final Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 23);
 		cal.set(Calendar.MINUTE, 59);
 		cal.set(Calendar.SECOND, 59);
-		cal.set(Calendar.MILLISECOND, 59); 
+		cal.set(Calendar.MILLISECOND, 59);
 		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		return cal;
 	}
 
 	@Override
 	public WorkOrderComparisonChartDataDTO getWoComparisonChartData() {
-		WorkOrderComparisonChartDataDTO dto = new WorkOrderComparisonChartDataDTO();
+		final WorkOrderComparisonChartDataDTO dto = new WorkOrderComparisonChartDataDTO();
 		setPreviousWeekWoData(dto);
 		setCurrentWeekWoData(dto);
-		setNextWeekWoData(dto); 
+		setNextWeekWoData(dto);
+		findOnTimeCompletedWoWithCompltedWo(dto);
 		return dto;
 	}
 
 	private void setPreviousWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		Calendar cal = getEndCalendar();   
+		final Calendar cal = getEndCalendar();
 		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
 		cal.add(Calendar.DAY_OF_YEAR, -1);
-		Date toDate = cal.getTime();
-		
-		Calendar cal2 = getStartCalendar(); 
+		final Date toDate = cal.getTime();
+
+		final Calendar cal2 = getStartCalendar();
 		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
 		cal2.add(Calendar.WEEK_OF_YEAR, -1);
-		Date fromDate = cal2.getTime(); 
-	
-		setOpenCloseDataByUserLevel(dto, fromDate, toDate);
-		
-	} 
+		final Date fromDate = cal2.getTime();
+
+		dto.setPreviousWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
+		dto.setPreviousWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
+	}
 
 	private void setCurrentWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		Calendar cal = getStartCalendar(); 
+		final Calendar cal = getStartCalendar();
 		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-		Date fromDate = cal.getTime(); 
-		
-		Calendar cal2 = getEndCalendar();   
+		final Date fromDate = cal.getTime();
+
+		final Calendar cal2 = getEndCalendar();
 		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
 		cal2.add(Calendar.WEEK_OF_YEAR, 1);
 		cal2.add(Calendar.DAY_OF_YEAR, -1);
-		Date toDate = cal2.getTime();
+		final Date toDate = cal2.getTime();
 
-		
-		setOpenCloseDataByUserLevel(dto, fromDate, toDate);
-	}  
-	
+		dto.setCurrentWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
+		dto.setCurrentWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
+	}
+
+	private Integer getCountOnRangeByStatus(Date fromDate, Date toDate, WorkOrderStatus status) {
+		Integer count = 0;
+
+		if ( AuthenticationUtil.isAuthUserAdminLevel() ) {
+			count = workOrderDao.findAllWorkOrdersOnDurationByStatus(fromDate, toDate, status);
+		} else if ( AuthenticationUtil.isAuthUserSystemLevel() ) {
+			count = workOrderDao.findAllWorkOrdersOnDurationByStatusBusiness(fromDate, toDate, status, AuthenticationUtil.getCurrentUser().getBusiness().getId());
+		} else if ( AuthenticationUtil.isAuthUserGeneralLevel() ) {
+			count = workOrderDao.findAllWorkOrdersOnDurationByStatusSite(fromDate, toDate, status, AuthenticationUtil.getCurrentUser().getSite().getId());
+		}
+
+		return count;
+	}
+
 	private void setNextWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		Calendar cal = getStartCalendar(); 
+		final Calendar cal = getStartCalendar();
 		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
 		cal.add(Calendar.WEEK_OF_YEAR, 1);
-		Date fromDate = cal.getTime(); 
+		final Date fromDate = cal.getTime();
 
-		Calendar cal2 = getEndCalendar(); 
+		final Calendar cal2 = getEndCalendar();
 		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
 		cal2.add(Calendar.WEEK_OF_YEAR, 2);
 		cal2.add(Calendar.DAY_OF_YEAR, -1);
-		Date toDate = cal2.getTime();
-		
-		setOpenCloseDataByUserLevel(dto, fromDate, toDate);
-	}
-	
-	private void setOpenCloseDataByUserLevel(WorkOrderComparisonChartDataDTO dto, Date fromDate, Date toDate) {
-		
-		if ( AuthenticationUtil.isAuthUserAdminLevel() ) {
-			dto.setNextWeekOpenWo(workOrderDao.findAllWorkOrdersOnDurationByStatus(fromDate, toDate, WorkOrderStatus.OPEN));
-			dto.setNextWeekClosedWo(workOrderDao.findAllWorkOrdersOnDurationByStatus(fromDate, toDate, WorkOrderStatus.CLOSED));
-			findOnTimeCompletedWoWithCompltedWo(dto);
-		} else if ( AuthenticationUtil.isAuthUserSystemLevel() ) {
-			dto.setNextWeekOpenWo(workOrderDao.findAllWorkOrdersOnDurationByStatusBusiness(fromDate, toDate, WorkOrderStatus.OPEN, AuthenticationUtil.getCurrentUser().getBusiness().getId()));
-			dto.setNextWeekClosedWo(workOrderDao.findAllWorkOrdersOnDurationByStatusBusiness(fromDate, toDate, WorkOrderStatus.CLOSED, AuthenticationUtil.getCurrentUser().getBusiness().getId()));
-			findOnTimeCompletedWoWithCompltedWo(dto);
-		} else if ( AuthenticationUtil.isAuthUserGeneralLevel() ) {
-			dto.setNextWeekOpenWo(workOrderDao.findAllWorkOrdersOnDurationByStatusSite(fromDate, toDate, WorkOrderStatus.OPEN, AuthenticationUtil.getCurrentUser().getSite().getId()));
-			dto.setNextWeekClosedWo(workOrderDao.findAllWorkOrdersOnDurationByStatusSite(fromDate, toDate, WorkOrderStatus.CLOSED, AuthenticationUtil.getCurrentUser().getSite().getId()));
-			findOnTimeCompletedWoWithCompltedWo(dto);
-		} else {
-			dto.setNextWeekOpenWo(0);
-			dto.setNextWeekClosedWo(0);
+		final Date toDate = cal2.getTime();
 
-			dto.setAllCompletedWo(0);
-			dto.setAllOnTimeCompletedWo(0);
-		}		
-		
+		dto.setNextWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
+		dto.setNextWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
+
 	}
-	
-	
+
 	private void findOnTimeCompletedWoWithCompltedWo(WorkOrderComparisonChartDataDTO dto){
 
 		dto.setAllCompletedWo((int) workOrderDao.count(getCompltedWo()));
 		dto.setAllOnTimeCompletedWo((int) workOrderDao.count(getOnTimeCompletedWo()));
 	}
-	
+
 	private Specification<WorkOrder> getCompltedWo(){
-		Specification<WorkOrder> specification;
-		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			specification = (root, query, cb) -> {
-				return getAllCompletedWoPredicate(root, cb);
-			};
-		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				Predicate predicate2 = getAllCompletedWoPredicate(root, cb);
-				return cb.and(predicate, predicate2);
-			};
-		} else {
-			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getAllCompletedWoPredicate( root, cb);
-				return cb.and(predicate, predicate2);
-			};
-			
-		}
+		final Specification<WorkOrder> specification = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+
+			predicates.add(getAllCompletedWoPredicate(root, cb));
+
+			if (AuthenticationUtil.isAuthUserSystemLevel()) {
+				predicates.add(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+			}
+			else if (AuthenticationUtil.isAuthUserGeneralLevel()) {
+				predicates.add(cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
+			}
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
 		return specification;
 	}
+
 	private Specification<WorkOrder> getOnTimeCompletedWo(){
-		Specification<WorkOrder> specification;
-		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			specification = (root, query, cb) -> {
-				return getAllOnTimeCompletedWoPredicate(root, cb);
-			};
-		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				Predicate predicate2 = getAllOnTimeCompletedWoPredicate(root, cb);
-				return cb.and(predicate, predicate2);
-			};
-		} else {
-			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getAllOnTimeCompletedWoPredicate( root, cb);
-				return cb.and(predicate, predicate2);
-			};
-			
-		}
+		final Specification<WorkOrder> specification = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+
+			predicates.add(getAllOnTimeCompletedWoPredicate(root, cb));
+
+			if (AuthenticationUtil.isAuthUserSystemLevel()) {
+				predicates.add(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+			}
+			else if (AuthenticationUtil.isAuthUserGeneralLevel()) {
+				predicates.add(cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
+			}
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
+
 		return specification;
 	}
+
 	private Predicate getAllCompletedWoPredicate(Root<WorkOrder> root, CriteriaBuilder cb) {
 		return cb.equal(root.get("currentStatus").get("workOrderStatus"), WorkOrderStatus.CLOSED);
 	}
-	
+
 	private Predicate getAllOnTimeCompletedWoPredicate(Root<WorkOrder> root, CriteriaBuilder cb) {
 		return cb.and(
 				cb.equal(root.get("suggestedCompletionDate"), root.get("suggestedCompletionDate")),

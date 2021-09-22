@@ -1,20 +1,23 @@
 package com.codex.ecam.dto.dashboard;
 
 public class WorkOrderComparisonChartDataDTO {
-	 
+
 	private Integer previousWeekOpenWo;
 	private Integer previousWeekClosedWo;
-	
+
 	private Integer currentWeekOpenWo;
 	private Integer currentWeekClosedWo;
-	
+
 	private Integer nextWeekOpenWo;
-	private Integer nextWeekClosedWo; 
-	
+	private Integer nextWeekClosedWo;
+
 	private Integer allCompletedWo;
-	private Integer allOnTimeCompletedWo; 
+	private Integer allOnTimeCompletedWo;
 
 	public Integer getPreviousWeekOpenWo() {
+		if (previousWeekOpenWo == null) {
+			return 0;
+		}
 		return previousWeekOpenWo;
 	}
 
@@ -23,6 +26,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getPreviousWeekClosedWo() {
+		if (previousWeekClosedWo == null) {
+			return 0;
+		}
 		return previousWeekClosedWo;
 	}
 
@@ -31,6 +37,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getCurrentWeekOpenWo() {
+		if (currentWeekOpenWo == null) {
+			return 0;
+		}
 		return currentWeekOpenWo;
 	}
 
@@ -39,6 +48,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getCurrentWeekClosedWo() {
+		if (currentWeekClosedWo == null) {
+			return 0;
+		}
 		return currentWeekClosedWo;
 	}
 
@@ -47,6 +59,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getNextWeekOpenWo() {
+		if (nextWeekOpenWo == null) {
+			return 0;
+		}
 		return nextWeekOpenWo;
 	}
 
@@ -55,6 +70,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getNextWeekClosedWo() {
+		if (nextWeekClosedWo == null) {
+			return 0;
+		}
 		return nextWeekClosedWo;
 	}
 
@@ -63,6 +81,9 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getAllCompletedWo() {
+		if (allCompletedWo == null) {
+			return 0;
+		}
 		return allCompletedWo;
 	}
 
@@ -71,13 +92,16 @@ public class WorkOrderComparisonChartDataDTO {
 	}
 
 	public Integer getAllOnTimeCompletedWo() {
+		if (allOnTimeCompletedWo == null) {
+			return 0;
+		}
 		return allOnTimeCompletedWo;
 	}
 
 	public void setAllOnTimeCompletedWo(Integer allOnTimeCompletedWo) {
 		this.allOnTimeCompletedWo = allOnTimeCompletedWo;
 	}
-	
-	
+
+
 
 }
