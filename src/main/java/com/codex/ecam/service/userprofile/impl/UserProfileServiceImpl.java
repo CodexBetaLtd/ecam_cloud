@@ -1,8 +1,5 @@
 package com.codex.ecam.service.userprofile.impl;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
