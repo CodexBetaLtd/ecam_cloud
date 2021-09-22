@@ -87,9 +87,7 @@ public class HomeController {
 			model.addAttribute("scheduleMaintenenceCount", smTriggerCountService.getCount()); 
 			model.addAttribute("woComparison", woComparisonService.getWoComparisonChartData());
 			model.addAttribute("openWorkOrderCount", workoderService.findAllOpenWorkOderCount());
-			model.addAttribute("mttr", 20);
 			model.addAttribute("lowStockItem", stockService.findMinimumStock());
-			model.addAttribute("workOderRequestCount", 71);
 			model.addAttribute("highPriorityWorkOrder", workoderService.findAllHighPriorityWorkOderCount());
 			model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
 		} catch (Exception e) { 

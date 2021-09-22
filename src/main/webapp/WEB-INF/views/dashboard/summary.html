@@ -83,33 +83,6 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-sm-12 col-md-2 center"
-					sec:authorize="hasAnyAuthority('ADMIN_LEVEL','BIZ_WIGET',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_BIZ_WIGET.id)">
-					<div class="panel panel-default">
-						<div class="panel-body ">
-							<div class="section-header">
-								<h2>MTTR</h2>
-								<hr>
-							</div>
-							<span><h1 class="counter-count" th:text="${mttr}"></h1>Hr</span>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12 col-md-2 center"
-					sec:authorize="hasAnyAuthority('ADMIN_LEVEL','SETTINGS_WIGET',T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SETTINGS_WIGET.id)">
-					<div class="panel panel-default">
-						<div class="panel-body ">
-							<div class="section-header">
-								<h2>Work Orders Request</h2>
-								<hr>
-							</div>
-							<span><h1 class="counter-count"
-									th:text="${workOderRequestCount}"></h1></span>
-						</div>
-					</div>
-
-
-				</div>
 			</div>
 		</div>
 	</div>
