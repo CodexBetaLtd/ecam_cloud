@@ -19,32 +19,13 @@ import com.codex.ecam.dto.dashboard.WorkOrderComparisonChartDataDTO;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 import com.codex.ecam.service.dashboard.api.WorkOrderComparisonService;
 import com.codex.ecam.util.AuthenticationUtil;
+import com.codex.ecam.util.DateUtil;
 
 @Service
 public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonService {
 
 	@Autowired
 	private WorkOrderDao workOrderDao;
-
-	private Calendar getStartCalendar() {
-		final Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.setFirstDayOfWeek(Calendar.MONDAY);
-		return cal;
-	}
-
-	private Calendar getEndCalendar() {
-		final Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 23);
-		cal.set(Calendar.MINUTE, 59);
-		cal.set(Calendar.SECOND, 59);
-		cal.set(Calendar.MILLISECOND, 59);
-		cal.setFirstDayOfWeek(Calendar.MONDAY);
-		return cal;
-	}
 
 	@Override
 	public WorkOrderComparisonChartDataDTO getWoComparisonChartData() {
@@ -57,26 +38,31 @@ public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonServic
 	}
 
 	private void setPreviousWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		final Calendar cal = getEndCalendar();
-		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-		cal.add(Calendar.DAY_OF_YEAR, -1);
-		final Date toDate = cal.getTime();
 
-		final Calendar cal2 = getStartCalendar();
+		final Calendar cal2 = DateUtil.getDayStartCalandar(null);
+		cal2.setFirstDayOfWeek(Calendar.MONDAY);
 		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
 		cal2.add(Calendar.WEEK_OF_YEAR, -1);
 		final Date fromDate = cal2.getTime();
+
+		final Calendar cal = DateUtil.getDayEndCalandar(null);
+		cal.setFirstDayOfWeek(Calendar.MONDAY);
+		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+		cal.add(Calendar.DAY_OF_YEAR, -1);
+		final Date toDate = cal.getTime();
 
 		dto.setPreviousWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
 		dto.setPreviousWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
 	}
 
 	private void setCurrentWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		final Calendar cal = getStartCalendar();
+		final Calendar cal = DateUtil.getDayStartCalandar(null);
+		cal.setFirstDayOfWeek(Calendar.MONDAY);
 		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
 		final Date fromDate = cal.getTime();
 
-		final Calendar cal2 = getEndCalendar();
+		final Calendar cal2 = DateUtil.getDayEndCalandar(null);
+		cal2.setFirstDayOfWeek(Calendar.MONDAY);
 		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
 		cal2.add(Calendar.WEEK_OF_YEAR, 1);
 		cal2.add(Calendar.DAY_OF_YEAR, -1);
@@ -84,6 +70,25 @@ public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonServic
 
 		dto.setCurrentWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
 		dto.setCurrentWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
+	}
+
+	private void setNextWeekWoData(WorkOrderComparisonChartDataDTO dto) {
+		final Calendar cal =  DateUtil.getDayStartCalandar(null);
+		cal.setFirstDayOfWeek(Calendar.MONDAY);
+		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+		cal.add(Calendar.WEEK_OF_YEAR, 1);
+		final Date fromDate = cal.getTime();
+
+		final Calendar cal2 = DateUtil.getDayEndCalandar(null);
+		cal2.setFirstDayOfWeek(Calendar.MONDAY);
+		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
+		cal2.add(Calendar.WEEK_OF_YEAR, 2);
+		cal2.add(Calendar.DAY_OF_YEAR, -1);
+		final Date toDate = cal2.getTime();
+
+		dto.setNextWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
+		dto.setNextWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
+
 	}
 
 	private Integer getCountOnRangeByStatus(Date fromDate, Date toDate, WorkOrderStatus status) {
@@ -98,23 +103,6 @@ public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonServic
 		}
 
 		return count;
-	}
-
-	private void setNextWeekWoData(WorkOrderComparisonChartDataDTO dto) {
-		final Calendar cal = getStartCalendar();
-		cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-		cal.add(Calendar.WEEK_OF_YEAR, 1);
-		final Date fromDate = cal.getTime();
-
-		final Calendar cal2 = getEndCalendar();
-		cal2.set(Calendar.DAY_OF_WEEK, cal2.getFirstDayOfWeek());
-		cal2.add(Calendar.WEEK_OF_YEAR, 2);
-		cal2.add(Calendar.DAY_OF_YEAR, -1);
-		final Date toDate = cal2.getTime();
-
-		dto.setNextWeekOpenWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.OPEN) );
-		dto.setNextWeekClosedWo( getCountOnRangeByStatus(fromDate, toDate, WorkOrderStatus.CLOSED) );
-
 	}
 
 	private void findOnTimeCompletedWoWithCompltedWo(WorkOrderComparisonChartDataDTO dto){
