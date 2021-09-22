@@ -22,13 +22,13 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 
 	@Override
 	public UserDTO domainToDto(User domain) throws Exception {
-		UserDTO dto = new UserDTO();
+		final UserDTO dto = new UserDTO();
 		domainToDto(domain,dto);
 		return dto;
 	}
 
 	public UserDTO domainToViewDto(User domain) throws Exception {
-		UserDTO dto = new UserDTO();
+		final UserDTO dto = new UserDTO();
 		setBasicUserData(domain, dto);
 		return dto;
 	}
@@ -40,35 +40,57 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 		dto.setHourlyRate(domain.getHourlyRate());
 		dto.setIsActive(domain.getActive());
 
-        dto.setEmailNotification(domain.getEmailNotification());
-        dto.setEmailSystemError(domain.getEmailSystemError());
+		dto.setEmailNotification(domain.getEmailNotification());
+		dto.setEmailSystemError(domain.getEmailSystemError());
 		dto.setWelcomeEmailSent(domain.getWelcomeEmailSent());
 		dto.setInternalMailAllMsg(domain.getInternalMailAllMsg());
 		dto.setSendMailOnExpire(domain.getSendMailOnExpire());
 		dto.setUserSiteDTOList(UserSiteMapper.getInstance().domainToDTOList(domain.getUserSites()));
-		dto.setUserCredentialDTO(UserCredentialMapper.getInstance().domainToDto(domain.getUserCredential())); 
 
-		if ((domain.getUserJobTitel() != null) && (domain.getUserJobTitel().getId() != null)) {
-			dto.setJobTitle(domain.getUserJobTitel().getId());
-			dto.setJobTitleName(domain.getUserJobTitel().getJobTitle());
-		}
 
-		if ((domain.getUserLevel() != null) && (domain.getUserLevel().getId() != null)) {
-			dto.setUserLevel(domain.getUserLevel());
-		}
-
-		if (domain.getUserSkillLevel() != null) {
-			dto.setSkillLevel(domain.getUserSkillLevel().getId());
-			dto.setSkillLevelName(domain.getUserSkillLevel().getSkill());
-		}
-		if (domain.getBusiness() != null) {
-			dto.setBusinessId(domain.getBusiness().getId());
-            dto.setBusinessName(domain.getBusiness().getName());
-        }
+		setUserBusiness(domain, dto);
+		setUserCredentials(domain, dto);
+		setUserTitle(domain, dto);
+		setUserLevel(domain, dto);
+		setUserSkillLevel(domain, dto);
 		setBasicUserData(domain, dto);
 		setUserCertification(domain, dto);
 
 		setCommanDTOFields(dto, domain);
+	}
+
+	private void setUserBusiness(User domain, UserDTO dto) {
+		if (domain.getBusiness() != null) {
+			dto.setBusinessId(domain.getBusiness().getId());
+			dto.setBusinessName(domain.getBusiness().getName());
+		}
+	}
+
+	private void setUserSkillLevel(User domain, UserDTO dto) {
+		if (domain.getUserSkillLevel() != null) {
+			dto.setSkillLevel(domain.getUserSkillLevel().getId());
+			dto.setSkillLevelName(domain.getUserSkillLevel().getSkill());
+		}
+	}
+
+	private void setUserLevel(User domain, UserDTO dto) {
+		if (domain.getUserLevel() != null && domain.getUserLevel().getId() != null) {
+			dto.setUserLevel(domain.getUserLevel());
+		}
+	}
+
+	private void setUserTitle(User domain, UserDTO dto) {
+		if (domain.getUserJobTitel() != null && domain.getUserJobTitel().getId() != null) {
+			dto.setJobTitle(domain.getUserJobTitel().getId());
+			dto.setJobTitleName(domain.getUserJobTitel().getJobTitle());
+		}
+	}
+
+	private void setUserCredentials(User domain, UserDTO dto) throws Exception {
+		if (domain.getUserCredential() != null) {
+			dto.setUserCredentialDTO(UserCredentialMapper.getInstance().domainToDto(domain.getUserCredential()));
+			dto.setCurrentPassword(dto.getUserCredentialDTO().getPassword());
+		}
 	}
 
 	private void setBasicUserData(User domain, UserDTO dto) {
@@ -84,8 +106,8 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 	}
 
 	private void setUserCertification(User domain, UserDTO dto) throws Exception {
-		for (UserCertification userCertification : domain.getUserCertifications()) {
-			UserCertificationDTO userCertificationDTO = UserCertificationMapper.getInstance().domainToDto(userCertification);
+		for (final UserCertification userCertification : domain.getUserCertifications()) {
+			final UserCertificationDTO userCertificationDTO = UserCertificationMapper.getInstance().domainToDto(userCertification);
 			dto.getUseCertificationDTOs().add(userCertificationDTO);
 		}
 	}
@@ -109,8 +131,8 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 		domain.setActive(dto.getIsActive());
 		domain.setUserLevel(dto.getUserLevel());
 
-        domain.setEmailNotification(dto.getEmailNotification());
-        domain.setEmailSystemError(dto.getEmailSystemError());
+		domain.setEmailNotification(dto.getEmailNotification());
+		domain.setEmailSystemError(dto.getEmailSystemError());
 		domain.setWelcomeEmailSent(dto.getWelcomeEmailSent());
 		domain.setInternalMailAllMsg(dto.getInternalMailAllMsg());
 		domain.setSendMailOnExpire(dto.getSendMailOnExpire());
@@ -134,16 +156,13 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 
 	@Override
 	public UserDTO domainToDtoForDataTable(User domain) throws Exception {
-		UserDTO dto = new UserDTO();
+		final UserDTO dto = new UserDTO();
 		dto.setId(domain.getId());
 		dto.setFullName(domain.getFullName());
 		dto.setEmailAddress(domain.getEmailAddress());
 		dto.setPersonalCode(domain.getPersonalCode());
-        if (domain.getBusiness() != null) {
-            dto.setBusinessId(domain.getBusiness().getId());
-            dto.setBusinessName(domain.getBusiness().getName());
-        }
-        return dto;
+		setUserBusiness(domain, dto);
+		return dto;
 	}
 
 

@@ -40,19 +40,19 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public UserProfileResult update(UserDTO dto, MultipartFile file) {
-		UserProfileResult result = new UserProfileResult(null, dto);
+		final UserProfileResult result = new UserProfileResult(null, dto);
 		if (!file.isEmpty()) {
 			dto.setImagePath(saveFile(file, dto.getId()));
 		}
 		try {
-			User domain = findEntityById(dto.getId());
+			final User domain = findEntityById(dto.getId());
 			result.setDomainEntity(domain);
 			if (dto.getChangePassword() == true) {
 				changePassword(result);
 			}
 			saveOrUpdate(result);
 			result.addToMessageList("Profile Updated Successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 		}
@@ -66,13 +66,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 			result.setResultStatusError();
 			result.addToErrorList("Current password not match!");
 		} else {
-			setPassword(result.getDtoEntity(), result.getDomainEntity());
-		}
-	}
-
-	private void setPassword(UserDTO dto, User domain) {
-		if (dto.getId() != null && dto.getId() > 0) {
-			domain.getUserCredential().setPassword(passwordEncoder.encode(dto.getNewPassword()));
+			result.getDomainEntity().getUserCredential().setPassword(passwordEncoder.encode(result.getDtoEntity().getNewPassword()));
 		}
 	}
 
@@ -81,10 +75,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 			UserMapper.getInstance().dtoToBasicDomain(result.getDtoEntity(), result.getDomainEntity());
 			userDao.save(result.getDomainEntity());
 			result.updateDtoIdAndVersion();
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Account Already updated. Please Reload account.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -92,9 +86,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	public String saveFile(MultipartFile file, Integer id) {
 		try {
-			// return saveToDisk(file, id);
 			return saveImageS3Bucket(id, file);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -103,8 +96,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 	private String saveImageS3Bucket(Integer id, MultipartFile image) throws IOException {
 
 		// s3 key for storage
-//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
-//				+ File.separator + getFileName(image);
+		//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
+		//				+ File.separator + getFileName(image);
 		final String key = environment.getProperty("upload.location.s3")
 				+ environment.getProperty("upload.location.avatar.s3") + id + "/" + setFileName(image, id);
 
@@ -121,26 +114,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 			fileName = id + "." + "jpeg";
 		}
 		return fileName;
-	}
-
-	private String saveToDisk(MultipartFile file, Integer id) throws Exception {
-		String uploadLocation = environment.getProperty("upload.location");
-		String uploadFolder = environment.getProperty("upload.folder");
-		String pathName = "/" + id + "/";
-		String fileName = setFileName(file, id);
-
-		File dir = new File(uploadLocation + uploadFolder + File.separator + pathName);
-		if (!dir.exists())
-			dir.mkdirs();
-
-		File serverFile = new File(dir.getAbsolutePath() + File.separator + fileName);
-		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
-
-		byte[] bytes = file.getBytes();
-		stream.write(bytes);
-		stream.close();
-
-		return uploadFolder + pathName + fileName;
 	}
 
 	@Override

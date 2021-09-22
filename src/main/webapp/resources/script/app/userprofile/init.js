@@ -9,8 +9,8 @@ jQuery(document).ready(function () {
         checkboxClass: 'icheckbox_minimal',
     });
 
-    $("#passwordCurrent").attr('disabled', 'disabled');
+    $("#currentPassword").attr('disabled', 'disabled');
     $("#password").attr('disabled', 'disabled');
-    $("#passwordAgain").attr('disabled', 'disabled');
+    $("#password_again").attr('disabled', 'disabled');
     
 });

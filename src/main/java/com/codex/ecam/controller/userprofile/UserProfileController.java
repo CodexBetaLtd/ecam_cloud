@@ -38,42 +38,49 @@ public class UserProfileController {
 	private CurrencyService currencyService;
 
 	@Autowired
-    private UserProfileService userProfileService;
+	private UserProfileService userProfileService;
 
 	@Value("${upload.location}")
 	private String uploadLocation;
 
 	@RequestMapping(value = "/myaccount", method = RequestMethod.GET)
-    public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error, @ModelAttribute("active") final String active) {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
-        model.addAttribute("active", active);
+	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error, @ModelAttribute("active") final String active) {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
+		model.addAttribute("active", active);
 
 		try {
-            UserDTO userDTO = userService.findUserById(AuthenticationUtil.getCurrentUser().getUserObj().getId()); 
-            if (userDTO.getCurrencyId() != null) {
-                CurrencyDTO currencyDTO = currencyService.findById(userDTO.getCurrencyId());
-                model.addAttribute("currency", currencyDTO.getSymbol());
-            }
-            model.addAttribute("userDTO", userDTO);
-            return "userprofile/general";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/";
-        }
-    }
+			final UserDTO userDTO = userService.findUserById(AuthenticationUtil.getCurrentUser().getUserObj().getId());
+			if (userDTO.getCurrencyId() != null) {
+				final CurrencyDTO currencyDTO = currencyService.findById(userDTO.getCurrencyId());
+				model.addAttribute("currency", currencyDTO.getSymbol());
+			}
+			model.addAttribute("userDTO", userDTO);
+			return "userprofile/general";
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return "redirect:/";
+		}
+	}
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String editAccount(@ModelAttribute("userDTO") @Valid UserDTO userDTO, @RequestParam("avatar") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
-        UserProfileResult result = userProfileService.update(userDTO, file);
-        if (result.getStatus().equals(ResultStatus.ERROR)) {
-            redirectAttributes.addFlashAttribute("error", result.getErrorList());
-            redirectAttributes.addAttribute("active", "edit");
-            model.addAttribute("userDTO", userDTO);
-            return "redirect:/profile/myaccount";
-        } else {
-            redirectAttributes.addAttribute("success", result.getMsgList());
-            return "redirect:/profile/myaccount";
-        }
-    }
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public String editAccount(@ModelAttribute("userDTO") @Valid UserDTO userDTO, @RequestParam("avatar") MultipartFile file, Model model, RedirectAttributes redirectAttributes) {
+
+		try {
+			final UserProfileResult result = userProfileService.update(userDTO, file);
+
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				redirectAttributes.addFlashAttribute("error", result.getErrorList());
+				redirectAttributes.addAttribute("active", "edit");
+				model.addAttribute("userDTO", userDTO);
+				return "redirect:/profile/myaccount";
+			} else {
+				redirectAttributes.addAttribute("success", result.getMsgList());
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+		}
+		return "redirect:/profile/myaccount";
+	}
 }

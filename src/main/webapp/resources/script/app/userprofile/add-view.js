@@ -2,12 +2,19 @@ var MyAccount = function () {
 
     //Check change password checkbox status.
     var checkPasswordChangeBox = function () {
+        
         $("input").on("ifChanged", function () {
 
             if (!document.getElementById('changePassword').checked) {
-                $("#password_current , #password , #password_again").attr('disabled', 'disabled');
+                
+                $("#currentPassword").attr('disabled', 'disabled');
+                $("#password").attr('disabled', 'disabled');
+                $("#password_again").attr('disabled', 'disabled');
+                
             } else {
-                $("#password_current , #password , #password_again").removeAttr('disabled');
+                $("#currentPassword").removeAttr('disabled');
+                $("#password").removeAttr('disabled');
+                $("#password_again").removeAttr('disabled');
             }
         });
 
@@ -103,7 +110,7 @@ var MyAccount = function () {
             }
         });
 
-        $("#password_current").rules("add", {
+        $("#currentPassword").rules("add", {
             required: true,
             messages: {
                 required: "Please Specify the Current Password"
