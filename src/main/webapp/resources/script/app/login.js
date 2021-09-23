@@ -2,7 +2,31 @@ var Login = function () {
 
     var initLoginButtons = function () {
         $('.box-login').show();
-
+    };
+    
+    var resetPassword = function () {
+        $("#btn_reset_password").on('click', function (event) {
+            event.preventDefault()
+            sendPasswordResetRequest();
+        });
+    };   
+    
+    var sendPasswordResetRequest = function () {
+        $("#username").rules("add", {
+            required: true,
+            messages: {
+                required: "Please specify a Username"
+            }
+        });
+        
+        $("#password").rules('remove', 'required');
+        
+        if ($('.form-login').valid()) {
+            var url = $("#btn_reset_password").attr("href") + '?userName=' + $("#username").val();
+            var win = window.open(url, '_self');
+            win.focus();
+        }
+        
     };
 
     var initLoginValidator = function () {
@@ -70,6 +94,7 @@ var Login = function () {
         init: function () {
             initLoginButtons();
             initLoginValidator();
+            resetPassword();
         }
     };
 }();
