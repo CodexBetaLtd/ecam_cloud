@@ -1,4 +1,5 @@
 var Message = function() {
+    
 	var authenticatedUserId = $("#authenticatedUserId").val();
 
 	var getAllMessages = function() {

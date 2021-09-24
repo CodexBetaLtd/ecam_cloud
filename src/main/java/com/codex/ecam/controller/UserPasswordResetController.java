@@ -21,24 +21,41 @@ import com.codex.ecam.service.login.api.LoginService;
 @RequestMapping(UserPasswordResetController.REQUEST_MAPPING_URL)
 public class UserPasswordResetController {
 
-    public static final String REQUEST_MAPPING_URL = "/resetPassword";
+	public static final String REQUEST_MAPPING_URL = "/resetPassword";
 
-    @Autowired
-    private LoginService loginService;
-    
-    @Autowired
-    private UserCredentialService userCredentialService;
+	@Autowired
+	private LoginService loginService;
 
-    @RequestMapping(value = "/")
-    public String index(String email, Model model) throws Exception {
-        return "/send-reset-email";
-    }
+	@Autowired
+	private UserCredentialService userCredentialService;
 
-    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
-    public String sendResetMail(String email, Model model, RedirectAttributes ra) throws Exception {
+	@RequestMapping(value = "/")
+	public String index(String email, Model model) throws Exception {
+		return "/send-reset-email";
+	}
 
-        LoginResult result = loginService.sendResetEmail(email);
-        
+	@RequestMapping(value = "/request")
+	public String requestPasswordReset(String userName, Model model) {
+		try {
+			final LoginResult result = loginService.requestPasswordReset(userName);
+
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList());
+			} else {
+				model.addAttribute("success",result.getMsgList());
+			}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			model.addAttribute("error", e.getMessage());
+		}
+		return "/login";
+	}
+
+	@RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
+	public String sendResetMail(String email, Model model, RedirectAttributes ra) throws Exception {
+
+		final LoginResult result = loginService.sendResetEmail(email);
+
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
 			return "send-reset-email";
@@ -46,13 +63,13 @@ public class UserPasswordResetController {
 			model.addAttribute("success",result.getMsgList());
 			return "/login";
 		}
-    }
+	}
 
-    @RequestMapping(value = "/add/userId={userId},token={token}", method = RequestMethod.GET)
-    public String resetPassword(@PathVariable("token") String token,@PathVariable("userId") Integer userId, Model model,RedirectAttributes ra) throws Exception {
+	@RequestMapping(value = "/add/userId={userId},token={token}", method = RequestMethod.GET)
+	public String resetPassword(@PathVariable("token") String token,@PathVariable("userId") Integer userId, Model model,RedirectAttributes ra) throws Exception {
 
-        LoginResult result = loginService.resetPassword(token, model);
-        model.addAttribute("credentialDTO", userCredentialService.findByUserId(userId));
+		final LoginResult result = loginService.resetPassword(token, model);
+		model.addAttribute("credentialDTO", userCredentialService.findByUserId(userId));
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
 			return "/login";
@@ -60,13 +77,13 @@ public class UserPasswordResetController {
 			model.addAttribute("success",result.getMsgList());
 			return "/reset-password";
 		}
-    }
+	}
 
-    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
-    public String updatePassword(@ModelAttribute("credentialDTO") @Valid UserCredentialDTO credentialDTO, Model model,RedirectAttributes ra) throws Exception {
+	@RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+	public String updatePassword(@ModelAttribute("credentialDTO") @Valid UserCredentialDTO credentialDTO, Model model,RedirectAttributes ra) throws Exception {
 
-        LoginResult result = loginService.updatePassword(credentialDTO);
-        
+		final LoginResult result = loginService.updatePassword(credentialDTO);
+
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
 			return "reset-password";
@@ -75,8 +92,8 @@ public class UserPasswordResetController {
 			return "/login";
 		}
 
-    }
-    
-     
+	}
+
+
 
 }

@@ -20,21 +20,22 @@ public class HomeController {
 
 	@Autowired
 	private SecurityContextAccessor securityContextAccessor;
-	
+
 	@Autowired
 	private ScheduledMaintenanceTriggerCountService smTriggerCountService;
-	
+
 	@Autowired
 	private WorkOrderComparisonService woComparisonService;
+
 	@Autowired
 	private WorkOrderService workoderService;
-	
+
 	@Autowired
 	private StockService stockService;
-	
+
 	@Autowired
 	private AppService appService;
-	
+
 
 	@RequestMapping(value = { "/session-expire-redirect"}, method = RequestMethod.GET)
 	public String sessionExpiredRedirect() {
@@ -60,7 +61,7 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login(Model model) { 
+	public String login(Model model) {
 		if (securityContextAccessor.isCurrentAuthenticationAnonymous()) {
 			return "/login";
 		} else {
@@ -81,18 +82,18 @@ public class HomeController {
 		setCommonData(model);
 		return "dashboard/index";
 	}
-	
+
 	private void setCommonData(Model model) {
 		try {
-			model.addAttribute("scheduleMaintenenceCount", smTriggerCountService.getCount()); 
+			model.addAttribute("scheduleMaintenenceCount", smTriggerCountService.getCount());
 			model.addAttribute("woComparison", woComparisonService.getWoComparisonChartData());
 			model.addAttribute("openWorkOrderCount", workoderService.findAllOpenWorkOderCount());
 			model.addAttribute("lowStockItem", stockService.findMinimumStock());
 			model.addAttribute("highPriorityWorkOrder", workoderService.findAllHighPriorityWorkOderCount());
 			model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
-		} catch (Exception e) { 
+		} catch (final Exception e) {
 			e.printStackTrace();
-		} 
+		}
 	}
 
 }
