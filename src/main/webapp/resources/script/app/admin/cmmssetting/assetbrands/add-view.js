@@ -1,5 +1,13 @@
 var AssetBrandAdd = function () {
-	
+    
+    var initSelect2Components = function () {
+        $("#brandBusinessId").select2({
+            placeholder: "Select a Business",
+            allowClear: true,
+            dropdownParent: $("#cmms-setting-add-modal")
+        });
+    };
+    
 	var runValidator = function () {
 	        var form = $('#assetBrandAddForm');
 	        var errorHandler = $('.errorHandler', form);
@@ -23,10 +31,14 @@ var AssetBrandAdd = function () {
 	            rules: {
 	                brandName: {
 	                    required: true,
-	                  },
+	                },
+	                brandBusinessName: {
+	                    required: true,
+	                },
 	            },
 	            messages: {
-	            	brandName: "Please specify a Brand Name",
+	                brandName: "Please specify a Brand Name",
+	                brandBusinessName: "Please specify a Business",
 	            },
 	            invalidHandler: function (event, validator) { //display error alert on form submit
 	                successHandler.hide();
@@ -60,6 +72,7 @@ var AssetBrandAdd = function () {
 
         init: function () {
             runValidator();
+            initSelect2Components();
         }
     };
 }();

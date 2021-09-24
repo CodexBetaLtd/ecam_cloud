@@ -117,68 +117,71 @@ var AssetBrandHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#assetBrandsTbl').dataTable().fnDestroy();
-		var oTable = $('#assetBrandsTbl') .dataTable(
-						{
-							"processing" : true,
-							"serverSide" : true,
-							"ajax" : $.fn.dataTable
-									.pipeline({
-										url : "../restapi/lookuptable/tabledataassetbrand",
-										pages : 5
-									}),
-							columns : [
-									{
-										width : "10%",
-										render : function(data, type, row, meta) {
-											return meta.row + meta.settings._iDisplayStart + 1;
-										}
-									}, {
-										data : 'brandName'
-									}, {
-										width : "10%",
-										data : 'brandId'
-									} ],
-							"aoColumnDefs" : [
-									{
-										"bSearchable" : false,
-										"aTargets" : [ 0, 2 ]
-									},
-									{
-										"orderable" : false,
-										"aTargets" : [ 0, 2 ]
-									},
-									{
-										"targets" : 2,//index of column starting from 0
-										"data" : 'brandId', //this name should exist in your JSON response
-										"render" : function(data, type, full, meta) {
-                                            return ButtonUtil.getEditBtnWithURL('assetbrand', data, 'AssetBrandHome');
-										}
-									} ],
-							oLanguage : {
-								"sLengthMenu" : "Show _MENU_ Rows",
-								"sSearch" : "",
-								"oPaginate" : {
-									"sPrevious" : "&laquo;",
-									"sNext" : "&raquo;"
-								}
-							},
-							"aaSorting" : [ [ 1, 'asc' ] ],
-							"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
-									[ 5, 10, 15, 20, "All" ] // change per page values here
-							],
-							dom : "<'row'<'col-sm-4  dtblassetbrand'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-						
-							bAutoWidth : false,
-							sScrollXInner : "100%",
-							iDisplayLength : 10,
-							bLengthChange : false,
-							sPaginationType : "full_numbers",
-							sPaging : 'pagination',
-							initComplete : function() {		
-								$("div.dtblassetbrand") .html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='brand-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-							},
-						});
+		
+		var oTable = $('#assetBrandsTbl') .dataTable({
+			"processing" : true,
+			"serverSide" : true,
+			"ajax" : $.fn.dataTable
+					.pipeline({
+						url : "../restapi/lookuptable/tabledataassetbrand",
+						pages : 5
+					}),
+			columns : [
+					{
+						width : "10%",
+						render : function(data, type, row, meta) {
+							return meta.row + meta.settings._iDisplayStart + 1;
+						}
+					}, {
+						data : 'brandName'
+					},{
+					    data : 'brandBusinessName'
+					}, {
+						width : "10%",
+						data : 'brandId'
+					} ],
+			"aoColumnDefs" : [
+					{
+						"bSearchable" : false,
+						"aTargets" : [ 0, 2 ]
+					},
+					{
+						"orderable" : false,
+						"aTargets" : [ 0, 2 ]
+					},
+					{
+						"targets" : 3,//index of column starting from 0
+						"data" : 'brandId', //this name should exist in your JSON response
+						"render" : function(data, type, full, meta) {
+                            return ButtonUtil.getEditBtnWithURL('assetbrand', data, 'AssetBrandHome');
+						}
+					} ],
+			oLanguage : {
+				"sLengthMenu" : "Show _MENU_ Rows",
+				"sSearch" : "",
+				"oPaginate" : {
+					"sPrevious" : "&laquo;",
+					"sNext" : "&raquo;"
+				}
+			},
+			"aaSorting" : [ [ 1, 'asc' ] ],
+			"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
+					[ 5, 10, 15, 20, "All" ] // change per page values here
+			],
+			dom : "<'row'<'col-sm-4  dtblassetbrand'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+		
+			bAutoWidth : false,
+			sScrollXInner : "100%",
+			iDisplayLength : 10,
+			bLengthChange : false,
+			sPaginationType : "full_numbers",
+			sPaging : 'pagination',
+			initComplete : function() {		
+				$("div.dtblassetbrand") .html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='brand-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+			},
+		});
 		$('#assetBrandsTbl_wrapper .dataTables_filter input').addClass( "form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
 		$('#assetBrandsTbl_wrapper .dataTables_length select').addClass( "m-wrap small");

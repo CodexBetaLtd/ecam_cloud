@@ -38,7 +38,16 @@
 					<form th:action="@{/assetbrand/save}" method="post" role="form" th:object="${assetBrand}" id="assetBrandAddForm">
                         <input type="hidden" id="id" name="id" th:field="*{brandId}"/>
                         <input type="hidden" id="version" name="version" th:field="*{version}"/>
-						<div class="row">
+						<div class="row">	
+							<div class="col-md-6">
+	                           	<div class="form-group">
+	                              	<label class="control-label"> Business <span class="symbol required"></span> </label>
+	                              	<select id="brandBusinessId" th:field="*{brandBusinessId}" class="search-select" style="width: 100%;">
+	                                    <option value="">&nbsp;</option>
+	                                    <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+									</select>
+	                             </div>
+	                        </div>
 							<div class="col-md-6">
 								<div class="form-group">
                                       <label class="control-label"> Brand Name<span class="symbol required"></span> </label>

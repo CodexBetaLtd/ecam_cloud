@@ -19,20 +19,29 @@ public class AssetBrandMapper extends GenericMapper<AssetBrand, AssetBrandDTO> {
 
 	@Override
 	public AssetBrandDTO domainToDto(AssetBrand domain) throws Exception {
-		AssetBrandDTO dto = new AssetBrandDTO();
+		final AssetBrandDTO dto = new AssetBrandDTO();
 		dto.setBrandId(domain.getId());
 		dto.setBrandName(domain.getBrandName());
 
+		setBrandBusiness(domain, dto);
 		setCommanDTOFields(dto, domain);
 
 		return dto;
 	}
 
+	private void setBrandBusiness(AssetBrand domain, AssetBrandDTO dto) {
+		if (domain.getBusiness() != null) {
+			dto.setBrandBusinessId(domain.getBusiness().getId());
+			dto.setBrandBusinessName(domain.getBusiness().getName());
+		}
+	}
+
 	@Override
 	public AssetBrandDTO domainToDtoForDataTable(AssetBrand domain) throws Exception {
-		AssetBrandDTO dto = new AssetBrandDTO();
+		final AssetBrandDTO dto = new AssetBrandDTO();
 		dto.setBrandId(domain.getId());
 		dto.setBrandName(domain.getBrandName());
+		setBrandBusiness(domain, dto);
 		return dto;
 	}
 

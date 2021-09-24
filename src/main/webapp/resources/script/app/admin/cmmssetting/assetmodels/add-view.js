@@ -9,10 +9,12 @@ var AssetModelAdd = function () {
 	};
 	
 	var runValidator = function () {
+	    
 	        var form = $('#assetModelAddForm');
 	        var errorHandler = $('.errorHandler', form);
 	        var successHandler = $('.successHandler', form);
-	        $('#assetModelAddForm').validate({
+	        
+	        form.validate({
 	            errorElement: "span", // contain the error msg in a span tag
 	            errorClass: 'help-block',
 	            errorPlacement: function (error, element) { // render error placement for each input type
