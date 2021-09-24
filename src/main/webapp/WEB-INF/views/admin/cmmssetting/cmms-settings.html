@@ -52,16 +52,16 @@
                         <div class="col-xs-12 col-sm-12 col-sm-12">
                             <div class="tabbable">
                                 <ul id="myTab" class="nav nav-tabs tab-bricky nav-tabs-padding-top list">
-                                    <li class="active"><a href="#globalSettingsTab" data-toggle="tab"> Global Settings </a></li>
-                                    <li><a href="#businessSettingsTab" data-toggle="tab"> Business Settings </a></li>
+                                    <li class="active"><a href="#businessSettingsTab" data-toggle="tab"> Business Settings </a></li>
                                     <li><a href="#assetCategoryTab" data-toggle="tab"> Asset category </a></li>                                   
                                     <li><a href="#siteTab" data-toggle="tab"> Site </a></li>
                                     <li><a href="#taxTab" data-toggle="tab"> Tax </a></li>
+                                    <li sec:authorize="hasAnyAuthority('ADMIN_LEVEL')"><a href="#globalSettingsTab" data-toggle="tab"> Global Settings </a></li>
                                     <li><a href="#backupTab" data-toggle="tab"> Backup </a></li>
                                 </ul>
 
                                 <div class="tab-content">
-                                    <div class="tab-pane in active" id="globalSettingsTab">
+                                    <div class="tab-pane" id="globalSettingsTab">
                                          <div class="panel-body">
                                             <div class="panel-group accordion-custom accordion-teal" id="accordion">
                                                 
@@ -96,6 +96,11 @@
                                                         </div>
                                                     </div>
                                                 </div>
+<<<<<<< HEAD
+=======
+                                                
+
+>>>>>>> branch 's3_implementation' of https://github.com/CodexBetaLtd/ecam_cloud.git
                                                 <div class="panel panel-default">
                                                     <div class="panel-heading">
                                                         <h4 class="panel-title">
@@ -130,7 +135,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="tab-pane" id="businessSettingsTab">
+                                    <div class="tab-pane  in active" id="businessSettingsTab">
                                         <div class="panel-body">
                                             <div class="panel-group accordion-custom accordion-teal" id="accordion">
                                                 <div class="panel panel-default">
@@ -319,6 +324,37 @@
                                                     <div id="collapseSixteen" class="panel-collapse collapse">
                                                         <div class="panel-body">
                                                             <div th:replace="admin/cmmssetting/lookuptable/miscellaneousexpensetype/home-view::homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                                                                 <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseFourteen">
+                                                                <i class="icon-arrow"></i> Asset Brand
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFourteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/assetbrands/home-view :: homeview"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h4 class="panel-title">
+                                                            <a class="accordion-toggle collapsed" data-toggle="collapse"
+                                                               data-parent="#accordion" href="#collapseFifteen">
+                                                                <i class="icon-arrow"></i> Asset Model
+                                                            </a>
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapseFifteen" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div th:replace="admin/cmmssetting/lookuptable/assetmodels/home-view :: homeview"></div>
                                                         </div>
                                                     </div>
                                                 </div>
