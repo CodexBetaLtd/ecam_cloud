@@ -152,7 +152,9 @@ public class WorkOrderComparisonServiceImpl implements WorkOrderComparisonServic
 
 	private Predicate getAllOnTimeCompletedWoPredicate(Root<WorkOrder> root, CriteriaBuilder cb) {
 		return cb.and(
-				cb.equal(root.get("suggestedCompletionDate"), root.get("suggestedCompletionDate")),
+				cb.isNotNull(root.get("suggestedCompletionDate")),
+				cb.isNotNull(root.get("dateCompleted")),
+				cb.equal(root.get("suggestedCompletionDate"), root.get("dateCompleted")),
 				getAllCompletedWoPredicate(root,cb)
 				);
 	}

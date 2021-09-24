@@ -120,8 +120,8 @@ var WorkorderComparisonChart = function () {
 				datasets: [{
 					data: data,
 					backgroundColor: [
-						'rgb(55,183,243)', 
-						'rgb(203, 75, 75)', 
+						'rgb(203, 75, 75)',
+						'rgb(55,183,243)',  
 						], 
 				}],
 				labels: [
