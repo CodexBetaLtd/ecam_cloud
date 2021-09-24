@@ -49,7 +49,6 @@
 	                                     <label class="control-label"> Business <span class="symbol required"></span>
 	                                     </label>
 	                                     <select id="chargeDepartmentBusinessId" th:field="*{businessId}" class="search-select" style="width: 100%;">
-	                                         <option value="">&nbsp;</option>
 	                                         <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
 	                                     </select>
 	                                 </div>
