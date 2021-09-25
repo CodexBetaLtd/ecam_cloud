@@ -4,27 +4,30 @@ import com.codex.ecam.util.search.BaseSearchPropertyMapper;
 
 public class AssetBrandSearchPropertyMapper extends BaseSearchPropertyMapper {
 
-    private static AssetBrandSearchPropertyMapper instance = null;
+	private static AssetBrandSearchPropertyMapper instance = null;
 
-    private AssetBrandSearchPropertyMapper() {
-    }
+	private AssetBrandSearchPropertyMapper() {
+	}
 
-    public static AssetBrandSearchPropertyMapper getInstance() {
-        if (instance == null) {
-            instance = new AssetBrandSearchPropertyMapper();
-        }
-        return instance;
-    }
+	public static AssetBrandSearchPropertyMapper getInstance() {
+		if (instance == null) {
+			instance = new AssetBrandSearchPropertyMapper();
+		}
+		return instance;
+	}
 
-    @Override
-    protected void mapSearchParamsToPropertyParams(String tableColumn) {
+	@Override
+	protected void mapSearchParamsToPropertyParams(String tableColumn) {
 
-        switch (tableColumn) {  
-        	
-            default:
-                break;
+		switch (tableColumn) {
+		case "brandBusinessName" :
+			addColumns("business.name");
+			break;
 
-        }
-    }
+		default:
+			break;
+
+		}
+	}
 
 }
