@@ -187,9 +187,7 @@ var InboxNotification = function () {
         return "" +
             "<div class='messages-item'> " +
             getNotificationButtonSet(dataSet.id) +
-            "<span title='Mark as starred' class='messages-item-star'>" +
-            "<i class='fa fa-star'></i>" +
-            "</span> " +
+            getNotificationMarkAsStarred(dataSet) +
             "<img alt='' src='/images/user-default.png' class='messages-item-avatar'> " +
             getSender(dataSet) +
             "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" +
@@ -209,6 +207,18 @@ var InboxNotification = function () {
         } else {
             return dataSet.content.replace(/(<([^>]+)>)/ig, "")
         }
+    };
+    
+    var getNotificationMarkAsStarred = function(dataSet){
+
+        if (dataSet.isOpen == "false" || dataSet.isOpen == false) {
+            return "<span title='Mark as starred' class='messages-item-star btn-delete'>" +
+            "<i class='fa fa-star'></i>" +
+            "</span> ";
+        }       
+        return "<span title='Mark as starred' class='messages-item-star'>" +
+        "<i class='fa fa-star'></i>" +
+        "</span> ";
     };
 
     var getSender = function (dataSet) {

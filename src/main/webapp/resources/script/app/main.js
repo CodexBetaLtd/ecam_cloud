@@ -217,6 +217,7 @@ var Main = function () {
             }, 1000);
         });
     };
+    
     //function to reduce the size of the Main Menu
     var runNavigationToggler = function () {
         $('.navigation-toggler').on('click', function () {
@@ -805,6 +806,7 @@ var Main = function () {
             runLayoutMenu();
             activeMenu();
             runScrollTab(); 
+            Notification.inboxUnreadCount();
         },
 
         runCheckBoxStyle: function () {

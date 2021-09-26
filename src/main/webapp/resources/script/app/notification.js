@@ -1,10 +1,11 @@
 var Notification = function() {
-	var authenticatedUserId = $("#authenticatedUserId").val();
+
+    var authenticatedUserId = $("#authenticatedUserId").val();
 
 	var getAllNotification = function() {
 		$.ajax({
 			type : "GET",
-			url : "/ECAM/restapi/notification/inbox-notificationlist",
+			url : "ECAM/restapi/notification/inbox-notificationlist",
 			contentType : "application/json",
 			dataType : "json",
 			success : function(output) {
@@ -18,7 +19,8 @@ var Notification = function() {
 				// alert("Failed to load site");
 			}
 		});
-	}
+	};
+	
 	var populateNotification = function() {
 		$("#notificationList").empty();
 		notificationList.sort(function(a, b) {
@@ -165,15 +167,46 @@ var Notification = function() {
 	var notificationCount = function() {
 		var count = notificationList.length
 		$(".notif-count").text(count);
-	}
+	};
+	
+
+    var getInboxUnreadCount = function() {
+        $.ajax({
+            type : "GET",
+            url : $("#ntf-url").attr('href'),
+            contentType : "application/json",
+            dataType : "json",
+            success : function(output) {
+                if (parseFloat(output) > 0) {     
+                    $("#inbox-count").text(output);
+                    $("#inbox-count").show()
+                    $("#ntf-dot").show()
+                } else {                    
+                    $("#inbox-count").hide()
+                    $("#ntf-dot").hide()
+                }
+            },
+            error : function(xhr, ajaxOptions, thrownError) {
+                // alert(xhr.status + " " + thrownError);
+            },
+            error : function(e) {
+                // alert("Failed to load site");
+            }
+        });
+    };
 
 	return {
 		init : function() {
 			kafakWebSocketListner();
 			getAllNotification();
 		},
+		
 		previewNotification : function(id) {
 			previewNotification(id);
-		}
+		},
+		
+		inboxUnreadCount: function () {
+		    getInboxUnreadCount();
+        }
 	};
 }();

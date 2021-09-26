@@ -4,8 +4,8 @@
 
 <!-- start: MAIN NAVIGATION MENU -->
 <ul class="main-navigation-menu" th:fragment="menu">
-
     <li>
+		<a class="hidden" id="ntf-url" th:href=@{/restapi/notification/inbox-unread-count}></a>
 		<!--active open--> 
 		<a th:href="@{/dashboard}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL',  T(com.codex.ecam.util.AuthenticationUtil).MENU_PREFIX + T(com.codex.ecam.constants.Menu).DASHBOARD.id )">
 			<i class=" clip-grid "></i> 
@@ -156,7 +156,9 @@
     <!-- MENU : Notification -->
     <li>
         <a href="javascript:void(0)" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).MENU_PREFIX + T(com.codex.ecam.constants.Menu).NOTIFICATIONS.id)">
-            <i class="icon-custom icon-notify"></i> <span class="title"> Notification </span>
+            <i class="icon-custom icon-notify"></i> 
+            <span class="title"> Notification </span>
+            <span class="dot" id="ntf-dot"> </span>
             <i class="icon-arrow"></i> <span class="selected"></span>
         </a>
         <ul class="sub-menu">
@@ -168,7 +170,7 @@
             <li>
                 <a th:href="@{/notification/inbox}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).INBOX.id)">
                     <i class=" clip-archive"></i> <span class="title">Inbox</span>
-                    <!--<span class="badge badge-info"> <span th:if="${notificationUtility != null && notificationUtility.inboxItemCount != null}" th:text="${notificationUtility.inboxItemCount}">Static</span> </span>-->
+                    <span class="badge badge-info inbox-count" id="inbox-count"> </span>
                 </a>
             </li>
             <li>

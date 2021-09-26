@@ -23,18 +23,22 @@ public interface NotificationService {
 
 	NotificationResult deleteNotification(Integer id);
 
-    NotificationResult replyNotification(Integer id);
+	NotificationResult replyNotification(Integer id);
 
-    NotificationResult forwardNotification(Integer id);
+	NotificationResult forwardNotification(Integer id);
 
-    NotificationResult findNotificationById(Integer id);
+	NotificationResult findNotificationById(Integer id);
+
+	NotificationResult previewById(Integer id) throws Exception;
 
 	NotificationViewDTO notificationUtility();
 
 	NotificationResult fireInboxNotification(Notification notification);
 
-    List<NotificationDTO> findAllNotification(NotificationType notificationType) throws Exception;
+	List<NotificationDTO> findAllNotification(NotificationType notificationType) throws Exception;
 
 	DataTablesOutput<NotificationDTO> findAllNotification(FocusDataTablesInput dataTablesInput, NotificationType notificationType) throws Exception;
+
+	Integer getInboxUnreadCount() throws Exception;
 
 }

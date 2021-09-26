@@ -373,7 +373,9 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	public NotificationResult findNotificationById(Integer id) {
+
 		final NotificationResult result = new NotificationResult(null, null);
+
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
@@ -385,6 +387,34 @@ public class NotificationServiceImpl implements NotificationService {
 			logger.error(ex.getMessage());
 		}
 		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public NotificationResult previewById(Integer id) throws Exception{
+
+		final NotificationResult result = new NotificationResult(null, null);
+
+		try {
+			setDomainData(id);
+			result.setDtoEntity(findDTOById(id));
+			result.setResultStatusSuccess();
+			result.addToMessageList("SUCCESS! Notification fetch operation completed.");
+		} catch (final NotificationException ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("ERROR! Notification fetch operation failed.");
+			logger.error(ex.getMessage());
+		}
+		return result;
+	}
+
+	private void setDomainData(Integer id) throws NotificationException {
+		final Notification domain = findEntityById(id);
+		if (!domain.getIsOpen()) {
+			domain.setIsOpen(true);
+			notificationDao.save(domain);
+		}
 	}
 
 	@Override
@@ -442,6 +472,18 @@ public class NotificationServiceImpl implements NotificationService {
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 		return spec;
+	}
+
+	@Override
+	public Integer getInboxUnreadCount() throws Exception {
+		final Specification<Notification> spec = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			predicates.add(cb.equal(root.get("receiver").get("id"), AuthenticationUtil.getAuthenticatedUser().getId()));
+			predicates.add(cb.equal(root.get("isOpen"), Boolean.FALSE));
+			predicates.add(cb.equal(root.get("notificationType"), NotificationType.INBOX_NOTIFICATION));
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
+		return (int) notificationDao.count(spec);
 	}
 
 }
