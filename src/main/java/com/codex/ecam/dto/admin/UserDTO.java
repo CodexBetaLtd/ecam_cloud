@@ -6,6 +6,7 @@ import java.util.List;
 import com.codex.ecam.constants.UserLevel;
 import com.codex.ecam.dto.BaseDTO;
 import com.codex.ecam.dto.admin.cmmssetting.UserSiteDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 
 public class UserDTO extends BaseDTO {
 

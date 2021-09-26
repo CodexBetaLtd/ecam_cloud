@@ -3,8 +3,8 @@ package com.codex.ecam.mappers.admin;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.dto.admin.cmmssetting.UserSiteDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.admin.UserSite;
 import com.codex.ecam.model.admin.UserSiteGroup;

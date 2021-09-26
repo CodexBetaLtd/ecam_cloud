@@ -3,8 +3,8 @@ package com.codex.ecam.service.admin.api;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
-import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.dto.admin.UserTokenDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 
 public interface UserTokenService {
 	

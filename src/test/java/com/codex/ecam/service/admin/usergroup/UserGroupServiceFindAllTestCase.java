@@ -1,7 +1,7 @@
 package com.codex.ecam.service.admin.usergroup;
 
 import com.codex.ecam.common.TestCase;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.service.admin.api.UserGroupService;
 
 import org.junit.Assert;

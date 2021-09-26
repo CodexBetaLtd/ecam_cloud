@@ -43,13 +43,13 @@ public class UserGroup extends BaseModel implements Serializable {
 	private String description;
 
 	@OneToMany( mappedBy = "userGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<UserGroupMenu> menuList = new HashSet<UserGroupMenu>();
+	private final Set<UserGroupMenu> menuList = new HashSet<UserGroupMenu>();
 
 	@OneToMany( mappedBy = "userGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<UserGroupPage> pageList = new HashSet<UserGroupPage>();
-	
+	private final Set<UserGroupPage> pageList = new HashSet<UserGroupPage>();
+
 	@OneToMany( mappedBy = "userGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<UserGroupWiget> wigetList = new HashSet<UserGroupWiget>();
+	private final Set<UserGroupWiget> wigetList = new HashSet<UserGroupWiget>();
 
 	public Integer getId() {
 		return id;
@@ -90,8 +90,6 @@ public class UserGroup extends BaseModel implements Serializable {
 	public void setPageList(Set<UserGroupPage> pageList) {
 		updateCollection("pageList", pageList);
 	}
-	
-	
 
 	public Set<UserGroupWiget> getWigetList() {
 		return wigetList;

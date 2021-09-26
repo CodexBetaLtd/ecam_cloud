@@ -8,6 +8,7 @@ var UserGroupAdd = function () {
 	};
 	
 	var initPageSelect = function () {
+	    
         $("#page").select2({
             placeholder: "Select a Page",
             allowClear: true

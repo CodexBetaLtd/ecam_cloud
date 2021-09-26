@@ -5,7 +5,7 @@ import com.codex.ecam.dao.admin.UserGroupMenuDao;
 import com.codex.ecam.dao.admin.UserGroupMenuSubMenuDao;
 import com.codex.ecam.dao.admin.UserGroupPageDao;
 import com.codex.ecam.dao.admin.UserGroupPagePermissionDao;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.result.admin.UserGroupResult;
 import com.codex.ecam.service.admin.api.UserGroupService;
 

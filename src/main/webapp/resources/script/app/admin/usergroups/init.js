@@ -2,6 +2,8 @@ jQuery(document).ready(function () {
     Main.init();
     UserGroupAdd.init();
     TabUsers.init();
+    TabMenu.init();
+    TabPagePermission.init();
     
 //     var userGroupId=$("#id").val();
 //    tree = $('#tree').tree({

@@ -141,14 +141,7 @@ var UserGroupHome = function () {
      			data: 'businessName'
      		}
      		],
-            aoColumnDefs : [
-            {
-            	targets : 4,//index of column starting from 0
-                data : "id", //this name should exist in your JSON response
-                render : function ( data, type, full, meta ) {
-                    return ButtonUtil.getHomeBtnWithURL('userGroups', data);
-                }
-            }],
+            aoColumnDefs : [],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -167,7 +160,15 @@ var UserGroupHome = function () {
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../userGroups/edit?id",
+            },
         });
         $('#userGroupTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -180,7 +181,10 @@ var UserGroupHome = function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });    
+        
+        DataTableUtil.deleteRows(oTable, "delete", "userGroups", "id");  
+        
     };    
     
     return {

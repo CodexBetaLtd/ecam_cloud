@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.codex.ecam.common.TestCase;
 import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.SubMenu;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.result.admin.UserGroupResult;
 import com.codex.ecam.service.admin.api.UserGroupService;
 

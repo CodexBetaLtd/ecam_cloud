@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.codex.ecam.dto.BaseDTO;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 
 public class UserSiteDTO extends BaseDTO {
 

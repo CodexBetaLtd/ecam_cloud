@@ -55,7 +55,7 @@
 				        <i class="clip-checkmark-circle-2 btn-save"></i> Save
 				    </a>
 				    
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top" 
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" 
 				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-original-title="Delete">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				    </a>
@@ -86,7 +86,6 @@
 					                            <th>Name</th>
 					                            <th class="hidden-xs">Description</th>
 					                            <th class="hidden-xs">Business</th>
-					                            <th class="last-col">More</th>
 					                        </tr>
 					                    </thead>
 					                    <tbody> </tbody>

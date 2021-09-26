@@ -35,7 +35,7 @@ public class DatabaseConfiguration {
 
 	@Bean
 	public DataSource getDataSource() {
-		HikariConfig dataSourceConfig = new HikariConfig();
+		final HikariConfig dataSourceConfig = new HikariConfig();
 		dataSourceConfig.setDriverClassName(environment.getProperty("jdbc.driverClassName"));
 		dataSourceConfig.setJdbcUrl(getJDBCUrl());
 		dataSourceConfig.setUsername(environment.getProperty("jdbc.user"));
@@ -49,7 +49,7 @@ public class DatabaseConfiguration {
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
-		LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+		final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactoryBean.setDataSource(dataSource);
 		entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 		entityManagerFactoryBean.setPackagesToScan("com.codex.ecam.model");
@@ -58,9 +58,9 @@ public class DatabaseConfiguration {
 	}
 
 	private Properties getJpaProperties() {
-		Properties jpaProperties = new Properties();
+		final Properties jpaProperties = new Properties();
 		jpaProperties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
-		jpaProperties.put("hibernate.show_sql", "true");
+		jpaProperties.put("hibernate.show_sql", environment.getProperty("hibernate.show_sql"));
 		jpaProperties.put("hibernate.format_sql", "true");
 		jpaProperties.put("hibernate.enable_lazy_load_no_trans", "true");
 		jpaProperties.put("hibernate.integrator_provider", (IntegratorProvider) () -> Collections.singletonList( RootAwareEventListenerIntegrator.INSTANCE ));
@@ -69,7 +69,7 @@ public class DatabaseConfiguration {
 
 	@Bean
 	public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		final JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(entityManagerFactory);
 		return transactionManager;
 	}

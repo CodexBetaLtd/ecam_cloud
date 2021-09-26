@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codex.ecam.dto.admin.PermisonTreeDTO;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.admin.api.UserGroupService;
 

@@ -1,6 +1,8 @@
 package com.codex.ecam.service.admin.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +24,7 @@ import com.codex.ecam.constants.Widgets;
 import com.codex.ecam.dao.admin.UserGroupDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dto.admin.PermisonTreeDTO;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.mappers.admin.UserGroupMapper;
 import com.codex.ecam.model.admin.UserGroup;
 import com.codex.ecam.model.admin.UserGroupMenu;
@@ -57,11 +59,11 @@ public class UserGroupServiceImpl implements UserGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = userGroupDao.findAll(input);
 		} else {
-			Specification<UserGroup> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<UserGroup> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = userGroupDao.findAll(input, specification);
 		}
-		DataTablesOutput<UserGroupDTO> out = UserGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<UserGroupDTO> out = UserGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -71,16 +73,16 @@ public class UserGroupServiceImpl implements UserGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = (List<UserGroup>) userGroupDao.findAll();
 		} else {
-			Specification<UserGroup> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<UserGroup> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
-			domainOut = (List<UserGroup>) userGroupDao.findAll(specification);
+			domainOut = userGroupDao.findAll(specification);
 		}
 		return UserGroupMapper.getInstance().domainToDTOList(domainOut);
 	}
 
 	@Override
 	public UserGroupDTO findById(Integer id) throws Exception {
-		UserGroup domain = userGroupDao.findById(id);
+		final UserGroup domain = userGroupDao.findById(id);
 		if (domain != null) {
 			return UserGroupMapper.getInstance().domainToDtoWithPermission(domain);
 		}
@@ -89,13 +91,13 @@ public class UserGroupServiceImpl implements UserGroupService {
 
 	@Override
 	public UserGroupResult delete(Integer id) {
-		UserGroupResult result = new UserGroupResult(null, null);
+		final UserGroupResult result = new UserGroupResult(null, null);
 		try {
 			userGroupDao.delete(id);
 
 			result.setResultStatusSuccess();
 			result.addToMessageList("User Group Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("Error Occured While Deleting.");
@@ -105,14 +107,14 @@ public class UserGroupServiceImpl implements UserGroupService {
 
 	@Override
 	public UserGroupResult save(UserGroupDTO dto) throws Exception {
-		UserGroupResult result = createUserGroupResult(dto);
+		final UserGroupResult result = createUserGroupResult(dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Group Already updated. Please Reload User Group.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -127,18 +129,99 @@ public class UserGroupServiceImpl implements UserGroupService {
 		UserGroupMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setBusiness(result);
 		setWigetList(result);
+		setPagePermissions(result.getDtoEntity(), result.getDomainEntity());
 		userGroupDao.save(result.getDomainEntity());
 		result.updateDtoIdAndVersion();
 	}
 
+	private void setPagePermissions(UserGroupDTO dto, UserGroup domain) {
+		final List<PagePermission> pagePermissionDTOs = dto.getPagePermissions();
+
+		final Set<UserGroupPage> userGroupPages = new HashSet<>();
+
+		if (pagePermissionDTOs != null && pagePermissionDTOs.size() > 0) {
+
+			final Set<UserGroupPage> currentUserGroupPages = domain.getPageList();
+
+			for (final PagePermission pagePermission : pagePermissionDTOs) {
+				final UserGroupPage userGroupPage = createOrUpdateUserGroupPage(domain, userGroupPages, currentUserGroupPages,pagePermission);
+				final UserGroupPagePermission userGroupPagePermission = createOrUpdateUserGroupPagePermission(pagePermission,userGroupPage);
+				userGroupPage.getPermissionList().add(userGroupPagePermission);
+
+			}
+
+		}
+
+		removeUngrantedPagePermissions(pagePermissionDTOs, userGroupPages);
+
+		domain.setPageList(userGroupPages);
+
+	}
+
+	private UserGroupPage createOrUpdateUserGroupPage(UserGroup domain, final Set<UserGroupPage> userGroupPages,
+			final Set<UserGroupPage> currentUserGroupPages, final PagePermission pagePermission) {
+		UserGroupPage userGroupPage = new UserGroupPage();
+
+		final Optional<UserGroupPage> optionalUserGroupPage = userGroupPages.stream().filter(x->x.getPage().getId().equals(pagePermission.getPage().getId())).findAny();
+		if (optionalUserGroupPage.isPresent()) {
+			userGroupPage = optionalUserGroupPage.get();
+		} else {
+			userGroupPage = currentUserGroupPages.stream().filter(x->x.getPage().getId().equals(pagePermission.getPage().getId())).findAny().orElseGet(UserGroupPage::new);
+			userGroupPages.add(userGroupPage);
+		}
+		userGroupPage.setPage(pagePermission.getPage());
+		userGroupPage.setUserGroup(domain);
+		userGroupPage.setIsDeleted(false);
+		return userGroupPage;
+	}
+
+	private UserGroupPagePermission createOrUpdateUserGroupPagePermission(final PagePermission pagePermission,
+			UserGroupPage userGroupPage) {
+		UserGroupPagePermission userGroupPagePermission = new UserGroupPagePermission();
+		final Set<UserGroupPagePermission> currentUserGroupPermissions = userGroupPage.getPermissionList();
+
+		if (currentUserGroupPermissions != null && currentUserGroupPermissions.size() > 0) {
+			final Optional<UserGroupPagePermission> optionalUserGroupPagePermission = currentUserGroupPermissions.stream()
+					.filter(x->x.getPagePermission().getId().equals(pagePermission.getId())).findAny();
+
+			if (optionalUserGroupPagePermission.isPresent()) {
+				userGroupPagePermission = optionalUserGroupPagePermission.get();
+				currentUserGroupPermissions.remove(optionalUserGroupPagePermission.get());
+			} else {
+				userGroupPagePermission = new UserGroupPagePermission();
+			}
+
+		} else {
+			userGroupPage.setPermissionList(new HashSet<>());
+		}
+
+		userGroupPagePermission.setPagePermission(pagePermission);
+		userGroupPagePermission.setUserGroupPage(userGroupPage);
+		userGroupPagePermission.setIsDeleted(false);
+		return userGroupPagePermission;
+	}
+
+	private void removeUngrantedPagePermissions(List<PagePermission> pagePermissionDTOs, Set<UserGroupPage> userGroupPages) {
+		for (final UserGroupPage userGroupPage : userGroupPages) {
+			final Set<UserGroupPagePermission> permissions = new HashSet<>();
+			for (final UserGroupPagePermission userGroupPagePermission : userGroupPage.getPermissionList()) {
+				final Optional<PagePermission> optional = pagePermissionDTOs.stream().filter(x->x.getId().equals(userGroupPagePermission.getPagePermission().getId())).findAny();
+				if (optional.isPresent()) {
+					permissions.add(userGroupPagePermission);
+				}
+			}
+			userGroupPage.setPermissionList(permissions);
+		}
+	}
+
 	private void setWigetList(UserGroupResult result) {
-		Set<UserGroupWiget> groupWigets = new HashSet<>();
+		final Set<UserGroupWiget> groupWigets = new HashSet<>();
 
-		if ((result.getDtoEntity().getWigets() != null) && (result.getDtoEntity().getWigets().size() > 0)) {
+		if (result.getDtoEntity().getWigets() != null && result.getDtoEntity().getWigets().size() > 0) {
 
-			Set<UserGroupWiget> currentUserGroupWiget = result.getDomainEntity().getWigetList();
+			final Set<UserGroupWiget> currentUserGroupWiget = result.getDomainEntity().getWigetList();
 
-			for (Widgets widgets : result.getDtoEntity().getWigets()) {
+			for (final Widgets widgets : result.getDtoEntity().getWigets()) {
 				UserGroupWiget groupWiget;
 
 				if (widgets.getId() != null) {
@@ -160,24 +243,14 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	private void removeMenuAndPagePermissions(UserGroupResult result) {
-		if ((result.getDomainEntity().getId() != null) && (result.getDomainEntity().getId() > 0)) {
+		if (result.getDomainEntity().getId() != null && result.getDomainEntity().getId() > 0) {
 			result.getDomainEntity().setMenuList(new HashSet<UserGroupMenu>());
-			if (result.getDtoEntity().getPage() != null) {
-				if ((result.getDomainEntity().getPageList() != null)
-						&& (result.getDomainEntity().getPageList().size() > 0)) {
-					Optional<UserGroupPage> optionalUserGroupPage = result.getDomainEntity().getPageList().stream()
-							.filter((x) -> x.getPage().equals(result.getDtoEntity().getPage())).findAny();
-					if (optionalUserGroupPage.isPresent()) {
-						result.getDomainEntity().getPageList().remove(optionalUserGroupPage.get());
-					}
-				}
-			}
 		}
 	}
 
 	private UserGroupResult createUserGroupResult(UserGroupDTO dto) {
 		UserGroupResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new UserGroupResult(userGroupDao.findOne(dto.getId()), dto);
 		} else {
 			result = new UserGroupResult(new UserGroup(), dto);
@@ -195,20 +268,20 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	private void setBusiness(UserGroupResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public List<GenericCheckBox<Menu, SubMenu>> getMenuPermissions() {
-		List<GenericCheckBox<Menu, SubMenu>> menuPermissionlist = new ArrayList<GenericCheckBox<Menu, SubMenu>>();
-		Menu[] menuList = findMenuByBusiness();
-		for (Menu menu : menuList) {
-			GenericCheckBox<Menu, SubMenu> cBox = new GenericCheckBox<Menu, SubMenu>(menu, null, false);
-			List<SubMenu> subMenuList = SubMenu.getSubMenuByMenu(menu);
-			List<GenericCheckBox<Menu, SubMenu>> sMenulist = new ArrayList<GenericCheckBox<Menu, SubMenu>>();
-			for (SubMenu sMenu : subMenuList) {
+		final List<GenericCheckBox<Menu, SubMenu>> menuPermissionlist = new ArrayList<GenericCheckBox<Menu, SubMenu>>();
+		final Menu[] menuList = findMenuByBusiness();
+		for (final Menu menu : menuList) {
+			final GenericCheckBox<Menu, SubMenu> cBox = new GenericCheckBox<Menu, SubMenu>(menu, null, false);
+			final List<SubMenu> subMenuList = SubMenu.getSubMenuByMenu(menu);
+			final List<GenericCheckBox<Menu, SubMenu>> sMenulist = new ArrayList<GenericCheckBox<Menu, SubMenu>>();
+			for (final SubMenu sMenu : subMenuList) {
 				sMenulist.add(new GenericCheckBox<Menu, SubMenu>(null, sMenu, false));
 			}
 			cBox.setChildList(sMenulist);
@@ -218,10 +291,10 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	public List<PermisonTreeDTO> getMenuAll() {
-		List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
-		Menu[] menuList = findMenuByBusiness();
-		for (Menu menu : menuList) {
-			PermisonTreeDTO menudto = new PermisonTreeDTO();
+		final List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
+		final Menu[] menuList = findMenuByBusiness();
+		for (final Menu menu : menuList) {
+			final PermisonTreeDTO menudto = new PermisonTreeDTO();
 			menudto.setId(menu.getId());
 			menudto.setText(menu.getName());
 			menudto.setAnyChildren(Boolean.TRUE);
@@ -232,10 +305,10 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	public List<PermisonTreeDTO> getSubMenuAll(Integer id) {
-		List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
-		Menu[] menuList = findMenuByBusiness();
-		for (SubMenu menu : SubMenu.getSubMenuByMenu(Menu.getMenuById(id))) {
-			PermisonTreeDTO menudto = new PermisonTreeDTO();
+		final List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
+		final Menu[] menuList = findMenuByBusiness();
+		for (final SubMenu menu : SubMenu.getSubMenuByMenu(Menu.getMenuById(id))) {
+			final PermisonTreeDTO menudto = new PermisonTreeDTO();
 			menudto.setId(menu.getId());
 			menudto.setText(menu.getName());
 			menudto.setAnyChildren(Boolean.TRUE);
@@ -248,9 +321,9 @@ public class UserGroupServiceImpl implements UserGroupService {
 
 	@Override
 	public List<PermisonTreeDTO> getPageAll(Integer id) {
-		List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
-		for (Page page : Page.findPageBySubMenu(SubMenu.getSubMenuById(id))) {
-			PermisonTreeDTO menudto = new PermisonTreeDTO();
+		final List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
+		for (final Page page : Page.findPageBySubMenu(SubMenu.getSubMenuById(id))) {
+			final PermisonTreeDTO menudto = new PermisonTreeDTO();
 			menudto.setId(page.getId());
 			menudto.setText(page.getName());
 			menudto.setAnyChildren(Boolean.TRUE);
@@ -263,9 +336,9 @@ public class UserGroupServiceImpl implements UserGroupService {
 
 	@Override
 	public List<PermisonTreeDTO> getPagePermistionAll(Integer id) {
-		List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
-		for (PagePermission pagePermission : PagePermission.getPagePermissionsByPage(Page.getPageById(id))) {
-			PermisonTreeDTO menudto = new PermisonTreeDTO();
+		final List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
+		for (final PagePermission pagePermission : PagePermission.getPagePermissionsByPage(Page.getPageById(id))) {
+			final PermisonTreeDTO menudto = new PermisonTreeDTO();
 			menudto.setId(pagePermission.getId());
 			menudto.setText(pagePermission.getName());
 			menudto.setAnyChildren(Boolean.FALSE);
@@ -277,39 +350,39 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	public List<PermisonTreeDTO> getMenuPermissionsAll(Integer id) {
-		List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
-		Menu[] menuList = findMenuByBusiness();
+		final List<PermisonTreeDTO> menuPermissionlist = new ArrayList<PermisonTreeDTO>();
+		final Menu[] menuList = findMenuByBusiness();
 
 		if (id != null) {
-			UserGroup domain = userGroupDao.findById(id);
+			final UserGroup domain = userGroupDao.findById(id);
 			int i = 0;
-			for (Menu menu : menuList) {
-				PermisonTreeDTO menudto = new PermisonTreeDTO();
+			for (final Menu menu : menuList) {
+				final PermisonTreeDTO menudto = new PermisonTreeDTO();
 				menudto.setId(menu.getId());
 				menudto.setText(menu.getName());
 				menudto.setAnyChildren(Boolean.TRUE);
 				menudto.setType("MENU");
 				int k = 0;
-				for (SubMenu subMenu : SubMenu.getSubMenuByMenu(menu)) {
-					PermisonTreeDTO submenudto = new PermisonTreeDTO();
+				for (final SubMenu subMenu : SubMenu.getSubMenuByMenu(menu)) {
+					final PermisonTreeDTO submenudto = new PermisonTreeDTO();
 					submenudto.setId(subMenu.getId());
 					submenudto.setText(subMenu.getName());
 					submenudto.setAnyChildren(Boolean.TRUE);
 					submenudto.setType("SUBMENU");
 					int j = 0;
-					for (Page page : Page.findPageBySubMenu(subMenu)) {
-						PermisonTreeDTO pageDto = new PermisonTreeDTO();
+					for (final Page page : Page.findPageBySubMenu(subMenu)) {
+						final PermisonTreeDTO pageDto = new PermisonTreeDTO();
 						pageDto.setId(page.getId());
 						pageDto.setText(page.getName());
 						pageDto.setAnyChildren(Boolean.TRUE);
 						pageDto.setType("PAGE");
 						int n = 0;
-						for (PagePermission pagePermission : PagePermission.getPagePermissionsByPage(page)) {
-							PermisonTreeDTO pagePermmisionDto = new PermisonTreeDTO();
+						for (final PagePermission pagePermission : PagePermission.getPagePermissionsByPage(page)) {
+							final PermisonTreeDTO pagePermmisionDto = new PermisonTreeDTO();
 							pagePermmisionDto.setId(pagePermission.getId());
 							pagePermmisionDto.setText(pagePermission.getName());
-							for (UserGroupPage groupPage : domain.getPageList()) {
-								for (UserGroupPagePermission userGroupPagePermission : groupPage.getPermissionList()) {
+							for (final UserGroupPage groupPage : domain.getPageList()) {
+								for (final UserGroupPagePermission userGroupPagePermission : groupPage.getPermissionList()) {
 									if (userGroupPagePermission.getPagePermission().equals(pagePermission)) {
 										pagePermmisionDto.setCheckedFieldName(Boolean.TRUE);
 
@@ -318,49 +391,49 @@ public class UserGroupServiceImpl implements UserGroupService {
 
 									}
 								}
-							//pagePermmisionDto.setCheckedFieldName(Boolean.TRUE);
+								//pagePermmisionDto.setCheckedFieldName(Boolean.TRUE);
 
-							pagePermmisionDto.setAnyChildren(Boolean.FALSE);
-							pagePermmisionDto.setType("PAGEPERMISSION");
-							pageDto.getChildren().add(pagePermmisionDto);
-							n++;
+								pagePermmisionDto.setAnyChildren(Boolean.FALSE);
+								pagePermmisionDto.setType("PAGEPERMISSION");
+								pageDto.getChildren().add(pagePermmisionDto);
+								n++;
+							}
+							submenudto.getChildren().add(pageDto);
+							j++;
 						}
-						submenudto.getChildren().add(pageDto);
-						j++;
+						menudto.getChildren().add(submenudto);
+						k++;
 					}
-					menudto.getChildren().add(submenudto);
-					k++;
+					menuPermissionlist.add(menudto);
+					i++;
 				}
-				menuPermissionlist.add(menudto);
-				i++;
-			}
 			}
 
 		} else {
 			int i = 0;
-			for (Menu menu : menuList) {
-				PermisonTreeDTO menudto = new PermisonTreeDTO();
+			for (final Menu menu : menuList) {
+				final PermisonTreeDTO menudto = new PermisonTreeDTO();
 				menudto.setId(menu.getId());
 				menudto.setText(menu.getName());
 				menudto.setAnyChildren(Boolean.TRUE);
 				menudto.setType("MENU");
 				int k = 0;
-				for (SubMenu subMenu : SubMenu.getSubMenuByMenu(menu)) {
-					PermisonTreeDTO submenudto = new PermisonTreeDTO();
+				for (final SubMenu subMenu : SubMenu.getSubMenuByMenu(menu)) {
+					final PermisonTreeDTO submenudto = new PermisonTreeDTO();
 					submenudto.setId(subMenu.getId());
 					submenudto.setText(subMenu.getName());
 					submenudto.setAnyChildren(Boolean.TRUE);
 					submenudto.setType("SUBMENU");
 					int j = 0;
-					for (Page page : Page.findPageBySubMenu(subMenu)) {
-						PermisonTreeDTO pageDto = new PermisonTreeDTO();
+					for (final Page page : Page.findPageBySubMenu(subMenu)) {
+						final PermisonTreeDTO pageDto = new PermisonTreeDTO();
 						pageDto.setId(page.getId());
 						pageDto.setText(page.getName());
 						pageDto.setAnyChildren(Boolean.TRUE);
 						pageDto.setType("PAGE");
 						int n = 0;
-						for (PagePermission pagePermission : PagePermission.getPagePermissionsByPage(page)) {
-							PermisonTreeDTO pagePermmisionDto = new PermisonTreeDTO();
+						for (final PagePermission pagePermission : PagePermission.getPagePermissionsByPage(page)) {
+							final PermisonTreeDTO pagePermmisionDto = new PermisonTreeDTO();
 							pagePermmisionDto.setId(pagePermission.getId());
 							pagePermmisionDto.setText(pagePermission.getName());
 							// if(pagePermission.equals(other)){
@@ -389,13 +462,18 @@ public class UserGroupServiceImpl implements UserGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			return Menu.values();
 		} else {
-			List<Menu> menus = new ArrayList<>();
-			Business business = businessDao.findById(AuthenticationUtil.getLoginUserBusiness().getId());
-			for (BusinessApp app : business.getBusinessApps()) {
-				for (AppMenu appMenu : app.getApp().getAppMenus()) {
+			final List<Menu> menus = new ArrayList<>();
+			final Business business = businessDao.findById(AuthenticationUtil.getLoginUserBusiness().getId());
+			for (final BusinessApp app : business.getBusinessApps()) {
+				for (final AppMenu appMenu : app.getApp().getAppMenus()) {
 					menus.add(appMenu.getMenu());
 				}
 			}
+
+			Collections.sort(menus, (m1,m2)->{
+				return m1.getId().compareTo(m2.getId());
+			});
+
 			return menus.toArray(new Menu[menus.size()]);
 		}
 	}
@@ -405,13 +483,13 @@ public class UserGroupServiceImpl implements UserGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			return Page.getPageList();
 		} else {
-			List<Page> pages = new ArrayList<>();
+			final List<Page> pages = new ArrayList<>();
 
-			Business business = businessDao.findById(AuthenticationUtil.getLoginUserBusiness().getId());
-			for (BusinessApp app : business.getBusinessApps()) {
-				for (AppMenu appMenu : app.getApp().getAppMenus()) {
-					List<SubMenu> submenus = SubMenu.getSubMenuByMenu(appMenu.getMenu());
-					for (SubMenu subMenu : submenus) {
+			final Business business = businessDao.findById(AuthenticationUtil.getLoginUserBusiness().getId());
+			for (final BusinessApp app : business.getBusinessApps()) {
+				for (final AppMenu appMenu : app.getApp().getAppMenus()) {
+					final List<SubMenu> submenus = SubMenu.getSubMenuByMenu(appMenu.getMenu());
+					for (final SubMenu subMenu : submenus) {
 						pages.addAll(Page.findPageBySubMenu(subMenu));
 					}
 				}
@@ -421,4 +499,45 @@ public class UserGroupServiceImpl implements UserGroupService {
 		}
 	}
 
+	public List<GenericCheckBox<Page, PagePermission>> findPagePermissions(){
+
+		final List<GenericCheckBox<Page, PagePermission>> menuPermissionlist = new ArrayList<GenericCheckBox<Page, PagePermission>>();
+
+		final Menu[] menuList = findMenuByBusiness();
+
+		for (final Menu menu : menuList) {
+
+			final List<SubMenu> submenus = SubMenu.getSubMenuByMenu(menu);
+
+			for (final SubMenu subMenu : submenus) {
+
+				final List<Page> pages = Page.findPageBySubMenu(subMenu);
+
+				for (final Page page : pages) {
+					final GenericCheckBox<Page, PagePermission> pcBox = new GenericCheckBox<Page, PagePermission>(page, null, false);
+
+					final List<PagePermission> pagePermissions = PagePermission.getPagePermissionsByPage(page);
+
+					final List<GenericCheckBox<Page, PagePermission>> ppboxs = new ArrayList<GenericCheckBox<Page, PagePermission>>();
+
+					for (final PagePermission pagePermission : pagePermissions) {
+						final GenericCheckBox<Page, PagePermission> ppcBox = new GenericCheckBox<Page, PagePermission>(null, pagePermission, false);
+						ppboxs.add(ppcBox);
+					}
+
+					pcBox.setChildList(ppboxs);
+
+					menuPermissionlist.add(pcBox);
+				}
+
+			}
+
+		}
+
+		Collections.sort(menuPermissionlist, (c1,c2)->{
+			return c1.getMain().getId().compareTo(c2.getMain().getId());
+		});
+
+		return menuPermissionlist;
+	}
 }

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.ResultStatus;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.result.admin.UserGroupResult;
 import com.codex.ecam.service.admin.api.UserGroupPageService;
 import com.codex.ecam.service.admin.api.UserGroupService;
@@ -36,7 +36,7 @@ public class UserGroupController {
 
 	@Autowired
 	private BusinessService businessService;
-	
+
 	@Autowired
 	private AppService appService;
 
@@ -57,7 +57,7 @@ public class UserGroupController {
 		try {
 			setCommonData(model, new UserGroupDTO());
 			return "admin/usergroups/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/userGroups/index";
 		}
@@ -66,10 +66,11 @@ public class UserGroupController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			UserGroupDTO userGroup = userGroupService.findById(id);
+			final UserGroupDTO userGroup = userGroupService.findById(id);
 			setCommonData(model, userGroup);
 			return "admin/usergroups/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
+			e.printStackTrace();
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/userGroups/index";
 		}
@@ -77,7 +78,7 @@ public class UserGroupController {
 
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
-		UserGroupResult result = userGroupService.delete(id);
+		final UserGroupResult result = userGroupService.delete(id);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
 		} else {
@@ -97,7 +98,7 @@ public class UserGroupController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("userGroup") @Valid UserGroupDTO userGroup, Model model, RedirectAttributes ra) throws Exception {
 
-		UserGroupResult result = userGroupService.save(userGroup);
+		final UserGroupResult result = userGroupService.save(userGroup);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -113,6 +114,7 @@ public class UserGroupController {
 	private void setCommonData(Model model, UserGroupDTO userGroup) throws Exception {
 		model.addAttribute("checkBoxList", userGroupService.getMenuPermissions());
 		model.addAttribute("pageList", userGroupService.findPageListByBusiness());
+		model.addAttribute("pageCBox", userGroupService.findPagePermissions());
 		model.addAttribute("userGroup", userGroup);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());

@@ -7,7 +7,7 @@ import com.codex.ecam.constants.Menu;
 import com.codex.ecam.constants.Page;
 import com.codex.ecam.constants.PagePermission;
 import com.codex.ecam.constants.SubMenu;
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 
 public class UserGroupDummyData {
 	

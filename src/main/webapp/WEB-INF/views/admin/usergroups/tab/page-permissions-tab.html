@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org" class="no-js">
 <div th:fragment="pagepermission">
-	<div>
+<!-- 	<div>
 		<label for="form-field-select-3"> Page </label> <select id="page"
 			name="page" class="search-select" style="width: 40%;">
 			<option value="">&nbsp;</option>
@@ -10,7 +10,51 @@
 				th:text="${page.name}"></option>
 		</select>
 	</div>
-	<hr>
+	<hr>	 -->	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<a class="btn btn-blue btn-sm active tooltips" type="button" id="btn_expand_colapse"> Expand All </a>
+					<label class="radio-inline">
+	                	<input type="radio" id="pp_select_all" value="" name="optionsRadios" class="grey"> Select All
+		            </label>
+		            <label class="radio-inline">
+		                <input type="radio" id="pp_deselect_all" value="" name="optionsRadios" class="grey"> Deselect All
+		            </label>
+	            </div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div id="accordion">
+						<div class="panel-group accordion-custom accordion-teal">
+							<div class="panel panel-default" th:each="pBox, iter : ${pageCBox}">
+								<div class="panel-heading">
+									<h4 class="panel-title accordion-header">
+										<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" th:href="${'#' + iter.index}">
+											<i class="icon-arrow"></i> <span th:text="${pBox.main.name}"></span>
+										</a>
+									</h4>
+								</div>
+								<div th:id="${iter.index}" class="panel-collapse collapse" style="">
+									<div class="panel-body">
+									<div class="checkbox" th:each="child : ${pBox.childList}">
+							        	&nbsp;
+								        <label>
+								            <input type="checkbox" name="pagePermissions" th:field="*{pagePermissions}" th:value="${child.sub}" value="" class="grey cb-pp"><span th:text="${child.sub.name}"></span>'
+								        </label>
+								    </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>						
 	<div id="pagePermissionBlock"></div>
 <!-- 	<div id="tree"></div>
 	<button id="add_permmisions"></button> -->

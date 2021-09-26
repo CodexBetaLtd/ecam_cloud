@@ -1,6 +1,6 @@
 package com.codex.ecam.result.admin;
 
-import com.codex.ecam.dto.admin.UserGroupDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.model.admin.UserGroup;
 import com.codex.ecam.result.BaseResult;
 
