@@ -26,6 +26,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -105,7 +107,6 @@ import com.codex.ecam.service.asset.api.WarrantyService;
 import com.codex.ecam.service.maintenance.api.ScheduledService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.QRCodeUtil;
 import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
@@ -113,6 +114,8 @@ import com.google.zxing.WriterException;
 
 @Service
 public class AssetServiceImpl implements AssetService {
+
+	private final static Logger logger = LoggerFactory.getLogger(AssetServiceImpl.class);
 
 	private final String ASSET_DEFAULT_IMAGE = "/resources/images/no_image.png";
 	private final String ASSET_NO_QR_IMAGE = "/resources/images/no_qr.png";
@@ -318,6 +321,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(assets);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<AssetDTO>();
 		}
 	}
@@ -329,6 +333,8 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTOList(list);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
+
 			return new ArrayList<AssetDTO>();
 		}
 	}
@@ -342,10 +348,12 @@ public class AssetServiceImpl implements AssetService {
 			result.addToMessageList("Asset Deleted Successfully.");
 		} catch (DataIntegrityViolationException e) {
 			result.setResultStatusError();
+			logger.error(e.getMessage());
 			result.addToErrorList("Asset Already Used. Cannot delete.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
+			logger.error(ex.getMessage());
 			result.addToErrorList(ex.getMessage());
 		}
 		return result;
@@ -359,9 +367,11 @@ public class AssetServiceImpl implements AssetService {
 			result.addToMessageList(getMessageByAction(dto));
 		} catch (ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
+			logger.error(e.getMessage());
 			result.addToErrorList("Asset Already updated. Please Reload Asset.");
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			logger.error(ex.getMessage());
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -433,7 +443,6 @@ public class AssetServiceImpl implements AssetService {
 		InputStream inputStream = QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
 		amazonS3ObjectUtil.uploadS3Object(filePath, inputStream);
 		result.getDomainEntity().setAssetUrl(filePath);
-		System.out.println(filePath);
 	}
 
 	private void setAssetSparePart(AssetResult result) throws Exception {
@@ -475,23 +484,16 @@ public class AssetServiceImpl implements AssetService {
 
 	private void setAssetImage(AssetResult result, MultipartFile image) throws Exception {
 		if (image != null) {
-			String uploadFolder = environment.getProperty("upload.asset.file.folder");
-			String uploadLocation = environment.getProperty("upload.location");
 			try {
-				String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
-						result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
 				result.getDomainEntity().setImageLocation(saveImageS3Bucket(result.getDtoEntity(), image));
 			} catch (Exception e) {
 				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 	}
 
 	private String saveImageS3Bucket(AssetDTO dto, MultipartFile image) throws IOException {
-
-		// s3 key for storage
-//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
-//				+ File.separator + getFileName(image);
 		final String key = environment.getProperty("upload.location.s3")
 				+ environment.getProperty("upload.location.asset.image.s3") + dto.getId() + "/" + getFileName(image);
 		try {
@@ -500,10 +502,10 @@ public class AssetServiceImpl implements AssetService {
 			}
 			amazonS3ObjectUtil.uploadS3Object(key, image);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -573,6 +575,7 @@ public class AssetServiceImpl implements AssetService {
 			assetCustomer.setIsDeleted(false);
 			assetCustomers.add(assetCustomer);
 		}
+		result.getDomainEntity().setAssetBusinesses(assetCustomers);;
 	}
 
 	private void setAssetEvents(AssetResult result) throws Exception {
@@ -1037,6 +1040,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTOList(list);
 
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -1104,6 +1108,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTOList(assets);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -1269,6 +1274,7 @@ public class AssetServiceImpl implements AssetService {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return null;
 		}
 	}
@@ -1316,6 +1322,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
 		}
 	}
@@ -1339,6 +1346,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
 		}
 	}
@@ -1357,6 +1365,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
 		}
 	}
@@ -1378,6 +1387,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
 		}
 	}
@@ -1401,6 +1411,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
 		}
 	}
@@ -1486,6 +1497,7 @@ public class AssetServiceImpl implements AssetService {
 			amazonS3ObjectUtil.uploadS3Object(key, file);
 			return key;
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			return null;
 		}
@@ -1600,6 +1612,7 @@ public class AssetServiceImpl implements AssetService {
 			return AssetMapper.getInstance().domainToDTOList(assets);
 		} catch (Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 			return new ArrayList<>();
 		}
 	}
