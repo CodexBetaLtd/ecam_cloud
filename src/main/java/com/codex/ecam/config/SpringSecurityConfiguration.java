@@ -3,6 +3,7 @@ package com.codex.ecam.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.codex.ecam.dao.FocusTokenRepository;
@@ -29,6 +31,10 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	@Qualifier("customRequestCache")
+	RequestCache customRequestCache;
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -69,6 +75,9 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.logout().invalidateHttpSession(true)
 		.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 		.logoutSuccessUrl("/login?logout")
+		.and()
+		.requestCache()
+		.requestCache(customRequestCache)
 		.and()
 		.exceptionHandling().accessDeniedPage("/access-denied").authenticationEntryPoint(authenticationEntryPoint());
 	}

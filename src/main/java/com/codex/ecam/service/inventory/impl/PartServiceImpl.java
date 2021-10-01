@@ -62,7 +62,6 @@ import com.codex.ecam.service.asset.api.WarrantyService;
 import com.codex.ecam.service.inventory.api.PartService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.FileDownloadUtil;
-import com.codex.ecam.util.FileUploadUtil;
 import com.codex.ecam.util.aws.AmazonS3ObjectUtil;
 import com.codex.ecam.util.search.asset.AssetSearchPropertyMapper;
 import com.codex.ecam.util.search.inventory.PartSearchPropertyMapper;
@@ -193,10 +192,13 @@ public class PartServiceImpl implements PartService {
 		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Part Already updated. Please Reload Part.");
+			logger.error(e.getMessage());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
+			logger.error(ex.getMessage());
+
 		}
 
 		return result;
@@ -296,11 +298,7 @@ public class PartServiceImpl implements PartService {
 
 	private void setPartImage(PartResult result, MultipartFile image) throws Exception {
 		if (image != null) {
-			final String uploadFolder = environment.getProperty("upload.asset.file.folder");
-			final String uploadLocation = environment.getProperty("upload.location");
 			try {
-				final String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
-						result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
 				result.getDomainEntity().setImageLocation(saveImageS3Bucket(result.getDtoEntity(), image));
 			} catch (final Exception e) {
 				e.printStackTrace();
@@ -309,10 +307,6 @@ public class PartServiceImpl implements PartService {
 	}
 
 	private String saveImageS3Bucket(PartDTO dto, MultipartFile image) throws IOException {
-
-		// s3 key for storage
-		//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
-		//				+ File.separator + getFileName(image);
 		final String key = environment.getProperty("upload.location.s3")
 				+ environment.getProperty("upload.location.part.image.s3") + dto.getId() + "/" + getFileName(image);
 		try {
@@ -321,10 +315,10 @@ public class PartServiceImpl implements PartService {
 			}
 			amazonS3ObjectUtil.uploadS3Object(key, image);
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		} catch (final Exception e) {
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 

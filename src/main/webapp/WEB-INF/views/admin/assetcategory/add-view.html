@@ -50,7 +50,6 @@
                                      <label class="control-label"> Business <span class="symbol required"></span>
                                      </label>
                                      <select th:field="*{businessId}" class="search-select" style="width: 100%;">
-                                         <option value="">&nbsp;</option>
                                          <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
                                      </select>
                                  </div>
@@ -62,7 +61,6 @@
 									<label class="control-label"> Root Asset Category <span class="symbol required"></span> </label> 
 <!-- 									<label class="control-label"> System Code <span class="symbol required"></span> </label> 
  -->									<select th:field="*{type}" class="search-select" style="width: 100%;">										
-										<option value="">&nbsp;</option>
                                         <option th:each="systemcode : ${systemcodes}" th:value="${systemcode}"
                                                 th:text="${systemcode.assetCategoryTypeName}">
 										</option>

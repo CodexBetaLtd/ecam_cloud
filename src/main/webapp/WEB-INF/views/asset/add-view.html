@@ -162,7 +162,6 @@
                                             <label class="control-label"> Business <span class="symbol required"></span>
                                             </label>
                                             <select th:field="*{businessId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
                                                 <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
                                             </select>
                                         </div>
@@ -172,7 +171,6 @@
                                             <label class="control-label"> Site <span class="symbol required"></span>
                                             </label>
                                             <select id="siteId" th:field="*{siteId}" class="search-select" style="width: 100%;">
-                                                <option value="">&nbsp;</option>
                                                 <option th:each="site : ${sites}" th:value="${site.id}" th:text="${site.name}"></option>
                                             </select>
                                         </div>
