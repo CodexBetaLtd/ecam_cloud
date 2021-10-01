@@ -54,7 +54,7 @@
 				        <i class="clip-checkmark-circle-2 btn-save"></i> Save
 				    </a>
 				    
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top" data-original-title="Delete"
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" data-original-title="Delete"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_VIEW.id)">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				    </a>
@@ -90,7 +90,6 @@
 					                            <th class="hidden-xs">Customer Code</th>
 	           									<th class="hidden-xs">Address</th>
 	           									<th>Country</th>
-					                            <th class="last-col">More</th>
 					                        </tr>
 					                    </thead>
 					                    <tbody>
@@ -122,13 +121,13 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 
+	<div th:include="template/commonjs :: commonjstables"></div>
+	
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/home-view.js}"></script>
     <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 

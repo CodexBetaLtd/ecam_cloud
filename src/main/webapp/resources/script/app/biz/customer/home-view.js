@@ -117,7 +117,7 @@ var CustomerHome = function () {
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#customer_tbl').dataTable({
+        var oTable = $('#customer_tbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
@@ -127,10 +127,11 @@ var CustomerHome = function () {
             columns : [ {
                 orderable: false,
                 searchable: false,
-                width:"2%",
+                width:"4%",
                 render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
+                    return "";
+                },
+                className: 'select-checkbox',
             },{
      			data : 'name'
      		},{
@@ -140,13 +141,7 @@ var CustomerHome = function () {
      		},{
      			data : 'countryName'
      		}],
-            aoColumnDefs: [{
-            	targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) {
-                	return ButtonUtil.getHomeBtnWithURL('customer', data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -165,7 +160,15 @@ var CustomerHome = function () {
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../customer/edit?id",
+            },
         });
         $('#customer_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -178,7 +181,9 @@ var CustomerHome = function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });    
+
+        DataTableUtil.deleteRows(oTable, "delete", "customer", "id");  
     };    
     
     return {

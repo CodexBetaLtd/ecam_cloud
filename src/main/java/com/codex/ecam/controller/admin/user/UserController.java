@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -152,7 +153,7 @@ public class UserController extends AdminBaseController {
 			model.addAttribute("userCertificationLevels", UserCertifiCationLevel.getUserCertifiCationLevelList());
 			setCommonData(model, new UserDTO());
 			return "admin/user/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/userProfile/index";
 		}
@@ -161,10 +162,10 @@ public class UserController extends AdminBaseController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			UserDTO user = userService.findById(id);
+			final UserDTO user = userService.findById(id);
 			setCommonData(model, user);
 			return "admin/user/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/userProfile/index";
 		}
@@ -173,7 +174,7 @@ public class UserController extends AdminBaseController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("user") @Valid UserDTO user, Model model) throws Exception {
 
-		UserResult result = userService.save(user);
+		final UserResult result = userService.save(user);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -189,7 +190,7 @@ public class UserController extends AdminBaseController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		UserResult result = userService.delete(id);
+		final UserResult result = userService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -204,7 +205,7 @@ public class UserController extends AdminBaseController {
 	private String getUserList(Model model) {
 		try {
 			model.addAttribute("userList", userService.findAll());
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			model.addAttribute("userList", new ArrayList<UserDTO>());
 		}
@@ -214,11 +215,30 @@ public class UserController extends AdminBaseController {
 
 	@RequestMapping(value = "/sitemodalview", method = {RequestMethod.GET})
 	private String getSiteAddView(Integer id, Model model) throws Exception {
-		List<AssetDTO> sites = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
+		final List<AssetDTO> sites = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		model.addAttribute("sites", sites);
 		model.addAttribute("userGroups", sites.size() > 0 ? userGroupService.findAll() : new ArrayList<UserGroupDTO>());
 
 		return "admin/user/modal/site-add-modal";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final UserResult result = userService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "User already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/user/home-view";
 	}
 
 	private void setCommonData(Model model, UserDTO user) throws Exception {

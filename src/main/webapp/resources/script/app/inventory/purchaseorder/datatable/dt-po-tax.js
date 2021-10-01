@@ -102,7 +102,8 @@ var dtPurchaseOrderTax = function () {
     });
 
     var dtPOTaxList = function (tableId, URL, method) {
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -112,7 +113,7 @@ var dtPurchaseOrderTax = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -141,19 +142,8 @@ var dtPurchaseOrderTax = function () {
             {
                 data: 'taxType',
                 searchable: false
-            }, 
-            {
-                width: "5%",
-                data: 'id'
             }],
-            aoColumnDefs: [{
-                targets: 6,
-                data: "id",
-                render: function (data, type, row, meta) {
-                	console.log(row.taxType)
-                    var vars = [data, row.name, row.priorty, row.currentValue,row.taxType];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(method, data, vars);                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -172,7 +162,26 @@ var dtPurchaseOrderTax = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "dtPurchaseOrderTax." + method,
+                aoData:[  
+                    {
+                        sName : "id"
+                    }, {
+                        sName : "name"
+                    }, {
+                        sName : "priorty"
+                    }, {
+                        sName : "currentValue"
+                    }, {
+                        sName : "taxType"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -184,11 +193,40 @@ var dtPurchaseOrderTax = function () {
         });
 
     };
+    
+    function setData(id, name, priorty, currentValue, taxType){
+        $("#taxId").val(id);
+        $("#taxName").val(name);
+        $('#common-modal').modal('toggle');
+    };    
+    
+    function addToList(id, name, priorty, currentValue, taxType){
+        TaxTab.addTax(id, name, priorty, currentValue, taxType);
+        $('#common-modal').modal('toggle');
+    }; 
+    
+    function setPOItem(id, name, priorty, currentValue, taxType){
+        ItemAddModal.setPOItem(id, name, priorty, currentValue, taxType);
+        $('#stackable-modal').modal('toggle');
+    };   
 
     return {
+        
     	dtPOTaxList: function (tableId, URL, method) {
         	dtPOTaxList(tableId, URL, method);
-        }
+        },
+        
+        setData : function (id, name, priorty, currentValue, taxType) {
+            setData(id, name, priorty, currentValue, taxType);
+        },
+        
+        addToList: function (id, name, priorty, currentValue, taxType) {
+            addToList(id, name, priorty, currentValue, taxType);
+        },
+        
+        setPOItem: function (id, name, priorty, currentValue, taxType) {
+            setPOItem(id, name, priorty, currentValue, taxType);
+        },
 
     };
 }();

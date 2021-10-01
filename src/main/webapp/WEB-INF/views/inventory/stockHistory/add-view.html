@@ -48,7 +48,7 @@
             <form role="form" id="frm_stockHistory" th:action="@{/stock/stockAdjustment}" th:object="${stockHistory}"
                   method="post">
                 <div class="row btn-bar">
-                    <a name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stock/}"
+                    <a th:name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stock/}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_STOCK_ADJUSTMENT_ADD.id)"
                        data-placement="top" data-original-title="Cancel and Back">
                         <i class="clip-arrow-left-2 "></i> Cancel
@@ -138,13 +138,15 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
+
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>

@@ -115,8 +115,10 @@ var AODReturnHome = function () {
     });
 
     var dtAODReturn = function () {
+        
         var table_name = "tbl_aodReturn_list";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -128,19 +130,21 @@ var AODReturnHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    width: "10%",    
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
                     data: 'returnNo',
+                    width: "30%",    
                     responsivePriority: 2 
                 }, {
                     data: 'returnRefNo',
+                    width: "30%",    
                     responsivePriority: 1
                 }, {
                     data: 'returnDate',
+                    width: "25%",    
                     render: function (data) {
                         if (data === null) return "";
                         var date = new Date(data);
@@ -152,19 +156,12 @@ var AODReturnHome = function () {
                     orderable: false,
                     searchable: false,
                     data: 'statusName',
+                    width: "25%",    
                     responsivePriority: 2
                 }
 
             ],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 5,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("aodReturn", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -178,7 +175,15 @@ var AODReturnHome = function () {
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../aodReturn/edit?id",
+            },
         });
 
         var wapperSet = function () {
@@ -191,6 +196,8 @@ var AODReturnHome = function () {
                 oTable.fnSetColumnVis(iCol, (bVis ? false : true));
             });
         }
+        
+        DataTableUtil.deleteRows(oTable, "delete", "aodReturn", "id"); 
 
     };
 

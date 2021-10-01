@@ -117,8 +117,10 @@ var JobTitleHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#jobtitleTbl').dataTable().fnDestroy();
-		var oTable = $('#jobtitleTbl').dataTable( {
+		
+		var oTable = $('#jobtitleTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable
@@ -130,26 +132,17 @@ var JobTitleHome = function() {
 					{ 
 						orderable: false, 
 						searchable: false, 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+		                width: "4%",
+	                    defaultContent: '',
+	                    className: 'select-checkbox'
 					}, {
 						data : 'jobTitle'
 					}, {
 						data : 'description'
 					},{
 						data : 'businessName'
-					}, { 
-						data : 'id'
-					} ],
-			"aoColumnDefs" : [ 
-					{
-						"targets" : 4,//index of column starting from 0
-						"data" : "id", //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL('jobtitle', data, 'JobTitleHome');
-						}
-					} ],
+					}],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -164,14 +157,29 @@ var JobTitleHome = function() {
 			],
 			dom : "<'row'<'col-sm-4 dtbljobtitle'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtbljobtitle").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='job-title-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtbljobtitle").html(
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='job-title-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='userJobTitleDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
 			iDisplayLength : 10,
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
-			sPaging : 'pagination',
+			sPaging : 'pagination', 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "JobTitleHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
 
 		});
 
@@ -187,6 +195,8 @@ var JobTitleHome = function() {
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+
+        DataTableUtil.deleteRowsFunc(oTable, "userJobTitleDelete", "JobTitleHome.deleteMutiple", "id");
 	};
 	
 	var addModal = function() {
@@ -269,6 +279,17 @@ var JobTitleHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../userjobtitle/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseTwelve").find('.panel-body').empty().append(response);
+                JobTitleHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -279,23 +300,33 @@ var JobTitleHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

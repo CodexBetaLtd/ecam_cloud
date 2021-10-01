@@ -340,6 +340,7 @@ var TabItem = function () {
         poItemView: function () {
             poItemView();
         },
+        
         updateSummaryDetail:function(){
         	updateSummaryDetail();
         },
@@ -368,15 +369,9 @@ var TabItem = function () {
             removeItem(index);
         },
 
-
         populatePOItems: function () {
             populatePOItems();
         },
-
-        /**********************************************************
-         * Initialize Modals
-         *********************************************************/
-
 
         /**********************************************************
          * RFQ Order Generating

@@ -103,7 +103,7 @@
 
         var tableId = "tbl-dt-mrn-item";
         
-        var oTable = $('#' + tableId).dataTable({
+        var oTable = $('#' + tableId).DataTable({
             // processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -113,22 +113,23 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "10%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-                {data: 'partName'},
-                {data: 'itemQuantity'},
-                {data: 'remainingQuantity'}
-            ],
-            aoColumnDefs: [{
-                targets: 4, 
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [row.id, row.partName, row.itemQuantity, row.remainingQuantity];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("MRNItemSelectModal.setMRNItem", data, vars);
+                {
+                    data: 'partName',
+                    width: "30%"
+                }, {
+                    data: 'itemQuantity',
+                    width: "30%"
+                }, {
+                    data: 'remainingQuantity',
+                    width: "30%"
                 }
-            }],
+            ],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -147,7 +148,24 @@
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "MRNItemSelectModal.setMRNItem",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "partName"
+                    }, {
+                        sName : "itemQuantity"
+                    }, {
+                        sName : "remainingQuantity"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -167,6 +185,7 @@
         $("#mrnItemId").val(id);
         $("#mrnItemName").val(name);
         $("#mrnItemRemainigQty").val(remainingQuantity);
+        $("#mrn-item-child-modal").modal('toggle');
     };
 
     return {

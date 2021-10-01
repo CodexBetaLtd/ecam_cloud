@@ -11,21 +11,23 @@ import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 
 public interface MRNReturnService {
 
-    MRNReturnResult newMRN();
-    
-    String getNextCode(Integer businessId);
-    
-    MRNReturnResult save(MRNReturnDTO mrnReturnDTO) throws Exception;
+	MRNReturnResult newMRN();
 
-    MRNReturnResult update(MRNReturnDTO mrnReturnDTO) throws Exception;
+	String getNextCode(Integer businessId);
 
-    MRNReturnResult delete(Integer id) throws Exception;
+	MRNReturnResult save(MRNReturnDTO mrnReturnDTO) throws Exception;
 
-    MRNReturnResult findById(Integer id) throws Exception;
+	MRNReturnResult update(MRNReturnDTO mrnReturnDTO) throws Exception;
 
-    MRNReturnResult statusChange(Integer id, MRNReturnStatus status);
+	MRNReturnResult delete(Integer id) throws Exception;
 
-    DataTablesOutput<MRNReturnDTO> findAll(FocusDataTablesInput input) throws Exception;
+	MRNReturnResult findById(Integer id) throws Exception;
+
+	MRNReturnResult statusChange(Integer id, MRNReturnStatus status);
+
+	DataTablesOutput<MRNReturnDTO> findAll(FocusDataTablesInput input) throws Exception;
+
+	MRNReturnResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 }

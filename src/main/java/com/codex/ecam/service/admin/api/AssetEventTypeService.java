@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.AssetEventTypeDTO;
@@ -20,9 +20,11 @@ public interface AssetEventTypeService {
 	void saveAll(List<AssetEventTypeDTO> list);
 
 	void deleteAll();
-	
+
 	DataTablesOutput<AssetEventTypeDTO> findAll(FocusDataTablesInput input) throws Exception;
 
 	DataTablesOutput<AssetEventTypeDTO> getAssetEventTypeByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
+
+	AssetEventTypeResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

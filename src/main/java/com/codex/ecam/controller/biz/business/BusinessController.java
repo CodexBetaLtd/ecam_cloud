@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.biz.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +14,7 @@ import com.codex.ecam.controller.admin.AdminBaseController;
 import com.codex.ecam.dto.biz.business.BusinessDTO;
 import com.codex.ecam.mappers.admin.BusinessMapper;
 import com.codex.ecam.result.admin.BusinessResult;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
 import com.codex.ecam.service.biz.api.BusinessClassificationService;
@@ -54,9 +56,9 @@ public class BusinessController extends AdminBaseController {
 
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) throws Exception {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
+	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) throws Exception {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
 		if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 			setCommonData(model, BusinessMapper.getInstance().domainToDto(AuthenticationUtil.getLoginUserBusiness()));
 		}
@@ -68,7 +70,7 @@ public class BusinessController extends AdminBaseController {
 		try {
 			setCommonData(model, new BusinessDTO());
 			return "biz/business/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/business/index";
 		}
@@ -77,10 +79,10 @@ public class BusinessController extends AdminBaseController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			BusinessDTO business = businessService.findById(id);
+			final BusinessDTO business = businessService.findById(id);
 			setCommonData(model, business);
 			return "biz/business/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/business/index";
 		}
@@ -89,7 +91,7 @@ public class BusinessController extends AdminBaseController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		BusinessResult result = businessService.delete(id);
+		final BusinessResult result = businessService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -102,7 +104,7 @@ public class BusinessController extends AdminBaseController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("business") @Valid BusinessDTO business, Model model, RedirectAttributes ra) throws Exception {
 
-		BusinessResult result = businessService.save(business);
+		final BusinessResult result = businessService.save(business);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -113,12 +115,31 @@ public class BusinessController extends AdminBaseController {
 		return "biz/business/add-view";
 	}
 
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final BusinessResult result = businessService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Business already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "biz/business/home-view";
+	}
+
 	private void setCommonData(Model model, BusinessDTO business) {
 		model.addAttribute("business", business);
 		model.addAttribute("businessClassifications", businessClassificationService.findAll());
 		model.addAttribute("businessTypes", businessTypeService.findAll());
 		model.addAttribute("currencyList", currencyService.findAll());
 		model.addAttribute("countryList", countryService.findAll());
-        model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 	}
 }

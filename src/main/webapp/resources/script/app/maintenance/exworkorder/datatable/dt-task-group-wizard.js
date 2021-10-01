@@ -48,7 +48,20 @@ var dtWorkOrderTaskGroupWizard = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetBrandSelectModal.setAssetBrand",
+                aoData:[  
+                    {
+                        sName : "brandId",
+                    }, {
+                        sName : "brandName"
+                    },
+                ],
+            },
         });
 
         $('#tbl_wo_task_group_asset_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
@@ -114,7 +127,20 @@ var dtWorkOrderTaskGroupWizard = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetBrandSelectModal.setAssetBrand",
+                aoData:[  
+                    {
+                        sName : "brandId",
+                    }, {
+                        sName : "brandName"
+                    },
+                ],
+            },
         });
 
         $('#tbl_workOrder_task_group_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

@@ -117,7 +117,7 @@
 
     var runDataTable = function () {
 
-        var oTable = $('#siteTbl').dataTable({
+        var oTable = $('#siteTbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -133,14 +133,8 @@
                 }
             },
                 {data : 'certificationType'}
-                           ],
-            aoColumnDefs: [{
-                targets: 2,
-                data: "id",
-                render: function (data, type, row, meta) {
-                	 return "<a id='link" + data + "' onclick='UserCertificationAddModal.setCertificationType(\"" + data + "\",\"" + row.certificationType + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";                    // return "<button id='link_" + data + "' onclick='"+WorkorderAdd.setWOProject(data,rowData.name) +"' type='button' class='btn btn-blue btn-squared btn-xs btn-modal-select-custom' >Select</button>";
-                }
-            }],
+            ],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -158,7 +152,20 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "UserCertificationAddModal.setCertificationType",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "certificationType"
+                    },
+                ],
+            },
         });
 
         $('#certificationTypeSelectTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

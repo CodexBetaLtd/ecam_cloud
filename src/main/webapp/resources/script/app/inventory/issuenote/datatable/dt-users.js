@@ -105,8 +105,10 @@ var AODUsers = function () {
     });
 
     var getUserDataTable = function (bizId) {
+        
         var table_name = "user_select_tbl";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -117,6 +119,7 @@ var AODUsers = function () {
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
@@ -133,19 +136,8 @@ var AODUsers = function () {
             {
             	data: 'personalCode',
             	responsivePriority: 2
-            },
-                {
-                    width: "5%",
-                    data: 'id'
-                }],
-            aoColumnDefs: [{
-                data: "id",
-                targets: 4,
-                render: function (data, type, result, meta) {
-                    var vars = [data, result.fullName];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODUsers.setAODRequestedUser", data, vars);
-                }
             }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -163,7 +155,20 @@ var AODUsers = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AODUsers.setAODRequestedUser",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName"
+                    },
+                ],
+            },
         });
         $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -179,6 +184,7 @@ var AODUsers = function () {
     var setAODRequestedUser = function (id, name) {
         $("#requestedUserId").val(id);
         $("#requestedUserName").val(name);
+        $("#master-modal-datatable").modal('toggle');
     };
 
     return {

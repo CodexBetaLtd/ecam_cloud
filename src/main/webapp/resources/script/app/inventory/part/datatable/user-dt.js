@@ -1,11 +1,14 @@
-﻿var AssetSelectModal = function () {
-
+﻿var UserSelectModal = function () {
+     
     $.fn.dataTable.pipeline = function (opts) {
+        // Configuration options
         var conf = $.extend({
-        	pages: 5,
-        	url: '',
-        	data: null,
-        	method: 'GET'
+            pages: 5, // number of pages to cache
+            url: '', // script url
+            data: null, // function or object with parameters to send to the
+            // server
+            // matching how `ajax.data` works in DataTables
+            method: 'GET' // Ajax HTTP method
         }, opts);
 
         // Private variables for storing the cache
@@ -35,10 +38,15 @@
                     .stringify(cacheLastRequest.columns)
                 || JSON.stringify(request.search) !== JSON
                     .stringify(cacheLastRequest.search)) {
+                // properties changed (ordering, columns, searching)
                 ajax = true;
             }
+
+            // Store the request for checking next time around
             cacheLastRequest = $.extend(true, {}, request);
+
             if (ajax) {
+                // Need data from the server
                 if (requestStart < cacheLower) {
                     requestStart = requestStart
                         - (requestLength * (conf.pages - 1));
@@ -47,17 +55,26 @@
                         requestStart = 0;
                     }
                 }
+
                 cacheLower = requestStart;
                 cacheUpper = requestStart + (requestLength * conf.pages);
 
                 request.start = requestStart;
                 request.length = requestLength * conf.pages;
+
+                // Provide the same `data` options as DataTables.
                 if ($.isFunction(conf.data)) {
+                    // As a function it is executed with the data object as an
+                    // arg
+                    // for manipulation. If an object is returned, it is used as
+                    // the
+                    // data object to submit
                     var d = conf.data(request);
                     if (d) {
                         $.extend(request, d);
                     }
                 } else if ($.isPlainObject(conf.data)) {
+                    // As an object, the data given extends the default
                     $.extend(request, conf.data);
                 }
 
@@ -91,41 +108,44 @@
         }
     };
 
+    // Register an API method that will empty the pipelined data, forcing an
+    // Ajax
+    // fetch on the next draw (i.e. `table.clearPipeline().draw()`)
     $.fn.dataTable.Api.register('clearPipeline()', function () {
         return this.iterator('table', function (settings) {
             settings.clearCache = true;
         });
     });
 
-    var initDataTable = function (bizId) {
-        $('#asset_tbl').dataTable().fnDestroy();
-        var oTable = $('#asset_tbl').dataTable({
+    var initDataTable = function (bizId, method) {
+
+        $('#user_select_tbl').dataTable().fnDestroy();
+        
+        var oTable = $('#user_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/asset/findNotPartByBusiness?id=" + parseInt(bizId),
+                url: "../restapi/users/usersbybusinessid?id=" + bizId,
                 pages: 5
             }),
             columns: [{
                 orderable: false,
-                searchable: false,
-                width: "2%",
+                searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            }, {
-                data: 'name'
-            }, {
-                data: 'code'
-            }],
-            aoColumnDefs: [{
-                targets: 3,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.name, row.code];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('TabAsset.addAsset', data, vars);
-                }
-            }],
+            },
+                {
+                    data: 'fullName'
+                },
+                {
+                    data: 'emailAddress'
+                },
+                {
+                    data: 'personalCode'
+                }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -143,21 +163,40 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: method,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName"
+                    },
+                ],
+            },
         });
-        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#user_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
-        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#user_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
         // modify table per page dropdown
-        $('#asset_tbl_wrapper .dataTables_length select').select2();
+        $('#user_select_tbl_wrapper .dataTables_length select').select2();
         // initialzie select2 dropdown
+        $('#user_select_tbl_toggler input[type="checkbox"]').change(function () {
+            /* Get the DataTables object again - this is not a recreation, just a get of the object */
+            var iCol = parseInt($(this).attr("data-column"));
+            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+        });
+
     };
 
-
     return {
-
-        init: function (bizId) {
-            initDataTable(bizId);
+        //main function to initiate template pages
+        init: function (bizId, method) {
+            initDataTable(bizId, method);
         }
     };
 }();

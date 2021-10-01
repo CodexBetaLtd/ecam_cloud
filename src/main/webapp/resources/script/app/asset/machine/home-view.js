@@ -118,7 +118,7 @@
 	
     var initAssetDataTable = function () {
     	
-        var oTable = $('#machine_tbl').dataTable({
+        var oTable = $('#machine_tbl').DataTable({
         	responsive: true,
         	"processing": true,
             "serverSide": true,
@@ -128,10 +128,10 @@
             } ),            
             columns : [ {
                 orderable: false,
-                searchable: false, 
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                },
+                searchable: false,
+                width: "4%",
+                defaultContent: '',
+                className: 'select-checkbox',
                 responsivePriority: 2, 
             },{
      			data : 'name',
@@ -150,12 +150,7 @@
      			responsivePriority: 4   
      		}],
             aoColumnDefs: [{
-            	orderData: [1,5],
-            	targets: 6, //index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) {
-                	return ButtonUtil.getHomeBtnWithURL("../asset/machine", data);
-                }
+            	orderData: [1,5]
             }],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
@@ -174,7 +169,15 @@
             ], 
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination', 
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../../asset/machine/edit?id",
+            },
 //            sDom: 'Rlfrtip'
            
         });
@@ -185,7 +188,10 @@
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });  
+        
+        DataTableUtil.deleteRows(oTable, "delete", "../asset/machine", "id");
+        
     };    
     
     return { 

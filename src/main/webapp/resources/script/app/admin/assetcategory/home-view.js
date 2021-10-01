@@ -117,39 +117,23 @@ var AssetCategoryHome = function () {
 	} );
 	
     var runDataTable = function () {
-    	assetCategoryTable = $('#asset_category_tbl').dataTable({
+        
+        $('#asset_category_tbl').dataTable().fnDestroy();
+        
+    	oTable = $('#asset_category_tbl').DataTable({
         	processing : true,
             serverSide : true,
             ajax : "../restapi/assetCategory/tabledata",
-            columns : [          
-            	 {
-                    render: function (data, type, row, meta) {
-                     return meta.row + meta.settings._iDisplayStart + 1;
-                 } },
-                 {data: 'name'},
-                 {data: 'description'},
-                 {data: 'parentName'}],
-            aoColumnDefs: [
-            		{"bSearchable" : false, "aTargets": [0, 4]}, 
-            		{"orderable" : false, "aTargets": [0, 4]},
-            		{"targets": 4,//index of column starting from 0
-            			"data": "id", //this name should exist in your JSON response
-            			"render": function ( data, type, full, meta ) {
-            				return "<div align=\"center\"><div class=\"btn-group\">" +
-                     			"<a class=\"btn btn-xs btn-blue dropdown-toggle btn-sm tooltips\"  data-placement=\"top\"data-original-title=\"remove or edit\"data-toggle=\"dropdown\" href=\"#\">"
-                     			+"<i class=\"fa fa-cog\"></i><span class=\"caret\"></span>" +
-                     			"</a><ul role=\"menu\" class=\"dropdown-menu pull-right\">"
-                     			+ "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"AssetCategoryHome.editCategory(" + data + ")\">" +
-                     			"<i class=\"fa fa-edit\"></i> Edit</a>" +
-                     			"</li><li role=\"presentation\"><a data-toggle=\"modal\" role=\"menuitem\" tabindex=\"-1\" href=\"#model"+data+"\">" +
-                     			"<i class=\"fa fa-times\"></i> Remove</a></li></ul>" +
-                     			"</div><div id=\"model" + data + "\" class=\"modal fade\" tabindex=\"-1\" data-backdrop=\"static\" data-keyboard=\"false\" style=\"display: none;\">"
-                     			+ "<div class=\"modal-body\"><p>Are You Sure You want to delete Asset Category ?</p>" +
-                     			"</div>" +
-                     			"<div class=\"modal-footer\"><a data-dismiss=\"modal\" class=\"btn btn-green \" >"
-                     			+ "Cancel</a> " +
-                     			"<a onclick=\"AssetCategoryHome.deleteCategory(" + data + ")\" class=\"btn btn-red \">Delete</a></div></div></div>"; }
-            		}],
+            columns : [{   
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox'
+                },
+                {data: 'name'},
+                {data: 'description'},
+                {data: 'parentName'}
+            ],
+            aoColumnDefs: [],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -166,14 +150,21 @@ var AssetCategoryHome = function () {
                 [5, 10, 15, 20, "All"] // change per page values here
             ],
             
-            // set the initial value
            iDisplayLength: 10,
-            bAutoWidth: false,
-        //     bLengthChange: false,
-            sPaginationType: "full_numbers", 
-            "initComplete": function(settings, json) {
-		       
-			  } 
+           bAutoWidth: false,
+           sPaginationType: "full_numbers", 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "AssetCategoryHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
         });
         $('#asset_category_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -186,7 +177,9 @@ var AssetCategoryHome = function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });       
+        });
+        
+        DataTableUtil.deleteRowsFunc(oTable, "assetCategoryDelete", "AssetCategoryHome.deleteMutiple", "id");
         
     };
     
@@ -223,6 +216,17 @@ var AssetCategoryHome = function () {
 	        }
 	    });
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../assetCategory/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#assetCategoryTab").empty().append(response);
+                AssetCategoryHome.init();
+            }
+        });
+    };
 	
 	var addCategory = function () {		
 		 $.ajax({
@@ -235,7 +239,7 @@ var AssetCategoryHome = function () {
         });
 	};
 	
-	var editCategory = function (id) {		
+	var editModal = function (id) {		
 		 $.ajax({
            url: "../assetCategory/edit?id=" + id,
            type: 'GET',
@@ -257,15 +261,19 @@ var AssetCategoryHome = function () {
 		},
 		
 		deleteCategoryFromEditPage : function(id) {
-			deleteCategoryFromEditPage(id)
+		    deleteCategoryFromEditPage(id)
+		},
+		
+		deleteMutiple : function(ids) {
+		    deleteMutiple(ids)
 		},
 		
 		addCategory : function() {
 			addCategory()
 		},
 		
-		editCategory : function(id) {
-			editCategory(id)
+		editModal : function(id) {
+			editModal(id)
 		},
 		
 		reloadCategory : function(){

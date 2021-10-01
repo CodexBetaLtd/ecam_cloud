@@ -102,9 +102,12 @@ var dtAODItemJob = function () {
     });
 
     var dtJobList = function () {
+        
         var tableId = "dt-tbl-aodJob";
+        
         var URL = "../restapi/job/tabledata";
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -115,7 +118,7 @@ var dtAODItemJob = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
@@ -124,16 +127,7 @@ var dtAODItemJob = function () {
             	data: 'code',
             	responsivePriority: 1
             }],
-            aoColumnDefs: [{
-                targets: 2,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var func = "aodItemTab.setJobToAodItem";
-                    var vars = [data, row.code];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                    // return "<button id='link" + data + "' onclick='AODAdd." + method + "(\"" + data + "\",\"" + row.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' > Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -152,7 +146,20 @@ var dtAODItemJob = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "aodItemTab.setJobToAodItem",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "code"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");

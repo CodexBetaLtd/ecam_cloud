@@ -13,28 +13,30 @@ import java.util.List;
 
 public interface AODReturnService {
 
-    AODReturnResult newAODReturn();
+	AODReturnResult newAODReturn();
 
-    AODReturnResult save(AODReturnDTO part) throws Exception;
+	AODReturnResult save(AODReturnDTO part) throws Exception;
 
-    AODReturnResult update(AODReturnDTO part) throws Exception;
+	AODReturnResult update(AODReturnDTO part) throws Exception;
 
-    AODReturnResult delete(Integer id) throws Exception;
+	AODReturnResult delete(Integer id) throws Exception;
 
-    AODReturnResult findById(Integer id) throws Exception;
+	AODReturnResult findById(Integer id) throws Exception;
 
-    AODReturnResult returnByAODItem();
+	AODReturnResult returnByAODItem();
 
-    AODReturnResult statusChange(Integer id, AODReturnStatus status) throws Exception;
+	AODReturnResult statusChange(Integer id, AODReturnStatus status) throws Exception;
 
-    AODReturnRepDTO findAODReturnRepById(Integer id);
+	AODReturnRepDTO findAODReturnRepById(Integer id);
 
-    List<AODReturnDTO> getUnFinalizedAODReturns();
+	List<AODReturnDTO> getUnFinalizedAODReturns();
 
-    List<AODReturnDTO> findAll();
+	List<AODReturnDTO> findAll();
 
-    List<AODReturnRepDTO> findAll(AODReturnFilterDTO aodReturnFilterDTO);
+	List<AODReturnRepDTO> findAll(AODReturnFilterDTO aodReturnFilterDTO);
 
-    DataTablesOutput<AODReturnDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<AODReturnDTO> findAll(FocusDataTablesInput input) throws Exception;
+
+	AODReturnResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

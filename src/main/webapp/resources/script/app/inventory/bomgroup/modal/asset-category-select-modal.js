@@ -126,7 +126,7 @@
 
     var runDataTable = function ( bizId ) {
     	
-        var oTable = $('#asset_category_tbl').dataTable({
+        var oTable = $('#asset_category_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -136,6 +136,7 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -147,16 +148,8 @@
             }, {
                 data: 'parentName',
                 searchable: false
-            }, { 
-                data: 'id'
             }],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {  
-                	return ButtonUtil.getCommonBtnSelect('AssetCategorySelectModal.getAssets', data, bizId ); 
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -174,7 +167,19 @@
             ], 
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetCategorySelectModal.getAssets",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }
+                ],
+                iExtra : bizId
+            },
         });
         $('#asset_category_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search"); 
         $('#asset_category_tbl_wrapper .dataTables_length select').addClass("m-wrap small"); 

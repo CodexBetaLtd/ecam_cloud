@@ -120,7 +120,7 @@ var WorkOrderLog = function () {
 
     var initWorkOrderLogTable = function (workOrderId) {
 
-        var oTable = $('#work_order_log_tbl').dataTable({
+        var oTable = $('#work_order_log_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -134,12 +134,13 @@ var WorkOrderLog = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
                 }, {
                     data: 'createdDate',
+                    width: "20%",
                     render: function (data) {
                         if (data === null) return "";
                         var date = new Date(data);
@@ -147,6 +148,7 @@ var WorkOrderLog = function () {
                     }
                 }, {
                     data: 'userName',
+                    width: "20%",
                     searchable: false,
                     orderable: false
                 }, {

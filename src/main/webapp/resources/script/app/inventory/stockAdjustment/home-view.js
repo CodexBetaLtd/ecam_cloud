@@ -115,8 +115,10 @@ var StockAdjustmentHome = function () {
     });
 
     var dtStockItem = function () {
+        
         var table_name = "tbl_stockAdjustment_list";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -128,10 +130,9 @@ var StockAdjustmentHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 1
                 },
                 {
@@ -164,25 +165,7 @@ var StockAdjustmentHome = function () {
                     data: 'adjustmentStatusName'
                 }
             ],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 7,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var html = "<div align='center'>" +
-                        "<div class='btn-group'>" +
-                        "<a class='btn btn-xs btn-blue dropdown-toggle btn-sm' data-toggle='dropdown' href='#'>" +
-                        "<i class='fa fa-cog'></i> <span class='caret'></span>" +
-                        "</a>" +
-                        "<ul role='menu' class='dropdown-menu pull-right'>" +
-                        "<li role='presentation'><a href='../stockAdjustment/edit?id=" + data + "' type='button' role='menuitem' tabindex='-1'><i class='fa fa-edit'></i> Edit</a></li>" +
-                        "</ul>" +
-                        "</div>" +
-                        "</div>";
-                    return html;
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -196,19 +179,24 @@ var StockAdjustmentHome = function () {
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../stockAdjustment/edit?id",
+            },
         });
-
-        var wapperSet = function () {
-            $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-            $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
-            $('#' + table_name + '_wrapper .dataTables_length select').select2();
-            $('#' + table_name + '_column_toggler input[type="checkbox"]').change(function () {
-                var iCol = parseInt($(this).attr("data-column"));
-                var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-                oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-            });
-        }
+        $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#' + table_name + '_wrapper .dataTables_length select').select2();
+        $('#' + table_name + '_column_toggler input[type="checkbox"]').change(function () {
+            var iCol = parseInt($(this).attr("data-column"));
+            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+        });
 
     };
 

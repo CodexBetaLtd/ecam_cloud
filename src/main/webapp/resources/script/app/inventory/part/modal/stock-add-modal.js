@@ -99,7 +99,8 @@ var StockAddModal = function () {
     };
     var setWarehouse=function(id,name){
     	$('#warehouseId').val(id);
-    	$('#warehouseName').val(name);    	
+    	$('#warehouseName').val(name);   
+        $('#stock-common-modal').modal('toggle'); 	
     }
     var addPartStock = function (obj) {
         if ($('#frm_part_stock').valid()) {      

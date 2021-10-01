@@ -127,10 +127,10 @@
             } ),            
             columns : [ {
                 orderable: false,
-                searchable: false, 
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
+                searchable: false,
+                defaultContent: '',
+                className: 'select-checkbox',
+                responsivePriority: 1  
             },{
      			data : 'name'
      		},{

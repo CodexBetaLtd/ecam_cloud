@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <div class="panel panel-default" th:fragment="homeview"> 
+		<div th:replace="template/messageview :: message"></div>
 	<div class="panel-body">
 		<div class="row">
 			<div class="col-md-12 space20">
@@ -11,7 +12,6 @@
 		                <th class="first-col" style="width:5%;">#</th>
 		                <th style="width:20%;">Miscellaneous Expense Type</th>
 		                <th style="width:70%;">Description</th> 
-		                <th class="last-col" style="width:5%;">More</th>
 		            </tr>
 		            </thead>
 		            <tbody>
@@ -21,6 +21,6 @@
 		</div>
 	</div>
 </div>
-<!-- end: PAGE CONTENT-->\
+<!-- end: PAGE CONTENT-->
 
 </html>

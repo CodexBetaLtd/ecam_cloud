@@ -100,10 +100,11 @@ var dtAOD = function () {
         });
     });
 
-
     var getAODTable = function (url, func) {
+        
         var tableId = "tbl_modal_aod";
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -114,7 +115,7 @@ var dtAOD = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
@@ -138,15 +139,7 @@ var dtAOD = function () {
                 responsivePriority: 2
              }
             ],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.aodNo, row.aodCustomerName, row.aodCustomerAddress];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                    //  return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.aodNo + "\");' type='button' class='btn btn-blue btn-squared btn-xs' > Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -165,7 +158,24 @@ var dtAOD = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "aodNo"
+                    }, {
+                        sName : "aodCustomerName"
+                    }, {
+                        sName : "aodCustomerAddress"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -189,7 +199,7 @@ var dtAOD = function () {
         $("#aodReturnAodItemId").val("");
         $("#aodReturnAodItemNo").val("");
         $("#aodItemQuantity").val("");
-        $('#stackable-modal').modal("hide");
+        $('#common-modal').modal("hide");
     };
 
     var setCustomerDetailsByAOD = function (customerName, customerAddress) {
@@ -199,6 +209,7 @@ var dtAOD = function () {
     var setCustomerByAOD = function (id) {
         $("#aodReturnAODCustomerName").val(CustomComponents.nullValueReplace());
         $("#aodReturnAODCustomerAddress").val(CustomComponents.nullValueReplace());
+        $("#common-modal").modal('toggle');
     };
 
 

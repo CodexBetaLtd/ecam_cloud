@@ -101,8 +101,10 @@ var dtWarehouse = function () {
     });
 
     var getWarehouseDataTable = function (tableId, url, func) {
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
                 url: url,
@@ -111,7 +113,7 @@ var dtWarehouse = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -124,17 +126,7 @@ var dtWarehouse = function () {
                     data: 'itemQty'
                 }
             ],
-            aoColumnDefs: [{
-                targets: 4,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    //  console.log(row);
-                    var vars = [row.id, row.name]
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                    //  return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.id + "\",\"" + row.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' data-dismiss='modal'> Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -153,7 +145,20 @@ var dtWarehouse = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -163,26 +168,10 @@ var dtWarehouse = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-
-        /*var commonSet=function () {
-         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-         $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
-         var iCol = parseInt($(this).attr("data-column"));
-         var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-         oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-         });
-         };*/
     };
-
-
-    /*********************************************************************
-     * Set Data Value
-     *********************************************************************/
-
-
+    
     return {
+        
         getWarehouseDataTable: function (tableId, url, func) {
             if (tableId == null) {
                 tableId = "tbl-dt-warehouse";
@@ -193,9 +182,6 @@ var dtWarehouse = function () {
             }
             getWarehouseDataTable(tableId, url, func);
         }
-        /*********************************************************************
-         * Set Data Value
-         *********************************************************************/
-
+    
     };
 }();

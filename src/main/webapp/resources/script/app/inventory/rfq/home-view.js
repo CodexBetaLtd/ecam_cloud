@@ -115,7 +115,8 @@ var RFQHome = function () {
     });
 
     var dtRFQ = function () {
-        var oTable = $('#rfq_tbl').dataTable({
+        
+        var oTable = $('#rfq_tbl').DataTable({
         	responsive: true,
         	"processing": true,
             "serverSide": true,
@@ -127,10 +128,9 @@ var RFQHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 2,
                 }, {
                     data: 'code',
@@ -146,15 +146,7 @@ var RFQHome = function () {
                     orderable: false,
                     searchable: false,
                 }],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("rfq", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -168,16 +160,26 @@ var RFQHome = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../rfq/edit?id",
+            },
         });
-        $('#purchase_order_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#purchase_order_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#purchase_order_tbl_wrapper .dataTables_length select').select2();
-        $('#purchase_order_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#rfq_tbl_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#rfq_tbl_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#rfq_tbl_tbl_wrapper .dataTables_length select').select2();
+        $('#rfq_tbl_tbl_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "rfq", "id"); 
     };
 
     return {

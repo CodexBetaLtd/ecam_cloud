@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,6 +20,7 @@ import com.codex.ecam.constants.WorkOrderStatus;
 import com.codex.ecam.dto.admin.ChargeDepartmentDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.maintenance.exworkorder.ExWorkOrderDTO;
+import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.ExWorkOrderResult;
 import com.codex.ecam.service.admin.api.ChargeDepartmentService;
 import com.codex.ecam.service.asset.api.AssetService;
@@ -69,7 +71,7 @@ public class ExWorkOrderController {
 	public String getUserView(Model model) {
 		return "maintenance/exworkorder/modals/user-modal";
 	}
-	
+
 	@RequestMapping(value = "/supplier-select-modal-view", method = RequestMethod.GET)
 	public String getSupplierView(Model model) {
 		return "maintenance/exworkorder/modals/supplier-modal";
@@ -84,7 +86,7 @@ public class ExWorkOrderController {
 		try {
 			setCommonData(model, new ExWorkOrderDTO());
 			return "maintenance/exworkorder/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/exworkorder/index";
 		}
@@ -93,11 +95,11 @@ public class ExWorkOrderController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			ExWorkOrderDTO workOrder = exworkOrderService.findById(id);
+			final ExWorkOrderDTO workOrder = exworkOrderService.findById(id);
 			setCommonData(model, workOrder);
 
 			return "maintenance/exworkorder/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 
 			return "redirect:/exworkorder/index";
@@ -107,7 +109,7 @@ public class ExWorkOrderController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("workOrder") ExWorkOrderDTO workOrder, Model model) throws Exception {
 
-		ExWorkOrderResult result = exworkOrderService.save(workOrder);
+		final ExWorkOrderResult result = exworkOrderService.save(workOrder);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -124,7 +126,7 @@ public class ExWorkOrderController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		ExWorkOrderResult result = exworkOrderService.delete(id);
+		final ExWorkOrderResult result = exworkOrderService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -134,31 +136,31 @@ public class ExWorkOrderController {
 
 		return "redirect:/exworkorder/index";
 	}
-	
+
 	@RequestMapping(value = "/statusChange", method = RequestMethod.POST)
-	public String workOrderRequestStatusChange(Integer id, WorkOrderStatus status, String date, String note, Model model) throws Exception {      
-		ExWorkOrderResult result = exworkOrderService.statusChange(id, status, date, note);
-		
+	public String workOrderRequestStatusChange(Integer id, WorkOrderStatus status, String date, String note, Model model) throws Exception {
+		final ExWorkOrderResult result = exworkOrderService.statusChange(id, status, date, note);
+
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
-		} else { 
+		} else {
 			model.addAttribute("success", result.getMsgList());
 		}
-		
-		setCommonData(model, exworkOrderService.findById(id)); 
+
+		setCommonData(model, exworkOrderService.findById(id));
 		return "maintenance/exworkorder/add-view";
 	}
 
 	@RequestMapping(value = "/getsites", method = RequestMethod.GET)
 	public @ResponseBody List<AssetDTO> selectParent(Integer id, Model model) throws Exception {
-		List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
+		final List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		return assetDTOs;
 	}
 
-//	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
-//	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
-//		return workOrderService.findCurrentWorkOrderCode(businessId);
-//	}
+	//	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
+	//	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
+	//		return workOrderService.findCurrentWorkOrderCode(businessId);
+	//	}
 
 
 	@RequestMapping(value = "/departments-by-business/{id}", method = RequestMethod.GET)
@@ -168,24 +170,43 @@ public class ExWorkOrderController {
 
 	@RequestMapping(value = "/status-change", method = RequestMethod.GET)
 	public String receiptOrderStatusChange(Integer id, WorkOrderStatus workOrderStatus,String date, String note, Model model) throws Exception {
-		if ((id != null) && (id > 0)) {
+		if (id != null && id > 0) {
 			try {
-				ExWorkOrderResult result = exworkOrderService.statusChange(id, workOrderStatus, date, note);
+				final ExWorkOrderResult result = exworkOrderService.statusChange(id, workOrderStatus, date, note);
 				if (result.getStatus().equals(ResultStatus.ERROR)) {
 					model.addAttribute("error", result.getErrorList());
 				} else {
 					model.addAttribute("success", result.getMsgList());
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				model.addAttribute("error", "Error Occurred. Please Try again.");
 			}
 		} else {
 			model.addAttribute("error", "Please Save the Work Order First");
 		}
 
-	setCommonData(model, exworkOrderService.findById(id));
+		setCommonData(model, exworkOrderService.findById(id));
 
 		return "maintenance/exworkorder/add-view";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final ExWorkOrderResult result = exworkOrderService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Ex workOrder already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "maintenance/exworkorder/home-view";
 	}
 
 
@@ -197,7 +218,7 @@ public class ExWorkOrderController {
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		try {
 			model.addAttribute("sites", assetService.findAllSiteByBusiness(exWorkOrderDTO.getBusinessId()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface WorkOrderService {
 
 	void workorderFileDownload(Integer refId, HttpServletResponse response) throws Exception ;
-	
+
 	WorkOrderDTO findById(Integer id) throws Exception;
 
 	WorkOrderResult delete(Integer id);
@@ -34,14 +34,16 @@ public interface WorkOrderService {
 	String workorderFileUpload(MultipartFile file, String refId) throws Exception ;
 
 	DataTablesOutput<WorkOrderDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id) throws Exception;
-	
+
 	Integer findAllOpenWorkOderCount() throws Exception;
-	
+
 	DataTablesOutput<WorkOrderDTO> findAllOpenWorkOder(FocusDataTablesInput input) throws Exception;
-	
+
 	Integer findAllHighPriorityWorkOderCount() throws Exception;
-	
+
 	DataTablesOutput<WorkOrderDTO> findAllHighPriorityWorkOder(FocusDataTablesInput input) throws Exception;
+
+	WorkOrderResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 

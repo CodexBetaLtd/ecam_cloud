@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -72,6 +73,7 @@ import com.codex.ecam.model.maintenance.workorder.WorkOrderPart;
 import com.codex.ecam.model.maintenance.workorder.WorkOrderTask;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.RestResult;
+import com.codex.ecam.result.admin.AccountResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.maintenance.api.EmailAndNotificationSender;
@@ -140,7 +142,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	@Override
 	public WorkOrderDTO findById(Integer id) throws Exception {
-		WorkOrder domain = workOrderDao.findById(id);
+		final WorkOrder domain = workOrderDao.findById(id);
 		if (domain != null) {
 			return WorkOrderMapper.getInstance().domainToDto(domain);
 		}
@@ -149,12 +151,33 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	@Override
 	public WorkOrderResult delete(Integer id) {
-		WorkOrderResult result = new WorkOrderResult(null, null);
+		final WorkOrderResult result = new WorkOrderResult(null, null);
 		try {
 			workOrderDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Work Order Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public WorkOrderResult deleteMultiple(Integer[] ids) throws Exception {
+		final WorkOrderResult result = new WorkOrderResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				workOrderDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("WorkOrder(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("WorkOrder(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -165,13 +188,13 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public WorkOrderResult save(WorkOrderDTO dto) {
 
-		WorkOrderResult result = createWorkOrderResult(dto);
+		final WorkOrderResult result = createWorkOrderResult(dto);
 		try {
 			saveOrUpdate(result);
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Work Order Already updated. Please Reload Work Order.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -183,7 +206,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private WorkOrderResult createWorkOrderResult(WorkOrderDTO dto) {
 		WorkOrderResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new WorkOrderResult(workOrderDao.findOne(dto.getId()), dto);
 		} else {
 			result = new WorkOrderResult(new WorkOrder(), dto);
@@ -230,12 +253,12 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setAssetToWorkOrder(WorkOrderResult result) throws Exception {
-		Set<WorkOrderAsset> woAssets = new HashSet<>();
-		if ((result.getDtoEntity().getAssets() != null) && (result.getDtoEntity().getAssets().size() > 0)) {
-			Set<WorkOrderAsset> currentAssets = result.getDomainEntity().getWorkOrderAssets();
+		final Set<WorkOrderAsset> woAssets = new HashSet<>();
+		if (result.getDtoEntity().getAssets() != null && result.getDtoEntity().getAssets().size() > 0) {
+			final Set<WorkOrderAsset> currentAssets = result.getDomainEntity().getWorkOrderAssets();
 			WorkOrderAsset woAsset;
-			for (AssetDTO asset : result.getDtoEntity().getAssets()) {
-				if ((currentAssets != null) && (currentAssets.size() > 0)) {
+			for (final AssetDTO asset : result.getDtoEntity().getAssets()) {
+				if (currentAssets != null && currentAssets.size() > 0) {
 					woAsset = currentAssets.stream().filter((x) -> x.getId().equals(asset.getId())).findAny()
 							.orElseGet(WorkOrderAsset::new);
 				} else {
@@ -255,75 +278,75 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setBusiness(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setAccount(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAccountId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAccountId() != null) {
 			result.getDomainEntity().setAccount(accountDao.findOne(result.getDtoEntity().getAccountId()));
 		}
 	}
 
 	private void setChargeDepartment(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getChargeDepartmentId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getChargeDepartmentId() != null) {
 			result.getDomainEntity()
-					.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
+			.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
 		}
 	}
 
 	private void setCompletedBy(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getCompletedByUserId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getCompletedByUserId() != null) {
 			result.getDomainEntity().setCompletedByUser(userDao.findOne(result.getDtoEntity().getCompletedByUserId()));
 		}
 	}
 
 	private void setRequestedBy(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getRequestedByUserId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getRequestedByUserId() != null) {
 			result.getDomainEntity().setRequestedByUser(userDao.findOne(result.getDtoEntity().getRequestedByUserId()));
 		}
 	}
 
 	private void setMaintenanceType(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMaintenanceTypeId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getMaintenanceTypeId() != null) {
 			result.getDomainEntity()
-					.setMaintenanceType(maintenanceTypeDao.findOne(result.getDtoEntity().getMaintenanceTypeId()));
+			.setMaintenanceType(maintenanceTypeDao.findOne(result.getDtoEntity().getMaintenanceTypeId()));
 		}
 	}
 
 	private void setPriority(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getPriorityId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getPriorityId() != null) {
 			result.getDomainEntity().setPriority(priorityDao.findOne(result.getDtoEntity().getPriorityId()));
 		}
 	}
 
 	private void setSite(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 
 	private void setProject(WorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getProjectId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getProjectId() != null) {
 			result.getDomainEntity().setProject(projectDao.findOne(result.getDtoEntity().getProjectId()));
 		}
 	}
 
 	private void setWorkOrderNotification(WorkOrderResult result) throws Exception {
-		Set<WorkOrderNotification> workOrderNotifications = new HashSet<>();
-		List<WorkOrderNotificationDTO> woOrderNotificationDTOs = result.getDtoEntity().getNotifications();
+		final Set<WorkOrderNotification> workOrderNotifications = new HashSet<>();
+		final List<WorkOrderNotificationDTO> woOrderNotificationDTOs = result.getDtoEntity().getNotifications();
 
-		if ((woOrderNotificationDTOs != null) && (woOrderNotificationDTOs.size() > 0)) {
+		if (woOrderNotificationDTOs != null && woOrderNotificationDTOs.size() > 0) {
 
-			Set<WorkOrderNotification> currentWorkOrderNotifications = result.getDomainEntity()
+			final Set<WorkOrderNotification> currentWorkOrderNotifications = result.getDomainEntity()
 					.getWorkOrderNotifications();
 			WorkOrderNotification workOrderNotification;
 
-			for (WorkOrderNotificationDTO workOrderNotificationDTO : woOrderNotificationDTOs) {
+			for (final WorkOrderNotificationDTO workOrderNotificationDTO : woOrderNotificationDTOs) {
 
 				workOrderNotification = new WorkOrderNotification();
-				if ((currentWorkOrderNotifications != null) && (currentWorkOrderNotifications.size() > 0)) {
+				if (currentWorkOrderNotifications != null && currentWorkOrderNotifications.size() > 0) {
 					workOrderNotification = currentWorkOrderNotifications.stream()
 							.filter((x) -> x.getId().equals(workOrderNotificationDTO.getId())).findAny()
 							.orElseGet(WorkOrderNotification::new);
@@ -350,11 +373,11 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setWorkOrderMeterReadings(WorkOrderResult result) throws Exception {
-		Set<WorkOrderMeterReading> meterReadings = new HashSet<>();
-		if ((result.getDtoEntity().getMeterReadings() != null)
-				&& (result.getDtoEntity().getMeterReadings().size() > 0)) {
+		final Set<WorkOrderMeterReading> meterReadings = new HashSet<>();
+		if (result.getDtoEntity().getMeterReadings() != null
+				&& result.getDtoEntity().getMeterReadings().size() > 0) {
 
-			for (WorkOrderMeterReadingDTO workOrderMeterReadingDTO : result.getDtoEntity().getMeterReadings()) {
+			for (final WorkOrderMeterReadingDTO workOrderMeterReadingDTO : result.getDtoEntity().getMeterReadings()) {
 				WorkOrderMeterReading workOrderMeterReading;
 				if (workOrderMeterReadingDTO.getId() != null) {
 					workOrderMeterReading = result.getDomainEntity().getWorkOrderMeterReadings().stream()
@@ -378,9 +401,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private AssetMeterReading setMeterReading(WorkOrderMeterReadingDTO workOrderMeterReadingDTO, WorkOrderResult result)
 			throws Exception {
-		AssetMeterReading assetMeterReading = assetMeterReadingDao
+		final AssetMeterReading assetMeterReading = assetMeterReadingDao
 				.findOne(workOrderMeterReadingDTO.getMeterReadingId());
-		List<AssetMeterReadingValueDTO> assetMeterReadingValueDTOs = getAssetMeterReadingValue(result,
+		final List<AssetMeterReadingValueDTO> assetMeterReadingValueDTOs = getAssetMeterReadingValue(result,
 				workOrderMeterReadingDTO);
 		updateMeterReading(assetMeterReading, assetMeterReadingValueDTOs, workOrderMeterReadingDTO);
 		assetService.updateAverageMeterReadingValue(assetMeterReading);
@@ -394,10 +417,10 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 			domain.setAssetMeterReadingValues(new HashSet<AssetMeterReadingValue>());
 		}
 
-		for (AssetMeterReadingValueDTO assetMeterReadingValueDto : assetMeterReadingValueDTOs) {
-			if ((workOrderMeterReadingDTO.getMeterReadingCurrentValueIndex() != null)
-					&& (workOrderMeterReadingDTO.getMeterReadingCurrentValueIndex() >= 0)) {
-				AssetMeterReadingValue meterReadingValue = new AssetMeterReadingValue();
+		for (final AssetMeterReadingValueDTO assetMeterReadingValueDto : assetMeterReadingValueDTOs) {
+			if (workOrderMeterReadingDTO.getMeterReadingCurrentValueIndex() != null
+					&& workOrderMeterReadingDTO.getMeterReadingCurrentValueIndex() >= 0) {
+				final AssetMeterReadingValue meterReadingValue = new AssetMeterReadingValue();
 				AssetMeterReadingValueMapper.getInstance().dtoToDomain(assetMeterReadingValueDto, meterReadingValue);
 				meterReadingValue.setAssetMeterReading(domain);
 				if (workOrderMeterReadingDTO.getMeterReadingCurrentValueIndex()
@@ -411,20 +434,20 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private List<AssetMeterReadingValueDTO> getAssetMeterReadingValue(WorkOrderResult result,
 			WorkOrderMeterReadingDTO workOrderMeterReadingDTO) {
-		List<AssetMeterReadingValueDTO> assetMeterReadingValueDTOs = new ArrayList<>();
-		for (WorkOrderMeterReadingValueDTO workOrderMeterReadingValueDTO : result.getDtoEntity()
+		final List<AssetMeterReadingValueDTO> assetMeterReadingValueDTOs = new ArrayList<>();
+		for (final WorkOrderMeterReadingValueDTO workOrderMeterReadingValueDTO : result.getDtoEntity()
 				.getWorkOrderMeterReadingValues()) {
 			if (workOrderMeterReadingValueDTO.getWoMeterReadingId()
 					.equals(workOrderMeterReadingDTO.getMeterReadingId())) {
-				AssetMeterReadingValueDTO assetMeterReadingValueDTO = new AssetMeterReadingValueDTO();
+				final AssetMeterReadingValueDTO assetMeterReadingValueDTO = new AssetMeterReadingValueDTO();
 				assetMeterReadingValueDTO
-						.setAssetMeterReadingValueId(workOrderMeterReadingValueDTO.getWoMeterReadingValueId());
+				.setAssetMeterReadingValueId(workOrderMeterReadingValueDTO.getWoMeterReadingValueId());
 				assetMeterReadingValueDTO.setAssetMeterReadingValueAddedDate(
 						workOrderMeterReadingValueDTO.getWoMeterReadingValueAddedDate());
 				assetMeterReadingValueDTO
-						.setAssetMeterReadingValue(workOrderMeterReadingValueDTO.getWoMeterReadingValue());
+				.setAssetMeterReadingValue(workOrderMeterReadingValueDTO.getWoMeterReadingValue());
 				assetMeterReadingValueDTO
-						.setAssetMeterReadingValueIndex(workOrderMeterReadingValueDTO.getWoMeterReadingValueIndex());
+				.setAssetMeterReadingValueIndex(workOrderMeterReadingValueDTO.getWoMeterReadingValueIndex());
 				assetMeterReadingValueDTOs.add(assetMeterReadingValueDTO);
 			}
 		}
@@ -433,9 +456,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setWorkOrderMisCost(WorkOrderResult result) {
-		Set<WorkOrderMiscellaneousExpense> workOrderMiscellaneousExpenses = new HashSet<>();
-		for (MiscellaneousExpenseDTO miscellaneousExpenseDTO : result.getDtoEntity().getMiscellaneousExpenses()) {
-			WorkOrderMiscellaneousExpense miscellaneousExpense = new WorkOrderMiscellaneousExpense();
+		final Set<WorkOrderMiscellaneousExpense> workOrderMiscellaneousExpenses = new HashSet<>();
+		for (final MiscellaneousExpenseDTO miscellaneousExpenseDTO : result.getDtoEntity().getMiscellaneousExpenses()) {
+			final WorkOrderMiscellaneousExpense miscellaneousExpense = new WorkOrderMiscellaneousExpense();
 			miscellaneousExpense.setMiscellaneousExpenseType(
 					miscellaneousExpenseTypeDao.findOne(miscellaneousExpenseDTO.getMiscellaneousExpenseTypeId()));
 			miscellaneousExpense.setEstimatedUnitCost(miscellaneousExpenseDTO.getEstimatedUnitCost());
@@ -454,8 +477,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private void setWorkOrderTask(WorkOrderResult result) throws Exception {
 
-		Set<WorkOrderTask> taskList = new HashSet<WorkOrderTask>();
-		for (WorkOrderTaskDTO workOrderTaskDTO : result.getDtoEntity().getTasks()) {
+		final Set<WorkOrderTask> taskList = new HashSet<WorkOrderTask>();
+		for (final WorkOrderTaskDTO workOrderTaskDTO : result.getDtoEntity().getTasks()) {
 			WorkOrderTask workOrderTask;
 			if (workOrderTaskDTO.getId() != null) {
 				workOrderTask = result.getDomainEntity().getWorkOrderTasks().stream()
@@ -507,23 +530,23 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void stateChange(WorkOrderDTO workOrderDTO) {
-		WorkOrderState workOrderState = new WorkOrderState();
+		final WorkOrderState workOrderState = new WorkOrderState();
 		workOrderState.setNotificationOnAsigned(workOrderDTO, emailAndNotificationSender);
 	}
 
 	private void setWorkOrderTaskPart(WorkOrderResult result, WorkOrderTaskDTO taskDto, WorkOrderTask task)
 			throws Exception {
 
-		Set<WorkOrderPart> parts = new HashSet<>();
-		if ((result.getDtoEntity().getParts() != null) && (result.getDtoEntity().getParts().size() > 0)) {
-			Set<WorkOrderPart> currentParts = task.getWorkOrderParts();
+		final Set<WorkOrderPart> parts = new HashSet<>();
+		if (result.getDtoEntity().getParts() != null && result.getDtoEntity().getParts().size() > 0) {
+			final Set<WorkOrderPart> currentParts = task.getWorkOrderParts();
 
-			for (WorkOrderPartDTO partDTO : result.getDtoEntity().getParts()) {
+			for (final WorkOrderPartDTO partDTO : result.getDtoEntity().getParts()) {
 
 				if (partDTO.getWoPartTaskIndex().equals(taskDto.getIndex())) {
 
 					WorkOrderPart part;
-					if ((currentParts != null) && (currentParts.size() > 0)) {
+					if (currentParts != null && currentParts.size() > 0) {
 						part = currentParts.stream()
 								.filter((x) -> x.getStock().getId().equals(partDTO.getWoPartStockId())).findAny()
 								.orElseGet(WorkOrderPart::new);
@@ -548,11 +571,11 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		domain.setWorkOrderTask(task);
 		domain.setIsDeleted(false);
 
-		if ((dto.getWoPartPartId() != null) && (dto.getWoPartPartId() > 0)) {
+		if (dto.getWoPartPartId() != null && dto.getWoPartPartId() > 0) {
 			domain.setPart(assetDao.findOne(dto.getWoPartPartId()));
 		}
 
-		if ((dto.getWoPartStockId() != null) && (dto.getWoPartStockId() > 0)) {
+		if (dto.getWoPartStockId() != null && dto.getWoPartStockId() > 0) {
 			domain.setStock(stockDao.findOne(dto.getWoPartStockId()));
 		}
 	}
@@ -564,24 +587,24 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = workOrderDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = workOrderDao.findAll(input, specification);
 		} else {
-			Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
+			final Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
 					AuthenticationUtil.getLoginSite().getSite());
 			domainOut = workOrderDao.findAll(input, specification);
 		}
-		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
 	public DataTablesOutput<WorkOrderDTO> findAllByProjectId(FocusDataTablesInput input, Integer id) throws Exception {
 		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("project").get("id"), id);
-		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
-		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<WorkOrder> specification = (root, query, cb) -> cb.equal(root.get("project").get("id"), id);
+		final DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		final DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -592,26 +615,26 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		DataTablesOutput<WorkOrder> domainOut;
 
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			Specification<WorkOrder> specification = (root, query, cb) -> {
+			final Specification<WorkOrder> specification = (root, query, cb) -> {
 				return getWorkOrderByDatePredicate(date, root, cb);
 			};
 			domainOut = workOrderDao.findAll(input, specification);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<WorkOrder> specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				Predicate predicate2 = getWorkOrderByDatePredicate(date, root, cb);
+			final Specification<WorkOrder> specification = (root, query, cb) -> {
+				final Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Predicate predicate2 = getWorkOrderByDatePredicate(date, root, cb);
 				return cb.and(predicate, predicate2);
 			};
 			domainOut = workOrderDao.findAll(input, specification);
 		} else {
-			Specification<WorkOrder> specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getWorkOrderByDatePredicate(date, root, cb);
+			final Specification<WorkOrder> specification = (root, query, cb) -> {
+				final Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				final Predicate predicate2 = getWorkOrderByDatePredicate(date, root, cb);
 				return cb.and(predicate, predicate2);
 			};
 			domainOut = workOrderDao.findAll(input, specification);
 		}
-		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -621,13 +644,13 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private void setWorkOrderFiles(WorkOrderResult result) throws Exception {
 
-		Set<WorkOrderFile> workOrderFiles = new HashSet<>();
+		final Set<WorkOrderFile> workOrderFiles = new HashSet<>();
 
-		if ((result.getDtoEntity().getFiles() != null) && (result.getDtoEntity().getFiles().size() > 0)) {
+		if (result.getDtoEntity().getFiles() != null && result.getDtoEntity().getFiles().size() > 0) {
 
-			Set<WorkOrderFile> currentWorkOrderFiles = result.getDomainEntity().getWorkOrderFiles();
+			final Set<WorkOrderFile> currentWorkOrderFiles = result.getDomainEntity().getWorkOrderFiles();
 
-			for (WorkOrderFileDTO workOrderFileDTO : result.getDtoEntity().getFiles()) {
+			for (final WorkOrderFileDTO workOrderFileDTO : result.getDtoEntity().getFiles()) {
 
 				WorkOrderFile workOrderFile;
 
@@ -649,14 +672,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setWoNotes(WorkOrderResult result) throws Exception {
-		Set<WorkOrderNotes> workOrderNotes = new HashSet<>();
-		List<WorkOrderNoteDTO> workOrderNoteDTOs = result.getDtoEntity().getWorkOrderNoteDTOs();
+		final Set<WorkOrderNotes> workOrderNotes = new HashSet<>();
+		final List<WorkOrderNoteDTO> workOrderNoteDTOs = result.getDtoEntity().getWorkOrderNoteDTOs();
 
-		if ((workOrderNoteDTOs != null) && (workOrderNoteDTOs.size() > 0)) {
-			Set<WorkOrderNotes> currentNotes = result.getDomainEntity().getWorkOrderNotes();
+		if (workOrderNoteDTOs != null && workOrderNoteDTOs.size() > 0) {
+			final Set<WorkOrderNotes> currentNotes = result.getDomainEntity().getWorkOrderNotes();
 			WorkOrderNotes workOrderNote;
-			for (WorkOrderNoteDTO noteDTO : workOrderNoteDTOs) {
-				if ((currentNotes != null) && (currentNotes.size() > 0)) {
+			for (final WorkOrderNoteDTO noteDTO : workOrderNoteDTOs) {
+				if (currentNotes != null && currentNotes.size() > 0) {
 					workOrderNote = currentNotes.stream().filter((x) -> x.getId().equals(noteDTO.getId())).findAny()
 							.orElseGet(WorkOrderNotes::new);
 				} else {
@@ -677,10 +700,10 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	private void setWoStatus(WorkOrderResult result) {
 
-		Set<WorkOrderNotes> currentNotes = result.getDomainEntity().getWorkOrderNotes();
+		final Set<WorkOrderNotes> currentNotes = result.getDomainEntity().getWorkOrderNotes();
 
 		if (result.getDtoEntity().getCurrentStatusId() != null && currentNotes != null && currentNotes.size() > 0) {
-			Optional<WorkOrderNotes> optionalWorkOrderNote = currentNotes.stream()
+			final Optional<WorkOrderNotes> optionalWorkOrderNote = currentNotes.stream()
 					.filter((x) -> x.getId() != null && x.getId().equals(result.getDtoEntity().getCurrentStatusId()))
 					.findAny();
 			if (optionalWorkOrderNote.isPresent()) {
@@ -692,7 +715,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setStatusChangeNote(WorkOrderResult result, Set<WorkOrderNotes> currentNotes) {
-		WorkOrderNotes workOrderNote = new WorkOrderNotes();
+		final WorkOrderNotes workOrderNote = new WorkOrderNotes();
 		workOrderNote.setNotes("Work Order Start Status is Set as " + result.getDtoEntity().getWorkOrderStatus());
 		workOrderNote.setNoteDate(new Date());
 		workOrderNote.setWorkOrderStatus(result.getDtoEntity().getWorkOrderStatus());
@@ -705,9 +728,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public void workorderFileDownload(Integer refId, HttpServletResponse response) throws Exception {
 		if (refId != null) {
-			WorkOrderFile file = workOrderDao.findByFileId(refId);
-			int index = file.getFileLocation().lastIndexOf("\\");
-			String fileName = file.getFileLocation().substring(index + 1);
+			final WorkOrderFile file = workOrderDao.findByFileId(refId);
+			final int index = file.getFileLocation().lastIndexOf("\\");
+			final String fileName = file.getFileLocation().substring(index + 1);
 			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
 		}
 	}
@@ -720,7 +743,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		try {
 			amazonS3ObjectUtil.uploadS3Object(key, file);
 			return key;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -728,25 +751,25 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 
 	@Override
 	public RestResult<String> findCurrentWorkOrderCode(Integer businessId) {
-		RestResult<String> result = new RestResult<>();
+		final RestResult<String> result = new RestResult<>();
 		try {
-			if ((businessId != null) && (businessId > 0)) {
+			if (businessId != null && businessId > 0) {
 
-				Business business = businessDao.findById(businessId);
+				final Business business = businessDao.findById(businessId);
 
-				List<WorkOrder> lastInsertwo = workOrderDao.findLastInsertWoByBusiness(businessId);
+				final List<WorkOrder> lastInsertwo = workOrderDao.findLastInsertWoByBusiness(businessId);
 
-				StringBuilder code = new StringBuilder("WO/" + String.format("%03d", business.getId()));
+				final StringBuilder code = new StringBuilder("WO/" + String.format("%03d", business.getId()));
 
-				if ((lastInsertwo != null) && (lastInsertwo.size() > 0)) {
-					String str[] = lastInsertwo.get(0).getCode().split("/");
+				if (lastInsertwo != null && lastInsertwo.size() > 0) {
+					final String str[] = lastInsertwo.get(0).getCode().split("/");
 					code.append("/" + String.format("%05d", Integer.parseInt(str[2]) + 1));
 				} else {
 					code.append("/00001");
 				}
 				result.setData(code.toString());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			result.setStatus(ResultStatus.ERROR);
 			result.setMsg("Error Occured while code generation.");
 		}
@@ -757,10 +780,10 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	public DataTablesOutput<WorkOrderDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id)
 			throws Exception {
 		DataTablesOutput<WorkOrderDTO> out;
-		Specification<WorkOrder> specification = (root, query, cb) -> {
+		final Specification<WorkOrder> specification = (root, query, cb) -> {
 			return cb.equal(root.get("business").get("id"), id);
 		};
-		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(dataTablesInput, specification);
+		final DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(dataTablesInput, specification);
 		out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
@@ -768,12 +791,12 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public WorkOrderResult statusChange(Integer id, WorkOrderStatus status, String date, String note) throws Exception {
 
-		WorkOrderResult result = new WorkOrderResult(workOrderDao.findOne(id), findById(id));
+		final WorkOrderResult result = new WorkOrderResult(workOrderDao.findOne(id), findById(id));
 		try {
 			setStatusChangeData(result, status, date, note);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Work Order Status has Changed");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("ERROR! Status NOT changed! ");
@@ -790,7 +813,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	}
 
 	private void setStatus(WorkOrderResult result, WorkOrderStatus status, String date, String note) {
-		WorkOrderNotes workOrderNote = new WorkOrderNotes();
+		final WorkOrderNotes workOrderNote = new WorkOrderNotes();
 		workOrderNote.setNotes(note);
 		workOrderNote.setNoteDate(DateUtil.getDateObj(date));
 		workOrderNote.setWorkOrder(result.getDomainEntity());
@@ -799,18 +822,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		workOrderNote.setIsDeleted(false);
 		result.getDomainEntity().getWorkOrderNotes().add(workOrderNote);
 		result.getDomainEntity().setCurrentStatus(workOrderNote);
-		WorkOrderState workOrderState = new WorkOrderState();
+		final WorkOrderState workOrderState = new WorkOrderState();
 		result.getDtoEntity().setPreviousWorkOrderStatus(result.getDtoEntity().getWorkOrderStatus());
 		result.getDtoEntity().setWorkOrderStatus(status);
 		workOrderState.setNotificationStateType(result.getDtoEntity(), emailAndNotificationSender);
 	}
 
 	private void updatePartStocks(WorkOrderResult result, WorkOrderStatus status) {
-		if ((result.getDtoEntity().getWorkOrderStatus() == WorkOrderStatus.OPEN) && (status == WorkOrderStatus.APPROVED)
-				&& (result.getDomainEntity().getWorkOrderParts() != null)) {
-			WorkOrder workOrder = workOrderDao.findOne(result.getDomainEntity().getId());
-			for (WorkOrderPart workOrderPart : workOrder.getWorkOrderParts()) {
-				Stock stock = workOrderPart.getStock();
+		if (result.getDtoEntity().getWorkOrderStatus() == WorkOrderStatus.OPEN && status == WorkOrderStatus.APPROVED
+				&& result.getDomainEntity().getWorkOrderParts() != null) {
+			final WorkOrder workOrder = workOrderDao.findOne(result.getDomainEntity().getId());
+			for (final WorkOrderPart workOrderPart : workOrder.getWorkOrderParts()) {
+				final Stock stock = workOrderPart.getStock();
 				stock.setCurrentQuantity(
 						stock.getCurrentQuantity().subtract(BigDecimal.valueOf(workOrderPart.getActualQuantity())));
 				stockDao.save(stock);
@@ -831,14 +854,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 			};
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				Predicate predicate2 = getOpenWorkOrderPredicate(root, cb);
+				final Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Predicate predicate2 = getOpenWorkOrderPredicate(root, cb);
 				return cb.and(predicate, predicate2);
 			};
 		} else {
 			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getOpenWorkOrderPredicate(root, cb);
+				final Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				final Predicate predicate2 = getOpenWorkOrderPredicate(root, cb);
 				return cb.and(predicate, predicate2);
 			};
 
@@ -864,14 +887,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 			};
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				Predicate predicate2 = getHighPriorityWorkOrderPredicate(root, cb);
+				final Predicate predicate = cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Predicate predicate2 = getHighPriorityWorkOrderPredicate(root, cb);
 				return cb.and(predicate, predicate2);
 			};
 		} else {
 			specification = (root, query, cb) -> {
-				Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
-				Predicate predicate2 = getHighPriorityWorkOrderPredicate(root, cb);
+				final Predicate predicate = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				final Predicate predicate2 = getHighPriorityWorkOrderPredicate(root, cb);
 				return cb.and(predicate, predicate2);
 			};
 
@@ -887,18 +910,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public DataTablesOutput<WorkOrderDTO> findAllOpenWorkOder(FocusDataTablesInput input) throws Exception {
 		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<WorkOrder> specification = getAllOpenWorkOder();
-		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
-		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<WorkOrder> specification = getAllOpenWorkOder();
+		final DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		final DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
 	public DataTablesOutput<WorkOrderDTO> findAllHighPriorityWorkOder(FocusDataTablesInput input) throws Exception {
 		WorkOrderSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<WorkOrder> specification = (root, query, cb) -> getHighPriorityWorkOrderPredicate(root, cb);
-		DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
-		DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<WorkOrder> specification = (root, query, cb) -> getHighPriorityWorkOrderPredicate(root, cb);
+		final DataTablesOutput<WorkOrder> domainOut = workOrderDao.findAll(input, specification);
+		final DataTablesOutput<WorkOrderDTO> out = WorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 

@@ -1722,6 +1722,9 @@
                     $(tr).attr(data.DT_RowAttr);
                 }
 
+                $(tr).attr("title", settings.aoRowProperty != undefined ? settings.aoRowProperty.sTooltip : "")
+                $(tr).addClass(settings.aoRowProperty != undefined ? settings.aoRowProperty.sClassName : ""); 
+                
                 if (data.DT_RowData) {
                     $(tr).data(data.DT_RowData);
                 }
@@ -11791,7 +11794,7 @@
             }, 
 
             "aoRowProperty" : {
-                "sClassName" : "dtTr-editable tooltips",
+                "sClassName" : "",
                 "sTooltip" : ""
             }
         };
@@ -13612,7 +13615,7 @@
             },
 
             "aoRowProperty" : {
-                "sClassName" : "",
+                "sClassName" : "dtTr-editable tooltips",
                 "sTooltip" : ""
             }
         };

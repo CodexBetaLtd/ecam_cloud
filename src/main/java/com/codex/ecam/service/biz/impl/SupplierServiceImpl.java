@@ -10,6 +10,7 @@ import javax.persistence.criteria.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -61,7 +62,7 @@ public class SupplierServiceImpl implements SupplierService {
 	private SupplierDTO getDTOById(Integer id) throws SupplierException {
 		try {
 			return SupplierMapper.getInstance().domainToDto(getEntityById(id));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new SupplierException("ERROR! Supplier mapper not worked!");
 		}
 	}
@@ -69,19 +70,19 @@ public class SupplierServiceImpl implements SupplierService {
 	private Supplier getEntityById(Integer id) throws SupplierException {
 		try {
 			return supplierDao.findOne(id);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new SupplierException("ERROR! Supplier FETCH not completed.!");
 		}
 	}
 
 	@Override
 	public SupplierResult newSupplier() {
-		SupplierResult result = new SupplierResult(null, new SupplierDTO());
+		final SupplierResult result = new SupplierResult(null, new SupplierDTO());
 		try {
 			result.setDtoEntity(getNewSupplier());
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! NEW Supplier Created.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 			result.setResultStatusError();
@@ -91,19 +92,19 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	private SupplierDTO getNewSupplier() {
-		SupplierDTO supplierDTO = new SupplierDTO();
+		final SupplierDTO supplierDTO = new SupplierDTO();
 		supplierDTO.setActive(Boolean.TRUE);
 		return supplierDTO;
 	}
 
 	@Override
 	public SupplierResult findById(Integer id) {
-		SupplierResult result = new SupplierResult(null, new SupplierDTO());
+		final SupplierResult result = new SupplierResult(null, new SupplierDTO());
 		try {
 			result.setDtoEntity(getDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Supplier found.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 			result.setResultStatusError();
@@ -115,12 +116,12 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public SupplierResult save(SupplierDTO dto) {
-		SupplierResult result = new SupplierResult(new Supplier(), dto);
+		final SupplierResult result = new SupplierResult(new Supplier(), dto);
 		try {
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Supplier save operation completed.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 			result.setResultStatusError();
@@ -155,17 +156,17 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Override
 	public SupplierResult update(SupplierDTO dto) {
-		SupplierResult result = new SupplierResult(null, dto);
+		final SupplierResult result = new SupplierResult(null, dto);
 		try {
 			result.setDomainEntity(getEntityById(dto.getId()));
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Supplier save operation completed.");
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			logger.error(e.getMessage());
 			result.addToErrorList("Supplier Already updated. Please Reload Supplier.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -195,7 +196,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	private void setCountry(SupplierResult result) {
-		if ((result.getDtoEntity().getCountryId() != null) && (result.getDtoEntity().getCountryId() > 0)) {
+		if (result.getDtoEntity().getCountryId() != null && result.getDtoEntity().getCountryId() > 0) {
 			result.getDomainEntity().setCountry(countryDao.findOne(result.getDtoEntity().getCountryId()));
 		}
 	}
@@ -208,19 +209,19 @@ public class SupplierServiceImpl implements SupplierService {
 
 	private void setVirtualBusiness(SupplierResult result) {
 		if (result.getDomainEntity().getId() == null) {
-		//	result.getDomainEntity().setVirtualBusiness(Boolean.TRUE);
+			//	result.getDomainEntity().setVirtualBusiness(Boolean.TRUE);
 		}
 	}
 
 	private void setBusiness(SupplierResult result) {
-		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+		if (result.getDtoEntity().getBusinessId() != null && result.getDtoEntity().getBusinessId() > 0) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 	private void setBusinessVirtual(SupplierResult result) {
 		if (result.getDtoEntity().getVirtualBusinessOwnerId() != null) {
 			//			Business businessOwner = AuthenticationUtil.getLoginUserBusiness();
-			Business businessOwner = businessDao.findOne(result.getDtoEntity().getVirtualBusinessOwnerId());
+			final Business businessOwner = businessDao.findOne(result.getDtoEntity().getVirtualBusinessOwnerId());
 			BusinessVirtual businessVirtual = businessVirtualDao.findByBusinessOwner(businessOwner.getId());
 			if (businessVirtual == null) {
 				businessVirtual = new BusinessVirtual();
@@ -232,29 +233,50 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	private void setBusinessClassification(SupplierResult result) throws BusinessClassificationException {
-		if ((result.getDtoEntity().getBusinessClassificationId() != null) && (result.getDtoEntity().getBusinessClassificationId() > 0)) {
+		if (result.getDtoEntity().getBusinessClassificationId() != null && result.getDtoEntity().getBusinessClassificationId() > 0) {
 			//result.getDomainEntity().setBusinessClassification(businessClassificationDao.findOne(result.getDtoEntity().getBusinessClassificationId()));
 		}
 	}
 
 	private void setCurrency(SupplierResult result) throws CurrencyException {
-		if ((result.getDtoEntity().getCurrencyId() != null) && (result.getDtoEntity().getCurrencyId() > 0)) {
+		if (result.getDtoEntity().getCurrencyId() != null && result.getDtoEntity().getCurrencyId() > 0) {
 			result.getDomainEntity().setCurrency(currencyDao.findById(result.getDtoEntity().getCurrencyId()));
 		}
 	}
 
 	@Override
 	public SupplierResult delete(Integer id) {
-		SupplierResult result = new SupplierResult(null, new SupplierDTO());
+		final SupplierResult result = new SupplierResult(null, new SupplierDTO());
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Supplier delete operation completed.");
-		} catch (SupplierException ex) {
+		} catch (final SupplierException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			logger.error(ex.getMessage());
 			result.addToErrorList("FAILED! Supplier delete operation NOT completed");
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public SupplierResult deleteMultiple(Integer[] ids) throws Exception {
+		final SupplierResult result = new SupplierResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				deleteEntityById(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Supplier(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Supplier(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
 		}
 		return result;
 	}
@@ -275,29 +297,29 @@ public class SupplierServiceImpl implements SupplierService {
 		} else {
 			domainOut = supplierDao.findAll(input, getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
 		}
-		DataTablesOutput<SupplierDTO> out = SupplierMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<SupplierDTO> out = SupplierMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
 	public List<SupplierDTO> findAllVirtualSupplierList() {
 		try {
-			List<Supplier> list = supplierDao.findAll(specAdminLevelVirtualSupplier());
+			final List<Supplier> list = supplierDao.findAll(specAdminLevelVirtualSupplier());
 			return SupplierMapper.getInstance().domainToDTOList(list);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	private Specification<Supplier> getSystemUserBusinessSpecification(Integer businessId) {
-		Specification<Supplier> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), businessId);
+		final Specification<Supplier> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), businessId);
 		return specification;
 	}
 
 	private Specification<Supplier> getGeneralUserBusinessSpecification(Integer id) {
-		Specification<Supplier> specification = (root, query, cb) -> {
-			Join<Business, Asset> joinAssetBusiness = root.joinList("assets");
+		final Specification<Supplier> specification = (root, query, cb) -> {
+			final Join<Business, Asset> joinAssetBusiness = root.joinList("assets");
 			return cb.equal(joinAssetBusiness.get("id"), id);
 		};
 		return specification;
@@ -314,7 +336,7 @@ public class SupplierServiceImpl implements SupplierService {
 				domainOut =  supplierDao.findAll(input, specSystmeLevelVirtualSupplier());
 			}
 			return SupplierMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return new DataTablesOutput<>();
@@ -324,18 +346,18 @@ public class SupplierServiceImpl implements SupplierService {
 	@Override
 	public List<SupplierDTO> findAllOriginalSupplierList() {
 		try {
-			List<Supplier> list = supplierDao.findAll(specOriginalSupplier());
+			final List<Supplier> list = supplierDao.findAll(specOriginalSupplier());
 			return SupplierMapper.getInstance().domainToDTOList(list);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	private Specification<Supplier> specSystmeLevelVirtualSupplier() {
-		Specification<Supplier> spec = (root, query, cb) -> {
-			Join<Business, BusinessVirtual> joinvirtualBusiness = root.join("businessVirtual");
-			List<Predicate> predicates = new ArrayList<>();
+		final Specification<Supplier> spec = (root, query, cb) -> {
+			final Join<Business, BusinessVirtual> joinvirtualBusiness = root.join("businessVirtual");
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
 			predicates.add(cb.equal(root.get("roleSupplier"), Boolean.TRUE));
 			predicates.add(cb.equal(joinvirtualBusiness.get("business"), AuthenticationUtil.getLoginUserBusiness()));
@@ -343,10 +365,10 @@ public class SupplierServiceImpl implements SupplierService {
 		};
 		return spec;
 	}
-	
+
 	private Specification<Supplier> specAdminLevelVirtualSupplier() {
-		Specification<Supplier> spec = (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+		final Specification<Supplier> spec = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
 			predicates.add(cb.equal(root.get("roleSupplier"), Boolean.TRUE));
 			return cb.and(predicates.toArray(new Predicate[0]));
@@ -357,9 +379,9 @@ public class SupplierServiceImpl implements SupplierService {
 	@Override
 	public DataTablesOutput<SupplierDTO> findAllOriginalSupplier(FocusDataTablesInput input) throws Exception {
 		try {
-			DataTablesOutput<Supplier> domainOut = supplierDao.findAll(input, specOriginalSupplier());
+			final DataTablesOutput<Supplier> domainOut = supplierDao.findAll(input, specOriginalSupplier());
 			return SupplierMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			return new DataTablesOutput<>();
@@ -367,8 +389,8 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	private Specification<Supplier> specOriginalSupplier() {
-		Specification<Supplier> spec = (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+		final Specification<Supplier> spec = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.FALSE));
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
@@ -376,7 +398,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
-	public List<SupplierDTO> findAllSupplierByUserLevel() {		
+	public List<SupplierDTO> findAllSupplierByUserLevel() {
 		List<SupplierDTO> supplierDTOs = null;
 		try {
 			Iterable<Supplier> suppliers = null;
@@ -386,12 +408,12 @@ public class SupplierServiceImpl implements SupplierService {
 				suppliers = supplierDao.findAll( getSystemUserBusinessSpecification(AuthenticationUtil.getLoginUserBusiness().getId()));
 			} else {
 				suppliers = supplierDao.findAll(getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
-			}			
+			}
 			supplierDTOs = SupplierMapper.getInstance().domainToDTOList(suppliers);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return supplierDTOs;
 	}
 

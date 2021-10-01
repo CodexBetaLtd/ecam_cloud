@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags" class="no-js">
 
 <div class="panel panel-default" th:fragment="homeview">
 
     <div class="panel-body">
+		
+		<div th:replace="template/messageview :: message"></div>
+		
         <table class="table table-striped table-bordered table-hover table-full-width" style="width: 100%;" id="assetBrandsTbl">
             <thead>
             <tr> 
-                <th class="first-col" style="width:10%;">#</th>
+                <th class="first-th" style="width:10%;">#</th>
                 <th style="width:80%;">Name</th> 
-                <th style="width:80%;">Business</th> 
-                <th class="last-col" style="width:10%;">More</th>
+                <th style="width:80%;">Business</th>
             </tr>
             </thead>
             <tbody>

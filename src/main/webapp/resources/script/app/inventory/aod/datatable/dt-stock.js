@@ -102,7 +102,7 @@ var AODStockSelectModal = function () {
  
         var tableId = 'tblAODStock';
 
-        var oTable = $('#' + tableId).dataTable({
+        var oTable = $('#' + tableId).DataTable({
             // processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -112,6 +112,7 @@ var AODStockSelectModal = function () {
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -120,14 +121,7 @@ var AODStockSelectModal = function () {
                 {data: 'warehouseName'},
                 {data: 'qtyOnHand'},
             ],
-            aoColumnDefs: [{
-                targets: 4, 
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.batchNo, row.warehouseId, row.warehouseName, row.qtyOnHand];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODStockSelectModal.setADOItemStock", data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -146,7 +140,26 @@ var AODStockSelectModal = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AODStockSelectModal.setADOItemStock",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "batchNo"
+                    }, {
+                        sName : "warehouseId"
+                    }, {
+                        sName : "warehouseName"
+                    }, {
+                        sName : "qtyOnHand"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -169,6 +182,7 @@ var AODStockSelectModal = function () {
         $("#itemStockWarehouseName").val(wharehouseName);
         $("#itemStockOnHandQty").val(qtyOnHand); 
         $("#itemStockQuantity").val(qtyOnHand); 
+        $('#aod-item-child-modal').modal("hide");
     };
 
     return {

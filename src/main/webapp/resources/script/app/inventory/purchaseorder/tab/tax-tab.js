@@ -13,11 +13,11 @@ var TaxTab = function() {
 			var url = '../purchaseorder/poTaxView';
 			$modal.load(url, '', function() {
 				dtPurchaseOrderTax.dtPOTaxList("tax_select_tbl",
-						"../restapi/tax/tabledata", "TaxTab.addTax");
+						"../restapi/tax/tabledata", "addToList");
 				$modal.modal();
 			});
 		}, 1000);
-	}
+	};
 
 	var addTax = function(id, name, order, value,taxType) {
 		var tax = {};
@@ -34,6 +34,7 @@ var TaxTab = function() {
 	};
 
 	var populatePOTax = function() {
+	    
 		$("#po-tax-tbl > tbody").html("");
 
 		if (taxes.length > 0) {

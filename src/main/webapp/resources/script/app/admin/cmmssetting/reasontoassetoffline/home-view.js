@@ -117,7 +117,8 @@ var MaintenanceTypeHome = function () {
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#maintenanceTypeTbl').dataTable({
+        
+        var oTable = $('#maintenanceTypeTbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
@@ -125,22 +126,25 @@ var MaintenanceTypeHome = function () {
             	pages: 5
             } ),            
             columns : [ {
+                orderable: false, 
+                searchable: false, 
+                width: "4%",
+                defaultContent: '',
+                className: 'select-checkbox'
+            },{
      			data : 'name'
      		}, {
      			data : 'description'
      		},{
      			data : 'color'
-     		},
-     		{
-     			data : 'id'
      		}],
-            "aoColumnDefs": [{
-            	"targets": 3,//index of column starting from 0
-                "data": "id", //this name should exist in your JSON response
-                "render": function ( data, type, full, meta ) {
-                    return ButtonUtil.getCmmsLookupTableBtnWithURL('maintenanceType', data);
-                }
-            }],
+            "aoColumnDefs": [],
+            dom : "<'row'<'col-sm-4 dtblmaintanancetype'><'col-sm-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+            initComplete : function() {
+                $("div.dtblmaintanancetype").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='miscellaneous-expense-type-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='miscellaneousexpensetypeDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
+            },
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -160,7 +164,19 @@ var MaintenanceTypeHome = function () {
           //  iDisplayLength: 10,
             bLengthChange: false,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination', 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "MaintenanceTypeHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
         });
         $('#maintenanceTypeTblWrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -174,12 +190,29 @@ var MaintenanceTypeHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });        
+        
+        DataTableUtil.deleteRowsFunc(oTable, "maintenanceTypeHomeDelete", "MaintenanceTypeHome.deleteMutiple", "id");
     };    
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../assetCategory/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#assetCategoryTab").empty().append(response);
+                AssetCategoryHome.init();
+            }
+        });
+    };
     
     return {
         //main function to initiate template pages
         init: function () {
         	runDataTable();
         }	
+    
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
     };
 }();

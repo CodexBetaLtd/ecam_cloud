@@ -32,6 +32,7 @@ import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.maintenance.task.Task;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.AssetCategoryResult;
+import com.codex.ecam.result.admin.AssetCategoryResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.util.AuthenticationUtil;
 import com.codex.ecam.util.search.asset.AssetCategoryPropertyMapper;
@@ -44,10 +45,10 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
 	@Autowired
 	private BusinessDao businessDao;
-	
+
 	@Autowired
 	private TaskDao taskDao;
-	
+
 
 	@Override
 	public DataTablesOutput<AssetCategoryDTO> findAll(FocusDataTablesInput input) throws Exception {
@@ -57,14 +58,14 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = assetCategoryDao.findAll(input);
 		} else {
-			Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = assetCategoryDao.findAll(input, specification);
 		}
 
 		try {
 			out = AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;
@@ -72,7 +73,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
 	@Override
 	public AssetCategoryDTO findById(Integer id) throws Exception {
-		AssetCategory domain = assetCategoryDao.findById(id);
+		final AssetCategory domain = assetCategoryDao.findById(id);
 		if (domain != null) {
 			return AssetCategoryMapper.getInstance().domainToDto(domain);
 		}
@@ -82,15 +83,36 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public AssetCategoryResult delete(Integer id) {
-		AssetCategoryResult result = new AssetCategoryResult(null, null);
+		final AssetCategoryResult result = new AssetCategoryResult(null, null);
 		try {
 			assetCategoryDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("AssetCategory Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Asset category Already Assigned. Please Remove from Assigned items and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AssetCategoryResult deleteMultiple(Integer[] ids) throws Exception {
+		final AssetCategoryResult result = new AssetCategoryResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				assetCategoryDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("AssetCategory(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("AssetCategory(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -100,14 +122,14 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public AssetCategoryResult update(AssetCategoryDTO dto) {
-		AssetCategoryResult result = new AssetCategoryResult(null, dto);
+		final AssetCategoryResult result = new AssetCategoryResult(null, dto);
 		try {
-			AssetCategory domain = assetCategoryDao.findById(dto.getId());
+			final AssetCategory domain = assetCategoryDao.findById(dto.getId());
 			result.setDomainEntity(domain);
 			;
 			saveOrUpdate(result);
 			result.addToMessageList("Asset Category Updated Successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -118,7 +140,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public AssetCategoryResult save(AssetCategoryDTO dto) {
-		AssetCategoryResult result = new AssetCategoryResult(new AssetCategory(), dto);
+		final AssetCategoryResult result = new AssetCategoryResult(new AssetCategory(), dto);
 		saveOrUpdate(result);
 		result.addToMessageList("AssetCategory Added Successfully.");
 		return result;
@@ -130,10 +152,10 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 			setAssetCategoryData(result);
 			assetCategoryDao.save(result.getDomainEntity());
 			result.updateDtoIdAndVersion();
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("AssetCategory Already updated. Please Reload Asset Category.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -146,17 +168,17 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	}
 
 	private void setTask(AssetCategoryDTO dto, AssetCategory domain) {
-		Set<AssetCategoryTask> assetCategoryTasks = new HashSet<>();
-		List<TaskDTO> taskDTOs = dto.getTasks();
-		if ((dto.getTasks() != null) && (dto.getTasks().size() > 0)) {
-			Set<AssetCategoryTask> currentassetCategoryTasks = domain.getTasks();
+		final Set<AssetCategoryTask> assetCategoryTasks = new HashSet<>();
+		final List<TaskDTO> taskDTOs = dto.getTasks();
+		if (dto.getTasks() != null && dto.getTasks().size() > 0) {
+			final Set<AssetCategoryTask> currentassetCategoryTasks = domain.getTasks();
 
-			for (TaskDTO taskDTO : taskDTOs) {
+			for (final TaskDTO taskDTO : taskDTOs) {
 				AssetCategoryTask assetCategoryTask=new AssetCategoryTask();
 
-				if ((currentassetCategoryTasks != null) && (currentassetCategoryTasks.size() > 0)) {
-					AssetCategoryTask optional = currentassetCategoryTasks.stream().filter((x) -> x.getId().equals(taskDTO.getAssetCatgoryTaskId())).findAny().orElseGet(AssetCategoryTask :: new);
-					assetCategoryTask = optional; 
+				if (currentassetCategoryTasks != null && currentassetCategoryTasks.size() > 0) {
+					final AssetCategoryTask optional = currentassetCategoryTasks.stream().filter((x) -> x.getId().equals(taskDTO.getAssetCatgoryTaskId())).findAny().orElseGet(AssetCategoryTask :: new);
+					assetCategoryTask = optional;
 				} else {
 					assetCategoryTask = new AssetCategoryTask();
 				}
@@ -171,16 +193,16 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	}
 
 	private Task createTask(TaskDTO taskDTO) {
-			Task task;
+		Task task;
 		if(taskDTO.getId()!=null){
 			task= taskDao.findOne(taskDTO.getId());
 		}else{
 			task=new Task();
-		}	
-		
+		}
+
 		try {
 			TaskMapper.getInstance().dtoToDomain(taskDTO, task);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		taskDao.save(task);
@@ -188,13 +210,13 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	}
 
 	private void setParent(AssetCategoryDTO dto, AssetCategory domain) {
-		if ((dto.getParentId() != null) && (dto.getParentId() > 0)) {
+		if (dto.getParentId() != null && dto.getParentId() > 0) {
 			domain.setParentAssetCategory(assetCategoryDao.findOne(dto.getParentId()));
 		}
 	}
 
 	private void setBusiness(AssetCategoryDTO dto, AssetCategory domain) {
-		if ((dto.getBusinessId() != null) && (dto.getBusinessId() > 0)) {
+		if (dto.getBusinessId() != null && dto.getBusinessId() > 0) {
 			domain.setBusiness(businessDao.findOne(dto.getBusinessId()));
 		}
 	}
@@ -207,7 +229,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	public List<AssetCategoryDTO> findByAssetCategoyType(AssetCategoryType type) {
 		List<AssetCategory> list = new ArrayList<AssetCategory>();
-		
+
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			list = assetCategoryDao.findByAssetCategoyType(type);
 		} else {
@@ -215,7 +237,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 		}
 		try {
 			return AssetCategoryMapper.getInstance().domainToDTOList(list);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -239,10 +261,10 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	public void saveAll(List<AssetCategoryDTO> allData) {
 
-		for (AssetCategoryDTO dto : allData) {
+		for (final AssetCategoryDTO dto : allData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 
 				e.printStackTrace();
 			}
@@ -270,7 +292,7 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 		domainOut = assetCategoryDao.findAll(input, specification);
 		try {
 			out = AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -280,17 +302,17 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 	@Override
 	public DataTablesOutput<AssetCategoryDTO> findByAssetCategoyTypeById(FocusDataTablesInput input, Integer id)
 			throws Exception {
-		Specification<AssetCategory> specification = (root, query, cb) -> cb.and(
+		final Specification<AssetCategory> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("parentAssetCategory").get("id"), id),
 				cb.equal(root.get("assetCategoryType"), AssetCategoryType.WAREHOUSE));
 
 		AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
 
-		DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input, specification);
+		final DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input, specification);
 		DataTablesOutput<AssetCategoryDTO> out = null;
 		try {
 			out = AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 

@@ -117,39 +117,31 @@ var UserSkillLevelHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#userSkillLevelTbl').dataTable().fnDestroy();
-		var oTable = $('#userSkillLevelTbl').dataTable( {
+		
+		var oTable = $('#userSkillLevelTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
-			"ajax" : $.fn.dataTable
-					.pipeline({
+			"ajax" : $.fn.dataTable.pipeline({
 						url : "../restapi/lookuptable/tabledataUserSkillLevel",
 						pages : 5
 					}),
 			columns : [
 					{ 
-						orderable: false, 
-						searchable: false, 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'skill'
 					}, {
 						data : 'description'
 					}, {
 						data : 'businessName'
-					}, { 
-						data : 'id'
-					} ],
-			"aoColumnDefs" : [ 
-					{
-						"targets" : 4,//index of column starting from 0
-						"data" : "id", //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL('userskilllevel', data, 'UserSkillLevelHome');
-						}
-					} ],
+					}],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -165,7 +157,10 @@ var UserSkillLevelHome = function() {
 			],
 			dom : "<'row'<'col-sm-4 dtbluserskilllevel'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtbluserskilllevel").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='user-skill-level-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtbluserskilllevel").html(
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='user-skill-level-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='userSkillDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
@@ -173,6 +168,18 @@ var UserSkillLevelHome = function() {
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
 			sPaging : 'pagination', 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "UserSkillLevelHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           }, 
 		});
 
 		$('#userSkillLevelTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
@@ -187,6 +194,8 @@ var UserSkillLevelHome = function() {
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+
+        DataTableUtil.deleteRowsFunc(oTable, "userSkillDelete", "UserSkillLevelHome.deleteMutiple", "id");
 	};
 	
 	var addModal = function() {
@@ -269,6 +278,17 @@ var UserSkillLevelHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../userskilllevel/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseThirteen").find('.panel-body').empty().append(response);
+                UserSkillLevelHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -279,23 +299,33 @@ var UserSkillLevelHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

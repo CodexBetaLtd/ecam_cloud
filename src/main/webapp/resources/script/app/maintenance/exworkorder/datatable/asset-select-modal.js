@@ -1,8 +1,6 @@
-var StockSelectModal = function () {
+﻿//Todo: Use same ASSET modal for this (ss)
+var AssetSelectModel = function () {
 
-    /**********************************************************
-     * Init Datatable
-     * ********************************************************/
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -10,6 +8,8 @@ var StockSelectModal = function () {
             pages: 5, // number of pages to cache
             url: '', // script url
             data: null, // function or object with parameters to send to the
+            // server
+            // matching how `ajax.data` works in DataTables
             method: 'GET' // Ajax HTTP method
         }, opts);
 
@@ -27,13 +27,20 @@ var StockSelectModal = function () {
             var requestEnd = requestStart + requestLength;
 
             if (settings.clearCache) {
+                // API requested that the cache be cleared
                 ajax = true;
                 settings.clearCache = false;
-            } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
+            } else if (cacheLower < 0 || requestStart < cacheLower
+                || requestEnd > cacheUpper) {
+                // outside cached data - need to make a request
                 ajax = true;
-            } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)
-                || JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns)
-                || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)) {
+            } else if (JSON.stringify(request.order) !== JSON
+                    .stringify(cacheLastRequest.order)
+                || JSON.stringify(request.columns) !== JSON
+                    .stringify(cacheLastRequest.columns)
+                || JSON.stringify(request.search) !== JSON
+                    .stringify(cacheLastRequest.search)) {
+                // properties changed (ordering, columns, searching)
                 ajax = true;
             }
 
@@ -43,7 +50,8 @@ var StockSelectModal = function () {
             if (ajax) {
                 // Need data from the server
                 if (requestStart < cacheLower) {
-                    requestStart = requestStart - (requestLength * (conf.pages - 1));
+                    requestStart = requestStart
+                        - (requestLength * (conf.pages - 1));
 
                     if (requestStart < 0) {
                         requestStart = 0;
@@ -56,12 +64,19 @@ var StockSelectModal = function () {
                 request.start = requestStart;
                 request.length = requestLength * conf.pages;
 
+                // Provide the same `data` options as DataTables.
                 if ($.isFunction(conf.data)) {
+                    // As a function it is executed with the data object as an
+                    // arg
+                    // for manipulation. If an object is returned, it is used as
+                    // the
+                    // data object to submit
                     var d = conf.data(request);
                     if (d) {
                         $.extend(request, d);
                     }
                 } else if ($.isPlainObject(conf.data)) {
+                    // As an object, the data given extends the default
                     $.extend(request, conf.data);
                 }
 
@@ -95,78 +110,81 @@ var StockSelectModal = function () {
         }
     };
 
-    $.fn.dataTable.Api.register('clearPipeline()', function () {
-        return this.iterator('table', function (settings) {
-            settings.clearCache = true;
-        });
-    });
+    var initDataTable = function () {
 
-    /**********************************************************
-     * Part Select Datatable
-     * ********************************************************/
-
-    var initStockSelectTable = function (assetId, func) {
-        var oTable = $('#wo_asset_stock_tbl').dataTable({
+        var oTable = $('#asset_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/stock/stockByAsset",
-                pages: 5,
-                data: function (d) {
-                    d.assetId = assetId;
-                }
+                url: "../restapi/asset/tabledata",
+                pages: 5
             }),
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            },
-                {data: 'site'},
-                {data: 'partName'},
-                {data: 'minQty'},
-                {data: 'qtyOnHand'}
-            ],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-//                	var vars = [data, EncodeDecodeComponent.getBase64().encode(row.partName), row.partId, EncodeDecodeComponent.getBase64().encode(row.site)];
-                    var vars = [data, row.partName, row.partId, row.site];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
+            }, {
+                data: 'name'
+            }, {
+                data: 'code'
             }],
+            aoColumnDefs: [],
             oLanguage: {
-                sLengthMenu: "Show _MENU_ Rows",
+                sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
                 oPaginate: {
                     sPrevious: "&laquo;",
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[1, 'asc']],
-            aLengthMenu: [[5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]],
+            aaSorting: [
+                [1, 'asc']
+            ],
+            aLengthMenu: [
+                [5, 10, 15, 20, -1],
+                [5, 10, 15, 20, "All"] // change per page values here
+            ],
+            // set the initial value
+            //  iDisplayLength: 5,
+            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetAdd.addAsset",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },{
+                        sName : "code"
+                    }
+                ],
+            },
         });
-        $('#wo_asset_stock_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#wo_asset_stock_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#wo_asset_stock_tbl_wrapper .dataTables_length select').select2();
-        $('#wo_asset_stock_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#asset_tbl_wrapper .dataTables_length select').select2();
+        $('#asset_tbl_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+
     };
+
 
     return {
-        init: function (assetId, func) {
-            initStockSelectTable(assetId, func);
+        init: function () {
+            initDataTable();
         }
-    };
 
+    };
 }();

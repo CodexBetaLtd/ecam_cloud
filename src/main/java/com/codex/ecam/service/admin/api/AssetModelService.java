@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.AssetModelDTO;
@@ -22,5 +22,7 @@ public interface AssetModelService {
 	List<AssetModelDTO> findAll();
 
 	List<AssetModelDTO> findByBrandId(Integer id);
+
+	AssetModelResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

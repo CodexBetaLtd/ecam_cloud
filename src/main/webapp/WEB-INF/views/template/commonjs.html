@@ -12,7 +12,6 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.cookie.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/sweetalert.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/active-menu.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/colResizable-1.6.js}"></script>
        
     <script type="text/javascript" th:src="@{/resources/script/app/notification.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
@@ -33,8 +32,13 @@
 </div> 
 
 <div th:fragment="commonjstables">
+    <script type="text/javascript" th:src="@{/resources/script/libs/colResizable-1.6.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.responsive.min.js}"></script>  
+	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.select.min.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/libs/ColReorderWithResize.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.buttons.min.js}"></script> 
-	<script type="text/javascript" th:src="@{/resources/script/libs/buttons.colVis.min.js}"></script>   
-    <script type="text/javascript" th:src="@{/resources/script/app/util/datatable-util.js}"></script> 
+	<script type="text/javascript" th:src="@{/resources/script/libs/buttons.colVis.min.js}"></script>  
+    <script type="text/javascript" th:src="@{/resources/script/app/util/datatable-util.js}"></script>  
 </div>

@@ -111,8 +111,11 @@ var InboxNotification = function () {
     });
 
     var dtInbox = function () {
+        
         var tableId = "tbl_notification_list";
+        
         $('#' + tableId).dataTable().fnDestroy();
+        
         var oTable = $('#' + tableId).DataTable({
             "processing": true,
             "serverSide": true,

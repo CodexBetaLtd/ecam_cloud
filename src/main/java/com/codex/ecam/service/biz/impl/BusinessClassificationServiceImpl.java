@@ -15,6 +15,7 @@ import com.codex.ecam.dto.biz.business.BusinessClassificationDTO;
 import com.codex.ecam.mappers.admin.BusinessClassificationMapper;
 import com.codex.ecam.model.biz.business.BusinessClassification;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.admin.AccountResult;
 import com.codex.ecam.result.admin.BusinessClassificationResult;
 import com.codex.ecam.service.biz.api.BusinessClassificationService;
 
@@ -26,10 +27,10 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public List<BusinessClassificationDTO> findAll() {
-		Iterable<BusinessClassification> domainList = businessClassificationDao.findAll();
+		final Iterable<BusinessClassification> domainList = businessClassificationDao.findAll();
 		try {
 			return BusinessClassificationMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -37,11 +38,11 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public DataTablesOutput<BusinessClassificationDTO> findAllDataTable(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<BusinessClassification> domainOut = businessClassificationDao.findAll(input);
+		final DataTablesOutput<BusinessClassification> domainOut = businessClassificationDao.findAll(input);
 		DataTablesOutput<BusinessClassificationDTO> out = null;
 		try {
 			out =BusinessClassificationMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -50,7 +51,7 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public BusinessClassificationDTO findById(Integer id) throws Exception {
-		BusinessClassification domain = businessClassificationDao.findById(id);
+		final BusinessClassification domain = businessClassificationDao.findById(id);
 		if (domain != null) {
 			return BusinessClassificationMapper.getInstance().domainToDto(domain);
 		}
@@ -59,15 +60,36 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public BusinessClassificationResult delete(Integer id) {
-		BusinessClassificationResult result = new BusinessClassificationResult(null, null);
+		final BusinessClassificationResult result = new BusinessClassificationResult(null, null);
 		try {
 			businessClassificationDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Business Classification Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Business classification Already Assigned. Please Remove from Assigned Business and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public BusinessClassificationResult deleteMultiple(Integer[] ids) throws Exception {
+		final BusinessClassificationResult result = new BusinessClassificationResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				businessClassificationDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Business Classification(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Business Classification(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -76,14 +98,14 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public BusinessClassificationResult save(BusinessClassificationDTO dto) throws Exception {
-		BusinessClassificationResult result = createBusinessClassificationResult(dto);
+		final BusinessClassificationResult result = createBusinessClassificationResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Account Already updated. Please Reload Account.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -100,7 +122,7 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	private BusinessClassificationResult createBusinessClassificationResult(BusinessClassificationDTO dto) {
 		BusinessClassificationResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new BusinessClassificationResult(businessClassificationDao.findOne(dto.getId()), dto);
 		} else {
 			result = new BusinessClassificationResult(new BusinessClassification(), dto);
@@ -120,10 +142,10 @@ public class BusinessClassificationServiceImpl implements BusinessClassification
 
 	@Override
 	public void saveAll(List<BusinessClassificationDTO> allDummyData) {
-		for (BusinessClassificationDTO dto : allDummyData) {
+		for (final BusinessClassificationDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}

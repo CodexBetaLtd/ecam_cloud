@@ -115,17 +115,18 @@ var PurchaseOrderAdd = function () {
             btnMethod: "PurchaseOrderAdd.poTaxLoad()",
         });
     };
-    var poTaxLoad=function(){
+    var poTaxLoad = function(){
         var $modal = $('#common-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../purchaseorder/poTaxView';
             $modal.load(url, '', function () {
-            	dtPurchaseOrderTax.dtPOTaxList("tax_select_tbl","../restapi/tax/tabledata","");
+            	dtPurchaseOrderTax.dtPOTaxList("tax_select_tbl","../restapi/tax/tabledata", "setData");
                 $modal.modal();
             });
         }, 1000);
-    }
+    };
+    
 	var setPurchaseorderCode = function(id) {
 		
         	$.ajax({

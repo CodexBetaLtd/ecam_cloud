@@ -115,7 +115,7 @@ var InventoryGroupHome = function () {
     });
 
     var dtInventoryGroup = function () {
-        var oTable = $('#tbl_inventory_group').dataTable({
+        var oTable = $('#tbl_inventory_group').DataTable({
             //"processing": true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -126,23 +126,15 @@ var InventoryGroupHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
+                    width: "2%",    
+                    defaultContent: '',
+                    className: 'select-checkbox',
                 }, {
                     data: 'name'
                 }, {
                     data: 'description'
                 }],
-            aoColumnDefs: [{
-                width: "2%",
-                targets: 3,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("inventorygroup", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -156,7 +148,15 @@ var InventoryGroupHome = function () {
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../inventorygroup/edit?id",
+            },
         });
         $('#tbl_inventory_group_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#tbl_inventory_group_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -166,6 +166,8 @@ var InventoryGroupHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "inventorygroup", "id"); 
     };
 
     return {

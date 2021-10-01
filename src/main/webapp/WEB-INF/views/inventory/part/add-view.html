@@ -40,8 +40,9 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div id="stock-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 10%; margin-top: 10%; height:100%; position: fixed;"></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
+			
+			<div id="stock-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 			<div class="container">
 
 				<!-- start: PAGE HEADER -->
@@ -254,8 +255,6 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
@@ -267,13 +266,16 @@
 	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/jstree/jstree.min.js}"></script>
-
+	
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+			<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/init.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/add-view.js}"></script>
 
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/bom-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/warranty-tab.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/business-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/personnel-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/po-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/log-tab.js}"></script>
@@ -281,17 +283,18 @@
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/stock-notification-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/tab/notification-tab.js}"></script>
 
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/asset-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/warranty-add-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/user-select-modal.js}"></script>
     <!--<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/business-add-modal.js}"></script>-->
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/stock-add-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/stock-notification-add-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/brand-select-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/model-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/part-category-add-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/notification-add-modal.js}"></script>
 
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/brand-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/modal/model-modal.js}"></script>
+    
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/user-dt.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/asset-dt.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/business-dt.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/site-dt.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/model-dt.js}"></script>
@@ -299,7 +302,6 @@
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/part-log-dt.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/part-category-dt.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/inventory/part/datatable/warehouse-dt.js}"></script>
-
 
     <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>

@@ -61,20 +61,20 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public DataTablesOutput<AssetCustomerDTO> findByAsset(FocusDataTablesInput input, Integer assetId) throws Exception {
 
-		Specification<AssetCustomer> specification = (root, query, cb) -> cb.equal(root.get("asset").get("id"), assetId);
+		final Specification<AssetCustomer> specification = (root, query, cb) -> cb.equal(root.get("asset").get("id"), assetId);
 		AssetCustomerSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<AssetCustomer> domainOut = assetCustomerDao.findAll(input, specification);
-		DataTablesOutput<AssetCustomerDTO> out = AssetCustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<AssetCustomer> domainOut = assetCustomerDao.findAll(input, specification);
+		final DataTablesOutput<AssetCustomerDTO> out = AssetCustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public CustomerDTO findById(Integer id) {
-		Business customer = customerDao.findOne(id);
+		final Business customer = customerDao.findOne(id);
 		try {
 			return CustomerMapper.getInstance().domainToDto(customer);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -82,15 +82,15 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerResult delete(Integer id) {
-		CustomerResult result = new CustomerResult(null, null);
+		final CustomerResult result = new CustomerResult(null, null);
 		try {
 			customerDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Customer Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Customer Already Assigned. Please Remove from Assigned items and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -100,15 +100,36 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public CustomerResult deleteMultiple(Integer[] ids) throws Exception {
+		final CustomerResult result = new CustomerResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				customerDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Customer(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Customer(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public CustomerResult save(CustomerDTO dto) throws Exception {
-		CustomerResult result = createCustomerResult(dto);
+		final CustomerResult result = createCustomerResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Customer Already updated. Please Reload Customer.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -121,7 +142,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private void saveOrUpdate(CustomerResult result) throws Exception {
 		CustomerMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setCustomerData(result);
-		Business customer = customerDao.save(result.getDomainEntity());
+		final Business customer = customerDao.save(result.getDomainEntity());
 		setAssetsToCustomer(customer.getId(), result.getDtoEntity());
 		result.updateDtoIdAndVersion();
 	}
@@ -135,7 +156,7 @@ public class CustomerServiceImpl implements CustomerService {
 	private void setBusinessVirtual(CustomerResult result) {
 		if (result.getDtoEntity().getBusinessId() != null) {
 			//			Business businessOwner = AuthenticationUtil.getLoginUserBusiness();
-			Business businessOwner = businessDao.findOne(result.getDtoEntity().getBusinessId());
+			final Business businessOwner = businessDao.findOne(result.getDtoEntity().getBusinessId());
 			BusinessVirtual businessVirtual = businessVirtualDao.findByBusinessOwner(businessOwner.getId());
 			if (businessVirtual == null) {
 				businessVirtual = new BusinessVirtual();
@@ -146,14 +167,14 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 	}
 	private void setCountry(CustomerResult result) {
-		if ( (result.getDtoEntity().getCountryId() != null) && (result.getDtoEntity().getCountryId() > 0) ) {
+		if ( result.getDtoEntity().getCountryId() != null && result.getDtoEntity().getCountryId() > 0 ) {
 			result.getDomainEntity().setCountry(countryDao.findById(result.getDtoEntity().getCountryId()));
 		}
 	}
 
 	private CustomerResult createCustomerResult(CustomerDTO dto) {
 		CustomerResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new CustomerResult(customerDao.findOne(dto.getId()), dto);
 		} else {
 			result = new CustomerResult(new Business(), dto);
@@ -171,19 +192,19 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	private void setAssetsToCustomer(Integer id, CustomerDTO dto) {
-		Business customer = customerDao.findOne(id);
+		final Business customer = customerDao.findOne(id);
 
-		Set<Asset> currentAssets = new HashSet<>();
+		final Set<Asset> currentAssets = new HashSet<>();
 
-		if ((dto.getAssets() != null) && (dto.getAssets().size() > 0)) {
+		if (dto.getAssets() != null && dto.getAssets().size() > 0) {
 
 			Asset asset;
-			Set<Asset> prevAssets = customer.getAssets();
+			final Set<Asset> prevAssets = customer.getAssets();
 
-			for (AssetDTO assetDTO : dto.getAssets()) {
+			for (final AssetDTO assetDTO : dto.getAssets()) {
 
-				if ((prevAssets != null) && (prevAssets.size() > 0)) {
-					Optional<Asset> optionalAsset = prevAssets.stream().filter((x) -> x.getId().equals(assetDTO.getId())).findAny();
+				if (prevAssets != null && prevAssets.size() > 0) {
+					final Optional<Asset> optionalAsset = prevAssets.stream().filter((x) -> x.getId().equals(assetDTO.getId())).findAny();
 
 					if (optionalAsset.isPresent()) {
 						asset = optionalAsset.get();
@@ -202,7 +223,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	private Asset createAsset(Business customer, AssetDTO assetDTO) {
-		Asset asset = assetDao.findOne(assetDTO.getId());
+		final Asset asset = assetDao.findOne(assetDTO.getId());
 		asset.setBusiness(customer);
 		createCustomerAsset(customer, asset);
 
@@ -211,9 +232,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private void createCustomerAsset(Business customer, Asset asset) {
 
-		Set<AssetBusiness> assetCustomers = asset.getAssetBusinesses();
+		final Set<AssetBusiness> assetCustomers = asset.getAssetBusinesses();
 
-		AssetBusiness assetCustomer =  new AssetBusiness();
+		final AssetBusiness assetCustomer =  new AssetBusiness();
 		assetCustomer.setAsset(asset);
 		assetCustomer.setBusiness(customer);;
 		assetCustomer.setIsDeleted(false);
@@ -222,13 +243,13 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	private void setContactsToCustomer(CustomerResult result) throws Exception {
-		Set<BusinessContact> customerContacts = new HashSet<>();
-		if ((result.getDtoEntity().getContacts() != null) && (result.getDtoEntity().getContacts().size() > 0)) {
+		final Set<BusinessContact> customerContacts = new HashSet<>();
+		if (result.getDtoEntity().getContacts() != null && result.getDtoEntity().getContacts().size() > 0) {
 
-			Set<BusinessContact> currentCustomerContacts = result.getDomainEntity().getContacts();
+			final Set<BusinessContact> currentCustomerContacts = result.getDomainEntity().getContacts();
 			BusinessContact customerContact;
 
-			for (ContactDTO contactDTO : result.getDtoEntity().getContacts()) {
+			for (final ContactDTO contactDTO : result.getDtoEntity().getContacts()) {
 				customerContact = getCustomerContact(result.getDomainEntity(), currentCustomerContacts, contactDTO);
 				setContactData(contactDTO, customerContact.getContact());
 				customerContacts.add(customerContact);
@@ -240,8 +261,8 @@ public class CustomerServiceImpl implements CustomerService {
 
 	private BusinessContact getCustomerContact(Business customer, Set<BusinessContact> currentCustomerContacts, ContactDTO contactDTO) {
 		BusinessContact customerContact;
-		if ((currentCustomerContacts != null) && (currentCustomerContacts.size() > 0)) {
-			Optional<BusinessContact> optionalCustomerContact = currentCustomerContacts.stream().filter((x) -> x.getContact().getId().equals(contactDTO.getId())).findAny();
+		if (currentCustomerContacts != null && currentCustomerContacts.size() > 0) {
+			final Optional<BusinessContact> optionalCustomerContact = currentCustomerContacts.stream().filter((x) -> x.getContact().getId().equals(contactDTO.getId())).findAny();
 			if (optionalCustomerContact.isPresent()) {
 				customerContact = optionalCustomerContact.get();
 			} else {
@@ -255,7 +276,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	private BusinessContact createCustomerContact(Business customer) {
-		BusinessContact customerContact = new BusinessContact();
+		final BusinessContact customerContact = new BusinessContact();
 		customerContact.setContact(new Contact());
 		customerContact.setBusiness(customer);
 		customerContact.setIsDeleted(false);
@@ -272,44 +293,44 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-    public DataTablesOutput<CustomerDTO> findAll(FocusDataTablesInput input) throws Exception {
-        DataTablesOutput<Business> domainOut;
-        CustomerSearchPropertyMapper.getInstance().generateDataTableInput(input);
-        if (AuthenticationUtil.isAuthUserAdminLevel()) {
-            Specification<Business> specification = (root, query, cb) ->
-                    cb.and(
-                            cb.equal(root.get("roleCustomer"), Boolean.TRUE),
-                            cb.isNotNull(root.get("roleCustomer"))
-                    );
-            domainOut = customerDao.findAll(input, specification);
-        } else {
-            Specification<Business> specification = (root, query, cb) ->
-                    cb.and(
-                            cb.equal(root.get("roleCustomer"), Boolean.TRUE),
-                            cb.isNotNull(root.get("roleCustomer")),
-                            cb.equal(root.get("virtualBusiness"), Boolean.TRUE)
-                    );
-            domainOut = customerDao.findAll(input, specification);
-        }
-        DataTablesOutput<CustomerDTO> out = CustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+	public DataTablesOutput<CustomerDTO> findAll(FocusDataTablesInput input) throws Exception {
+		DataTablesOutput<Business> domainOut;
+		CustomerSearchPropertyMapper.getInstance().generateDataTableInput(input);
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			final Specification<Business> specification = (root, query, cb) ->
+			cb.and(
+					cb.equal(root.get("roleCustomer"), Boolean.TRUE),
+					cb.isNotNull(root.get("roleCustomer"))
+					);
+			domainOut = customerDao.findAll(input, specification);
+		} else {
+			final Specification<Business> specification = (root, query, cb) ->
+			cb.and(
+					cb.equal(root.get("roleCustomer"), Boolean.TRUE),
+					cb.isNotNull(root.get("roleCustomer")),
+					cb.equal(root.get("virtualBusiness"), Boolean.TRUE)
+					);
+			domainOut = customerDao.findAll(input, specification);
+		}
+		final DataTablesOutput<CustomerDTO> out = CustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
-        return out;
-    }
+		return out;
+	}
 
-    @Override
-    public DataTablesOutput<CustomerDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id) throws Exception {
-        DataTablesOutput<CustomerDTO> out;
-        Specification<Business> specification = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
-            predicates.add(cb.equal(root.get("roleCustomer"), Boolean.TRUE));
-            predicates.add(cb.equal(root.get("businessVirtual").get("business").get("id"), id));
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
+	@Override
+	public DataTablesOutput<CustomerDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id) throws Exception {
+		DataTablesOutput<CustomerDTO> out;
+		final Specification<Business> specification = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			predicates.add(cb.equal(root.get("virtualBusiness"), Boolean.TRUE));
+			predicates.add(cb.equal(root.get("roleCustomer"), Boolean.TRUE));
+			predicates.add(cb.equal(root.get("businessVirtual").get("business").get("id"), id));
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
 
-        DataTablesOutput<Business> domainOut = customerDao.findAll(dataTablesInput, specification);
-        out = CustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-        return out;
-    }
+		final DataTablesOutput<Business> domainOut = customerDao.findAll(dataTablesInput, specification);
+		out = CustomerMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
 
 }

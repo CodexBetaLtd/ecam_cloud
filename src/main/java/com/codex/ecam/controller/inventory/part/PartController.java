@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.inventory.part;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +21,7 @@ import com.codex.ecam.dto.admin.AssetBrandDTO;
 import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.biz.part.PartDTO;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.PartResult;
 import com.codex.ecam.service.admin.api.MeterReadingUnitService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
@@ -49,8 +51,8 @@ public class PartController {
 	@Autowired
 	private MeterReadingUnitService meterReadingUnitService;
 
-    @Autowired
-    private StockLogService stockLogService;
+	@Autowired
+	private StockLogService stockLogService;
 
 	@Autowired
 	private AssetCategoryService assetCategoryService;
@@ -71,7 +73,7 @@ public class PartController {
 	public String getUserSelectView(Model model) {
 		return "inventory/part/modal/user-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/part-category-select-view", method = RequestMethod.GET)
 	public String getCaregorySelectView(Model model) {
 		return "inventory/part/modal/category/part-category-select-modal";
@@ -99,7 +101,7 @@ public class PartController {
 	public String getAssetSelectView(Model model) {
 		return "inventory/part/modal/asset-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/stock-add-view", method = RequestMethod.GET)
 	public String getStockAddView(Model model) {
 		return "inventory/part/modal/stock-add-modal";
@@ -135,20 +137,20 @@ public class PartController {
 	public String modelView(Model model) {
 		return "inventory/part/modal/model/model-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/model-add-view", method = RequestMethod.GET)
 	public String modelAddView(Model model) {
 		model.addAttribute("assetModel", new AssetModelDTO());
 		return "inventory/part/modal/model/model-add-modal";
 	}
-	
+
 	@RequestMapping(value = "/notification-add-modal-view", method = RequestMethod.GET)
-	public String notificationAddView(Model model) { 
+	public String notificationAddView(Model model) {
 		return "inventory/part/modal/notification-add-modal";
 	}
 
 	@RequestMapping(value = "/stock-notification-add-modal-view", method = RequestMethod.GET)
-	public String stockNotificationAddView(Model model) { 
+	public String stockNotificationAddView(Model model) {
 		return "inventory/part/modal/stock-notification-add-modal";
 	}
 
@@ -157,7 +159,7 @@ public class PartController {
 		try {
 			setCommonData(model, new PartDTO());
 			return "inventory/part/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/part/index";
 		}
@@ -166,10 +168,10 @@ public class PartController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			PartDTO dto = partService.findById(id);
+			final PartDTO dto = partService.findById(id);
 			setCommonData(model, dto);
 			return "inventory/part/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/part/index";
 		}
@@ -178,7 +180,7 @@ public class PartController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		PartResult result = partService.delete(id);
+		final PartResult result = partService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -191,7 +193,7 @@ public class PartController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("part") @Valid PartDTO part, @RequestParam("partImage") MultipartFile image, Model model) throws Exception {
 
-		PartResult result = partService.save(part, image);
+		final PartResult result = partService.save(part, image);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -203,13 +205,32 @@ public class PartController {
 		return "inventory/part/add-view";
 	}
 
-    private void setCommonData(Model model, PartDTO part) throws Exception {
-        model.addAttribute("part", part);
-        model.addAttribute("businessGroups", businessGropService.findAllByLevel());
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final PartResult result = partService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Part already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "inventory/part/home-view";
+	}
+
+	private void setCommonData(Model model, PartDTO part) throws Exception {
+		model.addAttribute("part", part);
+		model.addAttribute("businessGroups", businessGropService.findAllByLevel());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("ledgerDTOs", stockLogService.findAllStockByPartId(part.getId()));
 		model.addAttribute("partTypes", PartType.getPartTypes());
-        model.addAttribute("usageTypes", PartUsageType.getPartUsageTypes());
-    }
+		model.addAttribute("usageTypes", PartUsageType.getPartUsageTypes());
+	}
 
 }

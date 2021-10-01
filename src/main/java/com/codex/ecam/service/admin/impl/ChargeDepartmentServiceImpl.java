@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -41,18 +41,18 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = chargeDepartmentDao.findAll(input);
 		} else {
-			Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = chargeDepartmentDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<ChargeDepartmentDTO> out = ChargeDepartmentMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<ChargeDepartmentDTO> out = ChargeDepartmentMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public ChargeDepartmentDTO findById(Integer id) throws Exception {
-		ChargeDepartment domain = findEntityById(id);
+		final ChargeDepartment domain = findEntityById(id);
 		if (domain != null) {
 			return ChargeDepartmentMapper.getInstance().domainToDto(domain);
 		}
@@ -61,15 +61,36 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 
 	@Override
 	public ChargeDepartmentResult delete(Integer id) {
-		ChargeDepartmentResult result = new ChargeDepartmentResult(null, null);
+		final ChargeDepartmentResult result = new ChargeDepartmentResult(null, null);
 		try {
 			chargeDepartmentDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Charge Department Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Charge Department Already Assigned. Please Remove from Assigned Charge Department and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ChargeDepartmentResult deleteMultiple(Integer[] ids) throws Exception {
+		final ChargeDepartmentResult result = new ChargeDepartmentResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				chargeDepartmentDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Charge Department(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Charge Department(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -78,14 +99,14 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 
 	@Override
 	public ChargeDepartmentResult save(ChargeDepartmentDTO dto) throws Exception {
-		ChargeDepartmentResult result = createAccountResult(dto);
+		final ChargeDepartmentResult result = createAccountResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Charge Department Already updated. Please Reload Charge Department.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -103,7 +124,7 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 
 	private ChargeDepartmentResult createAccountResult(ChargeDepartmentDTO dto) {
 		ChargeDepartmentResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new ChargeDepartmentResult(chargeDepartmentDao.findOne(dto.getId()), dto);
 		} else {
 			result = new ChargeDepartmentResult(new ChargeDepartment(), dto);
@@ -121,23 +142,23 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 	}
 
 	private void setBusiness(ChargeDepartmentResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
-	
+
 	@Override
 	public List<ChargeDepartmentDTO> findAll() {
 		try {
-			Iterable<ChargeDepartment> domainList; 
+			Iterable<ChargeDepartment> domainList;
 			if(AuthenticationUtil.isAuthUserAdminLevel()){
 				domainList = chargeDepartmentDao.findAll();
 			} else {
-				Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 				domainList = chargeDepartmentDao.findAll(specification);
-			} 
+			}
 			return ChargeDepartmentMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -147,14 +168,14 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 	public List<ChargeDepartmentDTO> findAllByBusiness(Integer id) {
 		try {
 			List<ChargeDepartmentDTO> dtoOut = new ArrayList<>();
-			Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), id);
-			
-			if( specification != null){  
-				List<ChargeDepartment> domainList = chargeDepartmentDao.findAll(specification);
+			final Specification<ChargeDepartment> specification = (root, query, cb) -> cb.equal(root.get("business"), id);
+
+			if( specification != null){
+				final List<ChargeDepartment> domainList = chargeDepartmentDao.findAll(specification);
 				dtoOut = ChargeDepartmentMapper.getInstance().domainToDTOList(domainList);
-			} 
+			}
 			return dtoOut;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -162,10 +183,10 @@ public class ChargeDepartmentServiceImpl implements ChargeDepartmentService {
 
 	@Override
 	public void saveAll(List<ChargeDepartmentDTO> list) {
-		for (ChargeDepartmentDTO dto : list) {
+		for (final ChargeDepartmentDTO dto : list) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 
 				e.printStackTrace();
 			}

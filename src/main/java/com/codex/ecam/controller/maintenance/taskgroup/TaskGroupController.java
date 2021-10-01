@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +17,7 @@ import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.TaskType;
 import com.codex.ecam.dto.maintenance.task.TaskGroupDTO;
+import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.TaskGroupResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -55,10 +57,10 @@ public class TaskGroupController {
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String add(Model model, RedirectAttributes ra) {
 		try {
-			TaskGroupResult result = taskGroupService.newTaskGroup();
+			final TaskGroupResult result = taskGroupService.newTaskGroup();
 			setCommonData(model, result.getDtoEntity());
 			return "maintenance/taskgroup/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/taskGroup/index";
 		}
@@ -67,10 +69,10 @@ public class TaskGroupController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			TaskGroupResult result = taskGroupService.findById(id);
+			final TaskGroupResult result = taskGroupService.findById(id);
 			setCommonData(model, result.getDtoEntity());
 			return "maintenance/taskgroup/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error Occurred. Please Try again."));
 			return "redirect:/taskGroup/index";
 		}
@@ -79,7 +81,7 @@ public class TaskGroupController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("taskGroup") @Valid TaskGroupDTO dto, Model model, RedirectAttributes ra) {
 
-		TaskGroupResult result = taskGroupService.save(dto);
+		final TaskGroupResult result = taskGroupService.save(dto);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -93,7 +95,7 @@ public class TaskGroupController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		TaskGroupResult result = taskGroupService.delete(id);
+		final TaskGroupResult result = taskGroupService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -102,6 +104,25 @@ public class TaskGroupController {
 		}
 
 		return "redirect:/taskGroup/index";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final TaskGroupResult result = taskGroupService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Task Group already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "maintenance/taskgroup/home-view";
 	}
 
 	private void setCommonData(Model model, TaskGroupDTO dto) {

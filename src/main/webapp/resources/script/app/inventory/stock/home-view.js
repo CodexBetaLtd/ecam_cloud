@@ -115,8 +115,10 @@ var StockHome = function () {
     });
 
     var dtStockItem = function () {
+        
         var table_name = "tbl_stock_home_list";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -128,7 +130,7 @@ var StockHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "4%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
@@ -157,28 +159,7 @@ var StockHome = function () {
                 }
 
             ],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 6,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    return ButtonUtil.getCommonBtnView("StockHome.viewStock", data);
-                    var html = "<div align='center'>" +
-                        "<div class='btn-group'>" +
-                        "<a class='btn btn-xs btn-blue dropdown-toggle btn-sm' data-toggle='dropdown' href='#'>" +
-                        "<i class='fa fa-cog'></i> <span class='caret'></span>" +
-                        "</a>" +
-                        "<ul role='menu' class='dropdown-menu pull-right'>" +
-                        "<li role='presentation'><a href='../stock/item?stockId=" + data + "' type='button' role='menuitem' tabindex='-1'><i class='fa fa-edit'></i> View Batch </a></li>" +
-                        "</ul>" +
-                        "</div>" +
-                        "</div>";
-                    return html;
-                    // return "<button type='button' class='btn btn-block'>SSSSSSSSS</button>";
-                    // return ButtonUtil.getHomeBtnWithURL("aodReturn", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -192,7 +173,20 @@ var StockHome = function () {
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'os',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sFunc: 'StockHome.viewStock',
+                aoData:[  
+                    {
+                        sName : "id",
+                    }
+                ],
+            },
 
         });
         wapperSet(table_name)
@@ -221,9 +215,11 @@ var StockHome = function () {
         }, 1000);
     }
     return {
+        
         initDataTable: function () {
             dtStockItem();
         },
+        
         viewStock: function (id) {
             viewStock(id)
         }

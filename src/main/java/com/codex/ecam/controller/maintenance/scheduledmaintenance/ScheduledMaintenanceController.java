@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,6 +35,7 @@ import com.codex.ecam.dto.asset.AssetEventTypeAssetDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingDTO;
 import com.codex.ecam.dto.maintenance.scheduledmaintenance.ScheduledMaintenanceDTO;
 import com.codex.ecam.result.RestResult;
+import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.ScheduledMaintenanceResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.admin.api.AccountService;
@@ -157,8 +159,8 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/filemodelview", method = RequestMethod.GET)
 	public String getFileTableView(Model model) {
 		return "maintenance/scheduledmaintenance/modal/file-add-modal";
-	} 
-    
+	}
+
 	/*********************************************************************
 	 * CRUD Ops
 	 *********************************************************************/
@@ -168,7 +170,7 @@ public class ScheduledMaintenanceController {
 		try {
 			setCommonData(model, new ScheduledMaintenanceDTO());
 			return "maintenance/scheduledmaintenance/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/scheduledmaintenance/index";
 		}
@@ -177,10 +179,10 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			ScheduledMaintenanceDTO scheduleMaintenance = scheduledMaintenanceService.findById(id);
+			final ScheduledMaintenanceDTO scheduleMaintenance = scheduledMaintenanceService.findById(id);
 			setCommonData(model, scheduleMaintenance);
 			return "maintenance/scheduledmaintenance/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/scheduledmaintenance/index";
 		}
@@ -189,7 +191,7 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("scheduleMaintenance") @Valid ScheduledMaintenanceDTO scheduleMaintenance, Model model, RedirectAttributes ra) throws Exception {
 
-		ScheduledMaintenanceResult result = scheduledMaintenanceService.save(scheduleMaintenance);
+		final ScheduledMaintenanceResult result = scheduledMaintenanceService.save(scheduleMaintenance);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -205,7 +207,7 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		ScheduledMaintenanceResult result = scheduledMaintenanceService.delete(id);
+		final ScheduledMaintenanceResult result = scheduledMaintenanceService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -232,22 +234,22 @@ public class ScheduledMaintenanceController {
 
 	@RequestMapping(value = "/sitesbybusiness", method = RequestMethod.GET)
 	public @ResponseBody List<AssetDTO> selectParent(Integer id) throws Exception {
-		List<AssetDTO> assets = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
+		final List<AssetDTO> assets = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		return assets;
 	}
 
 	@RequestMapping(value = "/assetmeterreadingsbyasset/{assetId}", method = RequestMethod.GET)
 	public @ResponseBody List<AssetMeterReadingDTO> selectAssetMeterReadings(@PathVariable("assetId") Integer assetId) throws Exception {
-		List<AssetMeterReadingDTO> assetMeterReadings = assetService.findByMeterReadingByAssetId(assetId);
+		final List<AssetMeterReadingDTO> assetMeterReadings = assetService.findByMeterReadingByAssetId(assetId);
 		return assetMeterReadings;
 	}
 
 	@RequestMapping(value = "/asseteventtypeassetsbyasset/{assetId}", method = RequestMethod.GET)
 	public @ResponseBody List<AssetEventTypeAssetDTO> selectAssetEvent(@PathVariable("assetId") Integer assetId) throws Exception {
-		List<AssetEventTypeAssetDTO> assetEventTypeAssets = assetEventService.findAssetEventTypeAssetByAssetId(assetId);
+		final List<AssetEventTypeAssetDTO> assetEventTypeAssets = assetEventService.findAssetEventTypeAssetByAssetId(assetId);
 		return assetEventTypeAssets;
-	} 
-	
+	}
+
 	@RequestMapping(value = "/maintenance-type-by-business/{id}", method = RequestMethod.GET)
 	public @ResponseBody List<MaintenanceTypeDTO> maintenanceTypeByBusiness(@PathVariable("id")Integer id, Model model) {
 		return  maintenanceTypeService.findAllByBusiness(id);
@@ -256,7 +258,7 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/priorities-by-business/{id}", method = RequestMethod.GET)
 	public @ResponseBody List<PriorityDTO> prioritiesTypeByBusiness(@PathVariable("id")Integer id, Model model) {
 		return  priorityService.findAllByBusiness(id);
-	} 
+	}
 
 	@RequestMapping(value = "/accounts-by-business/{id}", method = RequestMethod.GET)
 	public @ResponseBody List<AccountDTO> accountsByBusiness(@PathVariable("id")Integer id, Model model) {
@@ -267,10 +269,10 @@ public class ScheduledMaintenanceController {
 	public @ResponseBody List<ChargeDepartmentDTO> departmentsTypeByBusiness(@PathVariable("id")Integer id, Model model) {
 		return  chargeDepartmentService.findAllByBusiness(id);
 	}
-	
+
 	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
 	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData,@RequestParam("fileRefId")String refId) throws Exception {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add(fileData.getContentType());
 		list.add(scheduledMaintenanceService.scheduledMaintenanceFileUpload(fileData, refId));
 		return list;
@@ -279,6 +281,25 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/download-file", method = RequestMethod.GET)
 	public void downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		scheduledMaintenanceService.scheduledMaintenanceFileDownload(id,response);
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final ScheduledMaintenanceResult result = scheduledMaintenanceService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Scheduled Maintenance already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "maintenance/scheduledmaintenance/home-view";
 	}
 
 	private void setCommonData(Model model, ScheduledMaintenanceDTO scheduledMaintenance) throws Exception {

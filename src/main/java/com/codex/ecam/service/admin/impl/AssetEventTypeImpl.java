@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -40,18 +40,18 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = assetEventTypeDao.findAll(input);
 		} else {
-			Specification<AssetEventType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<AssetEventType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = assetEventTypeDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<AssetEventTypeDTO> out = AssetEventTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<AssetEventTypeDTO> out = AssetEventTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public AssetEventTypeDTO findById(Integer id) throws Exception {
-		AssetEventType domain = assetEventTypeDao.findById(id);
+		final AssetEventType domain = assetEventTypeDao.findById(id);
 		if (domain != null) {
 			return AssetEventTypeMapper.getInstance().domainToDto(domain);
 		}
@@ -61,15 +61,36 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public AssetEventTypeResult delete(Integer id) {
-		AssetEventTypeResult result = new AssetEventTypeResult(null, null);
+		final AssetEventTypeResult result = new AssetEventTypeResult(null, null);
 		try {
 			assetEventTypeDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Asset Event Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Asset Event Already Assigned. Please Remove from Assigned Asset Event and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AssetEventTypeResult deleteMultiple(Integer[] ids) throws Exception {
+		final AssetEventTypeResult result = new AssetEventTypeResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				assetEventTypeDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Asset Event Type(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Asset Event Type(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -78,14 +99,14 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 
 	@Override
 	public AssetEventTypeResult save(AssetEventTypeDTO dto) throws Exception {
-		AssetEventTypeResult result = createAssetEventTypeResultt(dto);
+		final AssetEventTypeResult result = createAssetEventTypeResultt(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Asset Event Type updated. Please Reload Asset Event Type.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -104,7 +125,7 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 
 	private AssetEventTypeResult createAssetEventTypeResultt(AssetEventTypeDTO dto) {
 		AssetEventTypeResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new AssetEventTypeResult(assetEventTypeDao.findOne(dto.getId()), dto);
 		} else {
 			result = new AssetEventTypeResult(new AssetEventType(), dto);
@@ -121,17 +142,17 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 	}
 
 	private void setBusiness(AssetEventTypeResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public List<AssetEventTypeDTO> findAll() {
-		Iterable<AssetEventType> domainList = assetEventTypeDao.findAll();
+		final Iterable<AssetEventType> domainList = assetEventTypeDao.findAll();
 		try {
 			return AssetEventTypeMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -139,10 +160,10 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 
 	@Override
 	public void saveAll(List<AssetEventTypeDTO> list) {
-		for (AssetEventTypeDTO dto : list) {
+		for (final AssetEventTypeDTO dto : list) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 
 				e.printStackTrace();
 			}
@@ -157,11 +178,11 @@ public class AssetEventTypeImpl implements AssetEventTypeService {
 
 	@Override
 	public DataTablesOutput<AssetEventTypeDTO> getAssetEventTypeByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
-		
+
 		AssetEventTypeSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<AssetEventType> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), bizId);
-		DataTablesOutput<AssetEventType> domainOut = assetEventTypeDao.findAll(input, specification); 
-		DataTablesOutput<AssetEventTypeDTO> out = AssetEventTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<AssetEventType> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), bizId);
+		final DataTablesOutput<AssetEventType> domainOut = assetEventTypeDao.findAll(input, specification);
+		final DataTablesOutput<AssetEventTypeDTO> out = AssetEventTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}

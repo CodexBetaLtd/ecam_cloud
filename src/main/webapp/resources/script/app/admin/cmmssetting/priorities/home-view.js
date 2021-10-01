@@ -117,8 +117,10 @@ var PioritiesHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#prioritiesTbl').dataTable().fnDestroy();
-		var oTable = $('#prioritiesTbl').dataTable( {
+		
+		var oTable = $('#prioritiesTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable.pipeline({
@@ -128,10 +130,10 @@ var PioritiesHome = function() {
 			columns : [
 					{ 
 						orderable: false, 
-						searchable: false, 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+						searchable: false,
+		                width: "4%",
+	                    defaultContent: '',
+	                    className: 'select-checkbox'
 					}, {
 						data : 'name'
 					}, {
@@ -140,17 +142,8 @@ var PioritiesHome = function() {
 						data : 'color'
 					},{
 						data : 'businessName'
-					}, { 
-						data : 'id'
-					} ],
-			"aoColumnDefs" : [ 
-					{
-						"targets" : 5,//index of column starting from 0
-						"data" : "id", //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL('priorities', data, 'PioritiesHome');
-						}
-					} ],
+					}],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -165,7 +158,10 @@ var PioritiesHome = function() {
 			],
 			dom : "<'row'<'col-sm-4 dtblpriorities'><'col-sm-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtblpriorities").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='priorities-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblpriorities").html(
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='priorities-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='prioritiesDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			// set the initial value
 			bAutoWidth : false,
@@ -173,7 +169,19 @@ var PioritiesHome = function() {
 			iDisplayLength : 10,
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
-			sPaging : 'pagination',
+			sPaging : 'pagination', 
+			select: {
+                style:    'multi',
+                selector: 'td:first-child',
+			},
+			rowClick : {
+                sFunc: "PioritiesHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+			},
 		});
 		$('#prioritiesTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
@@ -181,13 +189,14 @@ var PioritiesHome = function() {
 		// modify table per page dropdown
 		$('#prioritiesTbl_wrapper .dataTables_length select').select2();
 		// initialzie select2 dropdown
-		$('#prioritiesTbl_columnToggler input[type="checkbox"]').change(
-				function() {
-					/* Get the DataTables object again - this is not a recreation, just a get of the object */
-					var iCol = parseInt($(this).attr("data-column"));
-					var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-					oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-				});
+		$('#prioritiesTbl_columnToggler input[type="checkbox"]').change(function() {
+			/* Get the DataTables object again - this is not a recreation, just a get of the object */
+			var iCol = parseInt($(this).attr("data-column"));
+			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+		});
+        
+        DataTableUtil.deleteRowsFunc(oTable, "prioritiesDelete", "PioritiesHome.deleteMutiple", "id");
 	};
 	
 	var addModal = function() {
@@ -272,6 +281,17 @@ var PioritiesHome = function() {
 		});
 
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../priorities/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseNine").find('.panel-body').empty().append(response);
+                PioritiesHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -282,23 +302,33 @@ var PioritiesHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

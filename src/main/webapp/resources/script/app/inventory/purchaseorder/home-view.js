@@ -115,7 +115,10 @@ var PurchaseOrder = function () {
     });
 
     var runDataTable = function () {
-        var oTable = $('#purchase_order_tbl').dataTable({
+
+        $('#purchase_order_tbl').dataTable().fnDestroy();
+        
+        var oTable = $('#purchase_order_tbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline({
@@ -126,10 +129,9 @@ var PurchaseOrder = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
                 }, {
                     data: 'code'
                 }, {
@@ -139,15 +141,7 @@ var PurchaseOrder = function () {
                         orderable: false,
                         searchable: false,
                 }],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("purchaseorder", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -161,7 +155,15 @@ var PurchaseOrder = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../purchaseorder/edit?id",
+            },
         });
         $('#purchase_order_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#purchase_order_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -171,6 +173,8 @@ var PurchaseOrder = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "purchaseorder", "id"); 
     };
 
     return {

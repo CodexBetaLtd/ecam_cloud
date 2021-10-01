@@ -9,7 +9,7 @@ import com.codex.ecam.result.maintenance.ExWorkOrderResult;
 
 public interface ExWorkOrderService {
 
-	
+
 	ExWorkOrderDTO findById(Integer id) throws Exception;
 
 	ExWorkOrderResult delete(Integer id);
@@ -19,6 +19,8 @@ public interface ExWorkOrderService {
 	ExWorkOrderResult statusChange(Integer id, WorkOrderStatus status, String date, String note) throws Exception;
 
 	DataTablesOutput<ExWorkOrderDTO> findAll(FocusDataTablesInput input) throws Exception;
+
+	ExWorkOrderResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 

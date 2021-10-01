@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -106,6 +107,24 @@ public class UserGroupServiceImpl implements UserGroupService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public UserGroupResult deleteMultiple(Integer[] ids) throws Exception {
+		final UserGroupResult result = new UserGroupResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				userGroupDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("User Group(s) Deleted Successfully.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList("Error Occured While Deleting.");
+		}
+		return result;
+	}
+
+	@Override
 	public UserGroupResult save(UserGroupDTO dto) throws Exception {
 		final UserGroupResult result = createUserGroupResult(dto);
 		try {
@@ -147,9 +166,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 				final UserGroupPage userGroupPage = createOrUpdateUserGroupPage(domain, userGroupPages, currentUserGroupPages,pagePermission);
 				final UserGroupPagePermission userGroupPagePermission = createOrUpdateUserGroupPagePermission(pagePermission,userGroupPage);
 				userGroupPage.getPermissionList().add(userGroupPagePermission);
-
 			}
-
 		}
 
 		removeUngrantedPagePermissions(pagePermissionDTOs, userGroupPages);

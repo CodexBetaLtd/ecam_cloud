@@ -87,10 +87,6 @@ jQuery(document).ready(function () {
     	UserSkillLevelHome.addModal();
     });
     
-    $(document).on('click', '#brand-new', function () {
-    	AssetBrandHome.addModal();
-    });
-    
     $(document).on('click', '#model-new', function () {
     	AssetModelHome.addModal();
     });

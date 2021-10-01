@@ -117,83 +117,87 @@ var MiscellaneousExpenseTypeHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#miscellaneousExpenseTypeTbl').dataTable().fnDestroy();
-		var oTable = $('#miscellaneousExpenseTypeTbl')
-				.dataTable(
-						{
-							"processing" : true,
-							"serverSide" : true,
-							"ajax" : $.fn.dataTable.pipeline({
-										url : "../restapi/lookuptable/tabledatamiscellaneousexpensetype",
-										pages : 5
-									}),
-							columns : [
-									{
-										width : "2%",
-										render : function(data, type, row, meta) {
-											return meta.row + meta.settings._iDisplayStart + 1;
-										}
-									}, {
-										data : 'type'
-									}, {
-										data : 'description'
-									}, {
-										width : "3%",
-										data : 'id'
-									} ],
-							"aoColumnDefs" : [
-									{
-										"bSearchable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"orderable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"targets" : 3,//index of column starting from 0
-										"data" : "id", //this name should exist in your JSON response
-										"render" : function(data, type, full, meta) {
-                                            return ButtonUtil.getEditBtnWithURL('miscellaneousexpensetype', data, 'MiscellaneousExpenseTypeHome');
-										}
-									} ],
-							oLanguage : {
-								"sLengthMenu" : "Show _MENU_ Rows",
-								"sSearch" : "",
-								"oPaginate" : {
-									"sPrevious" : "&laquo;",
-									"sNext" : "&raquo;"
-								}
-							},
-							"aaSorting" : [ [ 1, 'asc' ] ],
-							"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
-									[ 5, 10, 15, 20, "All" ] // change per page values here
-							],
-							dom : "<'row'<'col-sm-4 dtblmiscellaneousexpensetype'><'col-sm-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
-							initComplete : function() {
-								$("div.dtblmiscellaneousexpensetype").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='miscellaneous-expense-type-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-							},
-							// set the initial value
-							bAutoWidth : false,
-							sScrollXInner : "100%",
-							iDisplayLength : 10,
-							bLengthChange : false,
-							sPaginationType : "full_numbers",
-							sPaging : 'pagination',
-						});
+		
+		var oTable = $('#miscellaneousExpenseTypeTbl').DataTable({
+			"processing" : true,
+			"serverSide" : true,
+			"ajax" : $.fn.dataTable.pipeline({
+						url : "../restapi/lookuptable/tabledatamiscellaneousexpensetype",
+						pages : 5
+					}),
+			columns : [
+					{
+		                width: "4%",
+	                    defaultContent: '',
+	                    className: 'select-checkbox'
+					}, {
+						data : 'type'
+					}, {
+						data : 'description'
+					}],
+			"aoColumnDefs" : [
+					{
+						"bSearchable" : false,
+						"aTargets" : [ 0 ]
+					},
+					{
+						"orderable" : false,
+						"aTargets" : [ 0 ]
+					}],
+			oLanguage : {
+				"sLengthMenu" : "Show _MENU_ Rows",
+				"sSearch" : "",
+				"oPaginate" : {
+					"sPrevious" : "&laquo;",
+					"sNext" : "&raquo;"
+				}
+			},
+			"aaSorting" : [ [ 1, 'asc' ] ],
+			"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
+					[ 5, 10, 15, 20, "All" ] // change per page values here
+			],
+			dom : "<'row'<'col-sm-4 dtblmiscellaneousexpensetype'><'col-sm-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
+			initComplete : function() {
+				$("div.dtblmiscellaneousexpensetype").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='miscellaneous-expense-type-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='miscellaneousexpensetypeDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
+			},
+			// set the initial value
+			bAutoWidth : false,
+			sScrollXInner : "100%",
+			iDisplayLength : 10,
+			bLengthChange : false,
+			sPaginationType : "full_numbers",
+			sPaging : 'pagination', 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "MiscellaneousExpenseTypeHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
+		});
 		$('#miscellaneousExpenseTypeTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
 		$('#miscellaneousExpenseTypeTbl_wrapper .dataTables_length select').addClass("m-wrap small");
 		// modify table per page dropdown
 		$('#miscellaneousExpenseTypeTbl_wrapper .dataTables_length select').select2();
 		// initialzie select2 dropdown
-		$('#miscellaneousExpenseTypeTbl_columnToggler input[type="checkbox"]').change(
-				function() {
-					/* Get the DataTables object again - this is not a recreation, just a get of the object */
-					var iCol = parseInt($(this).attr("data-column"));
-					var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-					oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-				});
+		$('#miscellaneousExpenseTypeTbl_columnToggler input[type="checkbox"]').change(function() {
+			/* Get the DataTables object again - this is not a recreation, just a get of the object */
+			var iCol = parseInt($(this).attr("data-column"));
+			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+		});
+        
+        DataTableUtil.deleteRowsFunc(oTable, "miscellaneousexpensetypeDelete", "MiscellaneousExpenseTypeHome.deleteMutiple", "id");
 	};
 	
 	var addModal = function() {
@@ -278,6 +282,17 @@ var MiscellaneousExpenseTypeHome = function() {
 		});
 
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../miscellaneousexpensetype/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseSixteen").find('.panel-body').empty().append(response);
+                MiscellaneousExpenseTypeHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -288,23 +303,33 @@ var MiscellaneousExpenseTypeHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

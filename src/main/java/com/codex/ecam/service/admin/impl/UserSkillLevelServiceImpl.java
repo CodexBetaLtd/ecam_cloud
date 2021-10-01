@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -34,24 +34,24 @@ public class UserSkillLevelServiceImpl implements UserSkillLevelService {
 	@Override
 	public DataTablesOutput<UserSkillLevelDTO> findAll(FocusDataTablesInput input) throws Exception {
 		DataTablesOutput<UserSkillLevel> domainOut;
-		
+
 		UserSkillLevelSearchPropertyMapper.getInstance().generateDataTableInput(input);
 
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = userSkillLevelDao.findAll(input);
 		} else {
-			Specification<UserSkillLevel> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<UserSkillLevel> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = userSkillLevelDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<UserSkillLevelDTO> out = UserSkillLevelMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<UserSkillLevelDTO> out = UserSkillLevelMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public UserSkillLevelDTO findById(Integer id) throws Exception {
-		UserSkillLevel  domain = findEntityById(id);
+		final UserSkillLevel  domain = findEntityById(id);
 		if (domain != null) {
 			return UserSkillLevelMapper.getInstance().domainToDto(domain);
 		}
@@ -64,15 +64,15 @@ public class UserSkillLevelServiceImpl implements UserSkillLevelService {
 
 	@Override
 	public UserSkillLevelResult delete(Integer id) {
-		UserSkillLevelResult result = new UserSkillLevelResult(null, null);
+		final UserSkillLevelResult result = new UserSkillLevelResult(null, null);
 		try {
 			userSkillLevelDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("User Skill Level Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Skill Level Already Assigned. Please Remove from Assigned User Skill Level and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -81,15 +81,36 @@ public class UserSkillLevelServiceImpl implements UserSkillLevelService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public UserSkillLevelResult deleteMultiple(Integer[] ids) throws Exception {
+		final UserSkillLevelResult result = new UserSkillLevelResult(null, null);
+		try {
+			for (final Integer id : ids) {
+
+				userSkillLevelDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("User Skill(s) Level Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("User Skill(s) Level Already Assigned. Please Remove from Assigned User Skill Level and try again.");
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public UserSkillLevelResult save(UserSkillLevelDTO dto) throws Exception {
-		UserSkillLevelResult result = createPriorityResult(dto);
+		final UserSkillLevelResult result = createPriorityResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Skill Level Already updated. Please Reload User Skill Level.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -107,7 +128,7 @@ public class UserSkillLevelServiceImpl implements UserSkillLevelService {
 
 	private UserSkillLevelResult createPriorityResult(UserSkillLevelDTO dto) {
 		UserSkillLevelResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new UserSkillLevelResult(userSkillLevelDao.findOne(dto.getId()), dto);
 		} else {
 			result = new UserSkillLevelResult(new UserSkillLevel(), dto);
@@ -125,17 +146,17 @@ public class UserSkillLevelServiceImpl implements UserSkillLevelService {
 	}
 
 	private void setBusiness(UserSkillLevelResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public List<UserSkillLevelDTO> findAll() {
-		Iterable<UserSkillLevel> domainList = userSkillLevelDao.findAll();
+		final Iterable<UserSkillLevel> domainList = userSkillLevelDao.findAll();
 		try {
 			return UserSkillLevelMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.UserSkillLevelDTO;
@@ -18,6 +18,8 @@ public interface UserSkillLevelService {
 	UserSkillLevelResult save(UserSkillLevelDTO dto) throws Exception;
 
 	List<UserSkillLevelDTO> findAll();
+
+	UserSkillLevelResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 

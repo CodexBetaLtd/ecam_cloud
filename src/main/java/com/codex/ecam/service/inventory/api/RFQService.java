@@ -19,14 +19,14 @@ import com.codex.ecam.result.purchasing.RFQResult;
 public interface RFQService {
 
 	RFQDTO findById(Integer id) throws Exception;
-	
+
 	RFQRepDTO findRFQRepDTOById(Integer id) throws Exception;
-	
+
 	RFQResult statusChange(Integer id,RFQStatus rfqStatus);
-	
+
 	RFQResult createNewRFQ();
-	
-	RFQDTO createRFQFromPoItems(String poItemIds); 
+
+	RFQDTO createRFQFromPoItems(String poItemIds);
 
 	RFQResult save(RFQDTO rfq);
 
@@ -34,16 +34,18 @@ public interface RFQService {
 
 	DataTablesOutput<RFQDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
 
-    PurchaseOrderDTO saveWithPurchaseOrder(RFQDTO rfq);
-    
+	PurchaseOrderDTO saveWithPurchaseOrder(RFQDTO rfq);
+
 	String rfqFileUpload(MultipartFile file,String refId) throws Exception;
 
 	void rfqFileDownload(Integer id,HttpServletResponse response) throws Exception;
 	void rfqFileDelete(Integer id) throws Exception;
-	
-    MRNResult generateRFQFromMrn(String ids, Integer mrnId);
-    
-    String getNextCode(Integer businessId);
+
+	MRNResult generateRFQFromMrn(String ids, Integer mrnId);
+
+	String getNextCode(Integer businessId);
+
+	RFQResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 }

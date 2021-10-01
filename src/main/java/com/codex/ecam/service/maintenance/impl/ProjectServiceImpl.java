@@ -56,7 +56,7 @@ public class ProjectServiceImpl implements ProjectService {
 	private ProjectDTO findDTOById(Integer id) throws ProjectException {
 		try {
 			return ProjectMapper.getInstance().domainToDto(findEntityById(id));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ProjectException("ERROR! Project mapper not worked!");
 		}
 	}
@@ -64,19 +64,19 @@ public class ProjectServiceImpl implements ProjectService {
 	private Project findEntityById(Integer id) throws ProjectException {
 		try {
 			return projectDao.findOne(id);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ProjectException("ERROR! Project entity FETCH not completed.!");
 		}
 	}
 
 	@Override
 	public ProjectResult newProject() {
-		ProjectResult result = new ProjectResult(null, new ProjectDTO());
+		final ProjectResult result = new ProjectResult(null, new ProjectDTO());
 		try {
 			newProject(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Project create operation completed.");
-		} catch (ProjectException e) {
+		} catch (final ProjectException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("ERROR! Project NOT created.");
@@ -90,12 +90,12 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public ProjectResult findById(Integer id) {
-		ProjectResult result = new ProjectResult(null, new ProjectDTO());
+		final ProjectResult result = new ProjectResult(null, new ProjectDTO());
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Project fetch operation completed.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("ERROR! Project fetch operation failed.");
@@ -106,27 +106,27 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public ProjectResult save(ProjectDTO dto) {
-		ProjectResult result = new ProjectResult(new Project(), dto);
+		final ProjectResult result = new ProjectResult(new Project(), dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList("SUCCESS! Project SAVE operation completed.");
 			result.setResultStatusSuccess();
-		} catch (ProjectException ex) {
+		} catch (final ProjectException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project SAVE operation not completed");
 			logger.error(ex.getMessage());
-		} catch (BusinessException ex) {
+		} catch (final BusinessException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project SAVE operation not completed, Business Error");
 			logger.error(ex.getMessage());
-		} catch (UserException ex) {
+		} catch (final UserException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project SAVE operation not completed, User Error");
 			logger.error(ex.getMessage());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -137,28 +137,28 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public ProjectResult update(ProjectDTO dto) {
-		ProjectResult result = new ProjectResult(null, dto);
+		final ProjectResult result = new ProjectResult(null, dto);
 		try {
-			Project project = projectDao.findOne(dto.getId());
+			final Project project = projectDao.findOne(dto.getId());
 			result.setDomainEntity(project);
 			saveOrUpdate(result);
 			result.addToMessageList("Project Updated Successfully.");
-		} catch (ProjectException e) {
+		} catch (final ProjectException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project UPDATE operation not completed");
 			logger.error(e.getMessage());
-		} catch (BusinessException e) {
+		} catch (final BusinessException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project UPDATE operation not completed, Business Error");
 			logger.error(e.getMessage());
-		} catch (UserException e) {
+		} catch (final UserException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project UPDATE operation not completed, User Error");
 			logger.error(e.getMessage());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -182,17 +182,17 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	private void setBusiness(ProjectResult result) throws BusinessException {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setProjectUser(ProjectResult result) throws ProjectException, UserException {
-		Set<ProjectUser> projectUsers = new HashSet<>();
-		for (UserDTO userDTO : result.getDtoEntity().getUsers()) {
+		final Set<ProjectUser> projectUsers = new HashSet<>();
+		for (final UserDTO userDTO : result.getDtoEntity().getUsers()) {
 			ProjectUser projectUser = new ProjectUser();
 			if (userDTO.getId() != null) {
-				projectUser = result.getDomainEntity().getProjectUsers().stream() .filter((x) -> x.getUser().getId().equals(userDTO.getId())).findAny().orElseGet(ProjectUser::new);
+				projectUser = result.getDomainEntity().getProjectUsers().stream() .filter((x) -> x.getUser() != null && x.getUser().getId().equals(userDTO.getId())).findAny().orElseGet(ProjectUser::new);
 			} else {
 				projectUser = new ProjectUser();
 			}
@@ -205,28 +205,48 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	private void setSite(ProjectResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 
 	@Override
 	public ProjectResult delete(Integer id) {
-		ProjectResult result = new ProjectResult(null, null);
+		final ProjectResult result = new ProjectResult(null, null);
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Project delete operation completed.");
-		} catch (DataIntegrityViolationException ex) {
+		} catch (final DataIntegrityViolationException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project Already Used. Cannot delete.");
 			logger.error(ex.getMessage());
-		} catch (ProjectException ex) {
+		} catch (final ProjectException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Project delete operation not completed");
 			logger.error(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public ProjectResult deleteMultiple(Integer[] ids) throws Exception {
+		final ProjectResult result = new ProjectResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				deleteEntityById(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Project(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Project(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
 		}
 		return result;
 	}
@@ -243,13 +263,13 @@ public class ProjectServiceImpl implements ProjectService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = projectDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<Project> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<Project> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = projectDao.findAll(input, specification);
 		} else {
-			Specification<Project> specification = (root, query, cb) -> cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+			final Specification<Project> specification = (root, query, cb) -> cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
 			domainOut = projectDao.findAll(input, specification);
 		}
-		DataTablesOutput<ProjectDTO> out = ProjectMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<ProjectDTO> out = ProjectMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -260,9 +280,9 @@ public class ProjectServiceImpl implements ProjectService {
 				logger.error("ID Cannot be null");
 				return new DataTablesOutput<>();
 			}
-			DataTablesOutput<Project> domainOut = projectDao.findAll(input, specFindByBusiness(id));
+			final DataTablesOutput<Project> domainOut = projectDao.findAll(input, specFindByBusiness(id));
 			return ProjectMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
 			return new DataTablesOutput<>();
@@ -271,7 +291,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	private Specification<Project> specFindByBusiness(Integer id) {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), id));
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};

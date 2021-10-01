@@ -122,7 +122,8 @@ var  AssetEventHistoryModel = function () {
     });
 
     var runDataTable = function (assetId, assetEventTypeId) {
-        var oTable = $('#asset_event_history_tbl').dataTable({
+        
+        var oTable = $('#asset_event_history_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -132,7 +133,7 @@ var  AssetEventHistoryModel = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "4%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -175,7 +176,7 @@ var  AssetEventHistoryModel = function () {
 //            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
         });
         $('#meterReading_history_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

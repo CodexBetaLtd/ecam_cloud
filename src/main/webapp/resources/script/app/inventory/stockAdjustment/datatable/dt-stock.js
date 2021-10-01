@@ -105,7 +105,7 @@ var dtStock = function () {
     var getDataTableStock = function (url, func) {
 
         var tableId = "tbl-dt-stock";
-        var oTable = $('#' + tableId).dataTable({
+        var oTable = $('#' + tableId).DataTable({
             // processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -115,7 +115,7 @@ var dtStock = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -125,14 +125,7 @@ var dtStock = function () {
                 {data: 'stockNo'},
                 {data: 'qtyOnHand'}
             ],
-            aoColumnDefs: [{
-                targets: 5,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.stockNo + "\",\"" + row.qtyOnHand + "\");' type='button' class='btn btn-blue btn-squared btn-xs' data-dismiss='modal'> Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -151,7 +144,22 @@ var dtStock = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "stockNo"
+                    }, {
+                        sName : "qtyOnHand"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -161,17 +169,6 @@ var dtStock = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-
-        /*var commonSet=function () {
-         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-         $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
-         var iCol = parseInt($(this).attr("data-column"));
-         var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-         oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-         });
-         };*/
     };
 
     /*********************************************************************

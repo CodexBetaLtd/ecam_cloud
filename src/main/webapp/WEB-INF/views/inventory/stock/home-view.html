@@ -83,13 +83,12 @@
                                        id="tbl_stock_home_list">
                                     <thead>
                                     <tr>
-                                        <th><span th:text="#{global.symbol.count}"/></th>
+                                        <th><span th:text="#{global.symbol.count}"></span></th>
                                         <th>Item Code</th>
                                         <th>Item No</th>
                                         <th>Batch No</th>
                                         <th>Quantity on Hand</th>
                                         <th>Min Quantity</th>
-                                        <th class="hidden-xs"><span th:text="#{global.keyword.more}"/></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -123,14 +122,15 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
 
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 <script type="text/javascript" th:src="@{/resources/script/app/inventory/stock/home-view.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/inventory/stock/datatable/dt-stock-ledger.js}"></script>

@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.biz.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.asset.CustomerDTO;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.asset.CustomerResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.asset.api.CustomerService;
@@ -60,7 +62,7 @@ public class CustomerController {
 		try {
 			setCommonData(model, new CustomerDTO());
 			return "biz/customer/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/customer/index";
 		}
@@ -70,10 +72,10 @@ public class CustomerController {
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
 
-			CustomerDTO customerDTO = customerService.findById(id);
+			final CustomerDTO customerDTO = customerService.findById(id);
 			setCommonData(model, customerDTO);
 			return "biz/customer/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/customer/index";
@@ -83,7 +85,7 @@ public class CustomerController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		CustomerResult result = customerService.delete(id);
+		final CustomerResult result = customerService.delete(id);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
 		} else {
@@ -95,7 +97,7 @@ public class CustomerController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("customer") @Valid CustomerDTO customer, Model model) throws Exception {
 
-		CustomerResult result = customerService.save(customer);
+		final CustomerResult result = customerService.save(customer);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -105,6 +107,25 @@ public class CustomerController {
 		}
 		setCommonData(model, customer);
 		return "biz/customer/add-view";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final CustomerResult result = customerService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Customer already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "biz/customer/home-view";
 	}
 
 	private void setCommonData(Model model, CustomerDTO customer) {

@@ -8,9 +8,12 @@ var ScheduledMaintenanceTaskGroup = function () {
 	};
 
     var dtTaskGroups = function (businessId) {
+        
         var tableId = "sm_task_group_tbl";
+        
         $("#" + tableId).dataTable().fnDestroy();
-        var oTable = $("#" + tableId).dataTable({
+        
+        var oTable = $("#" + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -21,7 +24,7 @@ var ScheduledMaintenanceTaskGroup = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -29,15 +32,7 @@ var ScheduledMaintenanceTaskGroup = function () {
                 {data: 'name'},
                 {data: 'description'}
             ],
-            aoColumnDefs: [{
-                targets: 3,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.name)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars('ScheduledMaintenanceTaskGroup.setTaskGroup', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -56,7 +51,21 @@ var ScheduledMaintenanceTaskGroup = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "ScheduledMaintenanceTaskGroup.setTaskGroup",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

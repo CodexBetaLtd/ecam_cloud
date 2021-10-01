@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,6 +31,7 @@ import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderDTO;
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderMeterReadingDTO;
 import com.codex.ecam.result.RestResult;
+import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.admin.api.AccountService;
 import com.codex.ecam.service.admin.api.ChargeDepartmentService;
@@ -162,12 +164,12 @@ public class WorkOrderController {
 		model.addAttribute("woMeterReadings", new WorkOrderMeterReadingDTO());
 		return "maintenance/workorder/modals/meter-reading-value-add-modal";
 	}
-	
+
 	@RequestMapping(value = "/filemodelview", method = RequestMethod.GET)
 	public String getFileTableView(Model model) {
 		return "maintenance/workorder/modals/file-add-modal";
 	}
-	
+
 	@RequestMapping(value = "/wonoteaddmodalview", method = RequestMethod.GET)
 	public String getWoNoteAddModalView(Model model) {
 		return "maintenance/workorder/modals/note-add-modal";
@@ -187,7 +189,7 @@ public class WorkOrderController {
 		try {
 			setCommonData(model, new WorkOrderDTO());
 			return "maintenance/workorder/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/workorder/index";
 		}
@@ -196,11 +198,11 @@ public class WorkOrderController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			WorkOrderDTO workOrder = workOrderService.findById(id);
+			final WorkOrderDTO workOrder = workOrderService.findById(id);
 			setCommonData(model, workOrder);
 
 			return "maintenance/workorder/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 
 			return "redirect:/workorder/index";
@@ -210,7 +212,7 @@ public class WorkOrderController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("workOrder") WorkOrderDTO workOrder, Model model) throws Exception {
 
-		WorkOrderResult result = workOrderService.save(workOrder);
+		final WorkOrderResult result = workOrderService.save(workOrder);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -226,7 +228,7 @@ public class WorkOrderController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		WorkOrderResult result = workOrderService.delete(id);
+		final WorkOrderResult result = workOrderService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -236,24 +238,24 @@ public class WorkOrderController {
 
 		return "redirect:/workorder/index";
 	}
-	
+
 	@RequestMapping(value = "/statusChange", method = RequestMethod.POST)
-	public String workOrderRequestStatusChange(Integer id, WorkOrderStatus status, String date, String note, Model model) throws Exception {      
-		WorkOrderResult result = workOrderService.statusChange(id, status, date, note);
-		
+	public String workOrderRequestStatusChange(Integer id, WorkOrderStatus status, String date, String note, Model model) throws Exception {
+		final WorkOrderResult result = workOrderService.statusChange(id, status, date, note);
+
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
-		} else { 
+		} else {
 			model.addAttribute("success", result.getMsgList());
 		}
-		
-		setCommonData(model, workOrderService.findById(id)); 
+
+		setCommonData(model, workOrderService.findById(id));
 		return "maintenance/workorder/add-view";
 	}
 
 	@RequestMapping(value = "/getsites", method = RequestMethod.GET)
 	public @ResponseBody List<AssetDTO> selectParent(Integer id, Model model) throws Exception {
-		List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
+		final List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		return assetDTOs;
 	}
 
@@ -284,15 +286,15 @@ public class WorkOrderController {
 
 	@RequestMapping(value = "/status-change", method = RequestMethod.GET)
 	public String receiptOrderStatusChange(Integer id, WorkOrderStatus workOrderStatus,String date, String note, Model model) throws Exception {
-		if ((id != null) && (id > 0)) {
+		if (id != null && id > 0) {
 			try {
-				WorkOrderResult result = workOrderService.statusChange(id, workOrderStatus, date, note);
+				final WorkOrderResult result = workOrderService.statusChange(id, workOrderStatus, date, note);
 				if (result.getStatus().equals(ResultStatus.ERROR)) {
 					model.addAttribute("error", result.getErrorList());
 				} else {
 					model.addAttribute("success", result.getMsgList());
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				model.addAttribute("error", "Error Occurred. Please Try again.");
 			}
 		} else {
@@ -306,7 +308,7 @@ public class WorkOrderController {
 
 	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
 	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData, @RequestParam("fileRefId")String refId) throws Exception {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add(fileData.getContentType());
 		list.add(workOrderService.workorderFileUpload(fileData, refId));
 		return list;
@@ -315,6 +317,25 @@ public class WorkOrderController {
 	@RequestMapping(value = "/download-file", method = RequestMethod.GET)
 	public void downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		workOrderService.workorderFileDownload(id, response);
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final WorkOrderResult result = workOrderService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "WorkOrder already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "maintenance/workorder/home-view";
 	}
 
 	/*********************************************************************

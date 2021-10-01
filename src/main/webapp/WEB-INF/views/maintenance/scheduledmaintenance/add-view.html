@@ -256,8 +256,6 @@
 	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
@@ -269,7 +267,11 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
-    
+    	
+    <!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
 	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
@@ -278,12 +280,8 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/add-view.js}"></script>
 
-	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/asset-select-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/project-select-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/user-select-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/part-add-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/trigger-add-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/stock-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/task-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/task-group-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/modals/notification-add-modal.js}"></script>
@@ -297,6 +295,10 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/log-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/file-tab.js}"></script>
 
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-asset.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-project.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/user-select-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-stock.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-users.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-task-group.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-sm-log.js}"></script>

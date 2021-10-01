@@ -54,7 +54,7 @@
                    data-original-title="Save"> <i class="clip-checkmark-circle-2 btn-save"></i> <span
                        class="hidden-xs" th:text="#{form.btn.save}"></span>
                 </a>
-                <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled"
+                <a class="btn btn-default btn-sm active tooltips" id="delete"
                    data-placement="top"
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_MRN_VIEW.id)"
                    data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span
@@ -90,7 +90,6 @@
                                         <th><span th:text="#{mrn.mrnNo}"></span></th>
                                         <th><span th:text="#{mrn.status}"></span></th>
                                         <th><span th:text="#{mrn.date}"></span></th>
-                                        <th class="hidden-xs last-col"><span th:text="#{global.keyword.more}"></span></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -122,14 +121,15 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
 
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 <script type="text/javascript" th:src="@{/resources/script/app/inventory/mrn/home-view.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>

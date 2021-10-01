@@ -86,6 +86,7 @@ var TaskAddModal = function () {
     var setAssignedUser = function (id, name) {
         $('#woTaskAssignedUserId').val(id);
         $('#woTaskAssignedUserName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $('#wo-task-add-child-modal').modal('toggle');
     };
 
     var completedUserSelect = function () {
@@ -108,6 +109,7 @@ var TaskAddModal = function () {
     var setCompletedUser = function (id, name) {
         $('#woTaskCompletedUserId').val(id);
         $('#woTaskCompletedUserName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $('#wo-task-add-child-modal').modal('toggle');
     };
 	
 	var initValidator = function () {

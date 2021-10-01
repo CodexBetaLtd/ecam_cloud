@@ -118,7 +118,7 @@ var MeterReadingUnitHome = function () {
 	
     var runDataTable = function () {
         $('#meterReadingUnitTbl').dataTable().fnDestroy();
-        var oTable = $('#meterReadingUnitTbl').dataTable({
+        var oTable = $('#meterReadingUnitTbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
@@ -127,10 +127,9 @@ var MeterReadingUnitHome = function () {
             } ),            
             columns : [{  
             	orderable : false,
-                width: "2%",
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }   
+                width: "4%",
+                defaultContent: '',
+                className: 'select-checkbox'   
             },{
             	orderable : false,
             	data : 'name'
@@ -140,18 +139,8 @@ var MeterReadingUnitHome = function () {
      		},{
      			orderable : false,
      			data : 'symbol'
-     		},{ 
-     			width: "3%",
-     			orderable: false,
-     			data : 'id'
      		}],
-            "aoColumnDefs": [{"bSearchable": false, "aTargets": [ 0,4 ]},{ "orderable": false, "aTargets": [ 0,4]  },{
-            	"targets": 4,//index of column starting from 0
-                "data": "id", //this name should exist in your JSON response
-                "render": function ( data, type, full, meta ) {
-                    return ButtonUtil.getEditBtnWithURL('meterreadingunits', data, 'MeterReadingUnitHome');            
-                }
-            }],
+            "aoColumnDefs": [{"bSearchable": false, "aTargets": [ 0 ]},{ "orderable": false, "aTargets": [ 0]  }],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -169,7 +158,9 @@ var MeterReadingUnitHome = function () {
             ],
             dom: "<'row'<'col-sm-4 dtblmeterReadingUnits'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
             initComplete: function () {
-                $("div.dtblmeterReadingUnits").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='meter-reading-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+                $("div.dtblmeterReadingUnits").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='meter-reading-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='meterReadingUnitsDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
             },
             // set the initial value
             bAutoWidth: false,
@@ -177,7 +168,19 @@ var MeterReadingUnitHome = function () {
             iDisplayLength: 10,
             bLengthChange: false,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination',
+            sPaging: 'pagination', 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "MeterReadingUnitHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
         });
         $('#meterReadingUnitTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -191,6 +194,8 @@ var MeterReadingUnitHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRowsFunc(oTable, "meterReadingUnitsDelete", "MeterReadingUnitHome.deleteMutiple", "id");
     };
     
     var addModal = function () {
@@ -274,6 +279,17 @@ var MeterReadingUnitHome = function () {
          });
        
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../meterreadingunits/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseFive").find('.panel-body').empty().append(response);
+                MeterReadingUnitHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -284,23 +300,33 @@ var MeterReadingUnitHome = function () {
         init: function () {
         	runDataTable();
         },
+        
         addModal : function(){
         	addModal();
     	},
+    	
     	editModal : function(id){
     		editModal(id);
     	},
+    	
     	saveModal : function(){
     		saveModal();
     	},
+    	
     	closeModal : function(){
     		closeModal();
     	},
+    	
     	deleteModal : function(id){
     		deleteModal(id);
     	},
+    	
     	deleteInsideModal : function(id){
     		deleteInsideModal(id);
-    	}
+    	},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
     };
 }();

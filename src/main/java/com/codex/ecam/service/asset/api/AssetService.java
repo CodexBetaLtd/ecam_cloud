@@ -89,7 +89,7 @@ public interface AssetService {
 	DataTablesOutput<AssetDTO> findAssetByCategoryTypeBusiness(FocusDataTablesInput input, Integer businessId, AssetCategoryType type);
 
 	DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
-    DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
+	DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
 
 	String assetFileUpload(MultipartFile file,String refId) throws Exception;
 
@@ -101,10 +101,12 @@ public interface AssetService {
 
 	DataTablesOutput<AssetDTO> getMachineToolsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 
-	void updateAverageMeterReadingValue(AssetMeterReading assetMeterReading); 
-	
+	void updateAverageMeterReadingValue(AssetMeterReading assetMeterReading);
+
 	void importBulkAssets(MultipartFile file,Integer bussinessId) throws IOException, Exception ;
 
-	 
+	AssetResult deleteMultiple(Integer[] ids) throws Exception;
+
+
 
 }

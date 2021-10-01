@@ -105,7 +105,7 @@ var AODWorkOrders = function () {
 
         var table_name = "tbl_select_workorder";
 
-        var oTable = $('#' + table_name).dataTable({
+        var oTable = $('#' + table_name).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -115,22 +115,14 @@ var AODWorkOrders = function () {
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width:"8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
                 {data: 'code'},
-                {data: 'description'},
-                { 
-                    data: 'id'
-                }],
-            aoColumnDefs: [{
-                data: "id",
-                targets: 3,
-                render: function (data, type, row, meta) {
-                    return htmlBtn(data, type, row, meta);
-                }
-            }],
+                {data: 'description'}],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -148,7 +140,20 @@ var AODWorkOrders = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AODWorkOrders.setAODWorkOrderData",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "code"
+                    },
+                ],
+            },
         });
         $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -161,14 +166,10 @@ var AODWorkOrders = function () {
 
     };
 
-    var htmlBtn = function (id, type, row, meta) {
-        var vars = [id, row.code];
-        return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODWorkOrders.setAODWorkOrderData", id, vars);
-    };
-
     var setAODWorkOrderData = function (id, name) {
         $("#aodWoId").val(id);
         $("#aodWoNo").val(name);
+        $("#common-modal").modal('toggle');
     };
 
     return {

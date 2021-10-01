@@ -115,7 +115,7 @@ var IssueNoteHome = function () {
     });
 
     var dtAOD = function () {
-        var oTable = $('#tbl_issuenote_list').dataTable({
+        var oTable = $('#tbl_issuenote_list').DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -126,10 +126,9 @@ var IssueNoteHome = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    searchable: false,    
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
                     data: 'aodNo',
@@ -149,14 +148,7 @@ var IssueNoteHome = function () {
                     responsivePriority: 2 
 
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("issuenote", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -170,7 +162,15 @@ var IssueNoteHome = function () {
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../issuenote/edit?id",
+            },
         });
         $('#tbl_issuenote_list_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#tbl_issuenote_list_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -180,6 +180,8 @@ var IssueNoteHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "issuenote", "id"); 
     };
 
     return {

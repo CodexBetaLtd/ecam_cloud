@@ -117,7 +117,7 @@ var BusinessHome = function () {
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#tbl_bussiness').dataTable({
+        var oTable = $('#tbl_bussiness').DataTable({
         	processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline( {
@@ -127,22 +127,17 @@ var BusinessHome = function () {
             columns : [ {
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "4%",
                 render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
+                    return "";
+                },
+                className: 'select-checkbox',
             },{
      			data : 'name'
      		}, {
      			data : 'code'
      		}],
-            aoColumnDefs: [{
-            	targets: 3,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) {
-                    return ButtonUtil.getHomeBtnWithURL('business', data);
-                },
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -161,7 +156,15 @@ var BusinessHome = function () {
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../business/edit?id",
+            },
         });
         $('#tbl_bussiness_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -174,7 +177,9 @@ var BusinessHome = function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });      
+        
+        DataTableUtil.deleteRows(oTable, "delete", "business", "id");    
     };    
     
     return {

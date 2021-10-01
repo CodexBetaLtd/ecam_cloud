@@ -64,7 +64,6 @@ var BomTab = function () {
             addAssetConsumeRefToList(id, assetName, assetId, maxConsumption, bomGroupName, bomGroupPartId, version);
             resetAssetConsumeRefHtmlTable();
         }
-        $('#common-modal').modal('toggle');
     };
 
     var addAssetConsumeRefToList = function (id, assetName, assetId, maxConsumption, bomGroupName, bomGroupPartId, version) {

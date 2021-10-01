@@ -115,7 +115,7 @@ var Project = function () {
     });
 
     var runDataTable = function () {
-        var oTable = $('#project_tbl').dataTable({
+        var oTable = $('#project_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -128,9 +128,8 @@ var Project = function () {
                     orderable: false,
                     searchable: false,
                     width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 2
                 }, {
                     data: 'name',
@@ -146,14 +145,7 @@ var Project = function () {
                 	data : 'businessName',
                 	responsivePriority: 4
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 5,
-                data: 'id',
-                render: function (data, type, full, meta) {
-                	return ButtonUtil.getHomeBtnWithURL("project", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -167,7 +159,15 @@ var Project = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../project/edit?id",
+            },
         });
         $('#project_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#project_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -177,6 +177,8 @@ var Project = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "project", "id"); 
     };
 
     return {

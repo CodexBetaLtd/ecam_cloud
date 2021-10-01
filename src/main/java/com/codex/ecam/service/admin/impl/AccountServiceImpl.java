@@ -41,18 +41,18 @@ public class AccountServiceImpl implements AccountService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = accountDao.findAll(input);
 		} else {
-			Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = accountDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<AccountDTO> out = AccountMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<AccountDTO> out = AccountMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public AccountDTO findById(Integer id) throws Exception {
-		Account domain = findEntityById(id);
+		final Account domain = findEntityById(id);
 		if (domain != null) {
 			return AccountMapper.getInstance().domainToDto(domain);
 		}
@@ -66,15 +66,36 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountResult delete(Integer id) {
-		AccountResult result = new AccountResult(null, null);
+		final AccountResult result = new AccountResult(null, null);
 		try {
 			accountDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Account Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Account Already Assigned. Please Remove from Assigned Account and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AccountResult deleteMultiple(Integer[] ids) throws Exception {
+		final AccountResult result = new AccountResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				accountDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Account(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Account(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -83,14 +104,14 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public AccountResult save(AccountDTO dto) throws Exception {
-		AccountResult result = createAccountResult(dto);
+		final AccountResult result = createAccountResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Account Already updated. Please Reload Account.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -108,7 +129,7 @@ public class AccountServiceImpl implements AccountService {
 
 	private AccountResult createAccountResult(AccountDTO dto) {
 		AccountResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new AccountResult(accountDao.findOne(dto.getId()), dto);
 		} else {
 			result = new AccountResult(new Account(), dto);
@@ -126,7 +147,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	private void setBusiness(AccountResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
@@ -138,11 +159,11 @@ public class AccountServiceImpl implements AccountService {
 			if(AuthenticationUtil.isAuthUserAdminLevel()){
 				domainList = accountDao.findAll();
 			} else {
-				Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 				domainList = accountDao.findAll(specification);
 			}
 			return AccountMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -152,14 +173,14 @@ public class AccountServiceImpl implements AccountService {
 	public List<AccountDTO> findAllByBusiness(Integer id) {
 		try {
 			List<AccountDTO> dtoOut =new ArrayList<>();
-			Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
+			final Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
 
 			if( specification != null){
-				List<Account> domainList = accountDao.findAll(specification);
+				final List<Account> domainList = accountDao.findAll(specification);
 				dtoOut = AccountMapper.getInstance().domainToDTOList(domainList);
 			}
 			return dtoOut;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -167,10 +188,10 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public void saveAll(List<AccountDTO> list) {
-		for (AccountDTO dto : list) {
+		for (final AccountDTO dto : list) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}

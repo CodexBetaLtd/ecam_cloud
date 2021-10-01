@@ -112,9 +112,12 @@ var dtWorkOrderPartStock = function () {
     };
 
     var getPartStock = function (partId, func) {
+        
         var tableId = "wo_asset_stock_tbl";
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -137,14 +140,7 @@ var dtWorkOrderPartStock = function () {
                 {data: 'minQty'},
                 {data: 'qtyOnHand'}
             ],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.partName), row.partId];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -165,7 +161,23 @@ var dtWorkOrderPartStock = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "partName",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },{
+                        sName : "partId"
+                    }
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

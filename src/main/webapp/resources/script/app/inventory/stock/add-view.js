@@ -46,15 +46,17 @@ var StockAdd = function () {
     };
     
     var addNewPart = function (partId,partName,partCode) {
-    	$('#partId').val(partId)
-    	$('#partName').val(partName)
-    }
+    	$('#partId').val(partId);
+    	$('#partName').val(partName);
+    	$('#master-modal-datatable').modal('toggle');
+    };
 
     var setWarehouseView = function () {
         warehouseView("StockAdd.setStockWarehouse");
     }
+    
     var warehouseView = function (func) {
-        var $modal = $('#master-modal');
+        var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../stock/warehouseView';
@@ -69,13 +71,13 @@ var StockAdd = function () {
    var setStockWarehouse = function (id, name) {
         $("#warehouseId").val(id);
         $("#warehouseName").val(name);
-        $('#master-modal').modal("hide");
+        $('#master-modal-datatable').modal("toggle");
     };
 
     var setStockItem = function (data, id, name) {
         $("#itemId").val(id);
         $("#itemName").val(name);
-        $('#master-modal').modal("hide");
+        $('#master-modal-datatable').modal("toggle");
     };
 
     var initValidator = function () {

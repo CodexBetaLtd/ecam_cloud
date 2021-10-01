@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -30,29 +31,29 @@ import com.codex.ecam.util.search.workorder.WorkOrderSearchPropertyMapper;
 public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 
 	private final static Logger logger = LoggerFactory.getLogger(ExWorkOrderServiceImpl.class);
-	
+
 	@Autowired
 	Environment environment;
-	
+
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private BusinessDao businessDao;
-	
+
 	@Autowired
 	private SupplierDao supplierDao;
-	
+
 	@Autowired
 	private AssetDao assetDao;
-	
+
 	@Autowired
 	private ExWorkOrderDao exWoDao;
 
 
 	@Override
 	public ExWorkOrderDTO findById(Integer id) throws Exception {
-		ExWorkOrder domain = exWoDao.findById(id);
+		final ExWorkOrder domain = exWoDao.findById(id);
 		if (domain != null) {
 			return ExWorkOrderMapper.getInstance().domainToDto(domain);
 		}
@@ -61,12 +62,33 @@ public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 
 	@Override
 	public ExWorkOrderResult delete(Integer id) {
-		ExWorkOrderResult result = new ExWorkOrderResult(null, null);
+		final ExWorkOrderResult result = new ExWorkOrderResult(null, null);
 		try {
 			exWoDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("External Work Order Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ExWorkOrderResult deleteMultiple(Integer[] ids) throws Exception {
+		final ExWorkOrderResult result = new ExWorkOrderResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				exWoDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("ExWorkOrder(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("ExWorkOrder(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -77,13 +99,13 @@ public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 	@Override
 	public ExWorkOrderResult save(ExWorkOrderDTO exWorkOrderDTO) {
 
-		ExWorkOrderResult result = createWorkOrderResult(exWorkOrderDTO);
+		final ExWorkOrderResult result = createWorkOrderResult(exWorkOrderDTO);
 		try {
 			saveOrUpdate(result);
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("External Work Order Already updated. Please Reload External Work Order.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -92,7 +114,7 @@ public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 
 		return result;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveOrUpdate(ExWorkOrderResult result) throws Exception {
 		ExWorkOrderMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
@@ -112,41 +134,41 @@ public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 		setRequestedBy(result);
 		//setWoStatus(result);
 	}
-	
+
 	private void setBusiness(ExWorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setSite(ExWorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 	private void setAssetToWorkOrder(ExWorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAssetId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAssetId() != null) {
 			result.getDomainEntity().setAsset(assetDao.findOne(result.getDtoEntity().getAssetId()));
 		}
 	}
 
 	private void setServiceProvider(ExWorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getServiceProviderId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getServiceProviderId() != null) {
 			result.getDomainEntity().setSupplier(supplierDao.findOne(result.getDtoEntity().getServiceProviderId()));
 		}
 	}
 
 	private void setRequestedBy(ExWorkOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getServiceRequestId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getServiceRequestId() != null) {
 			result.getDomainEntity().setRequestedByUser(userDao.findOne(result.getDtoEntity().getServiceRequestId()));
 		}
 	}
 
-	
+
 
 	private ExWorkOrderResult createWorkOrderResult(ExWorkOrderDTO dto) {
 		ExWorkOrderResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new ExWorkOrderResult(exWoDao.findOne(dto.getId()), dto);
 		} else {
 			result = new ExWorkOrderResult(new ExWorkOrder(), dto);
@@ -176,15 +198,15 @@ public class ExWorkOrderServiceImpl implements ExWorkOrderService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = exWoDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<ExWorkOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<ExWorkOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = exWoDao.findAll(input, specification);
 		} else {
-			Specification<ExWorkOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
+			final Specification<ExWorkOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
 					AuthenticationUtil.getLoginSite().getSite());
 			domainOut = exWoDao.findAll(input, specification);
 		}
-		DataTablesOutput<ExWorkOrderDTO> out = ExWorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<ExWorkOrderDTO> out = ExWorkOrderMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 

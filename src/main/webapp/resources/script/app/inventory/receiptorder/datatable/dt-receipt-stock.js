@@ -98,8 +98,8 @@ var dtReceiptStock = function () {
     });
 
     var getStockDataTable = function (tableId, url, method, partId) {
-    	console.log(tableId)
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -113,7 +113,7 @@ var dtReceiptStock = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -126,15 +126,7 @@ var dtReceiptStock = function () {
                 }, {
                     data: 'partName'
                 }],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 5,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                    return tblButton(rowData, tableId, url, method);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -148,7 +140,20 @@ var dtReceiptStock = function () {
                 [5, 10, 15, 20, "All"]],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: method,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "stockNo"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -160,16 +165,8 @@ var dtReceiptStock = function () {
         });
     };
 
-
-    var tblButton = function (rowData, tableId, URL, method) {
-        return ButtonUtil.getCommonBtnSelect(method, rowData.id, rowData.stockNo);
-
-     ///   return "<button id='link" + rowData.id + "' onclick='" + method + "(\"" + rowData.id + "\",\"" + rowData.stockNo + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</button>";
-    };
-
     return {
         getStockDataTable: function (tableId, url, method, partId) {
-        	console.log(url)
             getStockDataTable(tableId, url, method, partId);
         },
     };

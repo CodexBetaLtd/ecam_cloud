@@ -117,7 +117,8 @@
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#part_tbl').dataTable({
+        
+        var oTable = $('#part_tbl').DataTable({
         	responsive: true,
         	"processing": true,
             "serverSide": true,
@@ -128,10 +129,9 @@
             columns : [ {
                 orderable: false,
                 searchable: false, 
-                width:"2%",
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                },
+                width:"4%",
+                defaultContent: '',
+                className: 'select-checkbox',
                 responsivePriority: 1
             },{
      			data : 'name',
@@ -149,13 +149,7 @@
      			data : 'id',
      			responsivePriority: 2
      		}],
-            aoColumnDefs: [{
-            	targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) { 
-                    return ButtonUtil.getHomeBtnWithURL('part', data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -174,7 +168,15 @@
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../part/edit?id",
+            },
         });
         $('#part_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -187,7 +189,9 @@
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "part", "id");       
     };    
     
     return {

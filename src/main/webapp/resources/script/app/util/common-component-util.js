@@ -66,6 +66,27 @@ var CustomComponents = function () {
             allowedFileExtensions: ["jpg", "jpeg", "png", "gif"]
         }); 
 	};
+	
+	var sweetAlertSuccess = function(msg) {
+        setTimeout(function () {
+            swal({
+                title:'',
+                text: msg, 
+                customClass: "swal-success",
+            });
+        }, 1000); 
+    };
+    
+    var sweetAlertError = function (msg) {
+        setTimeout(function () {
+            swal({
+                title:'',
+                text: msg, 
+                customClass: "swal-error",
+            });
+        }, 500); 
+    }; 
+    
     
     return {
 
@@ -99,7 +120,15 @@ var CustomComponents = function () {
         
         fileInput: function(divId, browseOnZone, dropZone, src, alt) {
         	fileInput(divId, browseOnZone, dropZone, src, alt);
-		}
+		},
+        
+        sweetAlertSuccess : function(msg) {
+            return sweetAlertSuccess(msg);
+        },
+        
+        sweetAlertError : function(msg) {
+            return sweetAlertError(msg);
+        }, 
     };
 
 }();

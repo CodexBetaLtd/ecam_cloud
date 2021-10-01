@@ -60,7 +60,7 @@
 				        <i class="clip-checkmark-circle-2 btn-save"></i> Save
 				    </a>
 				    
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" disabled="disabled" data-placement="top" data-original-title="Delete"
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" data-original-title="Delete"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_WEARHOUSE_VIEW.id)">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				    </a>
@@ -97,7 +97,6 @@
 				                            <th>Name</th>
 				                            <th class="hidden-xs">Code</th>
            									<th class="hidden-xs">Description</th>
-				                            <th class="last-col">More</th>
 				                        </tr>
 				                    </thead>
 				                    <tbody>
@@ -128,15 +127,14 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
     
-<div th:include="template/commonjs :: commonjstables"></div>
+	<div th:include="template/commonjs :: commonjstables"></div>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
+	
     <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/home-view.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/home-tree-view.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/init-home.js}"></script>

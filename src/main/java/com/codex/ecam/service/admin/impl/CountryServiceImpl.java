@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -29,11 +29,11 @@ public class CountryServiceImpl implements CountryService {
 	@Override
 	public DataTablesOutput<CountryDTO> findAll(FocusDataTablesInput input) throws Exception {
 		CountrySearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<Country> domainOut = countryDao.findAll(input);
+		final DataTablesOutput<Country> domainOut = countryDao.findAll(input);
 		DataTablesOutput<CountryDTO> out = null;
 		try {
 			out = CountryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -42,7 +42,7 @@ public class CountryServiceImpl implements CountryService {
 
 	@Override
 	public CountryDTO findById(Integer id) throws Exception {
-		Country domain = countryDao.findById(id);
+		final Country domain = countryDao.findById(id);
 		if (domain != null) {
 			return CountryMapper.getInstance().domainToDto(domain);
 		}
@@ -52,15 +52,15 @@ public class CountryServiceImpl implements CountryService {
 
 	@Override
 	public CountryResult delete(Integer id) {
-		CountryResult result = new CountryResult(null, null);
+		final CountryResult result = new CountryResult(null, null);
 		try {
 			countryDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Country Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Country Already Assigned. Please Remove from Assigned Country and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -69,15 +69,36 @@ public class CountryServiceImpl implements CountryService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public CountryResult deleteMultiple(Integer[] ids) throws Exception {
+		final CountryResult result = new CountryResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				countryDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Country(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Country(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public CountryResult save(CountryDTO dto) throws Exception {
-		CountryResult result = createCountryResult(dto);
+		final CountryResult result = createCountryResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Country Already updated. Please Reload Country.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -94,7 +115,7 @@ public class CountryServiceImpl implements CountryService {
 
 	private CountryResult createCountryResult(CountryDTO dto) {
 		CountryResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new CountryResult(countryDao.findOne(dto.getId()), dto);
 		} else {
 			result = new CountryResult(new Country(), dto);
@@ -113,10 +134,10 @@ public class CountryServiceImpl implements CountryService {
 
 	@Override
 	public void saveAll(List<CountryDTO> allDummyData) {
-		for (CountryDTO dto : allDummyData) {
+		for (final CountryDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -129,10 +150,10 @@ public class CountryServiceImpl implements CountryService {
 
 	@Override
 	public List<CountryDTO> findAll() {
-		Iterable<Country> countries = countryDao.findAll();
+		final Iterable<Country> countries = countryDao.findAll();
 		try {
 			return CountryMapper.getInstance().domainToDTOList(countries);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -140,7 +161,7 @@ public class CountryServiceImpl implements CountryService {
 
 	@Override
 	public List<CountryDTO> findAllCountries() throws Exception {
-		Iterable<Country> countries = countryDao.findAll();
+		final Iterable<Country> countries = countryDao.findAll();
 		return CountryMapper.getInstance().domainToDTOList(countries);
 	}
 

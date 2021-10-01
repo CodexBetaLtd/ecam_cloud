@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.admin.cmmssettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,32 +38,32 @@ public class UserJobTitleController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String findByIDAccount(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			UserJobTitleDTO dto = jobTitleService.findById(id);
+			final UserJobTitleDTO dto = jobTitleService.findById(id);
 			setCommonData(model, dto);
 			return "admin/cmmssetting/lookuptable/userjobtitle/add-view";
-		} catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
-            return "redirect:/cmmssettings/";
-        }
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
+			return "redirect:/cmmssettings/";
+		}
 	}
 
 	@RequestMapping(value = "/delete", method = {RequestMethod.POST, RequestMethod.GET})
 	public String deleteAccount(Integer id, Model model, RedirectAttributes ra) {
 
-		UserJobTitleResult result = jobTitleService.delete(id);
+		final UserJobTitleResult result = jobTitleService.delete(id);
 
 		if(result.getStatus().equals(ResultStatus.ERROR)){
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
-        setCommonData(model, new UserJobTitleDTO());
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
+		setCommonData(model, new UserJobTitleDTO());
 		return "admin/cmmssetting/lookuptable/userjobtitle/add-view";
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("userJobTitle") UserJobTitleDTO jobTitleDTO, Model model) throws Exception{
-		save(jobTitleDTO, model); 
+		save(jobTitleDTO, model);
 		return "admin/cmmssetting/lookuptable/userjobtitle/add-view";
 	}
 
@@ -75,13 +76,13 @@ public class UserJobTitleController {
 	@RequestMapping(value = "/userjobTitledelete", method = {RequestMethod.POST, RequestMethod.GET})
 	public String deleteJobTitle(Integer id, Model model, RedirectAttributes ra) {
 
-		UserJobTitleResult result = jobTitleService.delete(id);
+		final UserJobTitleResult result = jobTitleService.delete(id);
 
 		if(result.getStatus().equals(ResultStatus.ERROR)){
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, new UserJobTitleDTO());
 
@@ -90,16 +91,35 @@ public class UserJobTitleController {
 
 	private void save(UserJobTitleDTO jobTitleDTO, Model model) throws Exception {
 
-		UserJobTitleResult result = jobTitleService.save(jobTitleDTO);
+		final UserJobTitleResult result = jobTitleService.save(jobTitleDTO);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        } 
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, jobTitleDTO);
-    }
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final UserJobTitleResult result = jobTitleService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "User job title already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/cmmssetting/lookuptable/userjobtitle/home-view";
+	}
 
 	private void setCommonData(Model model, UserJobTitleDTO jobTitleDTO) {
 		model.addAttribute("userJobTitle", jobTitleDTO);

@@ -105,8 +105,10 @@ var dtScheduledMaintenanceUsers = function () {
     });
 
     var getUserDataTable = function (userType) {
+        
         var table_name = "user_select_tbl";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -116,7 +118,7 @@ var dtScheduledMaintenanceUsers = function () {
             columns: [{
 	                orderable: false,
 	                searchable: false,
-	                width: "2%",
+	                width: "8%",
 	                render: function (data, type, row, meta) {
 	                    return meta.row + meta.settings._iDisplayStart + 1;
 	                }
@@ -126,14 +128,7 @@ var dtScheduledMaintenanceUsers = function () {
                 {data: 'personalCode'},
                 {data: 'businessName'}
             ],
-            aoColumnDefs: [{
-                data: "id",
-                targets: 5,
-                render: function (data, type, row, meta) {
-                	var vars = [data, EncodeDecodeComponent.getBase64().encode(row.fullName)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("TaskAddModal.setAssignedUser", data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -151,7 +146,21 @@ var dtScheduledMaintenanceUsers = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "TaskAddModal.setAssignedUser",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName",
+                        sRender : 'EncodeDecodeComponent.getBase64().encode'
+                    },
+                ],
+            },
         });
         $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -165,7 +174,9 @@ var dtScheduledMaintenanceUsers = function () {
     };
 
     var getNotifyUsersDataTable = function (func) {
+        
         var tableId = "tbl_scheduled_user";
+        
         var oTable = $("#" + tableId).dataTable({
             processing: true,
             serverSide: true,
@@ -176,7 +187,7 @@ var dtScheduledMaintenanceUsers = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -186,14 +197,7 @@ var dtScheduledMaintenanceUsers = function () {
                 {data: 'personalCode'},
                 {data: 'businessName'}
             ],
-            aoColumnDefs: [{
-                targets: 5,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.fullName)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -214,7 +218,21 @@ var dtScheduledMaintenanceUsers = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName",
+                        sRender : 'EncodeDecodeComponent.getBase64().encode'
+                    },
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
@@ -228,9 +246,11 @@ var dtScheduledMaintenanceUsers = function () {
     };
 
     return {
+        
         smAssignedUsers: function () {
             getUserDataTable();
         },
+        
         smNotifyUsers: function (func) {
             getNotifyUsersDataTable(func);
         }

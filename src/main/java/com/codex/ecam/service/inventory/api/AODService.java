@@ -17,32 +17,34 @@ import java.util.List;
 
 public interface AODService {
 
-    AODResult newAOD();
+	AODResult newAOD();
 
-    AODResult save(AODDTO aodDTO) throws Exception;
+	AODResult save(AODDTO aodDTO) throws Exception;
 
-    AODResult update(AODDTO aodDTO) throws Exception;
+	AODResult update(AODDTO aodDTO) throws Exception;
 
-    AODResult delete(Integer id) throws Exception;
+	AODResult delete(Integer id) throws Exception;
 
-    AODResult findById(Integer id) throws Exception;
+	AODResult findById(Integer id) throws Exception;
 
-    AODResult statusChange(Integer id, AODStatus status);
-    MRNResult generateAodFromMrn(String ids, Integer mrnId);
-
-
-    AODRepDTO findAODRepById(Integer id) throws Exception;
-
-    BigDecimal getAODItemRemainQty(Integer aodItemId);
-
-    List<AODRepDTO> findAll(AODFilterDTO aodFilterDTO) throws Exception;
-
-    List<AODDTO> findAll();
+	AODResult statusChange(Integer id, AODStatus status);
+	MRNResult generateAodFromMrn(String ids, Integer mrnId);
 
 
-    DataTablesOutput<AODDTO> findAll(FocusDataTablesInput input) throws Exception;
-    DataTablesOutput<AODDTO> findAllApprovedAOD(FocusDataTablesInput input) throws Exception;
+	AODRepDTO findAODRepById(Integer id) throws Exception;
 
-    DataTablesOutput<AODItemDTO> findAll(FocusDataTablesInput input, Integer id);
+	BigDecimal getAODItemRemainQty(Integer aodItemId);
+
+	List<AODRepDTO> findAll(AODFilterDTO aodFilterDTO) throws Exception;
+
+	List<AODDTO> findAll();
+
+
+	DataTablesOutput<AODDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<AODDTO> findAllApprovedAOD(FocusDataTablesInput input) throws Exception;
+
+	DataTablesOutput<AODItemDTO> findAll(FocusDataTablesInput input, Integer id);
+
+	AODResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

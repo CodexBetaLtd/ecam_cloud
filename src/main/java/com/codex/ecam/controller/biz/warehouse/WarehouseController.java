@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,12 +17,13 @@ import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.biz.warehouse.WareHouseDTO;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.asset.WareHouseResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
-import com.codex.ecam.service.biz.api.WareHouseService; 
+import com.codex.ecam.service.biz.api.WareHouseService;
 
 @Controller
 @RequestMapping(WarehouseController.REQUEST_MAPPING_URL)
@@ -61,7 +63,7 @@ public class WarehouseController {
 		model.addAttribute("type", type);
 		return "biz/warehouse/modal/category/category-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/assetview", method = RequestMethod.GET)
 	public  String parentAssetSelectView(Model model){
 		return "biz/warehouse/modal/warehouse-select-modal";
@@ -81,7 +83,7 @@ public class WarehouseController {
 		try {
 			setCommonData(model, new WareHouseDTO());
 			return "biz/warehouse/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/warehouse/index";
 		}
@@ -90,10 +92,10 @@ public class WarehouseController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			WareHouseDTO WearHouseDTO = wareHouseService.findById(id);;
+			final WareHouseDTO WearHouseDTO = wareHouseService.findById(id);;
 			setCommonData(model, WearHouseDTO);
 			return "biz/warehouse/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/warehouse/index";
 		}
@@ -102,7 +104,7 @@ public class WarehouseController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) throws Exception {
 
-		WareHouseResult result = wareHouseService.delete(id);
+		final WareHouseResult result = wareHouseService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -115,7 +117,7 @@ public class WarehouseController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("wearhouse") @Valid WareHouseDTO dto, Model model) throws Exception {
 
-		WareHouseResult result = wareHouseService.save(dto);
+		final WareHouseResult result = wareHouseService.save(dto);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -125,6 +127,25 @@ public class WarehouseController {
 
 		setCommonData(model, result.getDtoEntity());
 		return "biz/warehouse/add-view";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final WareHouseResult result = wareHouseService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Warehouse already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "biz/warehouse/home-view";
 	}
 
 	private void setCommonData(Model model,WareHouseDTO dto) {

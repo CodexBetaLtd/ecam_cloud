@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -41,18 +41,18 @@ public class MiscellaneousExpenseTypeServiceImpl implements MiscellaneousExpense
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = miscellaneousExpenseTypeDao.findAll(input);
 		} else {
-			Specification<MiscellaneousExpenseType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<MiscellaneousExpenseType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = miscellaneousExpenseTypeDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<MiscellaneousExpenseTypeDTO> out = MiscellaneousExpenseTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<MiscellaneousExpenseTypeDTO> out = MiscellaneousExpenseTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public MiscellaneousExpenseTypeDTO findById(Integer id) throws Exception {
-		MiscellaneousExpenseType domain = findEntityById(id);
+		final MiscellaneousExpenseType domain = findEntityById(id);
 		if (domain != null) {
 			return MiscellaneousExpenseTypeMapper.getInstance().domainToDto(domain);
 		}
@@ -61,15 +61,15 @@ public class MiscellaneousExpenseTypeServiceImpl implements MiscellaneousExpense
 
 	@Override
 	public MiscellaneousExpenseTypeResult delete(Integer id) {
-		MiscellaneousExpenseTypeResult result = new MiscellaneousExpenseTypeResult(null, null);
+		final MiscellaneousExpenseTypeResult result = new MiscellaneousExpenseTypeResult(null, null);
 		try {
 			miscellaneousExpenseTypeDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Miscellaneous Expense Type Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Miscellaneous Expense Type Already Assigned. Please Remove from Assigned Miscellaneous Expense Type and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -78,15 +78,36 @@ public class MiscellaneousExpenseTypeServiceImpl implements MiscellaneousExpense
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public MiscellaneousExpenseTypeResult deleteMultiple(Integer[] ids) throws Exception {
+		final MiscellaneousExpenseTypeResult result = new MiscellaneousExpenseTypeResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				miscellaneousExpenseTypeDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Miscellaneous Expense Type(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Miscellaneous Expense Type(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public MiscellaneousExpenseTypeResult save(MiscellaneousExpenseTypeDTO dto) throws Exception {
-		MiscellaneousExpenseTypeResult result = createMiscellaneousExpenseTypeResult(dto);
+		final MiscellaneousExpenseTypeResult result = createMiscellaneousExpenseTypeResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Priority Already updated. Please Reload Priority.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -104,7 +125,7 @@ public class MiscellaneousExpenseTypeServiceImpl implements MiscellaneousExpense
 
 	private MiscellaneousExpenseTypeResult createMiscellaneousExpenseTypeResult(MiscellaneousExpenseTypeDTO dto) {
 		MiscellaneousExpenseTypeResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new MiscellaneousExpenseTypeResult(miscellaneousExpenseTypeDao.findOne(dto.getId()), dto);
 		} else {
 			result = new MiscellaneousExpenseTypeResult(new MiscellaneousExpenseType(), dto);
@@ -122,7 +143,7 @@ public class MiscellaneousExpenseTypeServiceImpl implements MiscellaneousExpense
 	}
 
 	private void setBusiness(MiscellaneousExpenseTypeResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}

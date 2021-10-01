@@ -44,10 +44,8 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="item-add-modal" class="modal datatable fade" role="dialog"
-				tabindex="-1"
-				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-				        <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div> 
+			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div> 
 				
 			<div align='center'>
 				<div id='model' class='modal fade alert-warning' tabindex='-1'
@@ -288,10 +286,11 @@
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 	<script type="text/javascript"th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-
+	
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/add-view.js}"></script>

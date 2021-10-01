@@ -40,7 +40,11 @@
     <div class="main-content">
 
         <div class="container">
-
+            <div th:replace="general/modal/modal-base :: modalFragment "></div>
+            <div th:replace="general/modal/modal-base :: largeModalFragment "></div>
+            <div th:replace="general/modal/modal-base :: modalDatatableFragment"></div>
+            <div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
+            <div th:replace="general/modal/modal-base :: stackableDataTableModalFragment "></div>
             <!-- start: PAGE HEADER -->
             <div class="row" th:replace="inventory/stockAdjustment/page-header :: pageheader"></div>
             <!-- end: PAGE HEADER -->
@@ -52,11 +56,11 @@
                 <input type="hidden" id="stockAdjustmentId" name="id" th:field="*{id}"/>
                 <input type="hidden" id="stockAdjustmentVersion" name="version" th:field="*{version}"/>
                 <div class="row btn-bar">
-                    <a name="init" class="btn btn-default btn-sm active tooltips"
+                    <a th:name="init" class="btn btn-default btn-sm active tooltips"
                        th:href="@{/stockAdjustment/add}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_STOCK_ADJUSTMENT_VIEW.id)"
                        data-placement="top" data-original-title="New Stock Adjustment">
-                        <i class="clip-plus-circle-2  btn-new"></i> <span th:text="#{form.btn.new}"/>
+                        <i class="clip-plus-circle-2  btn-new"></i> <span th:text="#{form.btn.new}"></span>
                     </a>
                     <a class="btn btn-default btn-sm active tooltips" id="saveAdjustment" data-placement="top"
                        data-original-title="Save"
@@ -66,7 +70,7 @@
                     >
                         <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs" th:text="#{form.btn.save}"> </span>
                     </a>
-                    <a name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stockAdjustment/}"
+                    <a th:name="cancel" class="btn btn-default btn-sm active tooltips" th:href="@{/stockAdjustment/}"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_STOCK_ADJUSTMENT_ADD.id)"
                        data-placement="top" data-original-title="Cancel and Back">
                         <i class="clip-arrow-left-2 "></i> <span class="hidden-xs"> Cancel</span>
@@ -108,12 +112,6 @@
                             <div class="panel-body">
 
                                 <div th:replace="template/messageview :: message"></div>
-
-                                <div th:replace="general/modal/modal-base :: modalFragment "></div>
-                                <div th:replace="general/modal/modal-base :: largeModalFragment "></div>
-                                <div th:replace="general/modal/modal-base :: modalDatatableFragment"></div>
-                                <div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
-                                <div th:replace="general/modal/modal-base :: stackableDataTableModalFragment "></div>
 
                                 <div class="row">
                                     <div class="col-md-6">
@@ -251,25 +249,25 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
 
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/datatable/dt-warehouse.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/inventory/stockAdjustment/init.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/inventory/stockAdjustment/add-view.js}"></script>
-<script type="text/javascript"
-        th:src="@{/resources/script/app/inventory/stockAdjustment/datatable/dt-stock.js}"></script>
-<script type="text/javascript"
-        th:src="@{/resources/script/app/inventory/stockAdjustment/datatable/dt-part.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/stockAdjustment/datatable/dt-stock.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/inventory/stockAdjustment/datatable/dt-part.js}"></script>
 <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 <script th:inline="javascript">

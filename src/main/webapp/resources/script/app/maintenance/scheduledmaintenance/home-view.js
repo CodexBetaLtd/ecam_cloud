@@ -115,7 +115,7 @@ var ScheduledMaintenanceHome = function () {
     });
 
     var initDataTable = function () {
-        var oTable = $('#scheduled_maintenance_tbl').dataTable({
+        var oTable = $('#scheduled_maintenance_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -126,10 +126,10 @@ var ScheduledMaintenanceHome = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    searchable: false,
+                    defaultContent: '',
+                    width: "4%",
+                    className: 'select-checkbox',
                     responsivePriority: 2,
                 }, {
                     data: 'code',
@@ -146,14 +146,7 @@ var ScheduledMaintenanceHome = function () {
                 	data : 'businessName',
                 	responsivePriority: 4
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 5,
-                data: "id",
-                render: function (data, type, full, meta) {
-                	return ButtonUtil.getHomeBtnWithURL("scheduledmaintenance", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -167,7 +160,15 @@ var ScheduledMaintenanceHome = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../scheduledmaintenance/edit?id",
+            },
         });
         $('#scheduled_maintenance_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#scheduled_maintenance_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -177,6 +178,8 @@ var ScheduledMaintenanceHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "scheduledmaintenance", "id"); 
     };
 
     return {

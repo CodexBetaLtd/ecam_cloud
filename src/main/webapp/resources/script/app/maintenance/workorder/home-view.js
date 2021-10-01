@@ -115,7 +115,8 @@ var WorkOrderHome = function () {
     });
 
     var initWorkOrderTable = function () {
-        var oTable = $('#work_order_tbl').dataTable({
+        
+        var oTable = $('#work_order_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -126,10 +127,10 @@ var WorkOrderHome = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    searchable: false,
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
                     data: 'code',
@@ -144,14 +145,7 @@ var WorkOrderHome = function () {
                 	data : 'businessName',
                 	responsivePriority: 2
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 5,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("workorder", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -165,7 +159,15 @@ var WorkOrderHome = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../workorder/edit?id",
+            },
         });
         $('#work_order_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#work_order_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -175,6 +177,8 @@ var WorkOrderHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "workorder", "id"); 
     };
 
     return {

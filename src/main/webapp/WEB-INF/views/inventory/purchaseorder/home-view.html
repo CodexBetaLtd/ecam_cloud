@@ -52,15 +52,15 @@
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_PURCHASE_ORDER_VIEW.id)"
                    data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
                 </a> 
-                <a class="btn btn-default btn-sm active tooltips" id="save" disabled="disabled" data-placement="top"
+                <a class="btn btn-default btn-sm active tooltips" id="save" th:disabled="disabled" data-placement="top"
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_PURCHASE_ORDER_VIEW.id)"
                    data-original-title="Save"> <i class="clip-checkmark-circle-2 btn-save"></i><span class="hidden-xs"> Save</span>
 	            </a> 
-	            <a class="btn btn-default btn-sm active tooltips" id="delete" disabled="disabled" data-placement="top"
+	            <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top"
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_PURCHASE_ORDER_VIEW.id)"
                    data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i><span class="hidden-xs"> Delete</span>
 	            </a> 
-	            <a class="btn btn-default btn-sm active tooltips" id="cancel" disabled="disabled" data-placement="top"
+	            <a class="btn btn-default btn-sm active tooltips" id="cancel" th:disabled="disabled" data-placement="top"
                    sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_CANCEL_BUTTON_PURCHASE_ORDER_VIEW.id)"
                    data-original-title="Back"> <i class="clip-arrow-left-2 "></i><span class="hidden-xs"> Cancel</span>
 	            </a>
@@ -88,7 +88,6 @@
                                         <th>Code</th>
                                         <th>Supplier</th>
                                         <th>Status</th>
-                                        <th>More</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -119,13 +118,14 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-
+	
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>

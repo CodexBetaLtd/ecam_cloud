@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.inventory.stockAdjustment;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,114 +21,133 @@ import java.util.ArrayList;
 @RequestMapping(StockAdjustmentController.REQUEST_MAPPING_URL)
 public class StockAdjustmentController {
 
-    public static final String REQUEST_MAPPING_URL = "/stockAdjustment";
+	public static final String REQUEST_MAPPING_URL = "/stockAdjustment";
 
-    @Autowired
-    private StockAdjustmentService stockAdjustmentService;
+	@Autowired
+	private StockAdjustmentService stockAdjustmentService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Model model) {
-        return "inventory/stockAdjustment/home-view";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String index(Model model) {
+		return "inventory/stockAdjustment/home-view";
+	}
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
-        return "inventory/stockAdjustment/home-view";
-    }
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
+		return "inventory/stockAdjustment/home-view";
+	}
 
-    /*********************************************************************
-     * Stock Adjustment Modal Views
-     *********************************************************************/
+	/*********************************************************************
+	 * Stock Adjustment Modal Views
+	 *********************************************************************/
 
-    @RequestMapping(value = "/itemView", method = RequestMethod.GET)
-    public String getItemView(Model model) {
-        return "inventory/stockAdjustment/datatable/item-select-modal";
-    }
+	@RequestMapping(value = "/itemView", method = RequestMethod.GET)
+	public String getItemView(Model model) {
+		return "inventory/stockAdjustment/datatable/item-select-modal";
+	}
 
-    @RequestMapping(value = "/stockView", method = RequestMethod.GET)
-    public String getStockView(Model model) {
-        return "inventory/stockAdjustment/datatable/stock-select-modal";
-    }
+	@RequestMapping(value = "/stockView", method = RequestMethod.GET)
+	public String getStockView(Model model) {
+		return "inventory/stockAdjustment/datatable/stock-select-modal";
+	}
 
-    @RequestMapping(value = "/warehouseView", method = RequestMethod.GET)
-    public String getWarehouseView(Model model) {
-        return "inventory/stockAdjustment/datatable/item-select-modal";
-    }
-
-
-    /*********************************************************************
-     * Stock Adjustment Functions
-     *********************************************************************/
-
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String add(Model model, RedirectAttributes ra) {
-        try {
-            setCommonData(model, stockAdjustmentService.newStockAdjustment());
-            return "inventory/stockAdjustment/add-view";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
-            return "inventory/stockAdjustment/add-view";
-        }
-    }
-
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveOrUpdate(@ModelAttribute("stockAdjustment") StockAdjustmentDTO dto, Model model) throws Exception {
-        StockAdjustmentResult result;
-        if ((dto.getId() != null) && (dto.getId() > 0)) {
-            result = stockAdjustmentService.update(dto);
-        } else {
-            result = stockAdjustmentService.save(dto);
-        }
-        if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
-        setCommonData(model, result.getDtoEntity());
-        return "inventory/stockAdjustment/add-view";
-    }
-
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String editForm(Integer id, Model model, RedirectAttributes ra) {
-        try {
-            setCommonData(model, stockAdjustmentService.findById(id));
-            return "inventory/stockAdjustment/add-view";
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error occurred. Please Try again."));
-            return "inventory/stockAdjustment/add-view";
-        }
-    }
-
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String delete(Integer id, Model model, RedirectAttributes ra) {
-        StockAdjustmentResult result = stockAdjustmentService.delete(id);
-        if (result.getStatus().equals(ResultStatus.ERROR)) {
-            ra.addFlashAttribute("error", result.getErrorList());
-        } else {
-            ra.addFlashAttribute("success", result.getMsgList());
-        }
-        return "inventory/stockAdjustment/add-view";
-    }
+	@RequestMapping(value = "/warehouseView", method = RequestMethod.GET)
+	public String getWarehouseView(Model model) {
+		return "inventory/stockAdjustment/datatable/item-select-modal";
+	}
 
 
-    @RequestMapping(value = "/statusChange", method = RequestMethod.GET)
-    public String aodStatusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus, Model model, RedirectAttributes ra) throws Exception {
-        StockAdjustmentResult result = null;
-        result = stockAdjustmentService.statusChange(id, stockAdjustmentStatus);
-        if (result.getStatus().equals(ResultStatus.ERROR)) {
-            ra.addFlashAttribute("error", result.getErrorList());
-        } else {
-            ra.addFlashAttribute("success", result.getMsgList());
-        }
-        setCommonData(model, result.getDtoEntity());
-        return "inventory/stockAdjustment/add-view";
-    }
+	/*********************************************************************
+	 * Stock Adjustment Functions
+	 *********************************************************************/
 
-    private void setCommonData(Model model, StockAdjustmentDTO stockAdjustmentDTO) {
-        model.addAttribute("stockAdjustment", stockAdjustmentDTO);
-    }
+	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	public String add(Model model, RedirectAttributes ra) {
+		try {
+			setCommonData(model, stockAdjustmentService.newStockAdjustment());
+			return "inventory/stockAdjustment/add-view";
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
+			return "inventory/stockAdjustment/add-view";
+		}
+	}
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	public String saveOrUpdate(@ModelAttribute("stockAdjustment") StockAdjustmentDTO dto, Model model) throws Exception {
+		StockAdjustmentResult result;
+		if (dto.getId() != null && dto.getId() > 0) {
+			result = stockAdjustmentService.update(dto);
+		} else {
+			result = stockAdjustmentService.save(dto);
+		}
+		if (result.getStatus().equals(ResultStatus.ERROR)) {
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
+		setCommonData(model, result.getDtoEntity());
+		return "inventory/stockAdjustment/add-view";
+	}
+
+	@RequestMapping(value = "/edit", method = RequestMethod.GET)
+	public String editForm(Integer id, Model model, RedirectAttributes ra) {
+		try {
+			setCommonData(model, stockAdjustmentService.findById(id));
+			return "inventory/stockAdjustment/add-view";
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occurred. Please Try again."));
+			return "inventory/stockAdjustment/add-view";
+		}
+	}
+
+	@RequestMapping(value = "/delete", method = RequestMethod.GET)
+	public String delete(Integer id, Model model, RedirectAttributes ra) {
+		final StockAdjustmentResult result = stockAdjustmentService.delete(id);
+		if (result.getStatus().equals(ResultStatus.ERROR)) {
+			ra.addFlashAttribute("error", result.getErrorList());
+		} else {
+			ra.addFlashAttribute("success", result.getMsgList());
+		}
+		return "inventory/stockAdjustment/add-view";
+	}
+
+
+	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
+	public String aodStatusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus, Model model, RedirectAttributes ra) throws Exception {
+		StockAdjustmentResult result = null;
+		result = stockAdjustmentService.statusChange(id, stockAdjustmentStatus);
+		if (result.getStatus().equals(ResultStatus.ERROR)) {
+			ra.addFlashAttribute("error", result.getErrorList());
+		} else {
+			ra.addFlashAttribute("success", result.getMsgList());
+		}
+		setCommonData(model, result.getDtoEntity());
+		return "inventory/stockAdjustment/add-view";
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final StockAdjustmentResult result = stockAdjustmentService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Stock Adjustment already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "inventory/stockAdjustment/home-view";
+	}
+
+	private void setCommonData(Model model, StockAdjustmentDTO stockAdjustmentDTO) {
+		model.addAttribute("stockAdjustment", stockAdjustmentDTO);
+	}
 
 
 }

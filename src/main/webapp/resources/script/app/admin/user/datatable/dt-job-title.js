@@ -118,78 +118,76 @@
     var runDataTable = function () {
 
 		$('#jobtitleselectTbl').dataTable().fnDestroy();
-		var oTable = $('#jobtitleselectTbl')
-				.dataTable(
-						{
-							processing : true,
-							serverSide : true,
-							ajax : $.fn.dataTable
-									.pipeline({
-										url : "../restapi/lookuptable/tabledataUserjobtitle",
-										pages : 5
-									}),
-							columns : [
-									{ 
-										render : function(data, type, row, meta) {
-											return meta.row + meta.settings._iDisplayStart + 1;
-										}
-									}, {
-										data : 'jobTitle'
-									}, {
-										data : 'description'
-									}, { 
-										data : 'id'
-									} ],
-							aoColumnDefs : [
-									{
-										bSearchable : false,
-										aTargets : [ 0,3 ]
-									},
-									{
-										orderable : false,
-										aTargets : [ 0, 3 ]
-									},
-									{
-										targets : 3,//index of column starting from 0
-										data : "id", //this name should exist in your JSON response
-										render : function(data, type,row, full, meta) {
-											return ButtonUtil.getCommonBtnSelect('UserAdd.setJobTitle', data, row.jobTitle);
-											}
-									} ],
-							oLanguage : {
-								sLengthMenu : "Show _MENU_ Rows",
-								sSearch : "",
-								oPaginate : {
-									sPrevious : "&laquo;",
-									sNext : "&raquo;"
-								}
-							},
-							aaSorting : [ [ 1, 'asc' ] ],
-							aLengthMenu : [ [ 5, 10, 15, 20, -1 ],
-									[ 5, 10, 15, 20, "All" ] // change per page values here
-							],
-							dom : "<'row'<'col-sm-4 dtbljobtitle'><'col-sm-8'f>>"
-									+ "<'row'<'col-sm-12'tr>>"
-									+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-							initComplete : function() {
-								$("div.dtbljobtitle")
-										.html(
-												"<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='job-title-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-							},
-				            sPaginationType: "full_numbers",
-				            sPaging: 'pagination',
-				            bLengthChange: false
+		
+		var oTable = $('#jobtitleselectTbl').DataTable({
+			processing : true,
+			serverSide : true,
+			ajax : $.fn.dataTable.pipeline({
+						url : "../restapi/lookuptable/tabledataUserjobtitle",
+						pages : 5
+					}),
+			columns : [
+					{ 
+						render : function(data, type, row, meta) {
+							return meta.row + meta.settings._iDisplayStart + 1;
+						}
+					}, {
+						data : 'jobTitle'
+					}, {
+						data : 'description'
+					}],
+			aoColumnDefs : [
+					{
+						bSearchable : false,
+						aTargets : [ 0 ]
+					},
+					{
+						orderable : false,
+						aTargets : [ 0 ]
+					}],
+			oLanguage : {
+				sLengthMenu : "Show _MENU_ Rows",
+				sSearch : "",
+				oPaginate : {
+					sPrevious : "&laquo;",
+					sNext : "&raquo;"
+				}
+			},
+			aaSorting : [ [ 1, 'asc' ] ],
+			aLengthMenu : [ [ 5, 10, 15, 20, -1 ],
+					[ 5, 10, 15, 20, "All" ] // change per page values here
+			],
+			dom : "<'row'<'col-sm-4 dtbljobtitle'><'col-sm-8'f>>"
+					+ "<'row'<'col-sm-12'tr>>"
+					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+			initComplete : function() {
+				$("div.dtbljobtitle")
+						.html(
+								"<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='job-title-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+			},
+            sPaginationType: "full_numbers",
+            sPaging: 'pagination',
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "UserAdd.setJobTitle",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "jobTitle"
+                    },
+                ],
+            },
 
-						});
+		});
 
 		$('#jobtitleselectTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-		// modify table search input
 		$('#jobtitleselectTbl_wrapper .dataTables_length select').addClass("m-wrap small");
-		// modify table per page dropdown
 		$('#jobtitleselectTbl_wrapper .dataTables_length select').select2();
-		// initialzie select2 dropdown
 		$('#jobtitleselectTbl_columnToggler input[type="checkbox"]').change(function() {
-			/* Get the DataTables object again - this is not a recreation, just a get of the object */
 			var iCol = parseInt($(this).attr("data-column"));
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));

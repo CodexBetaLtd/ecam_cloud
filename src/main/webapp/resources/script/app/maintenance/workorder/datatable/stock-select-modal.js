@@ -1,6 +1,8 @@
-﻿//Todo: Use same ASSET modal for this (ss)
-var AssetSelectModel = function () {
+var StockSelectModal = function () {
 
+    /**********************************************************
+     * Init Datatable
+     * ********************************************************/
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -8,8 +10,6 @@ var AssetSelectModel = function () {
             pages: 5, // number of pages to cache
             url: '', // script url
             data: null, // function or object with parameters to send to the
-            // server
-            // matching how `ajax.data` works in DataTables
             method: 'GET' // Ajax HTTP method
         }, opts);
 
@@ -27,20 +27,13 @@ var AssetSelectModel = function () {
             var requestEnd = requestStart + requestLength;
 
             if (settings.clearCache) {
-                // API requested that the cache be cleared
                 ajax = true;
                 settings.clearCache = false;
-            } else if (cacheLower < 0 || requestStart < cacheLower
-                || requestEnd > cacheUpper) {
-                // outside cached data - need to make a request
+            } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
                 ajax = true;
-            } else if (JSON.stringify(request.order) !== JSON
-                    .stringify(cacheLastRequest.order)
-                || JSON.stringify(request.columns) !== JSON
-                    .stringify(cacheLastRequest.columns)
-                || JSON.stringify(request.search) !== JSON
-                    .stringify(cacheLastRequest.search)) {
-                // properties changed (ordering, columns, searching)
+            } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)
+                || JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns)
+                || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)) {
                 ajax = true;
             }
 
@@ -50,8 +43,7 @@ var AssetSelectModel = function () {
             if (ajax) {
                 // Need data from the server
                 if (requestStart < cacheLower) {
-                    requestStart = requestStart
-                        - (requestLength * (conf.pages - 1));
+                    requestStart = requestStart - (requestLength * (conf.pages - 1));
 
                     if (requestStart < 0) {
                         requestStart = 0;
@@ -64,19 +56,12 @@ var AssetSelectModel = function () {
                 request.start = requestStart;
                 request.length = requestLength * conf.pages;
 
-                // Provide the same `data` options as DataTables.
                 if ($.isFunction(conf.data)) {
-                    // As a function it is executed with the data object as an
-                    // arg
-                    // for manipulation. If an object is returned, it is used as
-                    // the
-                    // data object to submit
                     var d = conf.data(request);
                     if (d) {
                         $.extend(request, d);
                     }
                 } else if ($.isPlainObject(conf.data)) {
-                    // As an object, the data given extends the default
                     $.extend(request, conf.data);
                 }
 
@@ -110,80 +95,90 @@ var AssetSelectModel = function () {
         }
     };
 
+    $.fn.dataTable.Api.register('clearPipeline()', function () {
+        return this.iterator('table', function (settings) {
+            settings.clearCache = true;
+        });
+    });
 
-    var initDataTable = function () {
+    /**********************************************************
+     * Part Select Datatable
+     * ********************************************************/
 
-        var oTable = $('#asset_tbl').dataTable({
+    var initStockSelectTable = function (assetId, func) {
+        
+        var oTable = $('#wo_asset_stock_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/asset/tabledata",
-                pages: 5
+                url: "../restapi/stock/stockByAsset",
+                pages: 5,
+                data: function (d) {
+                    d.assetId = assetId;
+                }
             }),
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            }, {
-                data: 'name'
-            }, {
-                data: 'code'
-            }, {
-                width: "5%",
-                data: 'id'
-            }],
-            aoColumnDefs: [{
-                targets: 3,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    return "<a id='link" + data + "' onclick='AssetAdd.addAsset(" + data + ",\"" + row.name + "\",\"" + row.code + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
-                }
-            }],
+            },
+                {data: 'site'},
+                {data: 'partName'},
+                {data: 'minQty'},
+                {data: 'qtyOnHand'}
+            ],
+            aoColumnDefs: [],
             oLanguage: {
-                sLengthMenu: "Show_MENU_Rows",
+                sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
                 oPaginate: {
                     sPrevious: "&laquo;",
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [
-                [1, 'asc']
-            ],
-            aLengthMenu: [
-                [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"] // change per page values here
-            ],
-            // set the initial value
-            //  iDisplayLength: 5,
-            scrollY: "195px",
+            aaSorting: [[1, 'asc']],
+            aLengthMenu: [[5, 10, 15, 20, -1],
+                [5, 10, 15, 20, "All"]],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "partName",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    }, {
+                        sName : "partId"
+                    }, {
+                        sName : "site",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    }
+                ],
+            },
         });
-        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        // modify table search input
-        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        // modify table per page dropdown
-        $('#asset_tbl_wrapper .dataTables_length select').select2();
-        // initialzie select2 dropdown
-        $('#asset_tbl_column_toggler input[type="checkbox"]').change(function () {
-            /* Get the DataTables object again - this is not a recreation, just a get of the object */
+        $('#wo_asset_stock_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#wo_asset_stock_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#wo_asset_stock_tbl_wrapper .dataTables_length select').select2();
+        $('#wo_asset_stock_tbl_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-
     };
-
 
     return {
-        init: function () {
-            initDataTable();
+        init: function (assetId, func) {
+            initStockSelectTable(assetId, func);
         }
-
     };
+
 }();

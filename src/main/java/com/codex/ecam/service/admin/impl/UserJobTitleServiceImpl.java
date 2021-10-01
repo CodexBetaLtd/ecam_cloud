@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -40,18 +40,18 @@ public class UserJobTitleServiceImpl implements UserJobTitleService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = userJobTitleDao.findAll(input);
 		} else {
-			Specification<UserJobTitle> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<UserJobTitle> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = userJobTitleDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<UserJobTitleDTO> out = UserJobTitleMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<UserJobTitleDTO> out = UserJobTitleMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public UserJobTitleDTO findById(Integer id) throws Exception {
-		UserJobTitle  domain = findEntityById(id);
+		final UserJobTitle  domain = findEntityById(id);
 		if (domain != null) {
 			return UserJobTitleMapper.getInstance().domainToDto(domain);
 		}
@@ -64,15 +64,35 @@ public class UserJobTitleServiceImpl implements UserJobTitleService {
 
 	@Override
 	public UserJobTitleResult delete(Integer id) {
-		UserJobTitleResult result = new UserJobTitleResult(null, null);
+		final UserJobTitleResult result = new UserJobTitleResult(null, null);
 		try {
 			userJobTitleDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("User Job Title Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Job Title Already Assigned. Please Remove from Assigned User Job Title and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public UserJobTitleResult deleteMultiple(Integer[] ids) throws Exception {
+		final UserJobTitleResult result = new UserJobTitleResult(null, null);
+		try {
+			for (final Integer id : ids) {
+
+				userJobTitleDao.delete(id);
+			}result.setResultStatusSuccess();
+			result.addToMessageList("User Job Title(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("User Job Title(s) Already Assigned. Please Remove from Assigned User Job Title and try again.");
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -81,14 +101,14 @@ public class UserJobTitleServiceImpl implements UserJobTitleService {
 
 	@Override
 	public UserJobTitleResult save(UserJobTitleDTO dto) throws Exception {
-		UserJobTitleResult result = createPriorityResult(dto);
+		final UserJobTitleResult result = createPriorityResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Job Title Already updated. Please Reload User Job Title.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 			ex.printStackTrace();
@@ -112,30 +132,30 @@ public class UserJobTitleServiceImpl implements UserJobTitleService {
 			return "User Job Title Updated Successfully.";
 		}
 	}
-	
+
 	private UserJobTitleResult createPriorityResult(UserJobTitleDTO dto) {
 		UserJobTitleResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new UserJobTitleResult(userJobTitleDao.findOne(dto.getId()), dto);
 		} else {
 			result = new UserJobTitleResult(new UserJobTitle(), dto);
 		}
-		
+
 		return result;
 	}
 
 	private void setBusiness(UserJobTitleResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public List<UserJobTitleDTO> findAll() {
-		Iterable<UserJobTitle> domainList = userJobTitleDao.findAll();
+		final Iterable<UserJobTitle> domainList = userJobTitleDao.findAll();
 		try {
 			return UserJobTitleMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

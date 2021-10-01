@@ -117,8 +117,10 @@ var AccountHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#accountTbl').dataTable().fnDestroy();
-		var oTable = $('#accountTbl').dataTable( {
+		
+		var oTable = $('#accountTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable.pipeline({
@@ -127,11 +129,11 @@ var AccountHome = function() {
 					}),
 			columns : [
 					{ 
-						orderable: false, 
-						searchable: false, 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'code'
 					}, {
@@ -139,14 +141,7 @@ var AccountHome = function() {
 					}, { 
 						data : 'businessName'
 					} ],
-			"aoColumnDefs" : [
-					{
-						"targets" : 4,//index of column starting from 0
-						"data" : 'id', //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL( 'account', data, 'AccountHome');
-						}
-					} ],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -161,7 +156,9 @@ var AccountHome = function() {
 			],
 			dom : "<'row'<'col-sm-4  dtblaccount'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtblaccount").html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='account-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblaccount").html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='account-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='accountDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
@@ -169,6 +166,18 @@ var AccountHome = function() {
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
 			sPaging : 'pagination',
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "AccountHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
 		});
 		$('#accountTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
@@ -181,7 +190,10 @@ var AccountHome = function() {
 			var iCol = parseInt($(this).attr("data-column"));
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-		});
+		});    
+		
+        DataTableUtil.deleteRowsFunc(oTable, "accountDelete", "AccountHome.deleteMutiple", "id");
+        
 	};
 
 	var addModal = function() {
@@ -265,6 +277,17 @@ var AccountHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../account/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseTen").find('.panel-body').empty().append(response);
+                runDataTable();
+            }
+        });
+    };
 
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -275,23 +298,33 @@ var AccountHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

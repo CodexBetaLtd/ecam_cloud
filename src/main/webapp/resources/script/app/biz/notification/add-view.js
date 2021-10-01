@@ -118,6 +118,7 @@ var NotificationAdd = function () {
     var setToUser = function (id, name) {
         $('#receivedUserId').val(id);
         $('#receivedUserName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $('#stackable-datatable-modal').modal('toggle');
     };
 
 

@@ -115,8 +115,10 @@ var StockLedgerHome = function () {
     });
 
     var dtStockLedger = function (id) {
+        
         var table_name = "tbl_stockLedger_list";
-        var oTable = $('#' + table_name).dataTable({
+        
+        var oTable = $('#' + table_name).DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline({
@@ -127,7 +129,7 @@ var StockLedgerHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }

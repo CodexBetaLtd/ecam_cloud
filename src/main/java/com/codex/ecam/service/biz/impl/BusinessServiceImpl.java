@@ -25,6 +25,7 @@ import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.BusinessResult;
+import com.codex.ecam.result.admin.BusinessResult;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.util.AuthenticationUtil;
 
@@ -45,9 +46,9 @@ public class BusinessServiceImpl implements BusinessService {
 
 	@Override
 	public BusinessDTO findById(Integer id) throws Exception {
-		Business domain = findEntityById(id);
+		final Business domain = findEntityById(id);
 		if (domain != null) {
-			BusinessDTO businessDTO = BusinessMapper.getInstance().domainToDto(domain);
+			final BusinessDTO businessDTO = BusinessMapper.getInstance().domainToDto(domain);
 			return businessDTO;
 		}
 		return null;
@@ -55,15 +56,36 @@ public class BusinessServiceImpl implements BusinessService {
 
 	@Override
 	public BusinessResult delete(Integer id) {
-		BusinessResult result = new BusinessResult(null, null);
+		final BusinessResult result = new BusinessResult(null, null);
 		try {
 			businessDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Business Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Business Already Assigned. Please Remove from Assigned Business and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public BusinessResult deleteMultiple(Integer[] ids) throws Exception {
+		final BusinessResult result = new BusinessResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				businessDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Business(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Business(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -72,14 +94,14 @@ public class BusinessServiceImpl implements BusinessService {
 
 	@Override
 	public BusinessResult save(BusinessDTO dto) throws Exception {
-		BusinessResult result = createBusinessResult(dto);
+		final BusinessResult result = createBusinessResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Business Already updated. Please Reload Business.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -97,7 +119,7 @@ public class BusinessServiceImpl implements BusinessService {
 
 	private BusinessResult createBusinessResult(BusinessDTO dto) {
 		BusinessResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new BusinessResult(businessDao.findOne(dto.getId()), dto);
 		} else {
 			result = new BusinessResult(new Business(), dto);
@@ -135,19 +157,19 @@ public class BusinessServiceImpl implements BusinessService {
 	}
 
 	private void setCountry(BusinessDTO dto, Business domain) {
-		if ((dto.getCountryId() != null) && (dto.getCountryId() > 0)) {
+		if (dto.getCountryId() != null && dto.getCountryId() > 0) {
 			domain.setCountry(countryDao.findOne(dto.getCountryId()));
 		}
 	}
 
 	private void setBusisnessClassification(BusinessDTO dto, Business domain) {
-		if ((dto.getBusinessClassficationId() != null) && (dto.getBusinessClassficationId() > 0)) {
+		if (dto.getBusinessClassficationId() != null && dto.getBusinessClassficationId() > 0) {
 			domain.setBusinessClassification(businessClassificationDao.findOne(dto.getBusinessClassficationId()));
 		}
 	}
 
 	private void setCurrency(BusinessDTO dto, Business domain) {
-		if ((dto.getCurrencyId() != null) && (dto.getCurrencyId() > 0)) {
+		if (dto.getCurrencyId() != null && dto.getCurrencyId() > 0) {
 			domain.setCurrency(currencyDao.findById(dto.getCurrencyId()));
 		}
 	}
@@ -155,7 +177,7 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void saveAll(List<BusinessDTO> entities) throws Exception {
-		for (BusinessDTO dto : entities) {
+		for (final BusinessDTO dto : entities) {
 			save(dto);
 		}
 	}
@@ -183,7 +205,7 @@ public class BusinessServiceImpl implements BusinessService {
 				list = new ArrayList<BusinessDTO>();
 				list.add(BusinessMapper.getInstance().domainToDto(businessDao.findOne(AuthenticationUtil.getLoginUserBusiness().getId())));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return list;
@@ -193,9 +215,9 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	public List<BusinessDTO> findAllActualBusiness() {
 		try {
-			List<Business> businesses = businessDao.findOriginalBiz();
+			final List<Business> businesses = businessDao.findOriginalBiz();
 			return BusinessMapper.getInstance().domainToDTOList(businesses);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -208,8 +230,8 @@ public class BusinessServiceImpl implements BusinessService {
 
 	@Override
 	public DataTablesOutput<BusinessDTO> findAll(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<Business> domainOut = businessDao.findAll(input);
-		DataTablesOutput<BusinessDTO> out = BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Business> domainOut = businessDao.findAll(input);
+		final DataTablesOutput<BusinessDTO> out = BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -224,24 +246,24 @@ public class BusinessServiceImpl implements BusinessService {
 		} else {
 			domainOut = businessDao.findAll(input, getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
 		}
-		DataTablesOutput<BusinessDTO> out = BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<BusinessDTO> out = BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	private Specification<Business> getAdminUserBusinessSpecification() {
-		Specification<Business> specification = (root, query, cb) -> 
-			cb.and(cb.isNull(root.get("virtualBusiness")));
+		final Specification<Business> specification = (root, query, cb) ->
+		cb.and(cb.isNull(root.get("virtualBusiness")));
 		return specification;
 	}
 	private Specification<Business> getSystemUserBusinessSpecification(Integer businessId) {
-		Specification<Business> specification = (root, query, cb) ->
+		final Specification<Business> specification = (root, query, cb) ->
 		cb.and(cb.equal(root.get("id"), businessId),cb.isNull(root.get("virtualBusiness")));
 		return specification;
 	}
 
 	private Specification<Business> getGeneralUserBusinessSpecification(Integer id) {
-		Specification<Business> specification = (root, query, cb) -> {
-			Join<Business, Asset> joinAssetBusiness = root.joinList("assets");
+		final Specification<Business> specification = (root, query, cb) -> {
+			final Join<Business, Asset> joinAssetBusiness = root.joinList("assets");
 			return cb.and(cb.equal(joinAssetBusiness.get("id"), id),cb.notEqual(root.get("virtualBusiness"), Boolean.TRUE));
 		};
 		return specification;
@@ -250,9 +272,9 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	public DataTablesOutput<BusinessDTO> findActualBusinesses(FocusDataTablesInput input) throws Exception {
 		try {
-			DataTablesOutput<Business> domainOut = businessDao.findAll(input, findAllActualSpecification());
+			final DataTablesOutput<Business> domainOut = businessDao.findAll(input, findAllActualSpecification());
 			return BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -261,7 +283,7 @@ public class BusinessServiceImpl implements BusinessService {
 
 	private Specification<Business> findAllActualSpecification() {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			if (AuthenticationUtil.isAuthUserAdminLevel()) {
 				predicates.add(cb.or(cb.isNull(root.get("virtualBusiness")), cb.equal(root.get("virtualBusiness"), Boolean.FALSE)));
 			} else {

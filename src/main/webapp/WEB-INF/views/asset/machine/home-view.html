@@ -68,7 +68,7 @@
 				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
 				    </a>
 				    
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top" data-original-title="Delete"
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" data-original-title="Delete"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_VIEW.id)">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
 				    </a>
@@ -111,7 +111,6 @@
 	           									<th>Category</th> 
 					                            <th class="">Customer</th>
 	           									<th class="">Business</th>
-					                            <th class="hidden-xs">More</th>
 					                        </tr>
 					                    </thead>
 					                    <tbody>
@@ -142,21 +141,18 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/ColReorderWithResize.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
+   	<script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
-        <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
      
 	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjstables"></div>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
 	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	
     <script type="text/javascript" th:src="@{/resources/script/app/asset/machine/home-view.js}"></script>

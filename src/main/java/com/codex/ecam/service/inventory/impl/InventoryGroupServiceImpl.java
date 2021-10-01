@@ -6,6 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -51,12 +52,12 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 
 	@Override
 	public InventoryGroupResult newInventoryGroup() {
-		InventoryGroupResult result = new InventoryGroupResult(null, null);
+		final InventoryGroupResult result = new InventoryGroupResult(null, null);
 		try {
 			result.setDtoEntity(nextItem());
 			result.setResultStatusSuccess();
 			result.addToErrorList("New Inventory Group Created!");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("Inventory Group NOT Created ".concat(e.getMessage()));
@@ -66,18 +67,18 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 	}
 
 	private InventoryGroupDTO nextItem() throws Exception {
-		InventoryGroupDTO dto = new InventoryGroupDTO();
+		final InventoryGroupDTO dto = new InventoryGroupDTO();
 		return dto;
 	}
 
 	@Override
 	public InventoryGroupResult save(InventoryGroupDTO dto) throws Exception {
-		InventoryGroupResult result = new InventoryGroupResult(new InventoryGroup(), dto);
+		final InventoryGroupResult result = new InventoryGroupResult(new InventoryGroup(), dto);
 		try {
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Inventory Group save operation SUCCESS.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList("Inventory Group save operation UNSUCCESS. ".concat(ex.getMessage()));
 			logger.error(ex.getMessage());
@@ -95,16 +96,16 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 
 	@Override
 	public InventoryGroupResult update(InventoryGroupDTO dto) throws Exception {
-		InventoryGroupResult result = new InventoryGroupResult(null, dto);
+		final InventoryGroupResult result = new InventoryGroupResult(null, dto);
 		try {
 			result.setDomainEntity(findEntityById(dto.getId()));
 			saveOrUpdate(result);
 			result.addToMessageList("Inventory Group Updated Successfully.");
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("Inventory Group Already updated. Please Reload Inventory Group.");
 			logger.error(ex.getMessage(), "Inventory Group Already updated. Please Reload Inventory Group.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 			logger.error(ex.getMessage());
@@ -118,12 +119,12 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 	}
 
 	private void setInventoryGroupPart(InventoryGroupResult result){
-		Set<InventoryGroupPart> inventoryGroupParts = new HashSet<>();
-		if ((result.getDtoEntity().getInventoryGroupPartDTOs() != null) && (result.getDtoEntity().getInventoryGroupPartDTOs().size() > 0)) {
-			Set<InventoryGroupPart> currentItems = result.getDomainEntity().getInventoryGroupParts();
-			for (InventoryGroupPartDTO inventoryGroupPartDTO : result.getDtoEntity().getInventoryGroupPartDTOs()) {
+		final Set<InventoryGroupPart> inventoryGroupParts = new HashSet<>();
+		if (result.getDtoEntity().getInventoryGroupPartDTOs() != null && result.getDtoEntity().getInventoryGroupPartDTOs().size() > 0) {
+			final Set<InventoryGroupPart> currentItems = result.getDomainEntity().getInventoryGroupParts();
+			for (final InventoryGroupPartDTO inventoryGroupPartDTO : result.getDtoEntity().getInventoryGroupPartDTOs()) {
 				InventoryGroupPart inventoryGroupPart;
-				if ((currentItems != null) && (currentItems.size() > 0)) {
+				if (currentItems != null && currentItems.size() > 0) {
 					inventoryGroupPart = currentItems.stream().filter((x) -> x.getId().equals(inventoryGroupPartDTO.getId())).findAny().orElseGet(InventoryGroupPart :: new);
 				} else {
 					inventoryGroupPart = new InventoryGroupPart();
@@ -137,13 +138,13 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 	}
 
 	private void setBusinessSite(InventoryGroupResult result) {
-		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+		if (result.getDtoEntity().getBusinessId() != null && result.getDtoEntity().getBusinessId() > 0) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		} else {
 			result.getDomainEntity().setBusiness(AuthenticationUtil.getLoginUserBusiness());
 		}
 
-		if ((result.getDtoEntity().getSiteId() != null) && (result.getDtoEntity().getSiteId() > 0)) {
+		if (result.getDtoEntity().getSiteId() != null && result.getDtoEntity().getSiteId() > 0) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		} else if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 			result.getDomainEntity().setSite(AuthenticationUtil.getLoginSite().getSite());
@@ -152,16 +153,37 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 
 	@Override
 	public InventoryGroupResult delete(Integer id) throws Exception {
-		InventoryGroupResult result = new InventoryGroupResult(null, null);
+		final InventoryGroupResult result = new InventoryGroupResult(null, null);
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Inventory Group  delete operation SUCCESS.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("Inventory Group  delete operation unsuccessful.".concat(ex.getMessage()));
 			logger.error(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public InventoryGroupResult deleteMultiple(Integer[] ids) throws Exception {
+		final InventoryGroupResult result = new InventoryGroupResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				deleteEntityById(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Inventory Group(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Inventory Group(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
 		}
 		return result;
 	}
@@ -173,12 +195,12 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 
 	@Override
 	public InventoryGroupResult findById(Integer id) throws Exception {
-		InventoryGroupResult result = new InventoryGroupResult(null, null);
+		final InventoryGroupResult result = new InventoryGroupResult(null, null);
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("Inventory Group Found.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("Error Occurred! Inventory Group NOT Found.".concat(ex.getMessage()));
@@ -192,16 +214,16 @@ public class InventoryGroupServiceImpl implements InventoryGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = inventoryGroupDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<InventoryGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<InventoryGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = inventoryGroupDao.findAll(input, specification);
 		} else {
-			Specification<InventoryGroup> specification = (root, query, cb) -> cb.and(
+			final Specification<InventoryGroup> specification = (root, query, cb) -> cb.and(
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite())
 					);
 			domainOut = inventoryGroupDao.findAll(input, specification);
 		}
-		DataTablesOutput<InventoryGroupDTO> out = InventoryGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<InventoryGroupDTO> out = InventoryGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 

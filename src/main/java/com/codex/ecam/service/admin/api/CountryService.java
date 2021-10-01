@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.CountryDTO;
@@ -24,4 +24,6 @@ public interface CountryService {
 	List<CountryDTO> findAll();
 
 	List<CountryDTO> findAllCountries() throws Exception;
+
+	CountryResult deleteMultiple(Integer[] ids) throws Exception;
 }

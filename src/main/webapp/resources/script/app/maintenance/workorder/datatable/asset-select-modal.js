@@ -1,9 +1,7 @@
-﻿var UserSelectModel = function () {
+﻿//Todo: Use same ASSET modal for this (ss)
+var AssetSelectModel = function () {
 
-    //
-    // Pipelining function for DataTables. To be used to the `ajax` option of
-    // DataTables
-    //
+
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
         var conf = $.extend({
@@ -112,22 +110,14 @@
         }
     };
 
-    // Register an API method that will empty the pipelined data, forcing an
-    // Ajax
-    // fetch on the next draw (i.e. `table.clearPipeline().draw()`)
-    $.fn.dataTable.Api.register('clearPipeline()', function () {
-        return this.iterator('table', function (settings) {
-            settings.clearCache = true;
-        });
-    });
 
-    var runDataTable = function () {
+    var initDataTable = function () {
 
-        var oTable = $('#user_select_tbl').dataTable({
+        var oTable = $('#asset_tbl').dataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/users/getuserlist",
+                url: "../restapi/asset/tabledata",
                 pages: 5
             }),
             columns: [{
@@ -137,25 +127,19 @@
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            },
-                {
-                    data: 'fullName'
-                },
-                {
-                    data: 'emailAddress'
-                },
-                {
-                    data: 'personalCode'
-                },
-                {
-                	data: 'businessName'
-                }],
+            }, {
+                data: 'name'
+            }, {
+                data: 'code'
+            }, {
+                width: "5%",
+                data: 'id'
+            }],
             aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
+                targets: 3,//index of column starting from 0
                 data: "id", //this name should exist in your JSON response
                 render: function (data, type, row, meta) {
-                    var vars = [data, row.fullName];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('ScheduledMaintenanceAdd.selectAssignedUser', data, vars);
+                    return "<a id='link" + data + "' onclick='AssetAdd.addAsset(" + data + ",\"" + row.name + "\",\"" + row.code + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
                 }
             }],
             oLanguage: {
@@ -175,18 +159,31 @@
             ],
             // set the initial value
             //  iDisplayLength: 5,
-            // scrollY: "195px",
+            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetBrandSelectModal.setAssetBrand",
+                aoData:[  
+                    {
+                        sName : "brandId",
+                    }, {
+                        sName : "brandName"
+                    },
+                ],
+            },
         });
-        $('#user_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
-        $('#user_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
         // modify table per page dropdown
-        $('#user_select_tbl_wrapper .dataTables_length select').select2();
+        $('#asset_tbl_wrapper .dataTables_length select').select2();
         // initialzie select2 dropdown
-        $('#user_select_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#asset_tbl_column_toggler input[type="checkbox"]').change(function () {
             /* Get the DataTables object again - this is not a recreation, just a get of the object */
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
@@ -195,79 +192,11 @@
 
     };
 
-    var taskGroupUser = function (obj) {
-        var row_id = $(obj).closest("td").attr("id");
-        $('#tbl_scheduled_user').dataTable().fnDestroy();
-        var oTable = $('#tbl_scheduled_user').dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/users/getuserlist",
-                pages: 5
-            }),
-            columns: [
-                {
-                    orderable: false,
-                    searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {data: 'fullName'},
-                {data: 'emailAddress'},
-                {data: 'personalCode'}
-            ],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var userId = data;
-                    var userName = row.fullName;
-                    return "<div>" +
-                        "<input type='hidden' id='row_id' value='" + row_id + "'>" +
-                        "<input type='hidden' id='user_id' value='" + userId + "'>" +
-                        "<input type='hidden' id='user_name' value='" + userName + "'>" +
-                        "<a id='link" + data + "' data-dismiss='modal' type='button' class='btn btn-xs btn-squared add-task-user'> <i class='clip-arrow-right'></i> Add </a> </div>";
-                }
-            }],
-            oLanguage: {
-                sLengthMenu: "Show_MENU_Rows",
-                sSearch: "",
-                oPaginate: {
-                    sPrevious: "&laquo;",
-                    sNext: "&raquo;"
-                }
-            },
-            aaSorting: [
-                [1, 'asc']
-            ],
-            aLengthMenu: [
-                [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]
-            ],
-            sPaginationType: "full_numbers",
-            sPaging: 'pagination',
-            bLengthChange: false
-        });
-        $('#tbl_scheduled_task_group_task_user_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#tbl_scheduled_task_group_task_user_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#tbl_scheduled_task_group_task_user_wrapper .dataTables_length select').select2();
-        $('#tbl_scheduled_task_group_task_user_column_toggler input[type="checkbox"]').change(function () {
-            var iCol = parseInt($(this).attr("data-column"));
-            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });
-
-    };
 
     return {
-        //main function to initiate template pages
         init: function () {
-            runDataTable();
-        },
-        userGroupTaskUserList: function (obj) {
-            taskGroupUser(obj);
+            initDataTable();
         }
+
     };
 }();

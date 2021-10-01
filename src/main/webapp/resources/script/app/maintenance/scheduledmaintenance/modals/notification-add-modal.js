@@ -31,6 +31,7 @@ var NotificationAddModal = function () {
     var setNotifyUser = function (id, userName) {
         $('#notificationUserId').val(id);
         $('#notificationUserName').val(EncodeDecodeComponent.getBase64().decode(userName));
+        $('#sm-notification-dt-modal').modal('toggle');
     };
 	
 	var initValidator = function () {

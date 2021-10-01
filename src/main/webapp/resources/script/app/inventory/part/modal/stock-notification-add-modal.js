@@ -44,7 +44,7 @@ var StockNotificationAddModal = function () {
     var setNotifyUser = function (id, userName) {
         $('#stockNotificationUserId').val(id);
         $('#stockNotificationUserName').val(userName);
-//        $('#common-modal-child').modal('toggle');
+        $('#common-modal').modal('toggle');
     };
 	
 	var initValidator = function () {

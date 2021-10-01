@@ -195,32 +195,32 @@ public class AssetServiceImpl implements AssetService {
 			specification = getGeneralUserAssetSpecification(AuthenticationUtil.getLoginSite().getSite());
 		}
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public DataTablesOutput<AssetDTO> findCustomerAssets(FocusDataTablesInput input) throws Exception {
-		Specification<Asset> specification = (root, query, cb) -> cb.notEqual(
+		final Specification<Asset> specification = (root, query, cb) -> cb.notEqual(
 				root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.LOCATIONS_OR_FACILITIES);
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
 	public AssetDTO findById(Integer id) throws Exception {
-		Asset domain = findEntityById(id);
-		AssetDTO assetDTO = createAssetDto(domain);
+		final Asset domain = findEntityById(id);
+		final AssetDTO assetDTO = createAssetDto(domain);
 		return assetDTO;
 	}
 
 	private AssetDTO createAssetDto(Asset domain) throws Exception {
-		AssetDTO assetDTO = AssetMapper.getInstance().domainToDto(domain);
+		final AssetDTO assetDTO = AssetMapper.getInstance().domainToDto(domain);
 		getAssetUser(domain, assetDTO);
 		setPurchasingDetails(domain, assetDTO);
 		return assetDTO;
@@ -229,9 +229,9 @@ public class AssetServiceImpl implements AssetService {
 	private void setPurchasingDetails(Asset asset, AssetDTO assetDTO) {
 		if (asset.getAssetCategory().getAssetCategoryType().equals(AssetCategoryType.EQUIPMENTS_OR_MACHINES)
 				|| asset.getAssetCategory().getAssetCategoryType().equals(AssetCategoryType.TOOLS)) {
-			List<ReceiptOrderItem> items = receiptOrderItemDao.findByAsset(asset);
-			if ((items != null) && (items.size() > 0)) {
-				ReceiptOrderItem item = items.get(0);
+			final List<ReceiptOrderItem> items = receiptOrderItemDao.findByAsset(asset);
+			if (items != null && items.size() > 0) {
+				final ReceiptOrderItem item = items.get(0);
 				if (item.getReceiptOrder().getId() != null) {
 					assetDTO.getAssetPurchasingDetail().setReceiptOrderId(item.getReceiptOrder().getId());
 					assetDTO.getAssetPurchasingDetail().setReceiptOrderCode(item.getReceiptOrder().getCode());
@@ -245,20 +245,20 @@ public class AssetServiceImpl implements AssetService {
 					assetDTO.getAssetPurchasingDetail().setOrderVersion(item.getReceiptOrder().getVersion());
 					if (item.getReceiptOrder().getSupplier() != null) {
 						assetDTO.getAssetPurchasingDetail()
-								.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
+						.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
 					}
 					if (item.getReceiptOrder().getCurrency() != null) {
 						assetDTO.getAssetPurchasingDetail()
-								.setPurchasedCurrencyId(item.getReceiptOrder().getCurrency().getId());
+						.setPurchasedCurrencyId(item.getReceiptOrder().getCurrency().getId());
 					}
 
 					if (item.getUnitPrice() != null) {
 						assetDTO.getAssetPurchasingDetail().setPurchasedPrice(item.getUnitPrice().doubleValue());
 					}
 
-					if ((item.getReceiptOrder() != null) && (item.getReceiptOrder().getSupplier() != null)) {
+					if (item.getReceiptOrder() != null && item.getReceiptOrder().getSupplier() != null) {
 						assetDTO.getAssetPurchasingDetail()
-								.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
+						.setPurchasedSupplierId(item.getReceiptOrder().getSupplier().getId());
 					}
 
 					assetDTO.getAssetPurchasingDetail().setItemVersion(item.getVersion());
@@ -280,8 +280,8 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void getAssetUser(Asset domain, AssetDTO assetDTO) throws Exception {
-		for (AssetUser assetUser : domain.getAssetUsers()) {
-			AssetUserDTO assetUserDTO = AssetUserMapper.getInstance().domainToDto(assetUser);
+		for (final AssetUser assetUser : domain.getAssetUsers()) {
+			final AssetUserDTO assetUserDTO = AssetUserMapper.getInstance().domainToDto(assetUser);
 			assetDTO.getAssetUserDTOs().add(assetUserDTO);
 		}
 	}
@@ -294,11 +294,11 @@ public class AssetServiceImpl implements AssetService {
 			if (businessId == null) {
 				assets = assetDao.findByAssetCategoyType(type);
 			} else {
-				Specification<Asset> specification = getSystemUserLocationAsset(type, businessId);
+				final Specification<Asset> specification = getSystemUserLocationAsset(type, businessId);
 				assets = assetDao.findAll(specification);
 			}
 			return AssetMapper.getInstance().domainToDTOList(assets);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
@@ -310,13 +310,13 @@ public class AssetServiceImpl implements AssetService {
 		DataTablesOutput<Asset> assets;
 
 		try {
-			Specification<Asset> specification = (root, query, cb) -> {
+			final Specification<Asset> specification = (root, query, cb) -> {
 				return cb.and(cb.equal(root.get("assetCategory").get("assetCategoryType"), type),
 						cb.equal(root.get("business").get("id"), businessId));
 			};
 			assets = assetDao.findAll(input, specification);
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(assets);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<AssetDTO>();
 		}
@@ -325,9 +325,9 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public List<AssetDTO> findByExcludingAssetList(AssetCategoryType type, List<Integer> assetList) {
 		try {
-			List<Asset> list = assetDao.findByExcludingAssetList(type, assetList);
+			final List<Asset> list = assetDao.findByExcludingAssetList(type, assetList);
 			return AssetMapper.getInstance().domainToDTOList(list);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new ArrayList<AssetDTO>();
 		}
@@ -335,15 +335,36 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public AssetResult delete(Integer id) {
-		AssetResult result = new AssetResult(null, null);
+		final AssetResult result = new AssetResult(null, null);
 		try {
 			assetDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Asset Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Asset Already Used. Cannot delete.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AssetResult deleteMultiple(Integer[] ids) throws Exception {
+		final AssetResult result = new AssetResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				assetDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Asset(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Asset(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -353,14 +374,14 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public AssetResult save(AssetDTO dto, MultipartFile image) throws Exception {
-		AssetResult result = createAssetResult(dto);
+		final AssetResult result = createAssetResult(dto);
 		try {
 			saveOrUpdate(result, image);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Asset Already updated. Please Reload Asset.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -407,13 +428,13 @@ public class AssetServiceImpl implements AssetService {
 		scheduledService.notifyAssetTrigger(result.getDomainEntity(), SMTriggerType.METER_READING_TRIGGER);
 		scheduledService.notifyAssetTrigger(result.getDomainEntity(), SMTriggerType.ABC_METER_READING_TRIGGER);
 
-//	Set<ScheduledMaintenanceAsset> maintenanceAssets=result.getDomainEntity().getAssetScheduledMaintenances();
-//	List<ScheduledMaintenance> scheduledMaintenances=scheduledMaintenanceAssetDao.findByAsset(result.getDomainEntity());
-//	for(ScheduledMaintenance scheduledMaintenance:scheduledMaintenances){
-//		for(ScheduledMaintenanceTrigger scheduledMaintenanceTrigger:scheduledMaintenance.getScheduledMaintenanceTriggers()){
-//			scheduledService.createWorkOrderFromTriggerType(scheduledMaintenanceTrigger, scheduledMaintenanceTrigger.getTriggerType());
-//		}
-//	}
+		//	Set<ScheduledMaintenanceAsset> maintenanceAssets=result.getDomainEntity().getAssetScheduledMaintenances();
+		//	List<ScheduledMaintenance> scheduledMaintenances=scheduledMaintenanceAssetDao.findByAsset(result.getDomainEntity());
+		//	for(ScheduledMaintenance scheduledMaintenance:scheduledMaintenances){
+		//		for(ScheduledMaintenanceTrigger scheduledMaintenanceTrigger:scheduledMaintenance.getScheduledMaintenanceTriggers()){
+		//			scheduledService.createWorkOrderFromTriggerType(scheduledMaintenanceTrigger, scheduledMaintenanceTrigger.getTriggerType());
+		//		}
+		//	}
 	}
 
 	private void autotriggerSchedule(AssetMeterReadingValue meterReadingValue) {
@@ -422,29 +443,29 @@ public class AssetServiceImpl implements AssetService {
 
 	private void generateAssetQR(AssetResult result) throws WriterException, IOException {
 
-		String uploadFolder = environment.getProperty("upload.location.asset.qr.s3");
-		String uploadLocation = environment.getProperty("upload.location.s3");
-		String host = environment.getProperty("common.url");
-		String qrCodeText = host + "/asset/machine/edit?id=" + result.getDomainEntity().getId();
-		String filePath = uploadLocation + uploadFolder + "ECAM-ASSET(" + result.getDomainEntity().getCode() + ").png";
-		int size = 500;
-		String fileType = "png";
-		File qrFile = new File(filePath);
-		InputStream inputStream = QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
+		final String uploadFolder = environment.getProperty("upload.location.asset.qr.s3");
+		final String uploadLocation = environment.getProperty("upload.location.s3");
+		final String host = environment.getProperty("common.url");
+		final String qrCodeText = host + "/asset/machine/edit?id=" + result.getDomainEntity().getId();
+		final String filePath = uploadLocation + uploadFolder + "ECAM-ASSET(" + result.getDomainEntity().getCode() + ").png";
+		final int size = 500;
+		final String fileType = "png";
+		final File qrFile = new File(filePath);
+		final InputStream inputStream = QRCodeUtil.createQRImage(qrFile, qrCodeText, size, fileType);
 		amazonS3ObjectUtil.uploadS3Object(filePath, inputStream);
 		result.getDomainEntity().setAssetUrl(filePath);
 		System.out.println(filePath);
 	}
 
 	private void setAssetSparePart(AssetResult result) throws Exception {
-		Set<SparePart> spareParts = new HashSet<>();
+		final Set<SparePart> spareParts = new HashSet<>();
 
-		if ((result.getDtoEntity().getSparePartDTOs() != null)
-				&& (result.getDtoEntity().getSparePartDTOs().size() > 0)) {
+		if (result.getDtoEntity().getSparePartDTOs() != null
+				&& result.getDtoEntity().getSparePartDTOs().size() > 0) {
 
-			Set<SparePart> currentSpareParts = result.getDomainEntity().getSpareParts();
+			final Set<SparePart> currentSpareParts = result.getDomainEntity().getSpareParts();
 
-			for (SparePartDTO sparePartDTO : result.getDtoEntity().getSparePartDTOs()) {
+			for (final SparePartDTO sparePartDTO : result.getDtoEntity().getSparePartDTOs()) {
 				SparePart sparePart;
 
 				if (sparePartDTO.getId() != null) {
@@ -468,20 +489,20 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setSparePartPart(SparePart sparePart, SparePartDTO sparePartDTO) {
-		if ((sparePartDTO != null) && (sparePartDTO.getPartId()) != null) {
+		if (sparePartDTO != null && sparePartDTO.getPartId() != null) {
 			sparePart.setSparePart(findEntityById(sparePartDTO.getPartId()));
 		}
 	}
 
 	private void setAssetImage(AssetResult result, MultipartFile image) throws Exception {
 		if (image != null) {
-			String uploadFolder = environment.getProperty("upload.asset.file.folder");
-			String uploadLocation = environment.getProperty("upload.location");
+			final String uploadFolder = environment.getProperty("upload.asset.file.folder");
+			final String uploadLocation = environment.getProperty("upload.location");
 			try {
-				String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
+				final String fileLocation = FileUploadUtil.createFile(image, result.getDtoEntity().getCode(),
 						result.getDtoEntity().getCode(), uploadFolder, uploadLocation);
 				result.getDomainEntity().setImageLocation(saveImageS3Bucket(result.getDtoEntity(), image));
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -490,8 +511,8 @@ public class AssetServiceImpl implements AssetService {
 	private String saveImageS3Bucket(AssetDTO dto, MultipartFile image) throws IOException {
 
 		// s3 key for storage
-//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
-//				+ File.separator + getFileName(image);
+		//		final String key = amazonS3Util.getCommonUploadKey() + amazonS3Util.getAssetImageUploadKey() + dto.getId()
+		//				+ File.separator + getFileName(image);
 		final String key = environment.getProperty("upload.location.s3")
 				+ environment.getProperty("upload.location.asset.image.s3") + dto.getId() + "/" + getFileName(image);
 		try {
@@ -499,10 +520,10 @@ public class AssetServiceImpl implements AssetService {
 				amazonS3ObjectUtil.deleteS3Object(dto.getImageLocation());
 			}
 			amazonS3ObjectUtil.uploadS3Object(key, image);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -520,7 +541,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private AssetResult createAssetResult(AssetDTO dto) {
 		AssetResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new AssetResult(assetDao.findOne(dto.getId()), dto);
 		} else {
 			result = new AssetResult(new Asset(), dto);
@@ -538,7 +559,7 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setCustomer(AssetResult result) throws Exception {
-		if ((result.getDtoEntity().getCustomerId() != null) && (result.getDtoEntity().getCustomerId() > 0)) {
+		if (result.getDtoEntity().getCustomerId() != null && result.getDtoEntity().getCustomerId() > 0) {
 			if (isCustomerChanged(result)) {
 				result.getDomainEntity().setCustomer(businessDao.findById(result.getDtoEntity().getCustomerId()));
 				setAssetCustomers(result);
@@ -549,8 +570,8 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private boolean isCustomerChanged(AssetResult result) {
-		if ((result.getDomainEntity().getCustomer() == null)
-				|| (result.getDomainEntity().getCustomer().getId() != result.getDtoEntity().getCustomerId())) {
+		if (result.getDomainEntity().getCustomer() == null
+				|| result.getDomainEntity().getCustomer().getId() != result.getDtoEntity().getCustomerId()) {
 			return true;
 		}
 		return false;
@@ -567,7 +588,7 @@ public class AssetServiceImpl implements AssetService {
 
 		if (result.getDomainEntity().getCustomer() != null) {
 
-			AssetBusiness assetCustomer = new AssetBusiness();
+			final AssetBusiness assetCustomer = new AssetBusiness();
 			assetCustomer.setAsset(result.getDomainEntity());
 			assetCustomer.setBusiness(result.getDomainEntity().getCustomer());
 			assetCustomer.setIsDeleted(false);
@@ -576,16 +597,16 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setAssetEvents(AssetResult result) throws Exception {
-		Set<AssetEventTypeAsset> assetEventTypeAssets = new HashSet<>();
+		final Set<AssetEventTypeAsset> assetEventTypeAssets = new HashSet<>();
 
-		if ((result.getDtoEntity().getAssetEventTypeAssets() != null)
-				&& (result.getDtoEntity().getAssetEventTypeAssets().size() > 0)) {
+		if (result.getDtoEntity().getAssetEventTypeAssets() != null
+				&& result.getDtoEntity().getAssetEventTypeAssets().size() > 0) {
 
-			for (AssetEventTypeAssetDTO assetEventTypeAssetDto : result.getDtoEntity().getAssetEventTypeAssets()) {
+			for (final AssetEventTypeAssetDTO assetEventTypeAssetDto : result.getDtoEntity().getAssetEventTypeAssets()) {
 
-				AssetEventTypeAsset assetEventTypeAsset = getCurrentAssetEvent(
+				final AssetEventTypeAsset assetEventTypeAsset = getCurrentAssetEvent(
 						result.getDomainEntity().getAssetEventTypeAssets(), assetEventTypeAssetDto);
-				List<AssetEventDTO> assetEventDtos = getAssetEventByEventType(result, assetEventTypeAssetDto);
+				final List<AssetEventDTO> assetEventDtos = getAssetEventByEventType(result, assetEventTypeAssetDto);
 				updateAssetEventTypeAsset(assetEventTypeAsset, assetEventTypeAssetDto, assetEventDtos,
 						result.getDomainEntity());
 				assetEventTypeAssets.add(assetEventTypeAsset);
@@ -599,7 +620,7 @@ public class AssetServiceImpl implements AssetService {
 
 		AssetEventTypeAsset assetEventTypeAsset;
 
-		if ((currentAssetEventTypeAssets != null) && (currentAssetEventTypeAssets.size() > 0)) {
+		if (currentAssetEventTypeAssets != null && currentAssetEventTypeAssets.size() > 0) {
 			assetEventTypeAsset = currentAssetEventTypeAssets.stream()
 					.filter((x) -> x.getId().equals(assetEventTypeAssetDto.getId())).findAny()
 					.orElseGet(AssetEventTypeAsset::new);
@@ -612,9 +633,9 @@ public class AssetServiceImpl implements AssetService {
 
 	private List<AssetEventDTO> getAssetEventByEventType(AssetResult result,
 			AssetEventTypeAssetDTO assetEventTypeAssetDto) {
-		List<AssetEventDTO> assetEventDtos = new ArrayList<>();
+		final List<AssetEventDTO> assetEventDtos = new ArrayList<>();
 
-		for (AssetEventDTO assetEventDto : result.getDtoEntity().getAssetEvents()) {
+		for (final AssetEventDTO assetEventDto : result.getDtoEntity().getAssetEvents()) {
 			if (assetEventDto.getAssetEventTypeId().equals(assetEventTypeAssetDto.getAssetEventTypeId())) {
 				assetEventDtos.add(assetEventDto);
 			}
@@ -636,7 +657,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 
 		AssetEvent assetEvent;
-		for (AssetEventDTO assetEventDto : assetEventDtos) {
+		for (final AssetEventDTO assetEventDto : assetEventDtos) {
 
 			assetEvent = new AssetEvent();
 			AssetEventMapper.getInstance().dtoToDomain(assetEventDto, assetEvent);
@@ -656,9 +677,9 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void addReceiptOrder(AssetResult result) {
-		AssetCategoryType type = result.getDomainEntity().getAssetCategory().getAssetCategoryType();
+		final AssetCategoryType type = result.getDomainEntity().getAssetCategory().getAssetCategoryType();
 		if (type.equals(AssetCategoryType.EQUIPMENTS_OR_MACHINES) || type.equals(AssetCategoryType.TOOLS)) {
-			ReceiptOrder receiptOrder = createReceiptOrder(result.getDtoEntity().getAssetPurchasingDetail(),
+			final ReceiptOrder receiptOrder = createReceiptOrder(result.getDtoEntity().getAssetPurchasingDetail(),
 					result.getDomainEntity());
 			receiptOrderDao.save(receiptOrder);
 		}
@@ -668,7 +689,7 @@ public class AssetServiceImpl implements AssetService {
 	private ReceiptOrder createReceiptOrder(AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
 		ReceiptOrder ro;
 
-		if ((assetPurchasingDetail.getReceiptOrderId() != null) && (assetPurchasingDetail.getReceiptOrderId() > 0)) {
+		if (assetPurchasingDetail.getReceiptOrderId() != null && assetPurchasingDetail.getReceiptOrderId() > 0) {
 			ro = receiptOrderDao.findOne(assetPurchasingDetail.getReceiptOrderId());
 		} else {
 			ro = new ReceiptOrder();
@@ -678,13 +699,13 @@ public class AssetServiceImpl implements AssetService {
 		ro.setReceiptOrderStatus(ReceiptOrderStatus.RECEIVED);
 		addReceiptOrderItem(ro, assetPurchasingDetail, asset);
 
-		if ((assetPurchasingDetail.getPurchasedCurrencyId() != null)
-				&& (assetPurchasingDetail.getPurchasedCurrencyId() > 0)) {
+		if (assetPurchasingDetail.getPurchasedCurrencyId() != null
+				&& assetPurchasingDetail.getPurchasedCurrencyId() > 0) {
 			ro.setCurrency(currencyDao.findById(assetPurchasingDetail.getPurchasedCurrencyId()));
 		}
 
-		if ((assetPurchasingDetail.getPurchasedSupplierId() != null)
-				&& (assetPurchasingDetail.getPurchasedSupplierId() > 0)) {
+		if (assetPurchasingDetail.getPurchasedSupplierId() != null
+				&& assetPurchasingDetail.getPurchasedSupplierId() > 0) {
 			ro.setSupplier(supplierDao.findOne(assetPurchasingDetail.getPurchasedSupplierId()));
 		}
 
@@ -703,11 +724,11 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void addReceiptOrderItem(ReceiptOrder ro, AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
-		Set<ReceiptOrderItem> items = new HashSet<>();
+		final Set<ReceiptOrderItem> items = new HashSet<>();
 		ReceiptOrderItem item = new ReceiptOrderItem();
-		if ((ro.getReceiptOrderItems() != null) && (ro.getReceiptOrderItems().size() > 0)) {
+		if (ro.getReceiptOrderItems() != null && ro.getReceiptOrderItems().size() > 0) {
 			// item = ro.getReceiptOrderItems().get(0);
-			Optional<ReceiptOrderItem> first = ro.getReceiptOrderItems().stream().findFirst();
+			final Optional<ReceiptOrderItem> first = ro.getReceiptOrderItems().stream().findFirst();
 			if (first.isPresent()) {
 				item = first.get();
 			}
@@ -717,7 +738,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 		item.setAsset(asset);
 		item.setReceiptOrder(ro);
-		if ((assetPurchasingDetail.getPurchasedPrice() != null) && (assetPurchasingDetail.getPurchasedPrice() > 0)) {
+		if (assetPurchasingDetail.getPurchasedPrice() != null && assetPurchasingDetail.getPurchasedPrice() > 0) {
 			item.setTotalPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
 			item.setUnitPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
 			item.setQuantityReceived(BigDecimal.ONE);
@@ -733,10 +754,10 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void addAssetToBOMGroup(Asset asset) throws Exception {
-		List<BOMGroup> assetBOMGroups = bomGroupDao.findGroupsByAssetId(asset.getId());
-		for (AssetConsumingReference consumeRef : asset.getPartConsumingReferences()) {
+		final List<BOMGroup> assetBOMGroups = bomGroupDao.findGroupsByAssetId(asset.getId());
+		for (final AssetConsumingReference consumeRef : asset.getPartConsumingReferences()) {
 			if (consumeRef.getBomGroupAsset() != null) {
-				Optional<BOMGroup> group = assetBOMGroups.stream()
+				final Optional<BOMGroup> group = assetBOMGroups.stream()
 						.filter((x) -> x.getId().equals(consumeRef.getBomGroupAsset().getBomGroup().getId())).findAny();
 				if (!group.isPresent()) {
 					createBOMGroupPart(consumeRef.getBomGroupAsset().getBomGroup(), asset);
@@ -746,7 +767,7 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void createBOMGroupPart(BOMGroup bomGroup, Asset asset) {
-		BOMGroupPart groupPart = new BOMGroupPart();
+		final BOMGroupPart groupPart = new BOMGroupPart();
 		groupPart.setBomGroup(bomGroup);
 		groupPart.setPart(asset);
 		groupPart.setIsDeleted(false);
@@ -756,13 +777,13 @@ public class AssetServiceImpl implements AssetService {
 
 	private void setPartConsumeReferences(AssetResult result) throws Exception {
 
-		Set<AssetConsumingReference> partConsumeRefs = new HashSet<>();
+		final Set<AssetConsumingReference> partConsumeRefs = new HashSet<>();
 
-		if ((result.getDtoEntity().getPartConsumeRefs() != null)
-				&& (result.getDtoEntity().getPartConsumeRefs().size() > 0)) {
+		if (result.getDtoEntity().getPartConsumeRefs() != null
+				&& result.getDtoEntity().getPartConsumeRefs().size() > 0) {
 
-			for (AssetConsumingReferenceDTO partConsumeRefDTO : result.getDtoEntity().getPartConsumeRefs()) {
-				AssetConsumingReference partConsumeRef = getCurrentPartConsumeRef(
+			for (final AssetConsumingReferenceDTO partConsumeRefDTO : result.getDtoEntity().getPartConsumeRefs()) {
+				final AssetConsumingReference partConsumeRef = getCurrentPartConsumeRef(
 						result.getDomainEntity().getPartConsumingReferences(), partConsumeRefDTO);
 				updatePartConsumeReference(partConsumeRefDTO, result.getDomainEntity(), partConsumeRef);
 				partConsumeRefs.add(partConsumeRef);
@@ -777,7 +798,7 @@ public class AssetServiceImpl implements AssetService {
 
 		AssetConsumingReference partConsumeRef;
 
-		if ((currentPartConsRefs != null) && (currentPartConsRefs.size() > 0)) {
+		if (currentPartConsRefs != null && currentPartConsRefs.size() > 0) {
 			partConsumeRef = currentPartConsRefs.stream().filter((x) -> x.getId().equals(partConsumeRefDTO.getId()))
 					.findAny().orElseGet(AssetConsumingReference::new);
 		} else {
@@ -791,7 +812,7 @@ public class AssetServiceImpl implements AssetService {
 			throws Exception {
 
 		AssetConsumingReferenceMapper.getInstance().dtoToDomain(dto, domain);
-		if ((dto.getBomGroupPartId() != null) && (dto.getBomGroupPartId() > 0)) {
+		if (dto.getBomGroupPartId() != null && dto.getBomGroupPartId() > 0) {
 			domain.setBomGroupAsset(bomGroupPartDao.findOne(dto.getBomGroupPartId()));
 		}
 		domain.setPart(assetDao.findOne(dto.getPartId()));
@@ -799,13 +820,13 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setParentAsset(AssetResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getParentAssetId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getParentAssetId() != null) {
 			result.getDomainEntity().setParentAsset(findEntityById(result.getDtoEntity().getParentAssetId()));
 		}
 	}
 
 	private void setBrand(AssetResult result) {
-		if ((result.getDtoEntity().getBrand() != null) && (result.getDtoEntity().getBrand() > 0)) {
+		if (result.getDtoEntity().getBrand() != null && result.getDtoEntity().getBrand() > 0) {
 			result.getDomainEntity().setBrand(assetBrandDao.findById(result.getDtoEntity().getBrand()));
 		}
 	}
@@ -818,29 +839,29 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setModel(AssetResult result) {
-		if ((result.getDtoEntity().getModel() != null) && (result.getDtoEntity().getModel() > 0)) {
+		if (result.getDtoEntity().getModel() != null && result.getDtoEntity().getModel() > 0) {
 			result.getDomainEntity().setModel(assetModelDao.findById(result.getDtoEntity().getModel()));
 		}
 	}
 
 	private void setAssetCategory(AssetResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAssetCategoryId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAssetCategoryId() != null) {
 			result.getDomainEntity()
-					.setAssetCategory(assetCategoryDao.findById(result.getDtoEntity().getAssetCategoryId()));
+			.setAssetCategory(assetCategoryDao.findById(result.getDtoEntity().getAssetCategoryId()));
 		}
 	}
 
 	private void setAssetCountry(AssetResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getCountryId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getCountryId() != null) {
 			result.getDomainEntity().setCountry(countryDao.findById(result.getDtoEntity().getCountryId()));
 		}
 	}
 
 	private void addUsersToAsset(AssetResult result) {
 
-		Set<AssetUser> assetUsers = new HashSet<AssetUser>();
-		for (AssetUserDTO assetUserDTO : result.getDtoEntity().getAssetUserDTOs()) {
-			AssetUser assetUser = getCurrentAssetUser(result.getDomainEntity().getAssetUsers(), assetUserDTO);
+		final Set<AssetUser> assetUsers = new HashSet<AssetUser>();
+		for (final AssetUserDTO assetUserDTO : result.getDtoEntity().getAssetUserDTOs()) {
+			final AssetUser assetUser = getCurrentAssetUser(result.getDomainEntity().getAssetUsers(), assetUserDTO);
 			assetUser.setAsset(result.getDomainEntity());
 			assetUser.setUser(userDao.findById(assetUserDTO.getUserId()));
 			assetUser.setIsDeleted(false);
@@ -852,7 +873,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private AssetUser getCurrentAssetUser(Set<AssetUser> currentAssetUsers, AssetUserDTO assetUserDTO) {
 		AssetUser assetUser;
-		if ((currentAssetUsers != null) && (currentAssetUsers.size() > 0)) {
+		if (currentAssetUsers != null && currentAssetUsers.size() > 0) {
 			assetUser = currentAssetUsers.stream().filter((x) -> x.getId().equals(assetUserDTO.getId())).findAny()
 					.orElseGet(AssetUser::new);
 		} else {
@@ -863,27 +884,27 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private void setBusiness(AssetResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setSite(AssetResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 
 	private void setMeterReadings(AssetResult result) throws Exception {
 
-		Set<AssetMeterReading> assetMeterReadings = new HashSet<AssetMeterReading>();
-		if ((result.getDtoEntity().getAssetMeterReadings() != null)
-				&& (result.getDtoEntity().getAssetMeterReadings().size() > 0)) {
+		final Set<AssetMeterReading> assetMeterReadings = new HashSet<AssetMeterReading>();
+		if (result.getDtoEntity().getAssetMeterReadings() != null
+				&& result.getDtoEntity().getAssetMeterReadings().size() > 0) {
 
-			for (AssetMeterReadingDTO assetsMeterReadingDTO : result.getDtoEntity().getAssetMeterReadings()) {
-				AssetMeterReading assetMeterReading = getCurrentAssetMeterReading(
+			for (final AssetMeterReadingDTO assetsMeterReadingDTO : result.getDtoEntity().getAssetMeterReadings()) {
+				final AssetMeterReading assetMeterReading = getCurrentAssetMeterReading(
 						result.getDomainEntity().getAssetMeterReadings(), assetsMeterReadingDTO);
-				List<AssetMeterReadingValueDTO> assetMeterReadingValues = getMeterReadingValuesByMeterReading(result,
+				final List<AssetMeterReadingValueDTO> assetMeterReadingValues = getMeterReadingValuesByMeterReading(result,
 						assetsMeterReadingDTO);
 				updateAssetMeterReading(assetMeterReading, assetsMeterReadingDTO, assetMeterReadingValues,
 						result.getDomainEntity());
@@ -898,10 +919,10 @@ public class AssetServiceImpl implements AssetService {
 
 	private void setMeterReadingConsumptionVariable(AssetMeterReadingDTO assetsMeterReadingDTO,
 			AssetMeterReading assetMeterReading) {
-		Set<AssetMeterReadingFormulaVariable> assetMeterReadingConsumptionVariables = new HashSet<AssetMeterReadingFormulaVariable>();
-		for (AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO : assetsMeterReadingDTO
+		final Set<AssetMeterReadingFormulaVariable> assetMeterReadingConsumptionVariables = new HashSet<AssetMeterReadingFormulaVariable>();
+		for (final AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO : assetsMeterReadingDTO
 				.getConsumptionVariableDTO()) {
-			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable = new AssetMeterReadingFormulaVariable();
+			final AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable = new AssetMeterReadingFormulaVariable();
 			assetMeterReadingConsumptionVariable.setVariableName(consumptionVariableDTO.getVariable());
 			assetMeterReadingConsumptionVariable.setAssetMeterReading(assetMeterReading);
 			assetMeterReadingConsumptionVariable.setIsDeleted(Boolean.FALSE);
@@ -915,7 +936,7 @@ public class AssetServiceImpl implements AssetService {
 			AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable) {
 		if (consumptionVariableDTO != null && consumptionVariableDTO.getMeteReadingUnitId() != null) {
 			assetMeterReadingConsumptionVariable
-					.setMeterReadingUnit(meterReadingUnitDao.findOne(consumptionVariableDTO.getMeteReadingUnitId()));
+			.setMeterReadingUnit(meterReadingUnitDao.findOne(consumptionVariableDTO.getMeteReadingUnitId()));
 		}
 	}
 
@@ -924,13 +945,13 @@ public class AssetServiceImpl implements AssetService {
 
 		Double avgval = 0.00;
 
-		if ((assetMeterReading.getAssetMeterReadingValues() != null)
-				&& (assetMeterReading.getAssetMeterReadingValues().size() > 1)) {
-			List<AssetMeterReadingValue> list = assetMeterReading.getAssetMeterReadingValues().stream()
+		if (assetMeterReading.getAssetMeterReadingValues() != null
+				&& assetMeterReading.getAssetMeterReadingValues().size() > 1) {
+			final List<AssetMeterReadingValue> list = assetMeterReading.getAssetMeterReadingValues().stream()
 					.sorted(Comparator.comparing(AssetMeterReadingValue::getAddedDate).reversed())
 					.collect(Collectors.toList());
-			Long diff = list.get(0).getAddedDate().getTime() - list.get(1).getAddedDate().getTime();
-			long diffDays = diff / (24 * 60 * 60 * 1000);
+			final Long diff = list.get(0).getAddedDate().getTime() - list.get(1).getAddedDate().getTime();
+			final long diffDays = diff / (24 * 60 * 60 * 1000);
 			if (diffDays > 0) {
 				avgval = (list.get(0).getMeterReadingValue() - list.get(1).getMeterReadingValue()) / diffDays;
 			}
@@ -943,7 +964,7 @@ public class AssetServiceImpl implements AssetService {
 			AssetMeterReadingDTO assetsMeterReadingDTO) {
 		AssetMeterReading assetMeterReading;
 
-		if ((currentAssetMeterReadings != null) && (currentAssetMeterReadings.size() > 0)) {
+		if (currentAssetMeterReadings != null && currentAssetMeterReadings.size() > 0) {
 			assetMeterReading = currentAssetMeterReadings.stream()
 					.filter((x) -> x.getId().equals(assetsMeterReadingDTO.getMeterReadingId())).findAny()
 					.orElseGet(AssetMeterReading::new);
@@ -970,7 +991,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 
 		AssetMeterReadingValue meterReadingValue;
-		for (AssetMeterReadingValueDTO assetMeterReadingValueDto : assetMeterReadingValueDtos) {
+		for (final AssetMeterReadingValueDTO assetMeterReadingValueDto : assetMeterReadingValueDtos) {
 
 			meterReadingValue = new AssetMeterReadingValue();
 			AssetMeterReadingValueMapper.getInstance().dtoToDomain(assetMeterReadingValueDto, meterReadingValue);
@@ -990,11 +1011,11 @@ public class AssetServiceImpl implements AssetService {
 
 	private void updateAssetMeterReadingConsumption(AssetMeterReadingValueDTO meterReadingValueDTO,
 			AssetMeterReadingValue meterReadingValue) throws Exception {
-		List<AssetMeterReadingFormulaValue> valueConsumptions = new ArrayList<>();
-		for (AssetMeterReadingConsumptionValueDTO assetMeterReadingValueConsumptionDTO : meterReadingValueDTO
+		final List<AssetMeterReadingFormulaValue> valueConsumptions = new ArrayList<>();
+		for (final AssetMeterReadingConsumptionValueDTO assetMeterReadingValueConsumptionDTO : meterReadingValueDTO
 				.getValueConsumptionDTO()) {
 
-			AssetMeterReadingFormulaValue consumption = new AssetMeterReadingFormulaValue();
+			final AssetMeterReadingFormulaValue consumption = new AssetMeterReadingFormulaValue();
 			consumption.setMeterReadingIndex(meterReadingValueDTO.getAssetMeterReadingValueIndex());
 			// consumption.setVariable(assetMeterReadingValueConsumptionDTO.getVariable());
 			consumption.setIsDeleted(Boolean.FALSE);
@@ -1007,8 +1028,8 @@ public class AssetServiceImpl implements AssetService {
 
 	private List<AssetMeterReadingValueDTO> getMeterReadingValuesByMeterReading(AssetResult result,
 			AssetMeterReadingDTO assetMeterReadingDTO) {
-		List<AssetMeterReadingValueDTO> assetMeterReadingValueDtos = new ArrayList<>();
-		for (AssetMeterReadingValueDTO meterReadingValueDto : result.getDtoEntity().getAssetMeterReadingValues()) {
+		final List<AssetMeterReadingValueDTO> assetMeterReadingValueDtos = new ArrayList<>();
+		for (final AssetMeterReadingValueDTO meterReadingValueDto : result.getDtoEntity().getAssetMeterReadingValues()) {
 			if (meterReadingValueDto.getAssetMeterReadingIndex().equals(assetMeterReadingDTO.getMeterReadingIndex())) {
 				assetMeterReadingValueDtos.add(meterReadingValueDto);
 			}
@@ -1033,10 +1054,10 @@ public class AssetServiceImpl implements AssetService {
 			} else {
 				specification = getGeneralUserAssetSpecification(AuthenticationUtil.getLoginSite().getSite());
 			}
-			List<Asset> list = assetDao.findAll(specification);
+			final List<Asset> list = assetDao.findAll(specification);
 			return AssetMapper.getInstance().domainToDTOList(list);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 	}
@@ -1061,7 +1082,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 
 		if (specification != null) {
-			List<Asset> list = assetDao.findAll(specification);
+			final List<Asset> list = assetDao.findAll(specification);
 			dtoList = AssetMapper.getInstance().domainToDTOList(list);
 		} else {
 			dtoList = AuthenticationUtil.getUserSiteList();
@@ -1081,7 +1102,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 
 		if (specification != null) {
-			List<Asset> list = assetDao.findAll(specification);
+			final List<Asset> list = assetDao.findAll(specification);
 			dtoList = AssetMapper.getInstance().domainToDTOList(list);
 		}
 
@@ -1091,7 +1112,7 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void saveAll(List<AssetDTO> entities) throws Exception {
-		for (AssetDTO dto : entities) {
+		for (final AssetDTO dto : entities) {
 			save(dto, null);
 		}
 	}
@@ -1099,10 +1120,10 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public List<AssetDTO> findAll() {
 
-		List<Asset> assets = (List<Asset>) assetDao.findAll();
+		final List<Asset> assets = (List<Asset>) assetDao.findAll();
 		try {
 			return AssetMapper.getInstance().domainToDTOList(assets);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -1111,9 +1132,9 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public List<AssetMeterReadingDTO> findByMeterReadingByAsset(String name) throws Exception {
 		if (name != null) {
-			Asset asset = assetDao.findAssetMetereReadingsByAssetName(name);
-			Integer id = asset.getId();
-			List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
+			final Asset asset = assetDao.findAssetMetereReadingsByAssetName(name);
+			final Integer id = asset.getId();
+			final List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
 					.domainToDTOList(assetMeterReadingDao.findAssetMeterReadingByAssetId(id));
 			return dtos;
 		}
@@ -1123,7 +1144,7 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public List<AssetMeterReadingDTO> findAssetMeterReadingByAssetId(Integer id) throws Exception {
 		if (id != null) {
-			List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
+			final List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
 					.domainToDTOList(assetMeterReadingDao.findAssetMeterReadingByAssetId(id));
 			return dtos;
 		}
@@ -1133,11 +1154,11 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public DataTablesOutput<AssetMeterReadingDTO> findMeterReadingHistory(Integer assetId) {
 
-		DataTablesOutput<AssetMeterReadingDTO> dataTablesOutput = new DataTablesOutput<>();
+		final DataTablesOutput<AssetMeterReadingDTO> dataTablesOutput = new DataTablesOutput<>();
 
-		List<AssetMeterReadingValue> list = assetMeterReadingDao.findLAllAssetMetereReadingsByAsset(assetId);
-		List<AssetMeterReadingDTO> assetMeterReadingDTOs = new ArrayList<>();
-		for (AssetMeterReadingValue assetMeterReadingValue : list) {
+		final List<AssetMeterReadingValue> list = assetMeterReadingDao.findLAllAssetMetereReadingsByAsset(assetId);
+		final List<AssetMeterReadingDTO> assetMeterReadingDTOs = new ArrayList<>();
+		for (final AssetMeterReadingValue assetMeterReadingValue : list) {
 			assetMeterReadingDTOs.add(addAssetMeterReading(assetMeterReadingValue));
 		}
 		dataTablesOutput.setData(assetMeterReadingDTOs);
@@ -1146,7 +1167,7 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private AssetMeterReadingDTO addAssetMeterReading(AssetMeterReadingValue assetMeterReadingValue) {
-		AssetMeterReadingDTO assetMeterReadingDTO = new AssetMeterReadingDTO();
+		final AssetMeterReadingDTO assetMeterReadingDTO = new AssetMeterReadingDTO();
 		assetMeterReadingDTO.setMeterReadingName(assetMeterReadingValue.getAssetMeterReading().getMeterReadingName());
 		assetMeterReadingDTO.setMeterReadingCurrentValue(assetMeterReadingValue.getMeterReadingValue());
 		assetMeterReadingDTO.setMeterReadingViewName(
@@ -1157,18 +1178,18 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public List<AssetMeterReadingDTO> findAllAssetMeterReading() throws Exception {
-		Iterable<AssetMeterReading> assetMeterReadings = assetMeterReadingDao.findAll();
-		List<AssetMeterReadingDTO> assetMeterReadingDTOs = AssetMeterReadingMapper.getInstance()
+		final Iterable<AssetMeterReading> assetMeterReadings = assetMeterReadingDao.findAll();
+		final List<AssetMeterReadingDTO> assetMeterReadingDTOs = AssetMeterReadingMapper.getInstance()
 				.domainToDTOList(assetMeterReadings);
 		return assetMeterReadingDTOs;
 	}
 
 	@Override
 	public List<AssetMeterReadingDTO> findByMeterReadingByAssetId(Integer id) throws Exception {
-		List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
+		final List<AssetMeterReadingDTO> dtos = AssetMeterReadingMapper.getInstance()
 				.domainToDTOList(assetMeterReadingDao.findAssetMeterReadingByAssetId(id));
-		for (AssetMeterReadingDTO assetMeterReadingDTO : dtos) {
-			MeterReadingUnit meterReadingUnit = meterReadingUnitDao
+		for (final AssetMeterReadingDTO assetMeterReadingDTO : dtos) {
+			final MeterReadingUnit meterReadingUnit = meterReadingUnitDao
 					.findById(assetMeterReadingDTO.getMeterReadingUnitId());
 			assetMeterReadingDTO.setMeterReadingViewName(
 					assetMeterReadingDTO.getMeterReadingName() + " (" + meterReadingUnit.getSymbol() + ")");
@@ -1178,14 +1199,14 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> getAdminUserAssetSpecification() {
 
-		Specification<Asset> specification = (root, query, cb) -> cb
+		final Specification<Asset> specification = (root, query, cb) -> cb
 				.notEqual(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES);
 		return specification;
 	}
 
 	private Specification<Asset> getSystemUserAssetSpecification(Integer businessId) {
 
-		Specification<Asset> specification = (root, query, cb) -> {
+		final Specification<Asset> specification = (root, query, cb) -> {
 			return cb.and(
 					cb.notEqual(root.get("assetCategory").get("assetCategoryType"),
 							AssetCategoryType.PARTS_AND_SUPPLIES),
@@ -1197,7 +1218,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> getGeneralUserAssetSpecification(Asset site) {
 
-		Specification<Asset> specification = (root, query, cb) -> cb.and(
+		final Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.notEqual(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.equal(root.get("site"), site));
 
@@ -1206,7 +1227,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> getSystemUserLocationAsset(AssetCategoryType assetCategoryType, Integer businessId) {
 
-		Specification<Asset> specification = (root, query, cb) -> {
+		final Specification<Asset> specification = (root, query, cb) -> {
 			return cb.and(cb.equal(root.get("assetCategory").get("assetCategoryType"), assetCategoryType),
 					cb.equal(root.get("business").get("id"), businessId));
 		};
@@ -1216,7 +1237,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> getAdminUserLocationAsset(AssetCategoryType assetCategoryType) {
 
-		Specification<Asset> specification = (root, query, cb) -> cb
+		final Specification<Asset> specification = (root, query, cb) -> cb
 				.equal(root.get("assetCategory").get("assetCategoryType"), assetCategoryType);
 
 		return specification;
@@ -1244,8 +1265,8 @@ public class AssetServiceImpl implements AssetService {
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 		}
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1255,19 +1276,19 @@ public class AssetServiceImpl implements AssetService {
 		try {
 			List<AssetDTO> dtoList = null;
 
-			Specification<Asset> specification = (root, query, cb) -> {
+			final Specification<Asset> specification = (root, query, cb) -> {
 				return cb.and(cb.equal(root.get("assetCategory").get("assetCategoryType"), assetCategoryType),
 						cb.equal(root.get("business").get("id"), businessId));
 			};
 
 			if (specification != null) {
-				List<Asset> list = assetDao.findAll(specification);
+				final List<Asset> list = assetDao.findAll(specification);
 				dtoList = AssetMapper.getInstance().domainToDTOList(list);
 			}
 
 			return dtoList;
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -1290,21 +1311,21 @@ public class AssetServiceImpl implements AssetService {
 			specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
 			specification = (root, query, cb) -> {
-				Predicate assetCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
-				Predicate assetBusiness = cb.equal(root.get("business").get("id"),
+				final Predicate assetCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
+				final Predicate assetBusiness = cb.equal(root.get("business").get("id"),
 						AuthenticationUtil.getLoginUserBusiness().getId());
 				return cb.and(assetCategory, assetBusiness);
 			};
 		} else {
 			specification = (root, query, cb) -> {
-				Predicate assetCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
-				Predicate assetSite = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
+				final Predicate assetCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
+				final Predicate assetSite = cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite());
 				return cb.and(assetCategory, assetSite);
 			};
 		}
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -1312,9 +1333,9 @@ public class AssetServiceImpl implements AssetService {
 	public DataTablesOutput<AssetDTO> findSiteByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
 		try {
 			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specSiteListByBusiness(bizId));
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specSiteListByBusiness(bizId));
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -1322,7 +1343,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> specSiteListByBusiness(Integer bizId) {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), bizId));
 			predicates.add(cb.equal(root.get("assetCategory").get("assetCategoryType"),
 					AssetCategoryType.LOCATIONS_OR_FACILITIES));
@@ -1335,9 +1356,9 @@ public class AssetServiceImpl implements AssetService {
 			throws Exception {
 		try {
 			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specByBusiness(bizId));
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specByBusiness(bizId));
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -1353,9 +1374,9 @@ public class AssetServiceImpl implements AssetService {
 			} else {
 				throw new Exception("ERROR..! ADMIN User NOT assigned to the business");
 			}
-			DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specByBusiness(bizId));
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specByBusiness(bizId));
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -1363,7 +1384,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> specByBusiness(Integer bizId) {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), bizId));
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
@@ -1374,9 +1395,9 @@ public class AssetServiceImpl implements AssetService {
 			AssetCategoryType categoryType, Integer bizId) throws Exception {
 		try {
 			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specAssetByBusiness(bizId, categoryType));
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specAssetByBusiness(bizId, categoryType));
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -1384,7 +1405,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> specAssetByBusiness(Integer bizId, AssetCategoryType categoryType) {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), bizId));
 			predicates.add(cb.equal(root.get("assetCategory").get("assetCategoryType"), categoryType));
 			return cb.and(predicates.toArray(new Predicate[0]));
@@ -1396,10 +1417,10 @@ public class AssetServiceImpl implements AssetService {
 			AssetCategoryType categoryType, Integer bizId) throws Exception {
 		try {
 			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			DataTablesOutput<Asset> domainOut = assetDao.findAll(input,
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input,
 					specAssetNotAssetTypeByAndBusiness(bizId, categoryType));
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -1407,7 +1428,7 @@ public class AssetServiceImpl implements AssetService {
 
 	private Specification<Asset> specAssetNotAssetTypeByAndBusiness(Integer bizId, AssetCategoryType categoryType) {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), bizId));
 			predicates.add(cb.notEqual(root.get("assetCategory").get("assetCategoryType"), categoryType));
 			return cb.and(predicates.toArray(new Predicate[0]));
@@ -1436,8 +1457,8 @@ public class AssetServiceImpl implements AssetService {
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 		}
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1472,8 +1493,8 @@ public class AssetServiceImpl implements AssetService {
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 		}
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1485,7 +1506,7 @@ public class AssetServiceImpl implements AssetService {
 		try {
 			amazonS3ObjectUtil.uploadS3Object(key, file);
 			return key;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -1494,9 +1515,9 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public void assetFileDownload(Integer refId, HttpServletResponse response) throws Exception {
 		if (refId != null) {
-			AssetFile file = assetDao.findByFileId(refId);
-			int index = file.getFileLocation().lastIndexOf("\\");
-			String fileName = file.getFileLocation().substring(index + 1);
+			final AssetFile file = assetDao.findByFileId(refId);
+			final int index = file.getFileLocation().lastIndexOf("\\");
+			final String fileName = file.getFileLocation().substring(index + 1);
 			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
 
 		}
@@ -1505,22 +1526,22 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public void assetQRDownload(Integer id, HttpServletResponse response) throws Exception {
 		if (id != null) {
-			String file = assetDao.getAssetQRLocation(id);
-			int index = file.lastIndexOf("\\");
-			String fileName = file.substring(index + 1);
+			final String file = assetDao.getAssetQRLocation(id);
+			final int index = file.lastIndexOf("\\");
+			final String fileName = file.substring(index + 1);
 			amazonS3ObjectUtil.downloadToResponse(file, fileName, response);
 		}
 	}
 
 	private void setAssetFiles(AssetResult result) throws Exception {
-		Set<AssetFile> assetFiles = new HashSet<>();
+		final Set<AssetFile> assetFiles = new HashSet<>();
 
-		if ((result.getDtoEntity().getAssetFileDTOs() != null)
-				&& (result.getDtoEntity().getAssetFileDTOs().size() > 0)) {
+		if (result.getDtoEntity().getAssetFileDTOs() != null
+				&& result.getDtoEntity().getAssetFileDTOs().size() > 0) {
 
-			Set<AssetFile> currentAssetFiles = result.getDomainEntity().getAssetFiles();
+			final Set<AssetFile> currentAssetFiles = result.getDomainEntity().getAssetFiles();
 
-			for (AssetFileDTO assetFileDTO : result.getDtoEntity().getAssetFileDTOs()) {
+			for (final AssetFileDTO assetFileDTO : result.getDtoEntity().getAssetFileDTOs()) {
 				AssetFile assetFile;
 
 				if (assetFileDTO.getId() != null) {
@@ -1543,8 +1564,8 @@ public class AssetServiceImpl implements AssetService {
 	public byte[] getAssetImageStream(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
-			String imagePath = assetDao.getAssetImageLocation(id);
-			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+			final String imagePath = assetDao.getAssetImageLocation(id);
+			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				// return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);
@@ -1559,8 +1580,8 @@ public class AssetServiceImpl implements AssetService {
 	public byte[] getAssetQRStream(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
-			String imagePath = assetDao.getAssetQRLocation(id);
-			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+			final String imagePath = assetDao.getAssetQRLocation(id);
+			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);
 				// return FileDownloadUtil.getByteInputStream(imagePath);
@@ -1576,14 +1597,14 @@ public class AssetServiceImpl implements AssetService {
 			throws Exception {
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<Asset> specification = (root, query, cb) -> cb.and(
+		final Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.notEqual(root.get("assetCategory").get("assetCategoryType"),
 						AssetCategoryType.LOCATIONS_OR_FACILITIES),
 				cb.notEqual(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.equal(root.get("business").get("id"), bizId));
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1592,13 +1613,13 @@ public class AssetServiceImpl implements AssetService {
 	public List<AssetDTO> findAssetsByCategoryBusiness(Integer bizId, Integer categoryId) throws Exception {
 		List<Asset> assets = new ArrayList<>();
 		try {
-			Specification<Asset> specification = (root, query, cb) -> {
+			final Specification<Asset> specification = (root, query, cb) -> {
 				return cb.and(cb.equal(root.get("assetCategory").get("id"), categoryId),
 						cb.equal(root.get("business").get("id"), bizId));
 			};
 			assets = assetDao.findAll(specification);
 			return AssetMapper.getInstance().domainToDTOList(assets);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
@@ -1608,12 +1629,12 @@ public class AssetServiceImpl implements AssetService {
 	public DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<Asset> specification = (root, query, cb) -> cb.and(
+		final Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.equal(root.get("business").get("id"), bizId));
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1623,15 +1644,15 @@ public class AssetServiceImpl implements AssetService {
 			throws Exception {
 
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<Asset> specification = (root, query, cb) -> cb.and(
+		final Specification<Asset> specification = (root, query, cb) -> cb.and(
 				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.PARTS_AND_SUPPLIES),
 				cb.isNotNull(root.get("partType")), cb.equal(root.get("partType"), PartType.REPAIRABLE),
 				cb.equal(root.get("business").get("id"), bizId)
 
-		);
+				);
 
-		DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
-		DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
+		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -1639,23 +1660,23 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public void importBulkAssets(MultipartFile fileData, Integer bussinessId) throws Exception {
 
-		FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
+		final FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
 
-		Workbook workbook = new XSSFWorkbook(inputStream);
-		Sheet location = workbook.getSheetAt(0);
+		final Workbook workbook = new XSSFWorkbook(inputStream);
+		final Sheet location = workbook.getSheetAt(0);
 
-		Iterator<Row> iterator = location.iterator();
-		List<Asset> assetList = new ArrayList<>();
+		final Iterator<Row> iterator = location.iterator();
+		final List<Asset> assetList = new ArrayList<>();
 		System.out.println("location");
 		while (iterator.hasNext()) {
-			Row nextRow = iterator.next();
-			int rowIndex = nextRow.getRowNum();
+			final Row nextRow = iterator.next();
+			final int rowIndex = nextRow.getRowNum();
 			if (rowIndex != 0) {
-				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				AssetDTO assetDTO = new AssetDTO();
+				final Iterator<Cell> cellIterator = nextRow.cellIterator();
+				final AssetDTO assetDTO = new AssetDTO();
 				while (cellIterator.hasNext()) {
-					Cell cell = cellIterator.next();
-					int columnIndex = cell.getColumnIndex();
+					final Cell cell = cellIterator.next();
+					final int columnIndex = cell.getColumnIndex();
 					switch (columnIndex) {
 					case 0:
 						System.out.print("Asset No - " + cell.getStringCellValue());
@@ -1676,7 +1697,7 @@ public class AssetServiceImpl implements AssetService {
 					case 3:
 						System.out.print("Parent Asset - " + cell.getStringCellValue());
 						if (cell.getStringCellValue() != null) {
-							Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
+							final Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
 							if (parentAsset != null) {
 								assetDTO.setParentAssetId(parentAsset.getId());
 
@@ -1688,8 +1709,8 @@ public class AssetServiceImpl implements AssetService {
 						break;
 					case 5:
 						System.out.print("Asset Type - " + cell.getCellType());
-//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
-//						break;
+						//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
+						//						break;
 					default:
 						break;
 					}
@@ -1707,19 +1728,19 @@ public class AssetServiceImpl implements AssetService {
 			}
 
 		}
-		Sheet machine = workbook.getSheetAt(1);
+		final Sheet machine = workbook.getSheetAt(1);
 		System.out.println("machine");
-		Iterator<Row> iteratorMachine = machine.iterator();
-//List<Asset> assetList=new ArrayList<>();
+		final Iterator<Row> iteratorMachine = machine.iterator();
+		//List<Asset> assetList=new ArrayList<>();
 		while (iteratorMachine.hasNext()) {
-			Row nextRow = iteratorMachine.next();
-			int rowIndex = nextRow.getRowNum();
+			final Row nextRow = iteratorMachine.next();
+			final int rowIndex = nextRow.getRowNum();
 			if (rowIndex != 0) {
-				Iterator<Cell> cellIterator = nextRow.cellIterator();
-				AssetDTO assetDTO = new AssetDTO();
+				final Iterator<Cell> cellIterator = nextRow.cellIterator();
+				final AssetDTO assetDTO = new AssetDTO();
 				while (cellIterator.hasNext()) {
-					Cell cell = cellIterator.next();
-					int columnIndex = cell.getColumnIndex();
+					final Cell cell = cellIterator.next();
+					final int columnIndex = cell.getColumnIndex();
 					switch (columnIndex) {
 					case 0:
 						System.out.print("Asset No - " + cell.getStringCellValue());
@@ -1740,7 +1761,7 @@ public class AssetServiceImpl implements AssetService {
 					case 3:
 						System.out.print("Parent Asset - " + cell.getStringCellValue());
 						if (cell.getStringCellValue() != null) {
-							Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
+							final Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
 							if (parentAsset != null) {
 								assetDTO.setParentAssetId(parentAsset.getId());
 
@@ -1752,8 +1773,8 @@ public class AssetServiceImpl implements AssetService {
 						break;
 					case 5:
 						System.out.print("Asset Type - " + cell.getCellType());
-//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
-//						break;
+						//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
+						//						break;
 					default:
 						break;
 					}
@@ -1778,7 +1799,7 @@ public class AssetServiceImpl implements AssetService {
 	}
 
 	private AssetCategory findParentAssetCategoryByCode(String code, AssetCategoryType assetCategoryType) {
-		AssetCategoryDTO assetCategoryDTO = new AssetCategoryDTO();
+		final AssetCategoryDTO assetCategoryDTO = new AssetCategoryDTO();
 		AssetCategory assetCategory = assetCategoryDao.findByAssetCategoryByCode(code);
 		if (assetCategory != null) {
 		} else {

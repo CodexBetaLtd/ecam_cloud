@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.PriorityDTO;
@@ -27,4 +27,7 @@ public interface PriorityService {
 	Priority findEntityById(Integer id);
 
 	List<PriorityDTO> findAllByBusiness(Integer id);
+
+	PriorityResult deleteMultiple(Integer[] ids) throws Exception;
+
 }

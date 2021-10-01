@@ -124,7 +124,7 @@ var ProjectSelectModal = function () {
 
     var initDataTable = function () {
 
-        var oTable = $('#project_tbl').dataTable({
+        var oTable = $('#project_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -134,7 +134,7 @@ var ProjectSelectModal = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -145,14 +145,7 @@ var ProjectSelectModal = function () {
             }, {
                 data: 'siteName'
             }],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.name, row.code, row.assetCategoryName, row.location];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('ScheduledMaintenanceAdd.selectProject', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -170,7 +163,26 @@ var ProjectSelectModal = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "ScheduledMaintenanceAdd.selectProject",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    }, {
+                        sName : "code"
+                    }, {
+                        sName : "assetCategoryName"
+                    }, {
+                        sName : "location"
+                    },
+                ],
+            },
         });
         $('#project_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

@@ -103,8 +103,8 @@
 
         var tableId = "tbl-dt-item";
         
-        var oTable = $('#' + tableId).dataTable({
-            // processing: true,
+        var oTable = $('#' + tableId).DataTable({
+            processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
 //            	url: '../restapi/part/tabledata-by-business?bizId=' + bizId,
@@ -114,6 +114,7 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -123,14 +124,7 @@
                 {data: 'batchNo'},
                 {data: 'qtyOnHand'}
             ],
-            aoColumnDefs: [{
-                targets: 5, 
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [row.partId, row.partName, row.partCode];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("AODPartSelectModal.setAODPart", data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -149,7 +143,22 @@
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AODPartSelectModal.setAODPart",
+                aoData:[  
+                    {
+                        sName : "partId",
+                    }, {
+                        sName : "partName"
+                    }, {
+                        sName : "partCode"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -168,6 +177,7 @@
     var setAODPart = function (id, name, code) {
         $("#itemPartId").val(id);
         $("#itemPartName").val(name + " [" + code + "]");
+        $('#aod-item-child-modal').modal("hide");
     };
 
     return {

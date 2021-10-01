@@ -7,7 +7,8 @@ import java.util.List;
 
 import javax.persistence.criteria.Predicate;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -27,6 +28,7 @@ import com.codex.ecam.mappers.inventory.stockAdjustment.StockAdjustmentMapper;
 import com.codex.ecam.mappers.inventory.stockAdjustment.StockAdjustmentReportMapper;
 import com.codex.ecam.model.inventory.stockAdjustment.StockAdjustment;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.admin.AccountResult;
 import com.codex.ecam.result.inventory.StockAdjustmentResult;
 import com.codex.ecam.service.inventory.api.StockAdjustmentService;
 import com.codex.ecam.service.inventory.api.StockService;
@@ -44,26 +46,26 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Autowired
 	private StockAdjustmentDao stockAdjustmentDao;
-	
+
 	@Autowired
 	private StockService stockService;
 
 	@Override
 	public StockAdjustmentDTO newStockAdjustment() {
-		StockAdjustmentDTO dto = new StockAdjustmentDTO();
+		final StockAdjustmentDTO dto = new StockAdjustmentDTO();
 		dto.setAdjustmentStatus(StockAdjustmentStatus.DRAFT);
 		dto.setAdjustmentCode(getNextCode());
 		return dto;
 	}
 
 	private String getNextCode() {
-		StockAdjustment lastDomain = stockAdjustmentDao.findLastDomain();
+		final StockAdjustment lastDomain = stockAdjustmentDao.findLastDomain();
 		Integer nextNo = 0;
-		Integer year = Calendar.getInstance().get(Calendar.YEAR);
-		if ((lastDomain == null) || (lastDomain.getId() == null)) {
+		final Integer year = Calendar.getInstance().get(Calendar.YEAR);
+		if (lastDomain == null || lastDomain.getId() == null) {
 			nextNo = 1;
 		} else {
-			List<String> codeList = Arrays.asList(lastDomain.getAdjustmentCode().split("/"));
+			final List<String> codeList = Arrays.asList(lastDomain.getAdjustmentCode().split("/"));
 			if (!codeList.get(0).equalsIgnoreCase(AffixList.STOCK_ADJUSTMENT.getCode())) {
 				nextNo = 1;
 			} else if (Integer.parseInt(codeList.get(1)) == year) {
@@ -83,10 +85,10 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Override
 	public StockAdjustmentResult statusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus) {
-		StockAdjustmentResult result = new StockAdjustmentResult(null, null);
+		final StockAdjustmentResult result = new StockAdjustmentResult(null, null);
 		try {
 			executeStatusChange(id, result);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 		}
@@ -105,12 +107,12 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 	}
 
 	private void adjustStock(StockAdjustmentDTO dto) throws Exception {
-		        stockService.adjustStock(dto);
+		stockService.adjustStock(dto);
 	}
 
 	private void updateStockAdjustmentStatus(StockAdjustmentDTO dto) throws Exception {
 		StockAdjustment adjustment = null;
-		if ((dto != null) && (dto.getId() != null)) {
+		if (dto != null && dto.getId() != null) {
 			adjustment = stockAdjustmentDao.findOne(dto.getId());
 		}
 		adjustment.setStockAdjustmentStatus(StockAdjustmentStatus.APPROVED);
@@ -120,7 +122,7 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 	private void modifyStockListAvgCost(Integer partId) throws Exception {
 		try {
 			//            stockService.updateItemAVGPrice(partId);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -128,11 +130,11 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 	@Override
 	public DataTablesOutput<StockAdjustmentDTO> findAll(FocusDataTablesInput input) throws Exception {
 		StockAdjustmentPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<StockAdjustment> domainOut = stockAdjustmentDao.findAll(input);
+		final DataTablesOutput<StockAdjustment> domainOut = stockAdjustmentDao.findAll(input);
 		DataTablesOutput<StockAdjustmentDTO> out = null;
 		try {
 			out = StockAdjustmentMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;
@@ -140,7 +142,7 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Override
 	public StockAdjustmentDTO findById(Integer id) throws Exception {
-		StockAdjustment domain = findEntityById(id);
+		final StockAdjustment domain = findEntityById(id);
 		if (domain != null) {
 			return StockAdjustmentMapper.getInstance().domainToDto(domain);
 		}
@@ -153,9 +155,9 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Override
 	public StockAdjustmentResult delete(Integer id) {
-		StockAdjustmentResult result = new StockAdjustmentResult(null, null);
+		final StockAdjustmentResult result = new StockAdjustmentResult(null, null);
 		try {
-			StockAdjustment adjustment = findEntityById(id);
+			final StockAdjustment adjustment = findEntityById(id);
 			if (adjustment.getStockAdjustmentStatus().equals(StockAdjustmentStatus.DRAFT)) {
 				stockAdjustmentDao.delete(id);
 				result.setResultStatusSuccess();
@@ -164,7 +166,35 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 				result.setResultStatusError();
 				result.addToErrorList("Approved Stock Adjustment Cannot Deleted.");
 			}
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public StockAdjustmentResult deleteMultiple(Integer[] ids) throws Exception {
+		final StockAdjustmentResult result = new StockAdjustmentResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				final StockAdjustment adjustment = findEntityById(id);
+				if (adjustment.getStockAdjustmentStatus().equals(StockAdjustmentStatus.DRAFT)) {
+					stockAdjustmentDao.delete(id);
+				} else {
+					result.setResultStatusError();
+					result.addToErrorList("Approved Stock Adjustment Cannot Deleted.");
+					return result;
+				}
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Stock Adjustment (s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Stock Adjustment (s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -173,16 +203,16 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Override
 	public StockAdjustmentResult update(StockAdjustmentDTO dto) {
-		StockAdjustmentResult result = new StockAdjustmentResult(null, dto);
+		final StockAdjustmentResult result = new StockAdjustmentResult(null, dto);
 		try {
-			StockAdjustment domain = stockAdjustmentDao.findOne(dto.getId());
+			final StockAdjustment domain = stockAdjustmentDao.findOne(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("Stock Updated Successfully");
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("Stock Already updated. Please Reload Stock.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -192,11 +222,11 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 
 	@Override
 	public StockAdjustmentResult save(StockAdjustmentDTO dto) {
-		StockAdjustmentResult result = new StockAdjustmentResult(new StockAdjustment(), dto);
+		final StockAdjustmentResult result = new StockAdjustmentResult(new StockAdjustment(), dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList("Stock Adjustment Added Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -209,22 +239,22 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 	public List<StockAdjustmentRepDTO> findAll(StockAdjustmentFilterDTO filterDTO) {
 		List<StockAdjustment> domainList = null;
 		try {
-			Specification<StockAdjustment> specification = (root, query, cb) -> {
-				List<Predicate> predicates = new ArrayList<>();
-				if ((filterDTO != null) && (!filterDTO.getAdjustmentCode().equalsIgnoreCase("") == Boolean.TRUE)) {
+			final Specification<StockAdjustment> specification = (root, query, cb) -> {
+				final List<Predicate> predicates = new ArrayList<>();
+				if (filterDTO != null && !filterDTO.getAdjustmentCode().equalsIgnoreCase("") == Boolean.TRUE) {
 					predicates.add(cb.like(cb.lower(root.get("adjustmentCode")), "%" + filterDTO.getAdjustmentCode().toLowerCase() + "%"));
 				}
-				if ((filterDTO != null) && (filterDTO.getAdjustmentStatus() != null) && (filterDTO.getAdjustmentStatus().getId() != null)) {
+				if (filterDTO != null && filterDTO.getAdjustmentStatus() != null && filterDTO.getAdjustmentStatus().getId() != null) {
 					predicates.add(cb.equal(root.get("stockAdjustmentStatus"), filterDTO.getAdjustmentStatus()));
 				}
-				if ((filterDTO != null) && (filterDTO.getStockId() != null)) {
+				if (filterDTO != null && filterDTO.getStockId() != null) {
 					predicates.add(cb.equal(root.get("stock").get("id"), filterDTO.getStockId()));
 				}
 				;
-				if ((filterDTO != null) && (filterDTO.getDate() != null)) {
+				if (filterDTO != null && filterDTO.getDate() != null) {
 					predicates.add(cb.equal(root.get("stockAdjustmentDate"), filterDTO.getDate()));
 				}
-				if ((filterDTO != null) && (filterDTO.getItemId() != null)) {
+				if (filterDTO != null && filterDTO.getItemId() != null) {
 					predicates.add(cb.equal(root.get("part").get("id"), filterDTO.getItemId()));
 				}
 				return cb.and(predicates.toArray(new Predicate[0]));
@@ -232,7 +262,7 @@ public class StockAdjustmentServiceImpl implements StockAdjustmentService {
 			domainList = stockAdjustmentDao.findAll(specification);
 			return StockAdjustmentReportMapper.getInstance().domainToRepDTOList(domainList);
 
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}

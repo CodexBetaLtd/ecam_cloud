@@ -171,8 +171,10 @@ var MyApp = function () {
     });
 
     var initAppDataTable = function () {
+        
     	$('#my_app_tbl').dataTable().fnDestroy();
-        var oTable = $('#my_app_tbl').dataTable({
+    	
+        var oTable = $('#my_app_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({

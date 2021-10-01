@@ -14,20 +14,22 @@ import java.util.List;
 public interface StockAdjustmentService {
 
 	DataTablesOutput<StockAdjustmentDTO> findAll(FocusDataTablesInput input) throws Exception;
-	
-    StockAdjustmentDTO newStockAdjustment();
 
-    StockAdjustmentDTO findById(Integer id) throws Exception;
-    
-    StockAdjustmentResult statusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus);
+	StockAdjustmentDTO newStockAdjustment();
 
-    StockAdjustmentResult delete(Integer id);
+	StockAdjustmentDTO findById(Integer id) throws Exception;
 
-    StockAdjustmentResult update(StockAdjustmentDTO dto);
+	StockAdjustmentResult statusChange(Integer id, StockAdjustmentStatus stockAdjustmentStatus);
 
-    StockAdjustmentResult save(StockAdjustmentDTO dto);
+	StockAdjustmentResult delete(Integer id);
 
-    List<StockAdjustmentRepDTO> findAll(StockAdjustmentFilterDTO filterDTO);
+	StockAdjustmentResult update(StockAdjustmentDTO dto);
 
-    StockAdjustmentRepDTO findRepDTOById(Integer id);
+	StockAdjustmentResult save(StockAdjustmentDTO dto);
+
+	List<StockAdjustmentRepDTO> findAll(StockAdjustmentFilterDTO filterDTO);
+
+	StockAdjustmentRepDTO findRepDTOById(Integer id);
+
+	StockAdjustmentResult deleteMultiple(Integer[] ids) throws Exception;
 }

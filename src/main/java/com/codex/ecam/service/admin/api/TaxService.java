@@ -20,9 +20,11 @@ public interface TaxService {
 	TaxResult save(TaxDTO taxDTO) throws Exception;
 
 	Tax findEntityById(Integer id) throws Exception;
-	
+
 	List<TaxDTO> findAll();
 
 	List<TaxDTO> findAllByBusiness(Integer id);
+
+	TaxResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

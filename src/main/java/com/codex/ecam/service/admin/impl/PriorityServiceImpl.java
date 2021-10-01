@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -41,18 +41,18 @@ public class PriorityServiceImpl implements PriorityService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = priorityDao.findAll(input);
 		} else {
-			Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = priorityDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<PriorityDTO> out = PriorityMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<PriorityDTO> out = PriorityMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public PriorityDTO findById(Integer id) throws Exception {
-		Priority domain = findEntityById(id);
+		final Priority domain = findEntityById(id);
 		if (domain != null) {
 			return PriorityMapper.getInstance().domainToDto(domain);
 		}
@@ -61,15 +61,15 @@ public class PriorityServiceImpl implements PriorityService {
 
 	@Override
 	public PriorityResult delete(Integer id) {
-		PriorityResult result = new PriorityResult(null, null);
+		final PriorityResult result = new PriorityResult(null, null);
 		try {
 			priorityDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Priority Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Priority Already Assigned. Please Remove from Assigned Priority and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -78,15 +78,36 @@ public class PriorityServiceImpl implements PriorityService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public PriorityResult deleteMultiple(Integer[] ids) throws Exception {
+		final PriorityResult result = new PriorityResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				priorityDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Priority(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Priority(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public PriorityResult save(PriorityDTO dto) throws Exception {
-		PriorityResult result = createPriorityResult(dto);
+		final PriorityResult result = createPriorityResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Priority Already updated. Please Reload Priority.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -104,7 +125,7 @@ public class PriorityServiceImpl implements PriorityService {
 
 	private PriorityResult createPriorityResult(PriorityDTO dto) {
 		PriorityResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new PriorityResult(priorityDao.findOne(dto.getId()), dto);
 		} else {
 			result = new PriorityResult(new Priority(), dto);
@@ -122,17 +143,17 @@ public class PriorityServiceImpl implements PriorityService {
 	}
 
 	private void setBusiness(PriorityResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public void saveAll(List<PriorityDTO> allDummyData) {
-		for (PriorityDTO dto : allDummyData) {
+		for (final PriorityDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -146,32 +167,32 @@ public class PriorityServiceImpl implements PriorityService {
 	@Override
 	public List<PriorityDTO> findAll() {
 		try {
-			List<Priority> priorities;			
+			List<Priority> priorities;
 			if(AuthenticationUtil.isAuthUserAdminLevel()){
 				priorities = (List<Priority>) priorityDao.findAll();
 			} else {
-				Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				priorities = (List<Priority>) priorityDao.findAll(specification);
-			}			
+				final Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				priorities = priorityDao.findAll(specification);
+			}
 			return PriorityMapper.getInstance().domainToDTOList(priorities);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	@Override
 	public List<PriorityDTO> findAllByBusiness(Integer id) {
 		try {
 			List<PriorityDTO> dtoOut = new ArrayList<>();
-			Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
-			
-			if (specification != null) {				
-				List<Priority> priorities = (List<Priority>) priorityDao.findAll(specification); 
+			final Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
+
+			if (specification != null) {
+				final List<Priority> priorities = priorityDao.findAll(specification);
 				dtoOut = PriorityMapper.getInstance().domainToDTOList(priorities);
 			}
 			return dtoOut;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

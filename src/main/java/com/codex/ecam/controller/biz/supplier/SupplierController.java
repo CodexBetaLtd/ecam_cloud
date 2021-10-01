@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.biz.supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.biz.supplier.SupplierDTO;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.biz.SupplierResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
@@ -28,108 +30,127 @@ public class SupplierController {
 
 	public static final String REQUEST_MAPPING_URL = "/supplier";
 
-    @Autowired
-    private SupplierService supplierService;
-    
-    @Autowired
-    private BusinessClassificationService businessClassificationService;
-    
-    @Autowired
-    private BusinessTypeService businessTypeService;
-    
-    @Autowired
-    private CurrencyService currencyService;
-    
-    @Autowired
-    private CountryService countryService;
-    
-    @Autowired
-    private BusinessService businessService;
-	
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+	@Autowired
+	private SupplierService supplierService;
+
+	@Autowired
+	private BusinessClassificationService businessClassificationService;
+
+	@Autowired
+	private BusinessTypeService businessTypeService;
+
+	@Autowired
+	private CurrencyService currencyService;
+
+	@Autowired
+	private CountryService countryService;
+
+	@Autowired
+	private BusinessService businessService;
+
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
 		model.addAttribute("error", error);
 		return "biz/supplier/home-view";
-	} 
-    
+	}
+
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String addForm(Model model, RedirectAttributes ra) {
-        SupplierResult result;
-        try {
-            result = supplierService.newSupplier();
-            setCommonData(model, result.getDtoEntity());
-            return "biz/supplier/add-view";
-		} catch (Exception e) {
-            e.printStackTrace();
-            ra.addFlashAttribute("error", "Error While Loading Initial Data.");
-            return "redirect:/supplier/";
-        }
+		SupplierResult result;
+		try {
+			result = supplierService.newSupplier();
+			setCommonData(model, result.getDtoEntity());
+			return "biz/supplier/add-view";
+		} catch (final Exception e) {
+			e.printStackTrace();
+			ra.addFlashAttribute("error", "Error While Loading Initial Data.");
+			return "redirect:/supplier/";
+		}
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
-        SupplierResult result;
-        try {
-            result = supplierService.findById(id);
-            setCommonData(model, result.getDtoEntity());
-            return "biz/supplier/add-view";
-        } catch (Exception e) {
-            e.printStackTrace();
-            ra.addFlashAttribute("error", "Error occurred. Please Try again.");
-            return "redirect:/supplier/";
-        }
+		SupplierResult result;
+		try {
+			result = supplierService.findById(id);
+			setCommonData(model, result.getDtoEntity());
+			return "biz/supplier/add-view";
+		} catch (final Exception e) {
+			e.printStackTrace();
+			ra.addFlashAttribute("error", "Error occurred. Please Try again.");
+			return "redirect:/supplier/";
+		}
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveOrUpdate(@ModelAttribute("supplier") @Valid SupplierDTO supplierDTO, Model model, RedirectAttributes ra) {
-        SupplierResult result;
-        try {
-            if (supplierDTO.getId() != null && supplierDTO.getId() > 0) {
-                result = supplierService.update(supplierDTO);
-            } else {
-                result = supplierService.save(supplierDTO);
-            }
-            if (result.getStatus().equals(ResultStatus.ERROR)) {
-                model.addAttribute("error", result.getErrorList());
-            } else {
-                model.addAttribute("success", result.getMsgList());
-            }
-            setCommonData(model, supplierDTO);
-            return "biz/supplier/add-view";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/supplier/add";
-        }
-    } 
+	public String saveOrUpdate(@ModelAttribute("supplier") @Valid SupplierDTO supplierDTO, Model model, RedirectAttributes ra) {
+		SupplierResult result;
+		try {
+			if (supplierDTO.getId() != null && supplierDTO.getId() > 0) {
+				result = supplierService.update(supplierDTO);
+			} else {
+				result = supplierService.save(supplierDTO);
+			}
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList());
+			} else {
+				model.addAttribute("success", result.getMsgList());
+			}
+			setCommonData(model, supplierDTO);
+			return "biz/supplier/add-view";
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return "redirect:/supplier/add";
+		}
+	}
 
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String delete(Integer id, Model model, RedirectAttributes ra) {
-        SupplierResult result;
-        try {
-            result = supplierService.delete(id);
-            if (result.getStatus().equals(ResultStatus.ERROR)) {
-                ra.addFlashAttribute("error", result.getErrorList());
-            } else {
-                ra.addFlashAttribute("success", result.getMsgList());
-            }
-            return "redirect:/supplier/";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/supplier/";
-        }
+	@RequestMapping(value = "/delete", method = RequestMethod.GET)
+	public String delete(Integer id, Model model, RedirectAttributes ra) {
+		SupplierResult result;
+		try {
+			result = supplierService.delete(id);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				ra.addFlashAttribute("error", result.getErrorList());
+			} else {
+				ra.addFlashAttribute("success", result.getMsgList());
+			}
+			return "redirect:/supplier/";
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return "redirect:/supplier/";
+		}
 
-    } 
+	}
 
-    private void setCommonData(Model model, SupplierDTO supplierDTO) {
-        model.addAttribute("supplier", supplierDTO);
-        model.addAttribute("businessClassifications", businessClassificationService.findAll());
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final SupplierResult result = supplierService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Supplier already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "biz/supplier/home-view";
+	}
+
+	private void setCommonData(Model model, SupplierDTO supplierDTO) {
+		model.addAttribute("supplier", supplierDTO);
+		model.addAttribute("businessClassifications", businessClassificationService.findAll());
 		model.addAttribute("businessTypes", businessTypeService.findAll());
 		model.addAttribute("currencyList", currencyService.findAll());
 		model.addAttribute("countryList", countryService.findAll());
-        model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-//		model.addAttribute("sites", assetService.findSiteByBusinessId(supplierDTO.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
-    }
+		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+		//		model.addAttribute("sites", assetService.findSiteByBusinessId(supplierDTO.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+	}
 
 
 }

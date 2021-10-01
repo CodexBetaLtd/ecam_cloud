@@ -17,6 +17,9 @@
             </div>
         </div> -->
 		<div class="panel-body">
+		
+	<div th:replace="template/messageview :: message"></div>
+	
 			<div class="row">
 				<div class="col-md-12 space20">
 					<a th:href="@{/assetCategory/add}"
@@ -34,8 +37,7 @@
 					<tr>
 						<th style="width:60%;">Name</th>
 						<th style="width:10%;">Precision</th>
-						<th style="width:25%;">symbol</th>
-						<th style="width:5%;"></th>
+						<th style="width:25%;">Symbol</th>
 					</tr>
 				</thead>
 				<tbody>

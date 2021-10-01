@@ -118,7 +118,8 @@ var UserGroupHome = function () {
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#userGroupTbl').dataTable({
+        
+        var oTable = $('#userGroupTbl').DataTable({
         	processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline( {
@@ -128,10 +129,9 @@ var UserGroupHome = function () {
             columns : [ {
             	orderable: false, 
                 searchable: false, 
-                width:"2%",
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
+                width:"2%",    
+                defaultContent: '',
+                className: 'select-checkbox',
             },{
      			data : 'name'
      		},{
@@ -169,6 +169,9 @@ var UserGroupHome = function () {
                 sId : 'id',
                 sUrl: "../userGroups/edit?id",
             },
+            aoRowProperty: {
+                sClassName : "dtTr-editable tooltips",
+            }
         });
         $('#userGroupTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

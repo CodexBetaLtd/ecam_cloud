@@ -112,10 +112,12 @@ var dtWorkOrderAsset = function () {
 	};
 
     var dtAssetsByBusiness = function (func) {
-        var url = "";
-            url = "../../restapi/asset/machine-tabledata";
+        
         var tableId = "asset_tbl";
-        var oTable = $('#'+tableId).dataTable({
+
+        $("#" + tableId).dataTable().fnDestroy();
+        
+        var oTable = $('#'+tableId).DataTable({
         	responsive: true,
         	"processing": true,
             "serverSide": true,
@@ -126,6 +128,7 @@ var dtWorkOrderAsset = function () {
             columns : [ {
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -134,15 +137,7 @@ var dtWorkOrderAsset = function () {
      		},{
      			data : 'code'
      		}],
-            aoColumnDefs: [{
-            	orderData: [1,5],
-            	targets: 3, //index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data, row.name];
-               return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -160,7 +155,20 @@ var dtWorkOrderAsset = function () {
             ], 
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination', 
+            sPaging: 'pagination',
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
 //            sDom: 'Rlfrtip'
            
         });
@@ -172,63 +180,6 @@ var dtWorkOrderAsset = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         })
-//        $("#" + tableId).dataTable().fnDestroy();
-//        var oTable = $('#' + tableId).dataTable({
-//        	processing : true,
-//            serverSide : true,
-//            ajax : $.fn.dataTable.pipeline( {
-//                url: url,
-//            	pages: 5
-//            }),
-//            columns : [{
-//                orderable: false,
-//                searchable: false,
-//                width: "2%",
-//                render: function (data, type, row, meta) {
-//                    return meta.row + meta.settings._iDisplayStart + 1;
-//                }
-//            },
-//                {data: 'name'},
-//                {data: 'code'}
-//            ],
-//            aoColumnDefs: [{
-//                targets: 3, //index of column starting from 0
-//                data: "id", //this name should exist in your JSON response
-//                render: function (data, type, row, meta) {
-//                	console.log(row)
-//                    var vars = [data, row.name];
-//                   // return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-//                    // return "<a id='link" + data + "' onclick='woAssetTab.woAddAsset(" + data + ",\"" + row.name + "\",\"" + row.code + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
-//                }
-//            }],
-//            oLanguage: {
-//                sLengthMenu: "Show_MENU_Rows",
-//                sSearch: "",
-//                oPaginate: {
-//                    sPrevious: "&laquo;",
-//                    sNext: "&raquo;"
-//                }
-//            },
-//            aaSorting: [
-//                [1, 'asc']
-//            ],
-//            aLengthMenu: [
-//                [5, 10, 15, 20, -1],
-//                [5, 10, 15, 20, "All"] // change per page values here
-//            ],
-//            sPaginationType: "full_numbers",
-//            sPaging: 'pagination',
-//            bLengthChange: false
-//        });
-//        $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-//        $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-//        $('#' + tableId + '_wrapper .dataTables_length select').select2();
-//        $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
-//            /* Get the DataTables object again - this is not a recreation, just a get of the object */
-//            var iCol = parseInt($(this).attr("data-column"));
-//            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-//            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-//        });
     };
 
 

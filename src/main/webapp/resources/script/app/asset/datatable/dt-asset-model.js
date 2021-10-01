@@ -116,8 +116,10 @@ var AssetModelDataTable = function () {
 
     var runDataTable = function () {
     	var brandId = $('#brand').val();
+    	
     	$('#assetModelTbl').dataTable().fnDestroy();
-    	var oTable = $('#assetModelTbl').dataTable({
+    	
+    	var oTable = $('#assetModelTbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -127,7 +129,7 @@ var AssetModelDataTable = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "45px",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -141,15 +143,7 @@ var AssetModelDataTable = function () {
                 	data: 'modelName'
                 },
             ],
-            aoColumnDefs: [{
-            	className:"dt-center",
-                targets: 3,
-                width: "45px",
-                data: "modelId",
-                render: function (data, type, rowData, meta) {
-                    return ButtonUtil.getCommonBtnSelect('AssetModelSelectModal.setAssetModel', data, rowData.modelName);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -165,13 +159,26 @@ var AssetModelDataTable = function () {
                 [5, 10, 15, 20, -1],
                 [5, 10, 15, 20, "All"] // change per page values here
             ],
-            dom : "<'row'<'col-sm-4 col-xs-4  dtblassetmodel'><'col-sm-8 col-xs-8 text-right-xs'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            dom : "<'row'<'col-sm-8 col-xs-8  dtblassetmodel'><'col-sm-4 col-xs-4 text-right-xs'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
 				$("div.dtblassetmodel").html( "<button class='btn btn-blue btn-sm active tooltips' data-toggle='modal' type='button' id='btnAssetModelNew' onclick='AssetModelSelectModal.assetModelAddView();' ><i class='clip-plus-circle-2  btn-new'></i> New</button>");
 			},
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetModelSelectModal.setAssetModel",
+                aoData:[  
+                    {
+                        sName : "modelId",
+                    }, {
+                        sName : "modelName"
+                    },
+                ],
+            },
         });
 
         $('#assetModelTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

@@ -1,7 +1,7 @@
 package com.codex.ecam.service.biz.api;
 
 import java.util.List;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.biz.business.BusinessClassificationDTO;
@@ -23,6 +23,8 @@ public interface BusinessClassificationService {
 	void saveAll(List<BusinessClassificationDTO> allDummyData);
 
 	void deleteAll();
+
+	BusinessClassificationResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 

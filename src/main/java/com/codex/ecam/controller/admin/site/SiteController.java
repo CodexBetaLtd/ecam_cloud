@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.admin.UserDTO;
-import com.codex.ecam.dto.admin.UserGroupDTO;
 import com.codex.ecam.dto.admin.cmmssetting.UserSiteDTO;
+import com.codex.ecam.dto.admin.usergroup.UserGroupDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.service.admin.api.UserGroupService;
 import com.codex.ecam.service.admin.api.UserSiteService;

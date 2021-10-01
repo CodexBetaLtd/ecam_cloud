@@ -41,18 +41,18 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = maintenanceTypeDao.findAll(input);
 		} else {
-			Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = maintenanceTypeDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<MaintenanceTypeDTO> out = MaintenanceTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<MaintenanceTypeDTO> out = MaintenanceTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public MaintenanceTypeDTO findById(Integer id) throws Exception {
-		MaintenanceType domain = findEntityById(id);
+		final MaintenanceType domain = findEntityById(id);
 		if (domain != null) {
 			return MaintenanceTypeMapper.getInstance().domainToDto(domain);
 		}
@@ -61,15 +61,36 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 
 	@Override
 	public MaintenanceTypeResult delete(Integer id) {
-		MaintenanceTypeResult result = new MaintenanceTypeResult(null, null);
+		final MaintenanceTypeResult result = new MaintenanceTypeResult(null, null);
 		try {
 			maintenanceTypeDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("MaintenanceType Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("MaintenanceType Already Assigned. Please Remove from Assigned MaintenanceType and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public MaintenanceTypeResult deleteMultiple(Integer[] ids) throws Exception {
+		final MaintenanceTypeResult result = new MaintenanceTypeResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				maintenanceTypeDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Maintenance Type(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Maintenance Type(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -80,15 +101,15 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 
 	public MaintenanceTypeResult save(MaintenanceTypeDTO dto) throws Exception {
 
-		MaintenanceTypeResult result = createMaintenanceTypeResult(dto);
+		final MaintenanceTypeResult result = createMaintenanceTypeResult(dto);
 
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("MaintenanceType Already updated. Please Reload MaintenanceType.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -106,7 +127,7 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 
 	private MaintenanceTypeResult createMaintenanceTypeResult(MaintenanceTypeDTO dto) {
 		MaintenanceTypeResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new MaintenanceTypeResult(maintenanceTypeDao.findOne(dto.getId()), dto);
 		} else {
 			result = new MaintenanceTypeResult(new MaintenanceType(), dto);
@@ -124,17 +145,17 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 	}
 
 	private void setBusiness(MaintenanceTypeResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public void saveAll(List<MaintenanceTypeDTO> allDummyData) {
-		for (MaintenanceTypeDTO dto : allDummyData) {
+		for (final MaintenanceTypeDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -152,11 +173,11 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 			if(AuthenticationUtil.isAuthUserAdminLevel()){
 				domainOut = (List<MaintenanceType>) maintenanceTypeDao.findAll();
 			} else {
-				Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+				final Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 				domainOut = maintenanceTypeDao.findAll(specification);
 			}
 			return MaintenanceTypeMapper.getInstance().domainToDTOList(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -166,15 +187,15 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 	public List<MaintenanceTypeDTO> findAllByBusiness(Integer id) {
 		try {
 			List<MaintenanceTypeDTO> dtoOut = new ArrayList<>();
-			Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
+			final Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
 
 			if (specification != null) {
-				List<MaintenanceType> domainOut = maintenanceTypeDao.findAll(specification);
+				final List<MaintenanceType> domainOut = maintenanceTypeDao.findAll(specification);
 				dtoOut =  MaintenanceTypeMapper.getInstance().domainToDTOList(domainOut);
 			}
 
 			return dtoOut;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

@@ -44,6 +44,7 @@ var NotificationAddModal = function () {
     var setNotifyUser = function (id, userName) { 
         $('#rfqNotificationUserId').val(id);
         $('#rfqNotificationUserName').val(userName); 
+        $('#rfq-notification-add-child-modal').modal('toggle');
     };
 	
 	var initValidator = function () {

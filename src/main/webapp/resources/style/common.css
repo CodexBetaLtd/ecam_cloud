@@ -731,6 +731,42 @@ font-weight: bold;
 	border-radius: 50%;
 	display: inline-block;
 }
+
+.dtTr-editable{
+	cursor: pointer;
+}
+
+/*SWEET ALERT*/
+
+.swal-success p, .swal-error p, .swal-confirm p{ 
+	font-size:14px !important;
+}
+
+.swal-error p {
+	color: #b33426;
+}
+
+.swal-success p { 
+	color: #3c763d; 
+}
+
+.swal-error .confirm, .swal-error .cancel, .swal-success .confirm, .swal-confirm .confirm, .swal-confirm .cancel{ 
+	font-size: 13px;
+	color: #fff;
+	padding: 4px 25px;
+}
+
+.swal-success .confirm {
+	background-color: #3c763d !important; 
+}
+
+.swal-error .confirm {
+	background-color: #b33426 !important;
+} 
+
+.swal-confirm .confirm, .swal-error .cancel{
+	background-color: #272727 !important;
+} 
 /*body { zoom: 5; }
 /* body {
     zoom: 1;

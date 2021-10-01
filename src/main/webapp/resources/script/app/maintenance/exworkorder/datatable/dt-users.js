@@ -107,8 +107,12 @@ var dtWorkOrderUser = function () {
     //todo : Need to Change
 
     var dtUsers = function (func, businessId) { 
+        
 		var tableId = "wo_user_select_tbl";
-        var oTable = $("#" + tableId).dataTable({
+
+        $("#" + tableId).dataTable().fnDestroy();
+        
+        var oTable = $("#" + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -118,7 +122,7 @@ var dtWorkOrderUser = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -128,14 +132,7 @@ var dtWorkOrderUser = function () {
                 {data: 'personalCode'},
                 {data: 'businessName'}
             ],
-            aoColumnDefs: [{
-                targets: 5,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.fullName];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -153,7 +150,20 @@ var dtWorkOrderUser = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName"
+                    },
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

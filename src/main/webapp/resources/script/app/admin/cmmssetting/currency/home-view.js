@@ -117,37 +117,27 @@ var CurrencyHome = function () {
 	} );
 	
     var runDataTable = function () {
+        
         $('#currencyTbl').dataTable().fnDestroy();
       
-        var oTable = $('#currencyTbl').dataTable({
+        var oTable = $('#currencyTbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
                 url: "../restapi/lookuptable/tabledatacurrency",
             	pages: 5
             } ),            
-            columns : [            	 {
-                        width: "2%",
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }   }, {
-                	data : 'name'
+            columns : [{
+                width: "4%",
+                defaultContent: '',
+                className: 'select-checkbox'
+            }, {
+            	data : 'name'
             },
              {
             	data : 'symbol'
-     		},{
-     			  
-            	data : 'id'
      		}],
-            "aoColumnDefs": [{"bSearchable": false, "aTargets": [ 0,3]},{ "orderable": false, "aTargets":[ 0,3] },{
-            	"targets": 3,//index of column starting from 0
-                "data": "id", //this name should exist in your JSON response
-                "render": function ( data, type, full, meta ) {
-
-                    return ButtonUtil.getEditBtnWithURL('currency', data, 'CurrencyHome');
-
-                }
-            }],
+            "aoColumnDefs": [{"bSearchable": false, "aTargets": [ 0]},{ "orderable": false, "aTargets":[ 0] }],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -173,13 +163,26 @@ var CurrencyHome = function () {
             bLengthChange: false,
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            "initComplete": function(settings, json) {              	
-		  
+            "initComplete": function(settings, json) {
 			    $("div.dtblcurrency")
 	            .html(
-	                "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='currency-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+	                "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='currency-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='currencyDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			  
-            } 
+            } , 
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "CurrencyHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
         });
         $('#currencyTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -193,6 +196,8 @@ var CurrencyHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRowsFunc(oTable, "currencyDelete", "CurrencyHome.deleteMutiple", "id");
         
     };
     
@@ -275,6 +280,17 @@ var CurrencyHome = function () {
              }
          });      
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../currency/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseSeven").find('.panel-body').empty().append(response);
+                CurrencyHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -285,23 +301,33 @@ var CurrencyHome = function () {
         init: function () {
         	runDataTable();
         },
+        
         addModal : function(){
         	addModal();
     	},
+    	
     	editModal : function(id){
     		editModal(id);
     	},
+    	
     	saveModal : function(){
     		saveModal();
     	},
+    	
     	closeModal : function(){
     		closeModal();
     	},
+    	
     	deleteModal : function(id){
     		deleteModal(id);
     	},
+    	
     	deleteInsideModal : function(id){
     		deleteInsideModal(id);
-    	}
+    	},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
     };
 }();

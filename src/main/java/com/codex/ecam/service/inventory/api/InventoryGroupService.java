@@ -9,17 +9,19 @@ import com.codex.ecam.result.inventory.InventoryGroupResult;
 
 public interface InventoryGroupService {
 
-    InventoryGroupResult newInventoryGroup();
+	InventoryGroupResult newInventoryGroup();
 
-    InventoryGroupResult save(InventoryGroupDTO dto) throws Exception;
+	InventoryGroupResult save(InventoryGroupDTO dto) throws Exception;
 
-    InventoryGroupResult update(InventoryGroupDTO aodDTO) throws Exception;
+	InventoryGroupResult update(InventoryGroupDTO aodDTO) throws Exception;
 
-    InventoryGroupResult delete(Integer id) throws Exception;
+	InventoryGroupResult delete(Integer id) throws Exception;
 
-    InventoryGroupResult findById(Integer id) throws Exception;
+	InventoryGroupResult findById(Integer id) throws Exception;
 
-    DataTablesOutput<InventoryGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<InventoryGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
+
+	InventoryGroupResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 }

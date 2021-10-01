@@ -55,7 +55,7 @@
 					</a> 
 					<a class="btn btn-default btn-sm active tooltips" id="delete"
                     	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_WORK_ORDER_VIEW.id)"
-                        th:disabled="disabled" data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
+                        data-placement="top" data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
 					</a> 
 					<a class="btn btn-default btn-sm active tooltips" id="cancel"
                     	th:disabled="disabled" data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i> <span class="hidden-xs">Cancel</span>
@@ -89,7 +89,6 @@
 											<th>Asset</th>
 											<th>Description</th>
 											<th>Business</th>
-											<th class="hidden-xs">More</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -119,8 +118,6 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>

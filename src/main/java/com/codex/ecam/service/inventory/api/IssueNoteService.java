@@ -25,10 +25,12 @@ public interface IssueNoteService {
 
 	IssueNoteResult statusChange(Integer id, AODStatus status);
 
-    DataTablesOutput<IssueNoteDTO> findAll(FocusDataTablesInput input) throws Exception;
-    
-    DataTablesOutput<IssueNoteItemDTO> getIssuenoteItemDataTable(FocusDataTablesInput input);
+	DataTablesOutput<IssueNoteDTO> findAll(FocusDataTablesInput input) throws Exception;
 
-	
+	DataTablesOutput<IssueNoteItemDTO> getIssuenoteItemDataTable(FocusDataTablesInput input);
+
+	IssueNoteResult deleteMultiple(Integer[] ids) throws Exception;
+
+
 
 }

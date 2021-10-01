@@ -9,18 +9,18 @@ import com.codex.ecam.result.admin.BusinessResult;
 
 import java.util.List;
 
-public interface BusinessService { 
-	
+public interface BusinessService {
+
 	void saveAll(List<BusinessDTO> allDummyData) throws Exception;
-	
+
 	void deleteAll();
 
 	List<BusinessDTO> findAll() throws Exception;
-	
+
 	List<BusinessDTO> findAllActualBusiness();
-	
+
 	List<BusinessDTO> findAllActualBusinessByLevel();
-	
+
 	Business findEntityById(Integer id);
 
 	BusinessDTO findById(Integer id) throws Exception;
@@ -29,11 +29,13 @@ public interface BusinessService {
 
 	BusinessResult save(BusinessDTO business) throws Exception;
 
-    DataTablesOutput<BusinessDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<BusinessDTO> findAll(FocusDataTablesInput input) throws Exception;
 
-    DataTablesOutput<BusinessDTO> findAllByLevel(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<BusinessDTO> findAllByLevel(FocusDataTablesInput input) throws Exception;
 
-    DataTablesOutput<BusinessDTO> findActualBusinesses(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<BusinessDTO> findActualBusinesses(FocusDataTablesInput input) throws Exception;
+
+	BusinessResult deleteMultiple(Integer[] ids) throws Exception;
 
 }
 

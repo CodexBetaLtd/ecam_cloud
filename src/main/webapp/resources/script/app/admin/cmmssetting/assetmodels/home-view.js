@@ -117,8 +117,10 @@ var AssetModelHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#assetModelsTbl').dataTable().fnDestroy();
-		var oTable = $('#assetModelsTbl') .dataTable( {
+		
+		var oTable = $('#assetModelsTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable
@@ -126,23 +128,19 @@ var AssetModelHome = function() {
 						url : "../restapi/lookuptable/tabledataassetmodel",
 						pages : 5
 					}),
-			columns : [
-					{	width : "10%",
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+			columns : [{	
+			            orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					},
 					{ data : 'brandName' },
 					{ data : 'modelName' },
-					{ width : "10%", data : 'modelId' } 
 					],
 			"aoColumnDefs" : [
 					{ "bSearchable" : false, "aTargets" : [ 0 ] },
-					{ "orderable" : false, "aTargets" : [ 0 ] },
-					{ "targets" : 3, "data" : 'modelId', "render" : function(data, type, full, meta) {
-                        return ButtonUtil.getEditBtnWithURL('assetmodel', data, 'AssetModelHome');
-						}
-					} ],
+					{ "orderable" : false, "aTargets" : [ 0 ] }],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -157,7 +155,10 @@ var AssetModelHome = function() {
 			],
 			dom : "<'row'<'col-sm-4 dtblassetmodels'><'col-sm-8'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtblassetmodels") .html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='model-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblassetmodels").html( 
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='model-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='assetModelDelete'><i class=' clip-cancel-circle-2 btn-delete'></i> Delete</button>"
+				        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
@@ -165,6 +166,18 @@ var AssetModelHome = function() {
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
 			sPaging : 'pagination',
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "AssetModelHome.editModal",
+                aoData:[  
+                    {
+                        sName : "modelId",
+                    },
+                ],
+           },
 		});
 		$('#assetModelsTbl_wrapper .dataTables_filter input').addClass( "form-control input-sm").attr("placeholder", "Search");
 		$('#assetModelsTbl_wrapper .dataTables_length select').addClass( "m-wrap small");
@@ -174,6 +187,9 @@ var AssetModelHome = function() {
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+        
+        DataTableUtil.deleteRowsFunc(oTable, "assetModelDelete", "AssetModelHome.deleteMutiple", "modelId");
+       
 	};
 
 	var addModal = function() {
@@ -257,6 +273,17 @@ var AssetModelHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../assetmodel/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseFifteen").find('.panel-body').empty().append(response);
+                runDataTable();
+            }
+        });
+    };
 
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -267,23 +294,33 @@ var AssetModelHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

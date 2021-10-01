@@ -102,8 +102,10 @@ var dtAODReturnItem = function () {
 
 
     var getAODReturnItemTable = function (url, func) {
+        
         var tableId = "tbl_modal_aod_item";
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -113,7 +115,7 @@ var dtAODReturnItem = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -128,16 +130,7 @@ var dtAODReturnItem = function () {
                     data: 'remainingQuantity'
                 }
             ],
-            aoColumnDefs: [{
-                targets: 6,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    console.log(row);
-                    var vars = [data, row.partName, row.remainingQuantity, row.description];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                    //return "<button id='link" + data + "' onclick='" + func + "(\"" + data + "\",\"" + row.partName + "\");' type='button' class='btn btn-blue btn-squared btn-xs' > Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -156,7 +149,24 @@ var dtAODReturnItem = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "partName"
+                    }, {
+                        sName : "remainingQuantity"
+                    }, {
+                        sName : "description"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -166,17 +176,7 @@ var dtAODReturnItem = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-
-        /*var commonSet=function () {
-         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-         $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
-         var iCol = parseInt($(this).attr("data-column"));
-         var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-         oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-         });
-         };*/
+        
     };
 
 

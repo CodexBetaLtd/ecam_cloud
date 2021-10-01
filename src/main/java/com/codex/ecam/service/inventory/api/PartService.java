@@ -31,4 +31,6 @@ public interface PartService {
 
 	DataTablesOutput<PartDTO> getPartsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 
+	PartResult deleteMultiple(Integer[] ids) throws Exception;
+
 }

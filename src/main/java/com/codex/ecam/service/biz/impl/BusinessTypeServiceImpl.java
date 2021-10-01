@@ -3,7 +3,7 @@ package com.codex.ecam.service.biz.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -17,6 +17,7 @@ import com.codex.ecam.dto.biz.business.BussinessTypeDTO;
 import com.codex.ecam.mappers.admin.BussinesTypeMapper;
 import com.codex.ecam.model.biz.business.BusinessTypeDefinition;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.admin. BusinessTypeResult;
 import com.codex.ecam.result.admin.BusinessTypeResult;
 import com.codex.ecam.service.biz.api.BusinessTypeService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -40,18 +41,18 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			domainOut = businessTypeDao.findAll(input);
 		} else {
-			Specification<BusinessTypeDefinition> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<BusinessTypeDefinition> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = businessTypeDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<BussinessTypeDTO> out = BussinesTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<BussinessTypeDTO> out = BussinesTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public BussinessTypeDTO findById(Integer id) throws Exception {
-		BusinessTypeDefinition domain = businessTypeDao.findById(id);
+		final BusinessTypeDefinition domain = businessTypeDao.findById(id);
 		if (domain != null) {
 			return BussinesTypeMapper.getInstance().domainToDto(domain);
 		}
@@ -61,16 +62,37 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 	@Override
 	public BusinessTypeResult delete(Integer id) {
 
-		BusinessTypeResult result = new BusinessTypeResult(null, null);
+		final BusinessTypeResult result = new BusinessTypeResult(null, null);
 
 		try {
 			businessTypeDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Business Type Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Business Type Already Assigned. Please Remove from Assigned Business Type and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public  BusinessTypeResult deleteMultiple(Integer[] ids) throws Exception {
+		final  BusinessTypeResult result = new  BusinessTypeResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				businessTypeDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList(" Business Type(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList(" Business Type(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -80,15 +102,15 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 	@Override
 	public BusinessTypeResult save(BussinessTypeDTO dto) throws Exception {
 
-		BusinessTypeResult result = createBusinessTypeResult(dto);
+		final BusinessTypeResult result = createBusinessTypeResult(dto);
 
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Business Type Already updated. Please Reload Business Type.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -106,7 +128,7 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 
 	private BusinessTypeResult createBusinessTypeResult(BussinessTypeDTO dto) {
 		BusinessTypeResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new BusinessTypeResult(businessTypeDao.findOne(dto.getId()), dto);
 		} else {
 			result = new BusinessTypeResult(new BusinessTypeDefinition(), dto);
@@ -124,17 +146,17 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 	}
 
 	private void setBusiness(BusinessTypeResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public List<BussinessTypeDTO> findAll() {
-		Iterable<BusinessTypeDefinition> domainList = businessTypeDao.findAll();
+		final Iterable<BusinessTypeDefinition> domainList = businessTypeDao.findAll();
 		try {
 			return BussinesTypeMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -142,10 +164,10 @@ public class BusinessTypeServiceImpl implements BusinessTypeService {
 
 	@Override
 	public void saveAll(List<BussinessTypeDTO> allDummyData) {
-		for (BussinessTypeDTO dto : allDummyData) {
+		for (final BussinessTypeDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}

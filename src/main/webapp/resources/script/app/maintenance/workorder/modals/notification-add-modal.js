@@ -38,6 +38,7 @@ var NotificationAddModal = function () {
     var setNotifyUser = function (id, userName) {
         $('#woNotificationUserId').val(id);
         $('#woNotificationUserName').val(EncodeDecodeComponent.getBase64().decode(userName));
+        $('#wo-notification-add-child-modal').modal('toggle');
     };
 	
 	var initValidator = function () {

@@ -177,6 +177,7 @@ var TaskAddModal = function () {
     var setAssignedUser = function (id, name) {
         $("#stUserId").val(id);
         $("#stUserName").val(EncodeDecodeComponent.getBase64().decode(name));
+        $('#sm-task-add-child-modal').modal('toggle');
     };
     
     var addSmTask = function () {

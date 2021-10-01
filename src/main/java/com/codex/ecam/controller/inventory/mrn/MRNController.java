@@ -3,6 +3,7 @@ package com.codex.ecam.controller.inventory.mrn;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,6 +18,7 @@ import com.codex.ecam.constants.inventory.MRNStatus;
 import com.codex.ecam.constants.inventory.MRNType;
 import com.codex.ecam.dto.inventory.mrn.MRNDTO;
 import com.codex.ecam.result.RestResult;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -30,11 +32,11 @@ public class MRNController {
 	public static final String REQUEST_MAPPING_URL = "/mrn";
 
 	@Autowired
-	private AODService aodService;
-	@Autowired
 	private MRNService mrnService;
+
 	@Autowired
 	private BusinessService businessService;
+
 	@Autowired
 	private AssetService assetService;
 
@@ -53,19 +55,19 @@ public class MRNController {
 	/*********************************************************************
 	 * Modal Views
 	 *********************************************************************/
-    @RequestMapping(value = "/requestusermodalview", method = RequestMethod.GET)
-    public String getUserView(Model model) {
-        return "inventory/mrn/modal/user-modal";
+	@RequestMapping(value = "/requestusermodalview", method = RequestMethod.GET)
+	public String getUserView(Model model) {
+		return "inventory/mrn/modal/user-modal";
 	}
 
-    @RequestMapping(value = "/customermodalview", method = RequestMethod.GET)
-    public String getCustomerView(Model model) {
-        return "inventory/mrn/modal/customer-modal";
+	@RequestMapping(value = "/customermodalview", method = RequestMethod.GET)
+	public String getCustomerView(Model model) {
+		return "inventory/mrn/modal/customer-modal";
 	}
 
-    @RequestMapping(value = "/workordermodalview", method = RequestMethod.GET)
-    public String getPartView(Model model) {
-        return "inventory/mrn/modal/workorder-modal";
+	@RequestMapping(value = "/workordermodalview", method = RequestMethod.GET)
+	public String getPartView(Model model) {
+		return "inventory/mrn/modal/workorder-modal";
 	}
 
 	@RequestMapping(value = "/mrnItemView", method = RequestMethod.GET)
@@ -73,15 +75,15 @@ public class MRNController {
 		return "inventory/mrn/modal/item-modal";
 	}
 
-    @RequestMapping(value = "/partmodalview", method = RequestMethod.GET)
-    public String getItemAssetView(Model model) {
-        return "inventory/mrn/modal/asset-modal";
-    }
+	@RequestMapping(value = "/partmodalview", method = RequestMethod.GET)
+	public String getItemAssetView(Model model) {
+		return "inventory/mrn/modal/asset-modal";
+	}
 
-    @RequestMapping(value = "/stockmodalview", method = RequestMethod.GET)
-    public String getStockView(Model model, Integer id) {
-        return "inventory/mrn/modal/stock-modal";
-    }
+	@RequestMapping(value = "/stockmodalview", method = RequestMethod.GET)
+	public String getStockView(Model model, Integer id) {
+		return "inventory/mrn/modal/stock-modal";
+	}
 
 
 	/*********************************************************************
@@ -93,7 +95,7 @@ public class MRNController {
 		try {
 			setCommonData(model, mrnService.newMRN().getDtoEntity());
 			return "inventory/mrn/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/mrn/index";
 		}
@@ -102,7 +104,7 @@ public class MRNController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("mrn") MRNDTO dto, Model model) throws Exception {
 		MRNResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = mrnService.update(dto);
 		} else {
 			result = mrnService.save(dto);
@@ -121,7 +123,7 @@ public class MRNController {
 		try {
 			setCommonData(model, mrnService.findById(id).getDtoEntity());
 			return "inventory/mrn/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/mrn/index";
 		}
@@ -130,22 +132,22 @@ public class MRNController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			MRNResult result = mrnService.delete(id);
+			final MRNResult result = mrnService.delete(id);
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				ra.addFlashAttribute("error", result.getErrorList());
 			} else {
 				ra.addFlashAttribute("success", result.getMsgList());
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", e.getMessage());
 		}
 
 		return "redirect:/mrn/index";
-	}  
-	
+	}
+
 	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
 	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
-		RestResult<String> result = new RestResult<>();
+		final RestResult<String> result = new RestResult<>();
 		result.setData(mrnService.getNextCode(businessId).toString());
 
 		return result ;
@@ -154,19 +156,38 @@ public class MRNController {
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
 	public String mrnStatusChange(Integer id, MRNStatus mrnStatus, Model model, RedirectAttributes ra) throws Exception {
 		MRNResult result = null;
-		if ((id != null) && (id > 0)) { 
-		result = mrnService.statusChange(id, mrnStatus); 
+		if (id != null && id > 0) {
+			result = mrnService.statusChange(id, mrnStatus);
 			if (result.getStatus().equals(ResultStatus.ERROR)) {
 				model.addAttribute("error", result.getErrorList());
 			} else {
 				model.addAttribute("success", result.getMsgList());
-			} 
-		} else {  
-			ra.addFlashAttribute("error", "Please Save/Select the MRN first"); 
+			}
+		} else {
+			ra.addFlashAttribute("error", "Please Save/Select the MRN first");
 		}
 		setCommonData(model, mrnService.findById(id).getDtoEntity());
 		return "inventory/mrn/add-view";
-	} 
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final MRNResult result = mrnService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "MRN already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "inventory/mrn/home-view";
+	}
 
 	private void setCommonData(Model model, MRNDTO dto) {
 		model.addAttribute("mrnTypes", MRNType.getMRNTypes());

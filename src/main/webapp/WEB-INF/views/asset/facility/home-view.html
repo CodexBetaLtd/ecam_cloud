@@ -56,7 +56,7 @@
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_ASSET_VIEW.id)">
 				        <i class="clip-checkmark-circle-2 btn-save"></i> <span class="hidden-xs">Save</span>
 				    </a> 
-				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top" data-original-title="Delete"
+				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" data-original-title="Delete"
                        sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_ASSET_VIEW.id)">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> <span class="hidden-xs">Delete</span>
 				    </a> 
@@ -94,7 +94,6 @@
 					                            <th class=""> Code </th>
 	           									<th> Category</th> 
 	           									<th class=""> Business</th>
-					                            <th class="hidden-xs"> More</th>
 					                        </tr>
 					                    </thead>
 					                    <tbody>
@@ -137,6 +136,7 @@
     
 	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjstables"></div>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
 	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS --> 
     	
     <script type="text/javascript" th:src="@{/resources/script/app/asset/facility/home-view.js}"></script>

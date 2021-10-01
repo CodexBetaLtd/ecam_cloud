@@ -23,13 +23,13 @@ import javax.servlet.http.HttpServletRequest;
 public interface UserService {
 
 	List<UserDTO> findAll();
-	
+
 	List<UserDTO> findUserList();
 
 	UserDTO findUserById(Integer userId) throws Exception;
 
 	UserDTO findUser(UserDTO dto);
-	
+
 	UserDTO findById(Integer id) throws Exception;
 
 	User findByEmail(String email) throws Exception;
@@ -38,20 +38,22 @@ public interface UserService {
 
 	UserResult save(UserDTO dto) throws Exception;
 
-	UserResult delete(Integer id); 
+	UserResult delete(Integer id);
 
-    DataTablesOutput<UserDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
+	DataTablesOutput<UserDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
 
-    DataTablesOutput<UserDTO> findAllUsersByGroup(FocusDataTablesInput dataTablesInput, Integer groupId);
+	DataTablesOutput<UserDTO> findAllUsersByGroup(FocusDataTablesInput dataTablesInput, Integer groupId);
 
 	DataTablesOutput<UserDTO> findAllByBusiness(FocusDataTablesInput dataTablesInput, Integer id);
 
-    DataTablesOutput<UserDTO> findAllUsersByLoggedUserBusiness(FocusDataTablesInput input);
+	DataTablesOutput<UserDTO> findAllUsersByLoggedUserBusiness(FocusDataTablesInput input);
 
-    DataTablesOutput<UserDTO> findUsersBySite(FocusDataTablesInput input, Integer id);
+	DataTablesOutput<UserDTO> findUsersBySite(FocusDataTablesInput input, Integer id);
 
 	String getSystemPassword();
 
 	byte[] getUserAvatar(Integer id, HttpServletRequest request) throws IOException;
+
+	UserResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

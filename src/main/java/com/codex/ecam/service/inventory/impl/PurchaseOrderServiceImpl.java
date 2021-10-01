@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -65,6 +66,7 @@ import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderTax;
 import com.codex.ecam.model.inventory.rfq.RFQItem;
 import com.codex.ecam.params.VelocityMail;
 import com.codex.ecam.repository.FocusDataTablesInput;
+import com.codex.ecam.result.admin.AccountResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.RFQResult;
@@ -138,15 +140,15 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = purchaseOrderDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = purchaseOrderDao.findAll(input, specification);
 		} else {
-			Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
+			final Specification<PurchaseOrder> specification = (root, query, cb) -> cb.equal(root.get("site"),
 					AuthenticationUtil.getLoginSite().getSite());
 			domainOut = purchaseOrderDao.findAll(input, specification);
 		}
-		DataTablesOutput<PurchaseOrderDTO> out = PurchaseOrderMapper.getInstance()
+		final DataTablesOutput<PurchaseOrderDTO> out = PurchaseOrderMapper.getInstance()
 				.domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
@@ -173,7 +175,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		DataTablesOutput<PurchaseOrderItemDTO> out = null;
 		try {
 			out = PurchaseOrderItemMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -182,7 +184,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public PurchaseOrderDTO findById(Integer id) throws Exception {
-		PurchaseOrder domain = purchaseOrderDao.findOne(id);
+		final PurchaseOrder domain = purchaseOrderDao.findOne(id);
 
 		if (domain != null) {
 			return PurchaseOrderMapper.getInstance().domainToDto(domain);
@@ -193,13 +195,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public PurchaseOrderResult update(PurchaseOrderDTO dto) {
-		PurchaseOrderResult result = new PurchaseOrderResult(null, dto);
+		final PurchaseOrderResult result = new PurchaseOrderResult(null, dto);
 		try {
-			PurchaseOrder domain = purchaseOrderDao.findOne(dto.getId());
+			final PurchaseOrder domain = purchaseOrderDao.findOne(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("Purchase Order Updated Successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 		}
@@ -209,7 +211,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public PurchaseOrderResult save(PurchaseOrderDTO dto) {
-		PurchaseOrderResult result = new PurchaseOrderResult(new PurchaseOrder(), dto);
+		final PurchaseOrderResult result = new PurchaseOrderResult(new PurchaseOrder(), dto);
 		saveOrUpdate(result);
 		result.addToMessageList("Purchase Order Added Successfully.");
 		return result;
@@ -221,10 +223,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			setPurchaseOrderData(result);
 			purchaseOrderDao.save(result.getDomainEntity());
 			result.updateDtoIdAndVersion();
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Purchase Order Already updated. Please Reload Purchase Order.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -257,19 +259,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	private void setTaxValue(PurchaseOrderResult result) {
-		List<PurchaseOrderTax> taxs = new ArrayList<>();
+		final List<PurchaseOrderTax> taxs = new ArrayList<>();
 
-		if ((result.getDtoEntity().getPurchaseOrderTaxDTOs() != null)
-				&& (result.getDtoEntity().getPurchaseOrderTaxDTOs().size() > 0)) {
+		if (result.getDtoEntity().getPurchaseOrderTaxDTOs() != null
+				&& result.getDtoEntity().getPurchaseOrderTaxDTOs().size() > 0) {
 
-			List<PurchaseOrderTax> currentTaxes = result.getDomainEntity().getPurchaseOrderTaxs();
+			final List<PurchaseOrderTax> currentTaxes = result.getDomainEntity().getPurchaseOrderTaxs();
 
-			for (PurchaseOrderTaxDTO orderTaxDTO : result.getDtoEntity().getPurchaseOrderTaxDTOs()) {
+			for (final PurchaseOrderTaxDTO orderTaxDTO : result.getDtoEntity().getPurchaseOrderTaxDTOs()) {
 
 				PurchaseOrderTax purchaseOrderTax;
 
-				if ((currentTaxes != null) && (currentTaxes.size() > 0)) {
-					Optional<PurchaseOrderTax> optionalTax = currentTaxes.stream()
+				if (currentTaxes != null && currentTaxes.size() > 0) {
+					final Optional<PurchaseOrderTax> optionalTax = currentTaxes.stream()
 							.filter((x) -> x.getId() == orderTaxDTO.getId()).findAny();
 					if (optionalTax.isPresent()) {
 						purchaseOrderTax = optionalTax.get();
@@ -298,18 +300,18 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	private void setItems(PurchaseOrderResult result) throws Exception {
 
-		List<PurchaseOrderItem> items = new ArrayList<>();
+		final List<PurchaseOrderItem> items = new ArrayList<>();
 
-		if ((result.getDtoEntity().getItems() != null) && (result.getDtoEntity().getItems().size() > 0)) {
+		if (result.getDtoEntity().getItems() != null && result.getDtoEntity().getItems().size() > 0) {
 
-			List<PurchaseOrderItem> currentItems = result.getDomainEntity().getPurchaseOrderItems();
+			final List<PurchaseOrderItem> currentItems = result.getDomainEntity().getPurchaseOrderItems();
 
-			for (PurchaseOrderItemDTO itemDTO : result.getDtoEntity().getItems()) {
+			for (final PurchaseOrderItemDTO itemDTO : result.getDtoEntity().getItems()) {
 
 				PurchaseOrderItem item;
 
-				if ((currentItems != null) && (currentItems.size() > 0)) {
-					Optional<PurchaseOrderItem> optionalItem = currentItems.stream()
+				if (currentItems != null && currentItems.size() > 0) {
+					final Optional<PurchaseOrderItem> optionalItem = currentItems.stream()
 							.filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
 					if (optionalItem.isPresent()) {
 						item = optionalItem.get();
@@ -333,35 +335,35 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		domain.setPurchaseOrder(purchaseOrder);
 		domain.setSupplier(purchaseOrder.getSupplier());
 
-		if ((dto.getItemAssetId() != null) && (dto.getItemAssetId() > 0)) {
+		if (dto.getItemAssetId() != null && dto.getItemAssetId() > 0) {
 			domain.setAsset(assetDao.findOne(dto.getItemAssetId()));
 		}
 
-		if ((dto.getItemAccountId() != null) && (dto.getItemAccountId() > 0)) {
+		if (dto.getItemAccountId() != null && dto.getItemAccountId() > 0) {
 			domain.setAccount(accountDao.findOne(dto.getItemAccountId()));
 		}
 
-		if ((dto.getItemChargeDepartmentId() != null) && (dto.getItemChargeDepartmentId() > 0)) {
+		if (dto.getItemChargeDepartmentId() != null && dto.getItemChargeDepartmentId() > 0) {
 			domain.setChargeDepartment(chargeDepartmentDao.findOne(dto.getItemChargeDepartmentId()));
 		}
 
-		if ((dto.getItemSiteId() != null) && (dto.getItemSiteId() > 0)) {
+		if (dto.getItemSiteId() != null && dto.getItemSiteId() > 0) {
 			domain.setSite(assetDao.findOne(dto.getItemSiteId()));
 		}
 
-		if ((dto.getItemSourceWorkOrderId() != null) && (dto.getItemSourceWorkOrderId() > 0)) {
+		if (dto.getItemSourceWorkOrderId() != null && dto.getItemSourceWorkOrderId() > 0) {
 			domain.setSourceWorkOrder(workOrderDao.findOne(dto.getItemSourceWorkOrderId()));
 		}
 
-		if ((dto.getItemSourceAssetId() != null) && (dto.getItemSourceAssetId() > 0)) {
+		if (dto.getItemSourceAssetId() != null && dto.getItemSourceAssetId() > 0) {
 			domain.setSourceAsset(assetDao.findOne(dto.getItemSourceAssetId()));
 		}
 
 		// setPOItemTax(result);
-		if ((dto.getItemRfqItemId() != null) && (dto.getItemRfqItemId() > 0)) {
-			RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
+		if (dto.getItemRfqItemId() != null && dto.getItemRfqItemId() > 0) {
+			final RFQItem rfqItem = rfqItemDao.findOne(dto.getItemRfqItemId());
 
-			PurchaseOrderItemRFQItem item = new PurchaseOrderItemRFQItem();
+			final PurchaseOrderItemRFQItem item = new PurchaseOrderItemRFQItem();
 			item.setPurchaseOrderItem(domain);
 			item.setRfqItem(rfqItem);
 			item.setIsDeleted(false);
@@ -386,82 +388,82 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	private void setBusiness(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setSite(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 
 	private void setPurchaseOrderCurrency(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getPurchaseCurrencyId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getPurchaseCurrencyId() != null) {
 			result.getDomainEntity()
-					.setPurchaseCurrency(currencyDao.findOne(result.getDtoEntity().getPurchaseCurrencyId()));
+			.setPurchaseCurrency(currencyDao.findOne(result.getDtoEntity().getPurchaseCurrencyId()));
 		}
 	}
 
 	private void setSupplierBusiness(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSupplierId() != null) {
 			result.getDomainEntity().setSupplier(businessDao.findOne(result.getDtoEntity().getSupplierId()));
 		}
 	}
 
 	private void setSupplierCountry(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSupplierCountry() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSupplierCountry() != null) {
 			result.getDomainEntity().setSupplierCountry(countryDao.findOne(result.getDtoEntity().getSupplierCountry()));
 		}
 	}
 
 	private void setShipToFacility(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getShipToId() != null) {
 			result.getDomainEntity().setShipToFacility(assetDao.findOne(result.getDtoEntity().getShipToId()));
 		}
 	}
 
 	private void setShipToCountry(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getShipToCountry() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getShipToCountry() != null) {
 			result.getDomainEntity().setShipToCountry(countryDao.findOne(result.getDtoEntity().getShipToCountry()));
 		}
 	}
 
 	private void setBillToFacility(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBillToId() != null) {
 			result.getDomainEntity().setBillToFaciltiy(assetDao.findOne(result.getDtoEntity().getBillToId()));
 		}
 	}
 
 	private void setBillToCountry(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBillToCountry() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBillToCountry() != null) {
 			result.getDomainEntity().setBillCountry(countryDao.findOne(result.getDtoEntity().getBillToCountry()));
 		}
 	}
 
 	private void setAccount(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAccountId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAccountId() != null) {
 			result.getDomainEntity().setAccount(accountDao.findOne(result.getDtoEntity().getAccountId()));
 		}
 	}
 
 	private void setChargeDepartment(PurchaseOrderResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getChargeDepartmentId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getChargeDepartmentId() != null) {
 			result.getDomainEntity()
-					.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
+			.setChargeDepartment(chargeDepartmentDao.findOne(result.getDtoEntity().getChargeDepartmentId()));
 		}
 	}
 
 	private void setAdditionalCost(PurchaseOrderResult result) {
-		List<PurchaseOrderAdditionalCost> purchaseOrderAdditionalCosts = new ArrayList<PurchaseOrderAdditionalCost>();
-		for (PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO : result.getDtoEntity()
+		final List<PurchaseOrderAdditionalCost> purchaseOrderAdditionalCosts = new ArrayList<PurchaseOrderAdditionalCost>();
+		for (final PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO : result.getDtoEntity()
 				.getAdditionalCostDTOs()) {
 
 			PurchaseOrderAdditionalCost purchaseOrderAdditionalCost;
 
 			if (purchaseOrderAdditionalCostDTO.getId() != null) {
-				Optional<PurchaseOrderAdditionalCost> optionalpurchaseOrderAdditionalCosts = result.getDomainEntity()
+				final Optional<PurchaseOrderAdditionalCost> optionalpurchaseOrderAdditionalCosts = result.getDomainEntity()
 						.getPurchaseOrderAdditionalCosts().stream()
 						.filter((x) -> x.getId() == purchaseOrderAdditionalCostDTO.getId()).findAny();
 				if (optionalpurchaseOrderAdditionalCosts.isPresent()) {
@@ -478,7 +480,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			purchaseOrderAdditionalCost.setTaxRate(purchaseOrderAdditionalCostDTO.getTaxRate());
 			purchaseOrderAdditionalCost.setPurchaseOrder(result.getDomainEntity());
 			purchaseOrderAdditionalCost
-					.setPurchaseOrderAdditionalCostType(setAdditionalCostType(purchaseOrderAdditionalCostDTO));
+			.setPurchaseOrderAdditionalCostType(setAdditionalCostType(purchaseOrderAdditionalCostDTO));
 			purchaseOrderAdditionalCost.setShippingType(setShippingType(purchaseOrderAdditionalCostDTO));
 			purchaseOrderAdditionalCost.setIsDeleted(false);
 			purchaseOrderAdditionalCosts.add(purchaseOrderAdditionalCost);
@@ -490,7 +492,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	protected PurchaseOrderAdditionalCostType setAdditionalCostType(
 			PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO) {
-		for (PurchaseOrderAdditionalCostType additionalCostType : PurchaseOrderAdditionalCostType
+		for (final PurchaseOrderAdditionalCostType additionalCostType : PurchaseOrderAdditionalCostType
 				.getAdditionalCostTypeList()) {
 			if (purchaseOrderAdditionalCostDTO.getAdditionalCostTypeId() == additionalCostType.getId()) {
 				return additionalCostType;
@@ -501,7 +503,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	protected ShippingType setShippingType(PurchaseOrderAdditionalCostDTO purchaseOrderAdditionalCostDTO) {
-		for (ShippingType shippingType : ShippingType.getShippingTypeList()) {
+		for (final ShippingType shippingType : ShippingType.getShippingTypeList()) {
 			if (purchaseOrderAdditionalCostDTO.getShippingTypeId() == shippingType.getId()) {
 				return shippingType;
 			}
@@ -511,14 +513,14 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	private void setPurchaseOrderFiles(PurchaseOrderResult result) throws Exception {
-		List<PurchaseOrderFile> purchaseOrderFiles = new ArrayList<PurchaseOrderFile>();
+		final List<PurchaseOrderFile> purchaseOrderFiles = new ArrayList<PurchaseOrderFile>();
 
-		if ((result.getDtoEntity().getPurchaseOrderFileDTOs() != null)
-				&& (result.getDtoEntity().getPurchaseOrderFileDTOs().size() > 0)) {
+		if (result.getDtoEntity().getPurchaseOrderFileDTOs() != null
+				&& result.getDtoEntity().getPurchaseOrderFileDTOs().size() > 0) {
 
-			List<PurchaseOrderFile> currentPurchaseOrderFiles = result.getDomainEntity().getPurchaseOrderFiles();
+			final List<PurchaseOrderFile> currentPurchaseOrderFiles = result.getDomainEntity().getPurchaseOrderFiles();
 
-			for (PurchaseOrderFileDTO purchaseOrderFileDTO : result.getDtoEntity().getPurchaseOrderFileDTOs()) {
+			for (final PurchaseOrderFileDTO purchaseOrderFileDTO : result.getDtoEntity().getPurchaseOrderFileDTOs()) {
 				PurchaseOrderFile purchaseOrderFile;
 
 				if (purchaseOrderFileDTO.getId() != null) {
@@ -539,11 +541,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	private void setDiscussion(PurchaseOrderResult result) {
-		List<PurchaseOrderDiscussion> purchaseOrderDiscussions = new ArrayList<PurchaseOrderDiscussion>();
-		for (PurchaseOrderDiscussionDTO purchaseOrderDiscussionDTO : result.getDtoEntity().getDiscussionDTOs()) {
+		final List<PurchaseOrderDiscussion> purchaseOrderDiscussions = new ArrayList<PurchaseOrderDiscussion>();
+		for (final PurchaseOrderDiscussionDTO purchaseOrderDiscussionDTO : result.getDtoEntity().getDiscussionDTOs()) {
 			PurchaseOrderDiscussion purchaseOrderDiscussion;
 			if (purchaseOrderDiscussionDTO.getId() != null) {
-				Optional<PurchaseOrderDiscussion> optionalPurchaseOrderDiscussions = result.getDomainEntity()
+				final Optional<PurchaseOrderDiscussion> optionalPurchaseOrderDiscussions = result.getDomainEntity()
 						.getPurchaseOrderDiscussions().stream()
 						.filter((x) -> x.getId() == purchaseOrderDiscussionDTO.getId()).findAny();
 				if (optionalPurchaseOrderDiscussions.isPresent()) {
@@ -564,11 +566,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	private void setNotification(PurchaseOrderResult result) {
-		List<PurchaseOrderNotification> poNotificationList = new ArrayList<>();
-		for (PurchaseOrderNotificationDTO notificationDTO : result.getDtoEntity().getNotificationDTOs()) {
-			PurchaseOrderNotification notification = new PurchaseOrderNotification();
+		final List<PurchaseOrderNotification> poNotificationList = new ArrayList<>();
+		for (final PurchaseOrderNotificationDTO notificationDTO : result.getDtoEntity().getNotificationDTOs()) {
+			final PurchaseOrderNotification notification = new PurchaseOrderNotification();
 			notification
-					.setUser(notificationDTO.getUserId() != null ? userDao.findOne(notificationDTO.getUserId()) : null);
+			.setUser(notificationDTO.getUserId() != null ? userDao.findOne(notificationDTO.getUserId()) : null);
 			notification.setNotifyOnAssignment(notificationDTO.getNotifyOnAssignment());
 			notification.setNotifyOnStatusChange(notificationDTO.getNotifyOnStatusChange());
 			notification.setNotifyOnCompletion(notificationDTO.getNotifyOnCompletion());
@@ -588,12 +590,33 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public PurchaseOrderResult delete(Integer id) {
-		PurchaseOrderResult result = new PurchaseOrderResult(null, null);
+		final PurchaseOrderResult result = new PurchaseOrderResult(null, null);
 		try {
 			purchaseOrderDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Purchase Order Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public PurchaseOrderResult deleteMultiple(Integer[] ids) throws Exception {
+		final PurchaseOrderResult result = new PurchaseOrderResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				purchaseOrderDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("PurchaseOrder(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("PurchaseOrder(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -616,7 +639,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			orderResult = update(purchaseOrderDTO);
 			// sendstatusEmail(preStaus,currentStatus);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return orderResult;
@@ -624,7 +647,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	}
 
 	public void sendstatusEmail(PurchaseOrderStatus prestatus, PurchaseOrderStatus poststatus) {
-		VelocityMail velocityMail = new VelocityMail();
+		final VelocityMail velocityMail = new VelocityMail();
 		velocityMail.getModel().put("user", "wasantha");
 		velocityMail.getModel().put("priviouspurchaseOrderstatus", prestatus.getName());
 		velocityMail.getModel().put("currentpurchaseOrderstatus", poststatus.getName());
@@ -636,19 +659,19 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public RFQResult createPurchaseOrderFromRFQItems(String rfqItemIds, String supplierIds) {
-		String[] itemIds = rfqItemIds.split(",");
-		String[] ssupplierIds = supplierIds.split(",");
-		List<Integer> supplierList = Arrays.asList(ssupplierIds).stream().map(Integer::parseInt)
+		final String[] itemIds = rfqItemIds.split(",");
+		final String[] ssupplierIds = supplierIds.split(",");
+		final List<Integer> supplierList = Arrays.asList(ssupplierIds).stream().map(Integer::parseInt)
 				.collect(Collectors.toList());
-		List<Integer> itemList = Arrays.asList(itemIds).stream().map(Integer::parseInt).collect(Collectors.toList());
+		final List<Integer> itemList = Arrays.asList(itemIds).stream().map(Integer::parseInt).collect(Collectors.toList());
 		return createPurchaseOrderFromRFQItems(itemList, supplierList);
 		// return null;
 	}
 
 	public RFQResult createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds, List<Integer> supplierList) {
-		RFQResult result = new RFQResult(null, null);
+		final RFQResult result = new RFQResult(null, null);
 
-		for (Integer supplier : supplierList) {
+		for (final Integer supplier : supplierList) {
 			List<String> msgList = new ArrayList<>();
 			msgList = generatePurchaseOrderFromRFQItems(rfqItemIds, supplier).getMsgList();
 			result.getMsgList().addAll(msgList);
@@ -660,12 +683,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	protected PurchaseOrderResult generatePurchaseOrderFromRFQItems(List<Integer> rfqItemIds, Integer supplierId) {
 		PurchaseOrderDTO dto = new PurchaseOrderDTO();
 
-		List<PurchaseOrderItemDTO> items = new ArrayList<>();
-		Supplier supplier = supplierDao.findOne(supplierId);
+		final List<PurchaseOrderItemDTO> items = new ArrayList<>();
+		final Supplier supplier = supplierDao.findOne(supplierId);
 		PurchaseOrderItemDTO item;
-		for (Integer id : rfqItemIds) {
+		for (final Integer id : rfqItemIds) {
 			item = new PurchaseOrderItemDTO();
-			RFQItem rfqItem = rfqItemDao.findOne(id);
+			final RFQItem rfqItem = rfqItemDao.findOne(id);
 			item.setItemAssetId(rfqItem.getAsset().getId());
 			item.setItemAssetName(rfqItem.getAsset().getName());
 			item.setItemRfqItemId(rfqItem.getId());
@@ -678,7 +701,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 				dto = PurchaseOrderRFQMapper.getInstance().domainToDto(rfqItem.getRfq());
 				dto.setCode(getNextCode(rfqItem.getRfq().getBusiness().getId()));
 
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -704,7 +727,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			// purchaseOrderResult.addToMessageList(purchaseOrderResult.getDomainEntity().getId().toString());
 			// purchaseOrderResult.addToMessageList(purchaseOrderResult.getDomainEntity().getCode());
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			purchaseOrderResult.setStatus(ResultStatus.ERROR);
 			purchaseOrderResult.addToErrorList("Error while PO generate");
@@ -716,9 +739,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Override
 	public void purchaseOrderFileDownload(Integer id, HttpServletResponse response) throws IOException {
 		if (id != null) {
-			PurchaseOrderFile file = purchaseOrderDao.findByFileId(id);
-			int index = file.getFileLocation().lastIndexOf("\\");
-			String fileName = file.getFileLocation().substring(index + 1);
+			final PurchaseOrderFile file = purchaseOrderDao.findByFileId(id);
+			final int index = file.getFileLocation().lastIndexOf("\\");
+			final String fileName = file.getFileLocation().substring(index + 1);
 			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
 
 		}
@@ -732,7 +755,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		try {
 			amazonS3ObjectUtil.uploadS3Object(key, fileData);
 			return key;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -741,11 +764,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	@Override
 	public void purchaseOrderFileDelete(Integer id) {
 
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+		final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 
-		PurchaseOrderFile pofile = purchaseOrderDao.findByFileId(id);
-		String externalFilePath = uploadLocation + pofile.getFileLocation();
-		File file = new File(externalFilePath);
+		final PurchaseOrderFile pofile = purchaseOrderDao.findByFileId(id);
+		final String externalFilePath = uploadLocation + pofile.getFileLocation();
+		final File file = new File(externalFilePath);
 		if (file.delete()) {
 			System.out.println("File deleted successfully");
 		} else {
@@ -755,9 +778,9 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	@Override
 	public MRNResult generatePoFromMrn(String idStr, Integer mrnId) {
-		MRNResult result = new MRNResult(null, null);
-		MRN mrn = mrnDao.findOne(mrnId);
-		PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
+		final MRNResult result = new MRNResult(null, null);
+		final MRN mrn = mrnDao.findOne(mrnId);
+		final PurchaseOrderDTO purchaseOrderDTO = new PurchaseOrderDTO();
 		purchaseOrderDTO.setPurchaseOrderstatus(PurchaseOrderStatus.DRAFT);
 		purchaseOrderDTO.setCode(getNextCode(mrn.getBusiness().getId()));
 		purchaseOrderDTO.setIsDeleted(Boolean.FALSE);
@@ -768,12 +791,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 			purchaseOrderDTO.setSiteId(mrn.getSite().getId());
 		}
 
-		List<PurchaseOrderItemDTO> purchaseOrderItemDTOs = new ArrayList<>();
-		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt)
+		final List<PurchaseOrderItemDTO> purchaseOrderItemDTOs = new ArrayList<>();
+		final List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt)
 				.collect(Collectors.toList());
-		for (Integer id : ids) {
-			MRNItem item = mrnItemDao.findOne(id);
-			PurchaseOrderItemDTO itemDTO = new PurchaseOrderItemDTO();
+		for (final Integer id : ids) {
+			final MRNItem item = mrnItemDao.findOne(id);
+			final PurchaseOrderItemDTO itemDTO = new PurchaseOrderItemDTO();
 			itemDTO.setItemQtyOnOrder(item.getApprovedQuantity().intValue());
 			itemDTO.setItemAssetId(item.getPart().getId());
 			purchaseOrderItemDTOs.add(itemDTO);
@@ -781,13 +804,13 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 		purchaseOrderDTO.setItems(purchaseOrderItemDTOs);
 
 		try {
-			PurchaseOrderResult purchaseOrderResult = save(purchaseOrderDTO);
+			final PurchaseOrderResult purchaseOrderResult = save(purchaseOrderDTO);
 			result.setStatus(ResultStatus.SUCCESS);
 			result.addToMessageList("Successfully Generated PO  ");
 			result.addToMessageList(purchaseOrderResult.getDomainEntity().getId().toString());
 			result.addToMessageList("Link TO PO");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setStatus(ResultStatus.ERROR);
 			result.addToErrorList("Error while PO generate");
@@ -797,11 +820,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
 	private String getApprovesPoForItem(MRNItem mrnItem) {
 		String poList = "";
-		List<PurchaseOrderItem> items = purchaseOrderDao.findItemOrderBeforeDate(mrnItem.getMrn().getDate(),
+		final List<PurchaseOrderItem> items = purchaseOrderDao.findItemOrderBeforeDate(mrnItem.getMrn().getDate(),
 				mrnItem.getPart().getId());
 		if (items != null && items.size() > 0) {
 			poList = poList + "Po already generated ";
-			for (PurchaseOrderItem item : items) {
+			for (final PurchaseOrderItem item : items) {
 				poList = poList + " " + item.getPurchaseOrder().getCode();
 			}
 		}

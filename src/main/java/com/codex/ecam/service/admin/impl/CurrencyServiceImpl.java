@@ -3,7 +3,7 @@ package com.codex.ecam.service.admin.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException; 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -28,11 +28,11 @@ public class CurrencyServiceImpl implements CurrencyService {
 	@Override
 	public DataTablesOutput<CurrencyDTO> findAll(FocusDataTablesInput input) throws Exception {
 		CurrencySearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<Currency> domainOut = currencyDao.findAll(input);
+		final DataTablesOutput<Currency> domainOut = currencyDao.findAll(input);
 		DataTablesOutput<CurrencyDTO> out = null;
 		try {
 			out = CurrencyMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;
@@ -40,7 +40,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	@Override
 	public CurrencyDTO findById(Integer id) throws Exception {
-		Currency domain = currencyDao.findById(id);
+		final Currency domain = currencyDao.findById(id);
 		if (domain != null) {
 			return CurrencyMapper.getInstance().domainToDto(domain);
 		}
@@ -49,15 +49,36 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	@Override
 	public CurrencyResult delete(Integer id) {
-		CurrencyResult result = new CurrencyResult(null, null);
+		final CurrencyResult result = new CurrencyResult(null, null);
 		try {
 			currencyDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Currency Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Currency Already Assigned. Please Remove from Assigned Currency and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public CurrencyResult deleteMultiple(Integer[] ids) throws Exception {
+		final CurrencyResult result = new CurrencyResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				currencyDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Currency(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Currency(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -66,14 +87,14 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	@Override
 	public CurrencyResult save(CurrencyDTO dto) throws Exception {
-		CurrencyResult result = createCurrencyResult(dto);
+		final CurrencyResult result = createCurrencyResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Currency Already updated. Please Reload Currency.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -90,7 +111,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	private CurrencyResult createCurrencyResult(CurrencyDTO dto) {
 		CurrencyResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new CurrencyResult(currencyDao.findOne(dto.getId()), dto);
 		} else {
 			result = new CurrencyResult(new Currency(), dto);
@@ -109,10 +130,10 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	@Override
 	public List<CurrencyDTO> findAll() {
-		Iterable<Currency> domainList = currencyDao.findAll();
+		final Iterable<Currency> domainList = currencyDao.findAll();
 		try {
 			return CurrencyMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -120,10 +141,10 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 	@Override
 	public void saveAll(List<CurrencyDTO> allDummyData) {
-		for (CurrencyDTO dto : allDummyData) {
+		for (final CurrencyDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}

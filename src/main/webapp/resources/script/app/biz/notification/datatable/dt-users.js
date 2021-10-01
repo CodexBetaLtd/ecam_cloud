@@ -107,8 +107,10 @@ var dtNotificationUser = function () {
     var dtUsers = function (func) {
         var url = "../restapi/users/businessUserList";
         var tableId = "notification_user_tbl";
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $("#" + tableId).dataTable({
+        
+        var oTable = $("#" + tableId).DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -119,7 +121,7 @@ var dtNotificationUser = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
@@ -138,14 +140,7 @@ var dtNotificationUser = function () {
             	responsivePriority: 2
             }
             ],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.fullName)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -166,7 +161,21 @@ var dtNotificationUser = function () {
             // scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName",
+                        sRender: "EncodeDecodeComponent.getBase64().encode"
+                    },
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

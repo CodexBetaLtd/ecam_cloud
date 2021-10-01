@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -43,22 +44,22 @@ public class RFQController {
 
 	@Autowired
 	private RFQService rfqService;
-	
+
 	@Autowired
 	private AssetService assetService;
-	
+
 	@Autowired
 	private BusinessService businessService;
-	
+
 	@Autowired
 	private CountryService countryService;
-	
+
 	@Autowired
 	private CurrencyService currencyService;
-	
+
 	@Autowired
 	private AccountService accountService;
-	
+
 	@Autowired
 	private SupplierService supplierService;
 
@@ -66,29 +67,29 @@ public class RFQController {
 	private ChargeDepartmentService chargeDeparmentService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Model model) {
-        return "inventory/rfq/home-view";
-    }
+	public String index(Model model) {
+		return "inventory/rfq/home-view";
+	}
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
-        return "inventory/rfq/home-view";
-    }
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
+		return "inventory/rfq/home-view";
+	}
 
 	@RequestMapping(value = "/item-add-modal-view", method = RequestMethod.GET)
 	public String getItemAddView(Model model) {
 		return "inventory/rfq/modal/item-modal";
 	}
-	
+
 	@RequestMapping(value = "/file-add-modal-view", method = RequestMethod.GET)
 	public String getFileAddView(Model model) {
 		return "inventory/rfq/modal/file-add-modal";
 	}
 
 	@RequestMapping(value = "/notification-add-modal-view", method = RequestMethod.GET)
-	public String notificationAddView(Model model) { 
+	public String notificationAddView(Model model) {
 		return "inventory/rfq/modal/notification-add-modal";
 	}
 
@@ -100,12 +101,12 @@ public class RFQController {
 	public String getPartSelectView(Model model) {
 		return "inventory/rfq/modal/part-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/user-select-modal-view", method = RequestMethod.GET)
 	public String getUserSelectView(Model model) {
 		return "inventory/rfq/modal/user-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/supplier-select-modal-view", method = RequestMethod.GET)
 	public String getSupplierSelectView(Model model) {
 		return "inventory/rfq/modal/supplier-select-modal";
@@ -120,27 +121,27 @@ public class RFQController {
 		try {
 			setCommonData(model,  rfqService.createNewRFQ().getDtoEntity());
 			return "inventory/rfq/add-view";
-		} catch (Exception ex) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
-            return "redirect:/rfq/index";
-        }
-    }
+		} catch (final Exception ex) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
+			return "redirect:/rfq/index";
+		}
+	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			RFQDTO rfq = rfqService.findById(id);
+			final RFQDTO rfq = rfqService.findById(id);
 			setCommonData(model, rfq);
 			return "inventory/rfq/add-view";
-		} catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
-            return "redirect:/rfq/index";
-        }
-    }
-	
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
+			return "redirect:/rfq/index";
+		}
+	}
+
 	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
 	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
-		RestResult<String> result = new RestResult<>();
+		final RestResult<String> result = new RestResult<>();
 		result.setData(rfqService.getNextCode(businessId).toString());
 
 		return result ;
@@ -149,45 +150,45 @@ public class RFQController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("rfq") RFQDTO rfq, Model model) throws Exception {
 
-		RFQResult result = rfqService.save(rfq);
-		
+		final RFQResult result = rfqService.save(rfq);
+
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
-        setCommonData(model, result.getDtoEntity());
-        return "inventory/rfq/add-view";
-    }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
+		setCommonData(model, result.getDtoEntity());
+		return "inventory/rfq/add-view";
+	}
 
 
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
-		RFQResult result = rfqService.delete(id);
+		final RFQResult result = rfqService.delete(id);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            ra.addFlashAttribute("error", result.getErrorList());
-        } else {
-            ra.addFlashAttribute("success", result.getMsgList());
-        }
-        return "redirect:/rfq/index";
-    }
+			ra.addFlashAttribute("error", result.getErrorList());
+		} else {
+			ra.addFlashAttribute("success", result.getMsgList());
+		}
+		return "redirect:/rfq/index";
+	}
 
 	@RequestMapping(value = "/status-change", method = RequestMethod.GET)
 	public String rfqStatusChange(Integer id, RFQStatus status, Model model, RedirectAttributes ra)throws Exception {
-		RFQResult result=rfqService.statusChange(id, status);
+		final RFQResult result=rfqService.statusChange(id, status);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, result.getDtoEntity());
 		return "inventory/rfq/add-view";
 	}
-	
+
 	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
 	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData, @RequestParam("fileRefId")String refId) throws Exception {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add(fileData.getContentType());
 		list.add(rfqService.rfqFileUpload(fileData,refId));
 		return list;
@@ -197,28 +198,29 @@ public class RFQController {
 	public void  downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		rfqService.rfqFileDownload(id,response);
 	}
-	
+
 	@RequestMapping(value = "/delete-file", method = RequestMethod.GET)
 	public void deleteFile(Model model,@RequestParam("fileRefId")Integer refId) throws Exception {
 		rfqService.rfqFileDelete(refId);
 	}
+
 	@RequestMapping(value = "/addfrompo", method = RequestMethod.GET)
 	public String generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("poItemIds") final String poItemIds) {
 		try {
-			RFQDTO dto = rfqService.createRFQFromPoItems(poItemIds);
+			final RFQDTO dto = rfqService.createRFQFromPoItems(poItemIds);
 			setCommonData(model, dto);
 			return "inventory/rfq/add-view";
-		} catch (Exception ex) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
-            return "redirect:/rfq/index";
-        }
-    }
-	
+		} catch (final Exception ex) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
+			return "redirect:/rfq/index";
+		}
+	}
+
 	@RequestMapping(value = "/generateRFQFromMrn", method = RequestMethod.GET)
 	public @ResponseBody MRNResult generateRFQFromMrn(String ids, Integer mrnId) throws Exception {
 		MRNResult result = null;
-		if ((mrnId != null) && (mrnId > 0)) { 
-			result = rfqService.generateRFQFromMrn(ids, mrnId); 
+		if (mrnId != null && mrnId > 0) {
+			result = rfqService.generateRFQFromMrn(ids, mrnId);
 		}
 		return result;
 	}
@@ -233,11 +235,25 @@ public class RFQController {
 		model.addAttribute("shippingTypes", ShippingType.getShippingTypeList());
 	}
 
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
 
+		try {
+			final RFQResult result = rfqService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "User already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
 
-	/**********************************************************
-	 * Purchase Order Generation
-	 *********************************************************/
+		return "inventory/rfq/home-view";
+	}
+
 	@RequestMapping(value = "/saveWithPurchaseOrder", method = RequestMethod.POST)
 	public String saveOrUpdatesWithPurchaseOrder(@ModelAttribute("rfq") RFQDTO rfq, Model model, RedirectAttributes ra) {
 		try {
@@ -255,7 +271,7 @@ public class RFQController {
 			model.addAttribute("poAdditionalCostTypes", PurchaseOrderAdditionalCostType.getAdditionalCostTypeList());
 			model.addAttribute("shippingTypes", ShippingType.getShippingTypeList());
 			return "inventory/purchaseorder/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", "Error While Loading Initial Data.");
 			return "inventory/rfq/add-view";
 		}

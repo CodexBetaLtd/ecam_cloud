@@ -67,7 +67,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	private TaskGroupDTO findDTOById(Integer id) throws TaskGroupException {
 		try {
 			return TaskGroupMapper.getInstance().domainToDto(findEntityById(id));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new TaskGroupException("ERROR! Task Group mapper not worked!");
 		}
 	}
@@ -75,19 +75,19 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	private TaskGroup findEntityById(Integer id) throws TaskGroupException {
 		try {
 			return taskGroupDao.findOne(id);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new TaskGroupException("ERROR! Task Group entity FETCH not completed.!");
 		}
 	}
 
 	@Override
 	public TaskGroupResult newTaskGroup() {
-		TaskGroupResult result = new TaskGroupResult(null, new TaskGroupDTO());
+		final TaskGroupResult result = new TaskGroupResult(null, new TaskGroupDTO());
 		try {
 			newTaskGroup(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Task Group create operation completed.");
-		} catch (TaskGroupException e) {
+		} catch (final TaskGroupException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("ERROR! Task Group NOT created.");
@@ -102,12 +102,12 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	@Override
 	public TaskGroupResult findById(Integer id) throws TaskGroupException {
-		TaskGroupResult result = new TaskGroupResult(null, null);
+		final TaskGroupResult result = new TaskGroupResult(null, null);
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Task Group fetch operation completed.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("ERROR! Task Group fetch operation failed.");
@@ -118,21 +118,41 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	@Override
 	public TaskGroupResult delete(Integer id) {
-		TaskGroupResult result = new TaskGroupResult(null, null);
+		final TaskGroupResult result = new TaskGroupResult(null, null);
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("SUCCESS! Task group operation deleted operation completed.");
-		} catch (DataIntegrityViolationException ex) {
+		} catch (final DataIntegrityViolationException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Task group Already Used. Cannot delete.");
 			logger.error(ex.getMessage());
-		} catch (TaskGroupException ex) {
+		} catch (final TaskGroupException ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("FAILED! Task group delete operation not completed");
 			logger.error(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public TaskGroupResult deleteMultiple(Integer[] ids) throws Exception {
+		final TaskGroupResult result = new TaskGroupResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				deleteEntityById(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Task Group(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Task Group(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
 		}
 		return result;
 	}
@@ -144,13 +164,13 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	@Override
 	public TaskGroupResult save(TaskGroupDTO dto) {
-		TaskGroupResult result = createTaskGroupResult(dto);
+		final TaskGroupResult result = createTaskGroupResult(dto);
 		try {
 			saveOrUpdate(result);
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Task Group Already updated. Please Reload Task Group.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -162,7 +182,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	private TaskGroupResult createTaskGroupResult(TaskGroupDTO dto) {
 		TaskGroupResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new TaskGroupResult(taskGroupDao.findOne(dto.getId()), dto);
 		} else {
 			result = new TaskGroupResult(new TaskGroup(), dto);
@@ -194,14 +214,14 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 	}
 
 	private void setBusiness(TaskGroupResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setTask(TaskGroupResult result) throws Exception {
-		Set<Task> tasks = new HashSet<>();
-		for (TaskDTO taskDTO : result.getDtoEntity().getTasks()) {
+		final Set<Task> tasks = new HashSet<>();
+		for (final TaskDTO taskDTO : result.getDtoEntity().getTasks()) {
 			Task task;
 			if (taskDTO.getId() != null) {
 				task = result.getDomainEntity().getTasks().stream().filter((x) -> x.getId().equals(taskDTO.getId()))
@@ -229,7 +249,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 				domainOut = taskGroupDao.findAll(input, findAllSpecification());
 			}
 			return TaskGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -241,12 +261,12 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 		try {
 			DataTablesOutput<TaskGroup> domainOut = new DataTablesOutput<>();
 			TaskGroupSearchPropertyMapper.getInstance().generateDataTableInput(input);
-			Specification<TaskGroup> specification = (root, query, cb) -> {
+			final Specification<TaskGroup> specification = (root, query, cb) -> {
 				return cb.equal(root.get("business").get("id"), bizId);
 			};
 			domainOut = taskGroupDao.findAll(input, specification);
 			return TaskGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -254,7 +274,7 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	private Specification<TaskGroup> findAllSpecification() {
 		return (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
+			final List<Predicate> predicates = new ArrayList<>();
 			predicates.add(cb.equal(root.get("business").get("id"), AuthenticationUtil.getLoginUserBusiness().getId()));
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
@@ -262,39 +282,39 @@ public class TaskGroupServiceImpl implements TaskGroupService {
 
 	@Override
 	public List<TaskGroupDTO> findAll() throws Exception {
-		List<TaskGroup> domainOut = (List<TaskGroup>) taskGroupDao.findAll();
-		List<TaskGroupDTO> out = TaskGroupMapper.getInstance().domainToDTOList(domainOut);
+		final List<TaskGroup> domainOut = (List<TaskGroup>) taskGroupDao.findAll();
+		final List<TaskGroupDTO> out = TaskGroupMapper.getInstance().domainToDTOList(domainOut);
 		return out;
 	}
 
 	@Override
 	public DataTablesOutput<TaskDTO> findAllTasksByTaskGroup(FocusDataTablesInput input, Integer id) throws Exception {
-		Specification<Task> specification = (root, query, cb) -> cb.equal(root.get("taskGroup").get("id"), id);
-		DataTablesOutput<Task> domainOut = taskDao.findAll(input, specification);
-		DataTablesOutput<TaskDTO> out = TaskMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<Task> specification = (root, query, cb) -> cb.equal(root.get("taskGroup").get("id"), id);
+		final DataTablesOutput<Task> domainOut = taskDao.findAll(input, specification);
+		final DataTablesOutput<TaskDTO> out = TaskMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	@Override
 	public List<TaskDTO> findAllTasksByTaskGroup(Integer id) throws Exception {
-		List<Task> domainOut = taskDao.findTaskByTaskGroup(id);
-		List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
+		final List<Task> domainOut = taskDao.findTaskByTaskGroup(id);
+		final List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
 		return out;
 	}
 
 	public List<TaskDTO> findAllTasksByAssetCategory(Integer assetId) throws Exception {
-		Asset asset = assetDao.findOne(assetId);
-		Specification<AssetCategoryTask> specification = (root, query, cb) -> {
+		final Asset asset = assetDao.findOne(assetId);
+		final Specification<AssetCategoryTask> specification = (root, query, cb) -> {
 			return cb.equal(root.get("assetCategory").get("id"), asset.getAssetCategory().getId());
 		};
 
-		List<AssetCategoryTask> assetCategoryTasks = assetCategoryTaskDao.findAll(specification);
-		List<Task> domainOut = new ArrayList<>();
-		for (AssetCategoryTask categoryTask : assetCategoryTasks) {
+		final List<AssetCategoryTask> assetCategoryTasks = assetCategoryTaskDao.findAll(specification);
+		final List<Task> domainOut = new ArrayList<>();
+		for (final AssetCategoryTask categoryTask : assetCategoryTasks) {
 			domainOut.add(categoryTask.getTask());
 		}
 
-		List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
+		final List<TaskDTO> out = TaskMapper.getInstance().domainToDTOList(domainOut);
 		return out;
 	}
 

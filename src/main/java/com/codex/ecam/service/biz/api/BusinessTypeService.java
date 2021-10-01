@@ -1,7 +1,7 @@
 package com.codex.ecam.service.biz.api;
 
 import java.util.List;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.biz.business.BussinessTypeDTO;
@@ -23,5 +23,7 @@ public interface BusinessTypeService {
 	void saveAll(List<BussinessTypeDTO> allDummyData);
 
 	void deleteAll();
+
+	BusinessTypeResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

@@ -118,8 +118,10 @@ var AssetEventTypeHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#assetEventTypeTbl').dataTable().fnDestroy();
-		var oTable = $('#assetEventTypeTbl').dataTable( {
+		
+		var oTable = $('#assetEventTypeTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable
@@ -129,12 +131,11 @@ var AssetEventTypeHome = function() {
 					}),
 			columns : [
 					{	
-						orderable: false, 
-						searchable: false, 
-						title : "#", 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'name'
 					}, {
@@ -146,22 +147,7 @@ var AssetEventTypeHome = function() {
 					}, { 
 						data : 'id'
 					} ],
-			"aoColumnDefs" : [ 
-					{
-						"targets" : 5,// index of column
-						// starting from 0
-						"data" : "id", // this name should
-						// exist in your JSON
-						// response
-						"render" : function(data, type, full, meta) {
-
-                            //return ButtonUtil.getHomeBtnWithURL('assetEventType', data);
-                            return ButtonUtil.getEditBtnWithURL('assetEventType', data, 'AssetEventTypeHome');
-
-						}
-					}
-
-			],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -180,14 +166,28 @@ var AssetEventTypeHome = function() {
 					+ "<'row'<'col-sm-12'tr>>"
 					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
-				$("div.dtblassetEvent").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='asset-event-type-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblassetEvent").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='asset-event-type-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='assetEventTypeDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
 			iDisplayLength : 10,
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
-			sPaging : 'pagination'
+			sPaging : 'pagination',
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "AssetEventTypeHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
 		});
 
 		$('#assetEventTypeTbl_wrapper .dataTables_filter input').addClass( "form-control input-sm").attr("placeholder", "Search");
@@ -196,12 +196,14 @@ var AssetEventTypeHome = function() {
 		// modify table per page dropdown
 		$('#assetEventTypeTbl_wrapper .dataTables_length select').select2();
 
-		$('#assetEventTypeTbl_columnToggler input[type="checkbox"]').change(
-				function() {
-					var iCol = parseInt($(this).attr("data-column"));
-					var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-					oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-				});
+		$('#assetEventTypeTbl_columnToggler input[type="checkbox"]').change(function() {
+			var iCol = parseInt($(this).attr("data-column"));
+			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+		});  
+		
+        DataTableUtil.deleteRowsFunc(oTable, "assetEventTypeDelete", "AssetEventTypeHome.deleteMutiple", "id");
+        
 	};
 
 	var editModal = function(id) {
@@ -290,6 +292,17 @@ var AssetEventTypeHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../assetEventType/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseOne").find('.panel-body').empty().append(response);
+                runDataTable();
+            }
+        });
+    };
 
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -299,26 +312,37 @@ var AssetEventTypeHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		setAssetAddModal : function() {
 			setAssetAddModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

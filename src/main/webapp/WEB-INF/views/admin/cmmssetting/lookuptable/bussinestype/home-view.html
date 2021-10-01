@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js"> 
 
 <div class="panel panel-default" th:fragment="homeview"> 
+
 	<div class="panel-body">
+	<div th:replace="template/messageview :: message"></div>
 		<div class="row">
 			<div class="col-md-12 space20">
 				<table
@@ -14,7 +16,6 @@
 							<th style="width:35%;">Definition Name</th>
 							<th style="width:15%;">Definition Short</th>
                 			<th style="width:15%;">Business</th>
-			                <th class="last-col" style="width:5%;">More</th>
 						</tr>
 					</thead>
 					<tbody>

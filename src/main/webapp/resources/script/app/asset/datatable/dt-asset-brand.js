@@ -115,8 +115,10 @@ var AssetBrandDataTable = function () {
 
 
     var runDataTable = function () {
+        
     	$('#assetBrandTbl').dataTable().fnDestroy();
-        var oTable = $('#assetBrandTbl').dataTable({
+    	
+        var oTable = $('#assetBrandTbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -127,27 +129,15 @@ var AssetBrandDataTable = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "45px",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
-                {	data: 'brandName',
-            		width: "84%",
-            	},
+                {	data: 'brandName'},
                 
             ],
-            aoColumnDefs: [{
-            	className:"dt-center",
-                targets: 2,
-                bAutoWidth:false, 
-                data: 'brandId',
-                searchable:false,
-                orderable:false,
-                render: function (data, type, rowData, meta) {
-                    return ButtonUtil.getCommonBtnSelect('AssetBrandSelectModal.setAssetBrand', data, rowData.brandName);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -163,20 +153,31 @@ var AssetBrandDataTable = function () {
                 [5, 10, 15, 20, -1],
                 [5, 10, 15, 20, "All"] // change per page values here
             ],
-            dom : "<'row'<'col-sm-4 col-xs-4  dtblassetbrand'><'col-sm-8 col-xs-8 text-right-xs'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            dom : "<'row'<'col-sm-8 col-xs-8  dtblassetbrand'><'col-sm-4 col-xs-4 text-right-xs'f>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
 				$("div.dtblassetbrand").html( "<button class='btn btn-blue btn-sm active tooltips' data-toggle='modal' type='button' id='btnAssetBrandNew' onclick='AssetBrandSelectModal.assetBrandAddView();' ><i class='clip-plus-circle-2  btn-new'></i> New</button>");
 			},
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetBrandSelectModal.setAssetBrand",
+                aoData:[  
+                    {
+                        sName : "brandId",
+                    }, {
+                        sName : "brandName"
+                    },
+                ],
+            },
         });
-
         $('#assetBrandTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#assetBrandTbl_wrapper .dataTables_length select').addClass("m-wrap small");
         $('#assetBrandTbl_wrapper .dataTables_length select').select2();
         $('#aassetBrandTbl_column_toggler input[type="checkbox"]').change(function () {
-
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));

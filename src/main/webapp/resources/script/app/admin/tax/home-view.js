@@ -117,15 +117,21 @@ var TaxHome = function () {
 	} );
 	
     var runDataTable = function () {
-    	assetCategoryTable = $('#tax_tbl').dataTable({
+
+        $('#tax_tbl').dataTable().fnDestroy();
+        
+        oTable = $('#tax_tbl').DataTable({
         	processing : true,
             serverSide : true,
-            ajax : "../restapi/tax/tabledata",
-            columns : [          
-            	 {
-                    render: function (data, type, row, meta) {
-                     return meta.row + meta.settings._iDisplayStart + 1;
-                 } },
+            ajax : $.fn.dataTable.pipeline({
+                url : "../restapi/tax/tabledata",
+                pages : 5
+            }),
+            columns : [{
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
+                 },
                  {data: 'name'},
                  {data: 'description'},
                  {
@@ -141,26 +147,9 @@ var TaxHome = function () {
                  {data: 'taxType'}
                  ],
             aoColumnDefs: [
-            		{"bSearchable" : false, "aTargets": [0, 6]}, 
-            		{"orderable" : false, "aTargets": [0, 6]},
-            		{"targets": 6,//index of column starting from 0
-            			"data": "id", //this name should exist in your JSON response
-            			"render": function ( data, type, full, meta ) {
-            				return "<div align=\"center\"><div class=\"btn-group\">" +
-                     			"<a class=\"btn btn-xs btn-blue dropdown-toggle btn-sm tooltips\"  data-placement=\"top\"data-original-title=\"remove or edit\"data-toggle=\"dropdown\" href=\"#\">"
-                     			+"<i class=\"fa fa-cog\"></i><span class=\"caret\"></span>" +
-                     			"</a><ul role=\"menu\" class=\"dropdown-menu pull-right\">"
-                     			+ "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" onclick=\"TaxHome.editTax(" + data + ")\">" +
-                     			"<i class=\"fa fa-edit\"></i> Edit</a>" +
-                     			"</li><li role=\"presentation\"><a data-toggle=\"modal\" role=\"menuitem\" tabindex=\"-1\" href=\"#model"+data+"\">" +
-                     			"<i class=\"fa fa-times\"></i> Remove</a></li></ul>" +
-                     			"</div><div id=\"model" + data + "\" class=\"modal fade\" tabindex=\"-1\" data-backdrop=\"static\" data-keyboard=\"false\" style=\"display: none;\">"
-                     			+ "<div class=\"modal-body\"><p>Are You Sure You want to delete Tax ?</p>" +
-                     			"</div>" +
-                     			"<div class=\"modal-footer\"><a data-dismiss=\"modal\" class=\"btn btn-green \" >"
-                     			+ "Cancel</a> " +
-                     			"<a onclick=\"TaxHome.deleteTax(" + data + ")\" class=\"btn btn-red \">Delete</a></div></div></div>"; }
-            		}],
+            		{"bSearchable" : false, "aTargets": [0]}, 
+            		{"orderable" : false, "aTargets": [0]}
+            ],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -184,7 +173,19 @@ var TaxHome = function () {
             sPaginationType: "full_numbers", 
             "initComplete": function(settings, json) {
 		       
-			  } 
+            },
+           select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "TaxHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
         });
         $('#tax_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -199,6 +200,8 @@ var TaxHome = function () {
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });       
         
+        DataTableUtil.deleteRowsFunc(oTable, "taxDelete", "TaxHome.deleteMutiple", "id");
+       
     };
     
     var reloadTax = function () {		
@@ -234,6 +237,17 @@ var TaxHome = function () {
 	        }
 	    });
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../tax/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#taxTab").empty().append(response);
+                TaxHome.init();
+            }
+        });
+    };
 	
 	var addTax = function () {	
 		
@@ -272,12 +286,16 @@ var TaxHome = function () {
 		deleteTaxFromEditPage : function(id) {
 			deleteTaxFromEditPage(id)
 		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 		
 		addTax : function() {
 			addTax()
 		},
 		
-		editTax : function(id) {
+		editModal : function(id) {
 			editTax(id)
 		},
 		

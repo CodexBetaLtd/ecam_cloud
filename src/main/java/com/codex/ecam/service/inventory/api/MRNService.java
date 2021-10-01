@@ -13,27 +13,29 @@ import com.codex.ecam.result.inventory.MRNResult;
 
 public interface MRNService {
 
-    MRNResult newMRN();
-    
-    String getNextCode(Integer businessId);
-    
-    MRNResult save(MRNDTO mrndto) throws Exception;
+	MRNResult newMRN();
 
-    MRNResult update(MRNDTO mrndto) throws Exception;
+	String getNextCode(Integer businessId);
 
-    MRNResult delete(Integer id) throws Exception;
+	MRNResult save(MRNDTO mrndto) throws Exception;
 
-    MRNResult findById(Integer id) throws Exception;
+	MRNResult update(MRNDTO mrndto) throws Exception;
 
-    MRNResult statusChange(Integer id, MRNStatus status);
+	MRNResult delete(Integer id) throws Exception;
 
-    List<MRNDTO> findAll();
+	MRNResult findById(Integer id) throws Exception;
 
-    DataTablesOutput<MRNDTO> findAll(FocusDataTablesInput input) throws Exception;
-    
-    DataTablesOutput<MRNDTO> findAllApprovedMRN(FocusDataTablesInput input) throws Exception;
+	MRNResult statusChange(Integer id, MRNStatus status);
 
-    DataTablesOutput<MRNItemDTO> getMRNItemDataTable(FocusDataTablesInput input, Integer mrnId);
+	List<MRNDTO> findAll();
+
+	DataTablesOutput<MRNDTO> findAll(FocusDataTablesInput input) throws Exception;
+
+	DataTablesOutput<MRNDTO> findAllApprovedMRN(FocusDataTablesInput input) throws Exception;
+
+	DataTablesOutput<MRNItemDTO> getMRNItemDataTable(FocusDataTablesInput input, Integer mrnId);
+
+	MRNResult deleteMultiple(Integer[] ids) throws Exception;
 
 	//AODResult statusChange(Integer id, MRNStatus mrnStatus);
 

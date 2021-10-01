@@ -115,8 +115,10 @@ var PartCategoryDataTable = function () {
 
 
     var runDataTable = function () {
+        
     	$('#partCategoryTbl').dataTable().fnDestroy();
-        var oTable = $('#partCategoryTbl').dataTable({
+    	
+        var oTable = $('#partCategoryTbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -126,7 +128,7 @@ var PartCategoryDataTable = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -135,14 +137,7 @@ var PartCategoryDataTable = function () {
                 {data: 'description'},
                 {data: 'parentName'}
             ],
-            aoColumnDefs: [{
-            	className:"dt-center",
-                targets: 4,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                    return ButtonUtil.getCommonBtnSelect('PartAdd.setPartCategory', data, rowData.name); 
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -164,7 +159,20 @@ var PartCategoryDataTable = function () {
 			},
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "PartAdd.setPartCategory",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
 
         $('#partCategoryTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

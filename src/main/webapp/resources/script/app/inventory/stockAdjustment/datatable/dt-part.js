@@ -101,9 +101,12 @@ var dtPart = function () {
     });
 
     var getPartDataTable = function (url, func) {
+        
         var tableId = "tbl-dt-item";
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
                 url: url,
@@ -112,7 +115,7 @@ var dtPart = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -122,15 +125,7 @@ var dtPart = function () {
                 {data: 'brandName'},
                 {data: 'description'}
             ],
-            aoColumnDefs: [{
-                targets: 5,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    console.log(row);
-                    return "<button id='link" + data + "' onclick='" + func + "(\"" + row.id + "\",\"" + row.code + "\");' type='button' class='btn btn-blue btn-squared btn-xs' data-dismiss='modal'> Select </button>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -149,7 +144,20 @@ var dtPart = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "code"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -159,41 +167,23 @@ var dtPart = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-
-        /*var commonSet=function () {
-         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
-         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-         $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
-         var iCol = parseInt($(this).attr("data-column"));
-         var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-         oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-         });
-         };*/
     };
-
-
-    /*********************************************************************
-     * Set Data Value
-     *********************************************************************/
-
+    
     var setPart = function (id, name) {
         $("#partId").val(id);
         $("#partName").val(name);
         $('#master-modal').modal("hide");
     };
 
-
     return {
+        
         getPartDataTable: function (url, func) {
             if (url == null) {
                 url = "../restapi/part/tabledata";
             }
             getPartDataTable(url, func);
         },
-        /*********************************************************************
-         * Set Data Value
-         *********************************************************************/
+        
         setPart: function (id, name) {
             setPart(id, name);
         },

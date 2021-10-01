@@ -105,7 +105,7 @@ var MRNCustomers = function () {
 
         var tableId = "tbl_customer";  
         
-        var oTable = $('#' + tableId).dataTable({
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -114,7 +114,8 @@ var MRNCustomers = function () {
             }),
             columns: [{
                 orderable: false,
-                searchable: false, 
+                searchable: false,
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -123,14 +124,7 @@ var MRNCustomers = function () {
             }, {
                 data: 'address'
             }],
-            aoColumnDefs: [{
-                targets: 3,
-                data: "id",
-                render: function (data, type, row, meta) { 
-                    var vars = [data, row.name];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars('MRNCustomers.setMRNCustomer', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -149,7 +143,20 @@ var MRNCustomers = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "MRNCustomers.setMRNCustomer",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -164,6 +171,7 @@ var MRNCustomers = function () {
     var setMRNCustomer = function (id, name) {
         $("#mrnCustomerId").val(id);
         $("#mrnCustomerName").val(name); 
+        $("#master-modal-datatable").modal('toggle');
     };
 
     return {

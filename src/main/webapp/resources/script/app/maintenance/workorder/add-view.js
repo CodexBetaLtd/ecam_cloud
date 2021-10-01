@@ -406,16 +406,19 @@ var WorkorderAdd = function () {
     var setWOProject = function (id, name) {
         $('#projectId').val(id);
         $('#projectName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $("#master-modal-datatable").modal('toggle');
     };
 
     var setAssignedUser = function (id, name) {
         $('#requestedByUserId').val(id);
         $('#requestedByUserName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $("#master-modal-datatable").modal('toggle');
     };
 
     var setCompletedUser = function (id, name) {
         $('#completedByUserId').val(id);
         $('#completedByUserName').val(EncodeDecodeComponent.getBase64().decode(name));
+        $("#master-modal-datatable").modal('toggle');
     };
 
 

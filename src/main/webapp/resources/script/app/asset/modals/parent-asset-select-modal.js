@@ -113,7 +113,7 @@ var ParentAssetSelectModal = function () {
         $('#parent_asset_select_tbl').dataTable().fnDestroy();
         
         console.log($('#type').val());
-        var oTable = $('#parent_asset_select_tbl').dataTable({
+        var oTable = $('#parent_asset_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -123,7 +123,9 @@ var ParentAssetSelectModal = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
+                    searchable: false,
+                    width: "8%",
+                    responsivePriority: 2, 
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -135,14 +137,7 @@ var ParentAssetSelectModal = function () {
                     data: 'name'
                 }
             ],
-            aoColumnDefs: [{
-                targets: 3,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response 
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.name];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('AssetAdd.setParentAsset', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -160,7 +155,20 @@ var ParentAssetSelectModal = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetAdd.setParentAsset",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#parent_asset_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

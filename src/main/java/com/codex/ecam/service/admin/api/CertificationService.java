@@ -1,7 +1,7 @@
 package com.codex.ecam.service.admin.api;
 
 import java.util.List;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.CertificationDTO;
@@ -24,5 +24,7 @@ public interface CertificationService {
 	void deleteAll();
 
 	List<CertificationDTO> findAll();
+
+	CertificationResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

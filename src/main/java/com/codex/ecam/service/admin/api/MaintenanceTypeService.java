@@ -30,4 +30,6 @@ public interface MaintenanceTypeService {
 
 	List<MaintenanceTypeDTO> findAllByBusiness(Integer id);
 
+	MaintenanceTypeResult deleteMultiple(Integer[] ids) throws Exception;
+
 }

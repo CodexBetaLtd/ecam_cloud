@@ -117,7 +117,8 @@
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#tbl-dt-warehouse').dataTable({
+        
+        var oTable = $('#tbl-dt-warehouse').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
@@ -127,7 +128,7 @@
             columns : [ {
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -138,15 +139,7 @@
      		},{
      			data : 'description'
      		}],
-            aoColumnDefs: [{
-                targets: 4,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [row.id, row.name]
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("WearHouseAdd.setParentAssetView", data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -165,15 +158,28 @@
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "WearHouseAdd.setParentAssetView",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
-        $('#wearhouse_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#tbl-dt-warehouse_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
-        $('#wearhouse_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#tbl-dt-warehouse_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
         // modify table per page dropdown
-        $('#wearhouse_tbl_wrapper .dataTables_length select').select2();
+        $('#tbl-dt-warehouse_tbl_wrapper .dataTables_length select').select2();
         // initialzie select2 dropdown
-        $('#wearhouse_tbl_column_toggler input[type="checkbox"]').change(function () {
+        $('#tbl-dt-warehouse_tbl_column_toggler input[type="checkbox"]').change(function () {
             /* Get the DataTables object again - this is not a recreation, just a get of the object */
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;

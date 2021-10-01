@@ -115,7 +115,7 @@ var AODHome = function () {
     });
 
     var dtAOD = function () {
-        var oTable = $('#tbl_aod_list').dataTable({
+        var oTable = $('#tbl_aod_list').DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -126,21 +126,24 @@ var AODHome = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    searchable: false,     
+                    defaultContent: '',
+                    width: "4%",    
+                    className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
                     data: 'aodNo',
+                    width: "32%",  
                     responsivePriority: 1
                 },{
                     orderable: false,
                     searchable: false,
+                    width: "32%",  
                     data: 'aodStatus',
                     responsivePriority: 2 
                 }, {
                     data: 'date',
+                    width: "32%",    
                     render: function (data) {
                         if (data === null) return "";
                         var date = new Date(data);
@@ -149,14 +152,7 @@ var AODHome = function () {
                     responsivePriority: 2 
 
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("aod", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -165,12 +161,20 @@ var AODHome = function () {
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[4, 'desc']],
+            aaSorting: [[1, 'desc']],
             aLengthMenu: [[5, 10, 15, 20],
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../aod/edit?id",
+            },
         });
         $('#tbl_aod_list_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#tbl_aod_list_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -180,6 +184,8 @@ var AODHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "aod", "id");     
     };
 
     return {

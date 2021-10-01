@@ -209,16 +209,19 @@ var ExWorkorderAdd = function () {
     var setWOServiceProvider = function (id, name) {
         $('#serviceProviderId').val(id);
         $('#serviceProviderName').val(name);
+        $('#master-modal-datatable').modal('toggle');
     };
 
     var setAssignedUser = function (id, name) {
         $('#serviceRequestId').val(id);
         $('#serviceRequestName').val(name);
+        $('#master-modal-datatable').modal('toggle');
     };
 
     var setAsset = function (id, name) {
         $('#assetId').val(id);
         $('#assetName').val(name);
+        $('#master-modal-datatable').modal('toggle');
     };
 
 

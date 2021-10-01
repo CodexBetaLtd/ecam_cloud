@@ -119,7 +119,7 @@
 
     	$('#certificationTypeSelectTbl').dataTable().fnDestroy();
     	
-        var oTable = $('#certificationTypeSelectTbl').dataTable({
+        var oTable = $('#certificationTypeSelectTbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -129,22 +129,15 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "4%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },{
             	data : 'certificationType'
-            },{ 
-				data : 'id'
-			}],
-                           
-            aoColumnDefs: [{
-                targets: 2,
-                data: "id",
-                render: function (data, type, row, meta) {
-                	return "<div align='center'>" + ButtonUtil.getCommonBtnSelect('UserCertificationAddModal.setCertificationType', data, row.certificationType) + "</div>";
-                }
             }],
+                           
+            aoColumnDefs: [],
 			dom : "<'row'<'col-sm-4 dtblcertification'><'col-sm-8'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'p>>",
 			initComplete : function() {
 				$("div.dtblcertification").html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='certificationTypeNew'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
@@ -166,7 +159,20 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "UserCertificationAddModal.setCertificationType",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "certificationType"
+                    },
+                ],
+            },
         });
 
         $('#certificationTypeSelectTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

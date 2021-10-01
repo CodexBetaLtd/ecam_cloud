@@ -117,8 +117,10 @@ var ChargeDepartmentHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#chargeDepartmentTbl').dataTable().fnDestroy();
-		var oTable = $('#chargeDepartmentTbl').dataTable( {
+		
+		var oTable = $('#chargeDepartmentTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable
@@ -128,28 +130,19 @@ var ChargeDepartmentHome = function() {
 					}),
 			columns : [
 					{ 
-						orderable: false, 
-						searchable: false, 
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'code'
 					}, {
 						data : 'description'
 					}, {
 						data : 'businessName'
-					},{ 
-						data : 'id'
-					} ],
-			"aoColumnDefs" : [ 
-					{
-						"targets" : 4,//index of column starting from 0
-						"data" : "id", //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL( 'chargeDepartment', data, 'ChargeDepartmentHome');
-						}
-					} ],
+					}],
+			"aoColumnDefs" : [],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -166,7 +159,10 @@ var ChargeDepartmentHome = function() {
 					+ "<'row'<'col-sm-12'tr>>"
 					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>", 
 			initComplete : function() {
-				$("div.dtblchargeDepartment").html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='charge-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblchargeDepartment").html( 
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='charge-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='chargeDepartmentDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			// set the initial value
 			bAutoWidth : false,
@@ -175,6 +171,18 @@ var ChargeDepartmentHome = function() {
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
 			sPaging : 'pagination',
+			select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "ChargeDepartmentHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
 		});
 		$('#chargeDepartmentTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
@@ -182,13 +190,14 @@ var ChargeDepartmentHome = function() {
 		// modify table per page dropdown
 		$('#chargeDepartmentTbl_wrapper .dataTables_length select').select2();
 		// initialzie select2 dropdown
-		$('#chargeDepartmentTbl_columnToggler input[type="checkbox"]').change(
-		function() {
+		$('#chargeDepartmentTbl_columnToggler input[type="checkbox"]').change(function() {
 			/* Get the DataTables object again - this is not a recreation, just a get of the object */
 			var iCol = parseInt($(this).attr("data-column"));
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+
+        DataTableUtil.deleteRowsFunc(oTable, "chargeDepartmentDelete", "ChargeDepartmentHome.deleteMutiple", "id");
 	};
 	
 	var addModal = function() {
@@ -272,6 +281,17 @@ var ChargeDepartmentHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../chargeDepartment/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseEleven").find('.panel-body').empty().append(response);
+                ChargeDepartmentHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -282,23 +302,33 @@ var ChargeDepartmentHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

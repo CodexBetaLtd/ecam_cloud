@@ -115,7 +115,8 @@ var MRNHome = function () {
     });
 
     var dtAOD = function () {
-        var oTable = $('#tbl_mrn_list').dataTable({
+        
+        var oTable = $('#tbl_mrn_list').DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -127,9 +128,9 @@ var MRNHome = function () {
                 {
                     orderable: false,
                     searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    defaultContent: '',
+                    width: "4%",
+                    className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
                     data: 'mrnNo',
@@ -149,14 +150,7 @@ var MRNHome = function () {
                     responsivePriority: 2 
 
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("mrn", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -165,21 +159,31 @@ var MRNHome = function () {
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[4, 'desc']],
+            aaSorting: [[1, 'desc']],
             aLengthMenu: [[5, 10, 15, 20],
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../mrn/edit?id",
+            },
         });
-        $('#tbl_aod_list_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#tbl_aod_list_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#tbl_aod_list_wrapper .dataTables_length select').select2();
-        $('#tbl_aod_list_column_toggler input[type="checkbox"]').change(function () {
+        $('#tbl_mrn_list_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#tbl_mrn_list_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#tbl_mrn_list_wrapper .dataTables_length select').select2();
+        $('#tbl_mrn_list_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "mrn", "id");  
     };
 
     return {

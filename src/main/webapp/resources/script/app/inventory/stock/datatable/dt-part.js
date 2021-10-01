@@ -103,8 +103,10 @@ var dtStockPart = function () {
 
 
     var getPartTable = function () {
+        
         var tableId = "tbl-dt-part";
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             // processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -114,7 +116,7 @@ var dtStockPart = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -124,15 +126,7 @@ var dtStockPart = function () {
                 {data: 'brandName'},
                 {data: 'description'}
             ],
-            aoColumnDefs: [{
-                targets: 5,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.code, row.name];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars('StockAdd.addNewPart', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -151,7 +145,22 @@ var dtStockPart = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "StockAdd.addNewPart",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "code"
+                    }, {
+                        sName : "name"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");

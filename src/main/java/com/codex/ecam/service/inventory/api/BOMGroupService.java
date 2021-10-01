@@ -8,16 +8,18 @@ import com.codex.ecam.result.inventory.BOMGroupResult;
 
 public interface BOMGroupService {
 
-    DataTablesOutput<BOMGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<BOMGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
 
-    BOMGroupDTO findById(Integer id) throws Exception;
+	BOMGroupDTO findById(Integer id) throws Exception;
 
-    BOMGroupResult delete(Integer id);
+	BOMGroupResult delete(Integer id);
 
-    BOMGroupResult update(BOMGroupDTO bomGroup);
+	BOMGroupResult update(BOMGroupDTO bomGroup);
 
-    BOMGroupResult save(BOMGroupDTO bomGroup);
+	BOMGroupResult save(BOMGroupDTO bomGroup);
 
 	DataTablesOutput<BOMGroupDTO> findBOMGroupsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
+
+	BOMGroupResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

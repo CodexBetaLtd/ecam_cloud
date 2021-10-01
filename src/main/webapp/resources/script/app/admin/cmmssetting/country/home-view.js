@@ -117,100 +117,94 @@ var CountryHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#countryTbl').dataTable().fnDestroy();
 		
-		var oTable = $('#countryTbl').dataTable(
-						{
-							"processing" : true,
-							"serverSide" : true,
-							"ajax" : $.fn.dataTable.pipeline({
-										url : "../restapi/lookuptable/tabledataCountry",
-										pages : 5
-									}),
-							columns : [
-									{
-										orderable: false,
-						                searchable: false,
-										width : "2%",
-										render : function(data, type, row, meta) {
-											return meta.row + meta.settings._iDisplayStart + 1;
-										}
-									}, {
-										data : 'name'
-									}, {
-										data : 'shortName'
-									}, {										
-										data : 'id'
-									} ],
-							aoColumnDefs : [
-									{
-										"bSearchable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"orderable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"targets" : 3,//index of column starting from 0
-										"data" : "id", //this name should exist in your JSON response
-										"render" : function(data, type, full, meta) {
-											return ButtonUtil.getEditBtnWithURL('country', data, 'CountryHome');
-										}
-									} ],
-							oLanguage : {
-								"sLengthMenu" : "Show _MENU_ Rows",
-								"sSearch" : "",
-								"oPaginate" : {
-									"sPrevious" : "&laquo;",
-									"sNext" : "&raquo;"
-								}
-							},
-							aaSorting : [ [ 1, 'asc' ] ],
-							aLengthMenu : [ [ 5, 10, 15, 20, -1 ],
-									[ 5, 10, 15, 20, "All" ] // change per page values here
-							],
-							dom : "<'row'<'col-sm-4 dtblcountry'><'col-sm-8'f>>"
-									+ "<'row'<'col-sm-12'tr>>"
-									+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-							//            initComplete: function () {
-							//                $("div.dtblcountry").html("<a class=\"btn btn-default btn-sm active tooltips\" id=\"new\"" +
-							//                    "href=\"/FOCUS_CMMS/country/add\"" +
-							//                    "data-placement=\"top\" data-original-title=\"Add\"> <i " +
-							//                    "class=\"clip-plus-circle-2  btn-new\"></i> New" +
-							//                    "	</a>");
-							//            },
-					
-							bAutoWidth : false,
-							sScrollXInner : "100%",
-							iDisplayLength : 10,
-							bLengthChange : false,
-							sPaginationType : "full_numbers",
-							sPaging : 'pagination',
-							
-							"initComplete": function(settings, json) {
-						        
-						        $("div.dtblcountry")
-								.html(
-										"<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='country-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-							  }
-						});
-
+		var oTable = $('#countryTbl').DataTable({
+			"processing" : true,
+			"serverSide" : true,
+			"ajax" : $.fn.dataTable.pipeline({
+						url : "../restapi/lookuptable/tabledataCountry",
+						pages : 5
+					}),
+			columns : [
+					{
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
+					}, {
+						data : 'name'
+					}, {
+						data : 'shortName'
+					}],
+			aoColumnDefs : [
+					{
+						"bSearchable" : false,
+						"aTargets" : [ 0]
+					},
+					{
+						"orderable" : false,
+						"aTargets" : [ 0 ]
+					}],
+			oLanguage : {
+				"sLengthMenu" : "Show _MENU_ Rows",
+				"sSearch" : "",
+				"oPaginate" : {
+					"sPrevious" : "&laquo;",
+					"sNext" : "&raquo;"
+				}
+			},
+			aaSorting : [ [ 1, 'asc' ] ],
+			aLengthMenu : [ [ 5, 10, 15, 20, -1 ],
+					[ 5, 10, 15, 20, "All" ] // change per page values here
+			],
+			dom : "<'row'<'col-sm-4 dtblcountry'><'col-sm-8'f>>"
+					+ "<'row'<'col-sm-12'tr>>"
+					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+			bAutoWidth : false,
+			sScrollXInner : "100%",
+			iDisplayLength : 10,
+			bLengthChange : false,
+			sPaginationType : "full_numbers",
+			sPaging : 'pagination',
+			"initComplete": function(settings, json) {
+		        
+		        $("div.dtblcountry")
+				.html(
+						"<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='country-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='countryDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
+			  },
+			  select: {
+	                style:    'multi',
+	                selector: 'td:first-child',
+	           },
+	           rowClick : {
+	                sFunc: "CountryHome.editModal",
+	                aoData:[  
+	                    {
+	                        sName : "id",
+	                    },
+	                ],
+	           },
+		});
 		$('#countryTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
 		$('#countryTbl_wrapper .dataTables_length select').addClass("m-wrap small");
 		// modify table per page dropdown
 		$('#countryTbl_wrapper .dataTables_length select').select2();
 		// initialzie select2 dropdown
-		$('#countryTbl_columnToggler input[type="checkbox"]').change(
-				function() {
-					/* Get the DataTables object again - this is not a recreation, just a get of the object */
-					var iCol = parseInt($(this).attr("data-column"));
-					var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-					oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-				});
+		$('#countryTbl_columnToggler input[type="checkbox"]').change(function() {
+			/* Get the DataTables object again - this is not a recreation, just a get of the object */
+			var iCol = parseInt($(this).attr("data-column"));
+			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+		});
 		
-		 
+        DataTableUtil.deleteRowsFunc(oTable, "countryDelete", "CountryHome.deleteMutiple", "id");
+        
 	};
 
 	var addModal = function() {
@@ -293,6 +287,17 @@ var CountryHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../country/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseFour").find('.panel-body').empty().append(response);
+                CountryHome.init();
+            }
+        });
+    };
 
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -303,23 +308,33 @@ var CountryHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

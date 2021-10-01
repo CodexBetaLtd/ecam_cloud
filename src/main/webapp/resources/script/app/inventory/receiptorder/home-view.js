@@ -115,7 +115,8 @@ var ReceiptOrderHome = function () {
     });
 
     var dtReceiptOrder = function () {
-        var oTable = $('#receipt_order_tbl').dataTable({
+        
+        var oTable = $('#receipt_order_tbl').DataTable({
         	responsive: true,
         	"processing": true,
             "serverSide": true,
@@ -127,10 +128,9 @@ var ReceiptOrderHome = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    },
+                    width: "4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
                     responsivePriority: 2,
                 },
                 {
@@ -146,15 +146,7 @@ var ReceiptOrderHome = function () {
                 	 responsivePriority: 4,
                 }
             ],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, full, meta) {
-                    return ButtonUtil.getHomeBtnWithURL("receiptorder", data);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -168,7 +160,15 @@ var ReceiptOrderHome = function () {
                 [5, 10, 15, 20, "All"]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../receiptorder/edit?id",
+            },
         });
         $('#receipt_order_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#receipt_order_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -178,6 +178,8 @@ var ReceiptOrderHome = function () {
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "receiptorder", "id"); 
     };
 
     return {

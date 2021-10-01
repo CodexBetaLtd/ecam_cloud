@@ -119,8 +119,10 @@ var dtWorkOrderAsset = function () {
             url = "../restapi/asset/findNotPartByBusiness?id=" + parseInt(bizId);
         }
         var tableId = "asset_tbl";
+        
         $("#" + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
         	processing : true,
             serverSide : true,
             ajax : $.fn.dataTable.pipeline( {
@@ -130,7 +132,7 @@ var dtWorkOrderAsset = function () {
             columns : [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -138,15 +140,7 @@ var dtWorkOrderAsset = function () {
                 {data: 'name'},
                 {data: 'code'}
             ],
-            aoColumnDefs: [{
-                targets: 3, //index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.name), EncodeDecodeComponent.getBase64().encode(row.code)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                    // return "<a id='link" + data + "' onclick='woAssetTab.woAddAsset(" + data + ",\"" + row.name + "\",\"" + row.code + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -164,7 +158,24 @@ var dtWorkOrderAsset = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },{
+                        sName : "code",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -178,33 +189,25 @@ var dtWorkOrderAsset = function () {
     };
 
     var dtWOTaskGroupAsset = function (func) {
+        
         var tableId = "asset_tbl";
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             data: assets,
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
                 {data: 'name'},
-                {data: 'code'},
-                {
-                    width: "5%",
-                    data: 'id'
-                }],
-            aoColumnDefs: [{
-                targets: 3,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.code), EncodeDecodeComponent.getBase64().encode(row.description)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+                {data: 'code'}],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -225,7 +228,24 @@ var dtWorkOrderAsset = function () {
             scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },{
+                        sName : "code",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    }
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
@@ -239,8 +259,6 @@ var dtWorkOrderAsset = function () {
         });
     };
 
-
-    
     return {
 
         dtAssetsByBusiness: function (func, bizId) {

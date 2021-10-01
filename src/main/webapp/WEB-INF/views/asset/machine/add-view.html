@@ -267,9 +267,6 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/ColReorderWithResize.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
@@ -280,9 +277,10 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/piexif.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/fileinput/plugins/canvas-to-blob.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/math.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/qrcode.min.js}"></script>
     
+	<div th:include="template/commonjs :: commonjstables"></div>
+    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.treeGrid.js}"></script>
 
     <script type="text/javascript" th:src="@{/resources/script/app/asset/init.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/add-view.js}"></script>
@@ -316,14 +314,12 @@
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-event-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-category-add-modal.js}"></script>
-    <script type="text/javascript"
-        th:src="@{/resources/script/app/asset/modals/meter-reading-history-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-history-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-brand-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/asset-model-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/parent-asset-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/file-add-modal.js}"></script>
-    <script type="text/javascript"
-        th:src="@{/resources/script/app/asset/modals/meter-reading-consumption-add-modal.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/meter-reading-consumption-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/asset/modals/spare-part-add-modal.js}"></script>
 
     <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-category.js}"></script>

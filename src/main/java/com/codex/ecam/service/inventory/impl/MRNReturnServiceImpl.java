@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -41,13 +42,13 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 
 	@Autowired
 	MRNReturnDao mrnReturnDao;
-	
+
 	@Autowired
 	MRNDao mrnDao;
-	
+
 	@Autowired
 	MRNItemDao mrnItemDao;
-	
+
 	@Autowired
 	private AssetDao assetDao;
 
@@ -56,7 +57,7 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 
 	@Override
 	public MRNReturnResult newMRN() {
@@ -80,12 +81,12 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	}
 
 	public MRNReturnResult save(MRNReturnDTO dto) throws Exception {
-		MRNReturnResult result = new MRNReturnResult(new MRNReturn(), dto);
+		final MRNReturnResult result = new MRNReturnResult(new MRNReturn(), dto);
 		try {
 			saveOrUpdate(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("MRN Added Successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("Receipt order save Unsuccessful. ".concat(e.getMessage()));
@@ -94,31 +95,31 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	}
 
 	public MRNReturnResult update(MRNReturnDTO dto) throws Exception {
-		MRNReturnResult result = new MRNReturnResult(null, dto);
+		final MRNReturnResult result = new MRNReturnResult(null, dto);
 		try {
-			MRNReturn domain = findEntityById(dto.getId());
+			final MRNReturn domain = findEntityById(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("MRN Updated Successfully.");
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("MRN Already updated. Please Reload MRN.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 		}
 		return result;
 	}
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveOrUpdate(MRNReturnResult result) throws Exception {
 		MRNReturnMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setMRNData(result);
-		mrnReturnDao.save(result.getDomainEntity()); 
-		result.setDtoEntity(findDTOById(result.getDomainEntity().getId())); 
+		mrnReturnDao.save(result.getDomainEntity());
+		result.setDtoEntity(findDTOById(result.getDomainEntity().getId()));
 	}
-	
+
 	private void setMRNData(MRNReturnResult result) throws Exception {
 		setMRNRequestUser(result);
 		setMRN(result);
@@ -126,32 +127,32 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 		setMRNReturnItem(result);
 		setBusinessSite(result);
 	}
-	
+
 	private void setMRNRequestUser(MRNReturnResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getRequestedUserId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getRequestedUserId() != null) {
 			result.getDomainEntity().setRequestedBy(userDao.findOne(result.getDtoEntity().getRequestedUserId()));
 		}
 	}
 
 	private void setMRNStatus(MRNReturnResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getMrnReturnStatus() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getMrnReturnStatus() != null) {
 			result.getDomainEntity().setMrnReturnStatus(result.getDtoEntity().getMrnReturnStatus());
 		}
 	}
-	
+
 	private void setMRN(MRNReturnResult result) {
-		if ((result.getDtoEntity().getMrnId() != null) && (result.getDtoEntity().getMrnId() > 0)) {
+		if (result.getDtoEntity().getMrnId() != null && result.getDtoEntity().getMrnId() > 0) {
 			result.getDomainEntity().setMrn(mrnDao.findOne(result.getDtoEntity().getMrnId()));
 		}
 	}
-	
+
 	private void setBusinessSite(MRNReturnResult result) {
-		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+		if (result.getDtoEntity().getBusinessId() != null && result.getDtoEntity().getBusinessId() > 0) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		} else {
 			result.getDomainEntity().setBusiness(AuthenticationUtil.getLoginUserBusiness());
 		}
-		if ((result.getDtoEntity().getSiteId() != null) && (result.getDtoEntity().getSiteId() > 0)) {
+		if (result.getDtoEntity().getSiteId() != null && result.getDtoEntity().getSiteId() > 0) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		} else if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 			result.getDomainEntity().setSite(AuthenticationUtil.getLoginSite().getSite());
@@ -159,45 +160,45 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	}
 
 	private void setMRNReturnItem(MRNReturnResult result) {
-		
-		Set<MRNReturnItem> mrnReturnItems = new HashSet<>();
-		List<MRNReturnItemDTO> mrnReturnItemDTOs = result.getDtoEntity().getMrnReturnItemDTOs();
-		
+
+		final Set<MRNReturnItem> mrnReturnItems = new HashSet<>();
+		final List<MRNReturnItemDTO> mrnReturnItemDTOs = result.getDtoEntity().getMrnReturnItemDTOs();
+
 		if (mrnReturnItemDTOs != null && mrnReturnItemDTOs.size() > 0) {
-			
-			Set<MRNReturnItem> currentMRNItems = result.getDomainEntity().getReturnItems();
-			
-			for ( MRNReturnItemDTO mrnReturnItemDTO : mrnReturnItemDTOs ) {
-				
+
+			final Set<MRNReturnItem> currentMRNItems = result.getDomainEntity().getReturnItems();
+
+			for ( final MRNReturnItemDTO mrnReturnItemDTO : mrnReturnItemDTOs ) {
+
 				MRNReturnItem mrnReturnItem = new MRNReturnItem();
-				
-				if ((currentMRNItems != null) && (currentMRNItems.size() > 0)) {
-					MRNReturnItem optional = currentMRNItems.stream().filter((x) -> x.getId().equals(mrnReturnItemDTO.getId())).findAny().orElseGet(MRNReturnItem :: new);
-					mrnReturnItem = optional; 
+
+				if (currentMRNItems != null && currentMRNItems.size() > 0) {
+					final MRNReturnItem optional = currentMRNItems.stream().filter((x) -> x.getId().equals(mrnReturnItemDTO.getId())).findAny().orElseGet(MRNReturnItem :: new);
+					mrnReturnItem = optional;
 				} else {
 					mrnReturnItem = new MRNReturnItem();
 				}
-				
-			createMRNReturnItem(result, mrnReturnItemDTO, mrnReturnItem);
-			mrnReturnItems.add(mrnReturnItem);
+
+				createMRNReturnItem(result, mrnReturnItemDTO, mrnReturnItem);
+				mrnReturnItems.add(mrnReturnItem);
 			}
 		}
-	result.getDomainEntity().setReturnItems(mrnReturnItems);
+		result.getDomainEntity().setReturnItems(mrnReturnItems);
 	}
-	
+
 	private void createMRNReturnItem(MRNReturnResult result, MRNReturnItemDTO mrnReturnItemDTO, MRNReturnItem mrnReturnItem) {
-		
+
 		if (mrnReturnItemDTO.getMrnItemId() != null) {
 			mrnReturnItem.setMrnItem(mrnItemDao.findOne(mrnReturnItemDTO.getMrnItemId()));
 		}
-		
-		mrnReturnItem.setMrnReturn(result.getDomainEntity()); 
+
+		mrnReturnItem.setMrnReturn(result.getDomainEntity());
 		mrnReturnItem.setMrnItemCurrentQuantity(mrnReturnItemDTO.getItemQuantity());
 		mrnReturnItem.setReturnQuantity(mrnReturnItemDTO.getItemReturnQuantity());
 		mrnReturnItem.setDescription(mrnReturnItemDTO.getDescription());
 		if(result.getDomainEntity().getMrnReturnStatus().equals(MRNReturnStatus.APPROVED)){
-			MRNItem mrnItem=mrnItemDao.findOne(mrnReturnItem.getMrnItem().getId());
-			BigDecimal mrnitemRemainingQuntity=mrnReturnItem.getMrnItemCurrentQuantity().subtract(mrnReturnItem.getReturnQuantity());
+			final MRNItem mrnItem=mrnItemDao.findOne(mrnReturnItem.getMrnItem().getId());
+			final BigDecimal mrnitemRemainingQuntity=mrnReturnItem.getMrnItemCurrentQuantity().subtract(mrnReturnItem.getReturnQuantity());
 			mrnItem.setRemainQuantity(mrnitemRemainingQuntity);
 			mrnItemDao.save(mrnItem);
 		}
@@ -206,39 +207,60 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	private MRNReturn findEntityById(Integer id) throws Exception {
 		return mrnReturnDao.findOne(id);
 	}
-	
+
 	private MRNReturnDTO findDTOById(Integer id) throws Exception {
 		return MRNReturnMapper.getInstance().domainToDto(findEntityById(id));
 	}
 	@Override
 	public MRNReturnResult delete(Integer id) throws Exception {
-		MRNReturnResult result = new MRNReturnResult(null, null);
+		final MRNReturnResult result = new MRNReturnResult(null, null);
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("MRN Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("MRN Deleted Unsuccessful. ".concat(ex.getMessage()));
 		}
 		return result;
 	}
-	
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public MRNReturnResult deleteMultiple(Integer[] ids) throws Exception {
+		final MRNReturnResult result = new MRNReturnResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				deleteEntityById(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("MRN Return(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("MRN Return(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void deleteEntityById(Integer id) throws Exception {
 		mrnReturnDao.delete(id);
-	} 
+	}
 
 
 	@Override
 	public MRNReturnResult findById(Integer id) throws Exception {
-		MRNReturnResult result = new MRNReturnResult(null, null);
+		final MRNReturnResult result = new MRNReturnResult(null, null);
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("MRN Found.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("Error Occurred! MRN NOT Found.".concat(ex.getMessage()));
@@ -247,20 +269,20 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 	}
 
 	public MRNReturnResult statusChange(Integer id, MRNReturnStatus status)  {
-		MRNReturnResult result = new MRNReturnResult(null, null);
+		final MRNReturnResult result = new MRNReturnResult(null, null);
 		try {
-			MRNReturnDTO dto=findDTOById(id);
+			final MRNReturnDTO dto=findDTOById(id);
 			dto.setMrnReturnStatus(status);
-			MRNReturn domain = findEntityById(dto.getId());
-			String  previousStatus=domain.getMrnReturnStatus().getName();
+			final MRNReturn domain = findEntityById(dto.getId());
+			final String  previousStatus=domain.getMrnReturnStatus().getName();
 			result.setDtoEntity(dto);
 			//result.setDomainEntity(domain);
 			update(result.getDtoEntity());
-		result.addToMessageList("MRN Return Status Updated Successfully. "+previousStatus+" --> "+ status.getName());
-		} catch (ObjectOptimisticLockingFailureException ex) {
+			result.addToMessageList("MRN Return Status Updated Successfully. "+previousStatus+" --> "+ status.getName());
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("MRN Return Already updated. Please Reload MRN Return.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -277,15 +299,15 @@ public class MRNReturnServiceImpl implements MRNReturnService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = mrnReturnDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<MRNReturn> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<MRNReturn> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = mrnReturnDao.findAll(input, specification);
 		} else {
-			Specification<MRNReturn> specification = (root, query, cb) -> cb.and(
+			final Specification<MRNReturn> specification = (root, query, cb) -> cb.and(
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()) );
 			domainOut = mrnReturnDao.findAll(input, specification);
 		}
-		DataTablesOutput<MRNReturnDTO> out = MRNReturnMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<MRNReturnDTO> out = MRNReturnMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 

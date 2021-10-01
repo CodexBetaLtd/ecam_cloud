@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h4 class="modal-title"><span th:text="#{customer.select.modal}"/></h4>
+    <h4 class="modal-title"><span th:text="#{customer.select.modal}"></span></h4>
 </div>
 
 <div class="modal-body">
@@ -11,10 +11,9 @@
            id="tbl_customer">
         <thead>
         <tr>
-            <th><span th:text="#{global.symbol.count}"/></th>
-            <th><span th:text="#{customer.select.modal.name}"/></th>
-            <th><span th:text="#{customer.select.modal.address}"/></th>
-            <th class="hidden-xs"><span th:text="#{global.keyword.more}"/></th>
+            <th><span th:text="#{global.symbol.count}"></span></th>
+            <th><span th:text="#{customer.select.modal.name}"></span></th>
+            <th><span th:text="#{customer.select.modal.address}"></span></th>
         </tr>
         </thead>
         <tbody>

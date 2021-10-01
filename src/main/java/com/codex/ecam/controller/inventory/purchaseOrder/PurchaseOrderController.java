@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.inventory.purchaseOrder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.codex.ecam.constants.*;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.result.RestResult;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.RFQResult;
@@ -35,18 +37,25 @@ public class PurchaseOrderController {
 
 	@Autowired
 	private PurchaseOrderService purchaseOrderService;
+
 	@Autowired
 	private AssetService assetService;
+
 	@Autowired
 	private AccountService accountService;
+
 	@Autowired
 	private BusinessService businessService;
+
 	@Autowired
 	private ChargeDepartmentService chargeDeparmentService;
+
 	@Autowired
 	private CountryService countryService;
+
 	@Autowired
 	private CurrencyService currencyService;
+
 	@Autowired
 	private UserService userService;
 
@@ -77,7 +86,7 @@ public class PurchaseOrderController {
 	public String getAssetSelectView(Model model) {
 		return "inventory/purchaseorder/modal/asset-modal";
 	}
-	
+
 	@RequestMapping(value = "/poTaxView", method = RequestMethod.GET)
 	public String getTaxSelectView(Model model) {
 		return "inventory/purchaseorder/modal/tax-select-modal";
@@ -122,7 +131,7 @@ public class PurchaseOrderController {
 			setCommonData(model,  purchaseOrderService.createNewPurchaseorder().getDtoEntity());
 
 			return "inventory/purchaseorder/add-view";
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/purchaseorder/index";
 		}
@@ -131,22 +140,22 @@ public class PurchaseOrderController {
 	@RequestMapping(value = "/addfromrfq", method = RequestMethod.GET)
 	public @ResponseBody RFQResult generatePOFromRFQItems(Model model, RedirectAttributes ra, @ModelAttribute("rfqItemIds") final String rfqItemIds,@ModelAttribute("supplierIds") final String supplierIds) {
 		RFQResult rfqResult=null;
-		if ((rfqItemIds != null) && (supplierIds != null)) { 
-			 rfqResult  = purchaseOrderService.createPurchaseOrderFromRFQItems(rfqItemIds,supplierIds);
+		if (rfqItemIds != null && supplierIds != null) {
+			rfqResult  = purchaseOrderService.createPurchaseOrderFromRFQItems(rfqItemIds,supplierIds);
 
 		}
-		
-	return rfqResult;
+
+		return rfqResult;
 	}
 
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String edit(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			PurchaseOrderDTO purchaseOrder = purchaseOrderService.findById(id);
+			final PurchaseOrderDTO purchaseOrder = purchaseOrderService.findById(id);
 			setCommonData(model, purchaseOrder);
 
 			return "inventory/purchaseorder/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 
 			return "redirect:/purchaseorder/index";
@@ -158,7 +167,7 @@ public class PurchaseOrderController {
 
 		PurchaseOrderResult result;
 
-		if ((purchaseOrder.getId() != null) && (purchaseOrder.getId() > 0)) {
+		if (purchaseOrder.getId() != null && purchaseOrder.getId() > 0) {
 			result = purchaseOrderService.update(purchaseOrder);
 		} else {
 			result = purchaseOrderService.save(purchaseOrder);
@@ -175,7 +184,7 @@ public class PurchaseOrderController {
 
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
-		PurchaseOrderResult result = purchaseOrderService.delete(id);
+		final PurchaseOrderResult result = purchaseOrderService.delete(id);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
 		} else {
@@ -183,10 +192,10 @@ public class PurchaseOrderController {
 		}
 		return "redirect:/purchaseorder/index";
 	}
-	
+
 	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)
 	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
-		RestResult<String> result = new RestResult<>();
+		final RestResult<String> result = new RestResult<>();
 		result.setData(purchaseOrderService.getNextCode(businessId).toString());
 
 		return result ;
@@ -195,30 +204,30 @@ public class PurchaseOrderController {
 
 	@RequestMapping(value = "/statusChange", method = RequestMethod.GET)
 	public String purchaseOrderStatusChange(Integer id, PurchaseOrderStatus status, Model model, RedirectAttributes ra) throws Exception {
-		PurchaseOrderResult result= purchaseOrderService.statusChange(id, status);
+		final PurchaseOrderResult result= purchaseOrderService.statusChange(id, status);
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, result.getDtoEntity());
 		return "inventory/purchaseorder/add-view";
 	}
-	
+
 	@RequestMapping(value = "/download-file", method = RequestMethod.GET)
 	public void  downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		purchaseOrderService.purchaseOrderFileDownload(id,response);
 	}
-	
+
 	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
 	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData, @RequestParam("fileRefId")String refId) throws Exception {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add(fileData.getContentType());
 		list.add(purchaseOrderService.purchaseOrderFileUpload(fileData,refId));
 		return list;
 	}
-	
+
 	@RequestMapping(value = "/delete-file", method = RequestMethod.GET)
 	public void deleteFile(Model model,@RequestParam("fileRefId")Integer refId) throws Exception {
 		purchaseOrderService.purchaseOrderFileDelete(refId);
@@ -227,11 +236,31 @@ public class PurchaseOrderController {
 	@RequestMapping(value = "/generatePoFromMrn", method = RequestMethod.GET)
 	public @ResponseBody MRNResult generateAodFromMrn(String ids, Integer mrnId) throws Exception {
 		MRNResult result = null;
-		if ((mrnId != null) && (mrnId > 0)) { 
-			result = purchaseOrderService.generatePoFromMrn(ids, mrnId); 
+		if (mrnId != null && mrnId > 0) {
+			result = purchaseOrderService.generatePoFromMrn(ids, mrnId);
 		}
 		return result;
 	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final PurchaseOrderResult result = purchaseOrderService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Purchase Order already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/user/home-view";
+	}
+
 	private void setCommonData(Model model, PurchaseOrderDTO purchaseOrder) throws Exception {
 		model.addAttribute("purchaseOrder", purchaseOrder);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());

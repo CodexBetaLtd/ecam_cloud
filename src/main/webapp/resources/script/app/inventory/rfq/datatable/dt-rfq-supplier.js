@@ -98,8 +98,10 @@ var dtRFQSupplier = function () {
     });
 
     var initRFQSupplierTable = function () {
+        
         var URL = "../restapi/supplier/tabledata";
-        var oTable = $('#supplier_select_tbl').dataTable({
+        
+        var oTable = $('#supplier_select_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -110,21 +112,16 @@ var dtRFQSupplier = function () {
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             },
             {data: 'name'},
-                {data: 'code'},
-                {data : 'businessName'}],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [row.id,row.name,row.address,row.city,row.province,row.postalCode,row.countryName];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("TabSupplier.addRFQSupplier", data, vars);
-                }
-            }],
+            {data: 'code'},
+            {data : 'businessName'}
+            ],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -143,7 +140,30 @@ var dtRFQSupplier = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "TabSupplier.addRFQSupplier",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    }, {
+                        sName : "address"
+                    }, {
+                        sName : "city"
+                    }, {
+                        sName : "province"
+                    }, {
+                        sName : "postalCode"
+                    }, {
+                        sName : "countryName"
+                    },
+                ],
+            },
         });
         $('#supplier_select_tbl.dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#supplier_select_tbl.dataTables_length select').addClass("m-wrap small");
@@ -155,9 +175,7 @@ var dtRFQSupplier = function () {
         });
 		
 	};
-
-
-
+	
     return {
 
     	init: function () {

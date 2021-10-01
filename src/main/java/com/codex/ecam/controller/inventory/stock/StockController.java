@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.inventory.stock;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,141 +26,141 @@ import java.util.List;
 @RequestMapping(StockController.REQUEST_MAPPING_URL)
 public class StockController {
 
-    public static final String REQUEST_MAPPING_URL = "/stock";
+	public static final String REQUEST_MAPPING_URL = "/stock";
 
-    @Autowired
-    private StockService stockService;
+	@Autowired
+	private StockService stockService;
 
 	@Autowired
 	private BusinessService businessService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("stock", new StockViewFilterDTO());
-        model.addAttribute("stockList", new ArrayList<StockDTO>());
-        return "inventory/stock/home-view";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String index(Model model) {
+		model.addAttribute("stock", new StockViewFilterDTO());
+		model.addAttribute("stockList", new ArrayList<StockDTO>());
+		return "inventory/stock/home-view";
+	}
 
-    @RequestMapping(value = "/index", method = RequestMethod.GET)
-    public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
-        model.addAttribute("stock", new StockViewFilterDTO());
-        model.addAttribute("stockList", new ArrayList<StockDTO>());
-        return "inventory/stock/home-view";
-    }
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
+		model.addAttribute("stock", new StockViewFilterDTO());
+		model.addAttribute("stockList", new ArrayList<StockDTO>());
+		return "inventory/stock/home-view";
+	}
 
-    @RequestMapping(value = "/stockLedger", method = RequestMethod.GET)
-    public String indexStockLedger(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
-        model.addAttribute("success", success);
-        model.addAttribute("error", error);
-        return "inventory/stockLedger/home-view";
-    }
-
-
-    /*********************************************************************
-     * Stock Modal Views
-     *********************************************************************/
-
-    @RequestMapping(value = "/partView", method = RequestMethod.GET)
-    public String getAssetView(Model model) {
-        return "inventory/stock/modal/part-select-modal";
-    }
-
-    @RequestMapping(value = "/siteView", method = RequestMethod.GET)
-    public String getSiteView(Model model) {
-        return "general/modal/dt-modal-site";
-    }
-
-    @RequestMapping(value = "/warehouseView", method = RequestMethod.GET)
-    public String getWarehouseView(Model model) {
-        return "inventory/stock/modal/warehouse-select-modal";
-    }
-
-    @RequestMapping(value = "/itemView", method = RequestMethod.GET)
-    public String getItemView(Model model) {
-        return "general/modal/dt-modal-item";
-    }
+	@RequestMapping(value = "/stockLedger", method = RequestMethod.GET)
+	public String indexStockLedger(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
+		model.addAttribute("success", success);
+		model.addAttribute("error", error);
+		return "inventory/stockLedger/home-view";
+	}
 
 
-    /*********************************************************************
-     * Stock Functions
-     *********************************************************************/
+	/*********************************************************************
+	 * Stock Modal Views
+	 *********************************************************************/
 
-    @RequestMapping(value = {"/getStock"}, method = {RequestMethod.GET, RequestMethod.POST}, params = "cancel")
-    public String cancel(@ModelAttribute("stockViewFilterDTO") @Valid StockViewFilterDTO stockViewFilterDTO, Model model) throws Exception {
-        model.addAttribute("stock", new StockViewFilterDTO());
-        model.addAttribute("stockList", new ArrayList<StockDTO>());
-        return "inventory/stock/home-view";
-    }
+	@RequestMapping(value = "/partView", method = RequestMethod.GET)
+	public String getAssetView(Model model) {
+		return "inventory/stock/modal/part-select-modal";
+	}
 
-    @RequestMapping(value = "/getStock", method = RequestMethod.POST, params = "init")
-    public String init(Model model) throws Exception {
-        model.addAttribute("stock", new StockViewFilterDTO());
-        model.addAttribute("stockList", new ArrayList<StockDTO>());
-        return "inventory/stock/add-view";
-    }
+	@RequestMapping(value = "/siteView", method = RequestMethod.GET)
+	public String getSiteView(Model model) {
+		return "general/modal/dt-modal-site";
+	}
 
-    @RequestMapping(value = "/getStock", method = RequestMethod.POST, params = "view")
-    public String find(@ModelAttribute("stockViewFilterDTO") @Valid StockViewFilterDTO stockViewFilterDTO, Model model) throws Exception {
-        List<StockDTO> stockDetailList = stockService.getStockDetailList(stockViewFilterDTO);
-        model.addAttribute("stock", stockViewFilterDTO);
-        model.addAttribute("stockList", stockDetailList);
-        return "inventory/stock/add-view";
-    }
+	@RequestMapping(value = "/warehouseView", method = RequestMethod.GET)
+	public String getWarehouseView(Model model) {
+		return "inventory/stock/modal/warehouse-select-modal";
+	}
+
+	@RequestMapping(value = "/itemView", method = RequestMethod.GET)
+	public String getItemView(Model model) {
+		return "general/modal/dt-modal-item";
+	}
+
+
+	/*********************************************************************
+	 * Stock Functions
+	 *********************************************************************/
+
+	@RequestMapping(value = {"/getStock"}, method = {RequestMethod.GET, RequestMethod.POST}, params = "cancel")
+	public String cancel(@ModelAttribute("stockViewFilterDTO") @Valid StockViewFilterDTO stockViewFilterDTO, Model model) throws Exception {
+		model.addAttribute("stock", new StockViewFilterDTO());
+		model.addAttribute("stockList", new ArrayList<StockDTO>());
+		return "inventory/stock/home-view";
+	}
+
+	@RequestMapping(value = "/getStock", method = RequestMethod.POST, params = "init")
+	public String init(Model model) throws Exception {
+		model.addAttribute("stock", new StockViewFilterDTO());
+		model.addAttribute("stockList", new ArrayList<StockDTO>());
+		return "inventory/stock/add-view";
+	}
+
+	@RequestMapping(value = "/getStock", method = RequestMethod.POST, params = "view")
+	public String find(@ModelAttribute("stockViewFilterDTO") @Valid StockViewFilterDTO stockViewFilterDTO, Model model) throws Exception {
+		final List<StockDTO> stockDetailList = stockService.getStockDetailList(stockViewFilterDTO);
+		model.addAttribute("stock", stockViewFilterDTO);
+		model.addAttribute("stockList", stockDetailList);
+		return "inventory/stock/add-view";
+	}
 
 	@RequestMapping(value = "/notification-add-modal-view", method = RequestMethod.GET)
-    public String notificationAddView(Model model) {
-        return "inventory/stock/modal/notification-add-modal";
-    }
+	public String notificationAddView(Model model) {
+		return "inventory/stock/modal/notification-add-modal";
+	}
 
 	@RequestMapping(value = "/user-select-modal-view", method = RequestMethod.GET)
-	public String getUserSelectView(Model model) {
+	public String getStockSelectView(Model model) {
 		return "inventory/stock/modal/user-select-modal";
 	}
 
-    @RequestMapping(value = "/item", method = RequestMethod.GET)
-    public String editForm(Integer itemId, String itemName, Model model, RedirectAttributes ra) {
-        try {
-            StockViewFilterDTO stockViewFilterDTO = new StockViewFilterDTO();
-            stockViewFilterDTO.setItemName(itemName);
-            stockViewFilterDTO.setItemId(itemId);
-            List<StockDTO> stockDetailList = stockService.getStockDetailList(stockViewFilterDTO);
-            model.addAttribute("stock", stockViewFilterDTO);
-            model.addAttribute("stockList", stockDetailList);
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
-        }
-        return "inventory/stock/add-view";
+	@RequestMapping(value = "/item", method = RequestMethod.GET)
+	public String editForm(Integer itemId, String itemName, Model model, RedirectAttributes ra) {
+		try {
+			final StockViewFilterDTO stockViewFilterDTO = new StockViewFilterDTO();
+			stockViewFilterDTO.setItemName(itemName);
+			stockViewFilterDTO.setItemId(itemId);
+			final List<StockDTO> stockDetailList = stockService.getStockDetailList(stockViewFilterDTO);
+			model.addAttribute("stock", stockViewFilterDTO);
+			model.addAttribute("stockList", stockDetailList);
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
+		}
+		return "inventory/stock/add-view";
 
-    }
+	}
 
-    @RequestMapping(value = "/ledger-modal-view", method = RequestMethod.GET)
-    public String getStockList(Model model, RedirectAttributes ra) {
-        return "inventory/stock/modal/stock-ledger-view-modal";
-    }
+	@RequestMapping(value = "/ledger-modal-view", method = RequestMethod.GET)
+	public String getStockList(Model model, RedirectAttributes ra) {
+		return "inventory/stock/modal/stock-ledger-view-modal";
+	}
 
-    /*********************************************************************
-     * Stock History Functions
-     *********************************************************************/
+	/*********************************************************************
+	 * Stock History Functions
+	 *********************************************************************/
 
-    @RequestMapping(value = "/stockHistory", method = RequestMethod.GET)
-    public String init(Integer stockId, Model model, RedirectAttributes ra) {
-        try {
-            List<StockHistoryDTO> stockHistoryDTOs;
-            stockHistoryDTOs = stockService.findStockHistoryByStock(stockId);
-            model.addAttribute("stockHistory", new StockHistoryDTO());
-            model.addAttribute("stockHistoryList", stockHistoryDTOs);
-        } catch (Exception e) {
-            ra.addFlashAttribute("error", new ArrayList<String>().add("Error Occurred. Please Try again."));
-        }
-        return "inventory/stockHistory/add-view";
-    }
+	@RequestMapping(value = "/stockHistory", method = RequestMethod.GET)
+	public String init(Integer stockId, Model model, RedirectAttributes ra) {
+		try {
+			List<StockHistoryDTO> stockHistoryDTOs;
+			stockHistoryDTOs = stockService.findStockHistoryByStock(stockId);
+			model.addAttribute("stockHistory", new StockHistoryDTO());
+			model.addAttribute("stockHistoryList", stockHistoryDTOs);
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<String>().add("Error Occurred. Please Try again."));
+		}
+		return "inventory/stockHistory/add-view";
+	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("stock") @Valid StockDTO stock, Model model) throws Exception {
 
-		StockResult result = stockService.save(stock);
+		final StockResult result = stockService.save(stock);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -171,12 +172,12 @@ public class StockController {
 		return "inventory/stock/add-view";
 	}
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String addForm(Model model, RedirectAttributes ra) {
+	@RequestMapping(value = "/add", method = RequestMethod.GET)
+	public String addForm(Model model, RedirectAttributes ra) {
 		try {
 			setCommonData(model, new StockDTO());
 			return "inventory/stock/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error While Loading Initial Data."));
 			return "redirect:/stock/index";
 		}
@@ -185,10 +186,10 @@ public class StockController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			StockDTO dto = stockService.findById(id);
+			final StockDTO dto = stockService.findById(id);
 			setCommonData(model, dto);
 			return "inventory/stock/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/stock/index";
 		}
@@ -197,7 +198,7 @@ public class StockController {
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
 	public String delete(Integer id, Model model, RedirectAttributes ra) {
 
-		StockResult result = stockService.delete(id);
+		final StockResult result = stockService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -206,33 +207,53 @@ public class StockController {
 		}
 		return "redirect:/stock/index";
 	}
-	
+
 	@RequestMapping(value = "/createstock", method = RequestMethod.GET)
 	public String createStock(Integer partId, Model model, RedirectAttributes ra) {
 		try {
-			StockDTO dto = stockService.createNewStock(partId);
+			final StockDTO dto = stockService.createNewStock(partId);
 			setCommonData(model, dto);
 			return "inventory/stock/add-view";
-		} catch (Exception e) {
-			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
-			return "redirect:/stock/index";
-		}
-	}
-	@RequestMapping(value = "/createrefubishstock", method = RequestMethod.GET)
-	public String createRefurbishStock(Integer partId, Model model, RedirectAttributes ra) {
-		try {
-			StockDTO dto = stockService.createNewStock(partId);
-			setCommonData(model, dto);
-			return "inventory/stock/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
 			return "redirect:/stock/index";
 		}
 	}
 
-    private void setCommonData(Model model, StockDTO stock) {
-        model.addAttribute("stock", stock);
-        model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+	@RequestMapping(value = "/createrefubishstock", method = RequestMethod.GET)
+	public String createRefurbishStock(Integer partId, Model model, RedirectAttributes ra) {
+		try {
+			final StockDTO dto = stockService.createNewStock(partId);
+			setCommonData(model, dto);
+			return "inventory/stock/add-view";
+		} catch (final Exception e) {
+			ra.addFlashAttribute("error", new ArrayList<>().add("Error occured. Please Try again."));
+			return "redirect:/stock/index";
+		}
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final StockResult result = stockService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Stock already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "inventory/stock/home-view";
+	}
+
+	private void setCommonData(Model model, StockDTO stock) {
+		model.addAttribute("stock", stock);
+		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("stockTypes", StockType.getPartTypes());
 	}
 

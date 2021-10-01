@@ -65,6 +65,27 @@ public class AssetModelServiceImpl implements AssetModelService{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AssetModelResult deleteMultiple(Integer[] ids) throws Exception {
+		final AssetModelResult result = new AssetModelResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				assetModelDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Asset Model(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Asset Model(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public AssetModelResult save(AssetModelDTO dto) throws Exception {
 		final AssetModelResult result = createAssetModelResult(dto);
 		try{

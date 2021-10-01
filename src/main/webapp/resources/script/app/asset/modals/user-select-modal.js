@@ -123,7 +123,9 @@
 
     var initUserSelectDataTable = function ( bizId ) {
 
-        var oTable = $('#tbl-user-select').dataTable({
+        $('#tbl-user-select').dataTable().fnDestroy();
+        
+        var oTable = $('#tbl-user-select').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -133,6 +135,7 @@
             columns: [{
                 orderable: false,
                 searchable: false,
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -149,14 +152,7 @@
                 {
                 	data: 'businessName'
                 }],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [null, row.id, 0, row.fullName, row.emailAddress];
-                	return ButtonUtil.getCommonBtnSelectWithMultipleVars('TabPersonal.addUser',data, vars );
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -174,7 +170,22 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "UserSelectModel.setData",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName"
+                    },{
+                        sName : "emailAddress"
+                    }
+                ],
+            },
         });
         $('#tbl-user-select_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -190,11 +201,20 @@
         });
 
     };
+    
+    function setData(id, name, email ){
+        TabPersonal.addUser('', id, 0, name, email);
+        $("#common-modal").modal('toggle');
+    };
 
     return {
         //main function to initiate template pages
         init: function ( bizId ) {
             initUserSelectDataTable( bizId );
+        },
+        
+        setData: function (id, name, email ) {
+            setData(id, name, email );
         }
     };
 }();

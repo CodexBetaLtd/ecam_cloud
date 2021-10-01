@@ -115,7 +115,7 @@ var AssetEventTypeDataTable = function () {
 
 
     var runDataTable = function (bizId) {
-        var oTable = $('#asset-event-type-tbl').dataTable({
+        var oTable = $('#asset-event-type-tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -125,7 +125,7 @@ var AssetEventTypeDataTable = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "5%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -134,13 +134,7 @@ var AssetEventTypeDataTable = function () {
 	            {data: 'description'},
 	            {data: 'code'},
             ],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                	return ButtonUtil.getCommonBtnSelect('AssetEventAddModal.setAssetEventType', data, rowData.name);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -158,7 +152,20 @@ var AssetEventTypeDataTable = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetEventAddModal.setAssetEventType",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
 
         $('#asset-event-type-tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

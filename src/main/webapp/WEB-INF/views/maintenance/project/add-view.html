@@ -39,7 +39,7 @@
     <div class="main-content">
     
     	<!-- start : MODALS  -->
-		<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+		<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 		<!-- end : MODALS  -->
 
         <div class="container">
@@ -208,18 +208,18 @@
 <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 <script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/init.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/maintenance/project/add-view.js}"></script>

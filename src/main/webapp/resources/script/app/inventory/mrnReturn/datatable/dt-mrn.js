@@ -115,7 +115,8 @@ var MRNReturnMRN = function () {
     });
 
     var dtMRN = function () {
-        var oTable = $('#tbl_mrn_list').dataTable({
+        
+        var oTable = $('#tbl_mrn_list').DataTable({
         	responsive: true,
             "processing": true,
             "serverSide": true,
@@ -126,21 +127,25 @@ var MRNReturnMRN = function () {
             columns: [
                 {
                     orderable: false,
-                    searchable: false, 
+                    searchable: false,
+                    width: "10%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     },
                     responsivePriority: 1 
                 }, {
                     data: 'mrnNo',
+                    width: "30%",
                     responsivePriority: 1
                 },{
                     orderable: false,
                     searchable: false,
                     data: 'mrnStatus',
+                    width: "30%",
                     responsivePriority: 2 
                 }, {
                     data: 'date',
+                    width: "30%",
                     render: function (data) {
                         if (data === null) return "";
                         var date = new Date(data);
@@ -149,17 +154,7 @@ var MRNReturnMRN = function () {
                     responsivePriority: 2 
 
                 }],
-            aoColumnDefs: [{ 
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, result,full, meta) {
-                	
-                    var vars = [result.id, result.mrnNo];
-                    console.log(vars)
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars("MRNReturnMRN.setMRN", data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -168,12 +163,25 @@ var MRNReturnMRN = function () {
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[4, 'desc']],
+            aaSorting: [[1, 'desc']],
             aLengthMenu: [[5, 10, 15, 20],
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "MRNReturnMRN.setMRN",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "mrnNo"
+                    },
+                ],
+            },
         });
         $('#tbl_mrn_list_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#tbl_mrn_list_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -186,9 +194,9 @@ var MRNReturnMRN = function () {
     };
     
     var setMRN = function (id, no) {
-    	console.log(id)
         $("#mrnId").val(id);
         $("#mrnNo").val(no);
+        $("#master-modal-datatable").modal('toggle');
     };
 
     return {

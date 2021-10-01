@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.maintenance.miscellaneousExpense.MiscellaneousExpenseTypeDTO;
@@ -19,6 +19,8 @@ public interface MiscellaneousExpenseTypeService {
 	MiscellaneousExpenseTypeResult save(MiscellaneousExpenseTypeDTO miscellaneousExpenseTypeDTO) throws Exception;
 
 	List<MiscellaneousExpenseTypeDTO> findAll();
+
+	MiscellaneousExpenseTypeResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 }

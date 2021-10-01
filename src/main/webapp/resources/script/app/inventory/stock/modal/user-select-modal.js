@@ -119,7 +119,8 @@
     });
 
     var initDataTable = function (tableId, bizId, method) { 
-        var oTable = $('#'+ tableId ).dataTable({
+        
+        var oTable = $('#'+ tableId ).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -129,6 +130,7 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -141,19 +143,8 @@
                 },
                 {
                     data: 'personalCode'
-                }, { 
-                    data: 'id'
                 }],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	method
-                	var vars = [data, row.fullName]; 
-                	return ButtonUtil.getCommonBtnSelectWithMultipleVars( method, data, vars );
-//                    return "<a id='link" + data + "'data-dismiss='modal' onclick='PersonnelTab.selectUser(null," + row.id + ",0,\"" + row.fullName + "\",\"" + row.emailAddress + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -171,7 +162,20 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: method,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullName"
+                    }
+                ],
+            },
         });
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

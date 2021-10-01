@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -110,7 +111,7 @@ public class RFQServiceImpl implements RFQService {
 
 	@Override
 	public RFQDTO findById(Integer id) throws Exception {
-		RFQ domain = rfqDao.findOne(id);
+		final RFQ domain = rfqDao.findOne(id);
 		if (domain != null) {
 			return RFQMapper.getInstance().domainToDto(domain);
 		}
@@ -121,11 +122,11 @@ public class RFQServiceImpl implements RFQService {
 	public RFQRepDTO findRFQRepDTOById(Integer id) throws Exception {
 		RFQRepDTO repDTO = null;
 		try {
-			RFQ domain = rfqDao.findOne(id);
+			final RFQ domain = rfqDao.findOne(id);
 			if (domain != null) {
 				repDTO = RFQReportMapper.getInstance().domainToRepDTO(domain);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return repDTO;
@@ -133,13 +134,13 @@ public class RFQServiceImpl implements RFQService {
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public RFQResult update(RFQDTO dto) {
-		RFQResult result = new RFQResult(null, dto);
+		final RFQResult result = new RFQResult(null, dto);
 		try {
-			RFQ domain = rfqDao.findOne(dto.getId());
+			final RFQ domain = rfqDao.findOne(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("RFQ Updated Successfully.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
 		}
@@ -157,14 +158,14 @@ public class RFQServiceImpl implements RFQService {
 
 	@Override
 	public RFQResult save(RFQDTO dto) {
-		RFQResult result = createPartResult(dto);
+		final RFQResult result = createPartResult(dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("RFQ Already updated. Please Reload RFQ.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -175,7 +176,7 @@ public class RFQServiceImpl implements RFQService {
 
 	private RFQResult createPartResult(RFQDTO dto) {
 		RFQResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new RFQResult(rfqDao.findOne(dto.getId()), dto);
 		} else {
 			result = new RFQResult(new RFQ(), dto);
@@ -200,12 +201,12 @@ public class RFQServiceImpl implements RFQService {
 			setRFQData(result);
 			rfqDao.save(result.getDomainEntity());
 			result.setDtoEntity(findById(result.getDomainEntity().getId()));
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
 			result.addToErrorList("RFQ Already updated. Please Reload RFQ.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -216,16 +217,37 @@ public class RFQServiceImpl implements RFQService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public RFQResult delete(Integer id) {
-		RFQResult result = new RFQResult(null, null);
+		final RFQResult result = new RFQResult(null, null);
 		try {
 			rfqDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("RFQ Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("Error Occurred! RFQ Deleted Unsuccessful.".concat(ex.getMessage()));
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public RFQResult deleteMultiple(Integer[] ids) throws Exception {
+		final RFQResult result = new RFQResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				rfqDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("RFQ(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("RFQ(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
 		}
 		return result;
 	}
@@ -238,16 +260,16 @@ public class RFQServiceImpl implements RFQService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = rfqDao.findAll(dataTablesInput);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<RFQ> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<RFQ> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = rfqDao.findAll(dataTablesInput, specification);
 		} else {
-			Specification<RFQ> specification = (root, query, cb) -> cb.and(
+			final Specification<RFQ> specification = (root, query, cb) -> cb.and(
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
 			domainOut = rfqDao.findAll(dataTablesInput, specification);
 		}
-		DataTablesOutput<RFQDTO> out = RFQMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<RFQDTO> out = RFQMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -291,13 +313,13 @@ public class RFQServiceImpl implements RFQService {
 	// }
 
 	private void setRFQFiles(RFQResult result) throws Exception {
-		Set<RFQFile> rfqFiles = new HashSet<>();
+		final Set<RFQFile> rfqFiles = new HashSet<>();
 
-		if ((result.getDtoEntity().getRfqFileDTOs() != null) && (result.getDtoEntity().getRfqFileDTOs().size() > 0)) {
+		if (result.getDtoEntity().getRfqFileDTOs() != null && result.getDtoEntity().getRfqFileDTOs().size() > 0) {
 
-			Set<RFQFile> currentRfqFiles = result.getDomainEntity().getRfqFiles();
+			final Set<RFQFile> currentRfqFiles = result.getDomainEntity().getRfqFiles();
 
-			for (RFQFileDTO rfqFileDTO : result.getDtoEntity().getRfqFileDTOs()) {
+			for (final RFQFileDTO rfqFileDTO : result.getDtoEntity().getRfqFileDTOs()) {
 				RFQFile rfqFile;
 
 				if (rfqFileDTO.getId() != null) {
@@ -317,18 +339,18 @@ public class RFQServiceImpl implements RFQService {
 	}
 
 	private void setItems(RFQResult result) throws Exception {
-		List<RFQItem> items = new ArrayList<>();
+		final List<RFQItem> items = new ArrayList<>();
 
 		if (result.getDtoEntity().getItems() != null && result.getDtoEntity().getItems().size() > 0) {
 
-			List<RFQItem> currentItems = result.getDomainEntity().getRfqItems();
+			final List<RFQItem> currentItems = result.getDomainEntity().getRfqItems();
 
-			for (RFQItemDTO itemDTO : result.getDtoEntity().getItems()) {
+			for (final RFQItemDTO itemDTO : result.getDtoEntity().getItems()) {
 
 				RFQItem item;
 
 				if (currentItems != null && currentItems.size() > 0) {
-					Optional<RFQItem> optionalItem = currentItems.stream()
+					final Optional<RFQItem> optionalItem = currentItems.stream()
 							.filter((x) -> x.getId() == itemDTO.getItemId()).findAny();
 					if (optionalItem.isPresent()) {
 						item = optionalItem.get();
@@ -355,9 +377,9 @@ public class RFQServiceImpl implements RFQService {
 
 		if (dto.getItemPurchaseOrderItemId() != null && dto.getItemPurchaseOrderItemId() > 0) {
 
-			PurchaseOrderItem poItem = purchaseOrderItemDao.findOne(dto.getItemPurchaseOrderItemId());
+			final PurchaseOrderItem poItem = purchaseOrderItemDao.findOne(dto.getItemPurchaseOrderItemId());
 
-			PurchaseOrderItemRFQItem item = new PurchaseOrderItemRFQItem();
+			final PurchaseOrderItemRFQItem item = new PurchaseOrderItemRFQItem();
 			item.setPurchaseOrderItem(poItem);
 			item.setRfqItem(domain);
 			item.setIsDeleted(false);
@@ -380,15 +402,15 @@ public class RFQServiceImpl implements RFQService {
 	}
 
 	private void setSupplier(RFQResult result) {
-		Set<RFQSupplier> rfqSuppliers = new HashSet<>();
-		List<RFQSupplierDTO> rfqSupplierDTOs = result.getDtoEntity().getRfqSupplireDTOs();
+		final Set<RFQSupplier> rfqSuppliers = new HashSet<>();
+		final List<RFQSupplierDTO> rfqSupplierDTOs = result.getDtoEntity().getRfqSupplireDTOs();
 
-		if ((rfqSupplierDTOs != null) && (rfqSupplierDTOs.size() > 0)) {
-			Set<RFQSupplier> currentRFQSuppliers = result.getDomainEntity().getRfqSupplier();
+		if (rfqSupplierDTOs != null && rfqSupplierDTOs.size() > 0) {
+			final Set<RFQSupplier> currentRFQSuppliers = result.getDomainEntity().getRfqSupplier();
 			RFQSupplier rfqSupplier = new RFQSupplier();
 
-			for (RFQSupplierDTO rfqSupplierDTO : rfqSupplierDTOs) {
-				if ((currentRFQSuppliers != null) && (currentRFQSuppliers.size() > 0)) {
+			for (final RFQSupplierDTO rfqSupplierDTO : rfqSupplierDTOs) {
+				if (currentRFQSuppliers != null && currentRFQSuppliers.size() > 0) {
 					rfqSupplier = currentRFQSuppliers.stream().filter((x) -> x.getId().equals(rfqSupplierDTO.getId()))
 							.findAny().orElseGet(RFQSupplier::new);
 				} else {
@@ -427,15 +449,15 @@ public class RFQServiceImpl implements RFQService {
 	}
 
 	private void setRFQNotification(RFQResult result) throws Exception {
-		Set<RFQNotification> rfqNotifications = new HashSet<>();
-		List<RFQNotificationDTO> rfqNotificationDTOs = result.getDtoEntity().getNotificationDTOs();
+		final Set<RFQNotification> rfqNotifications = new HashSet<>();
+		final List<RFQNotificationDTO> rfqNotificationDTOs = result.getDtoEntity().getNotificationDTOs();
 
-		if ((rfqNotificationDTOs != null) && (rfqNotificationDTOs.size() > 0)) {
-			Set<RFQNotification> currentRFQtNotifications = result.getDomainEntity().getRfqNotifications();
+		if (rfqNotificationDTOs != null && rfqNotificationDTOs.size() > 0) {
+			final Set<RFQNotification> currentRFQtNotifications = result.getDomainEntity().getRfqNotifications();
 			RFQNotification rfqNotification = new RFQNotification();
 
-			for (RFQNotificationDTO rfqNotificationDTO : rfqNotificationDTOs) {
-				if ((currentRFQtNotifications != null) && (currentRFQtNotifications.size() > 0)) {
+			for (final RFQNotificationDTO rfqNotificationDTO : rfqNotificationDTOs) {
+				if (currentRFQtNotifications != null && currentRFQtNotifications.size() > 0) {
 					rfqNotification = currentRFQtNotifications.stream()
 							.filter((x) -> x.getId().equals(rfqNotificationDTO.getId())).findAny()
 							.orElseGet(RFQNotification::new);
@@ -464,8 +486,8 @@ public class RFQServiceImpl implements RFQService {
 	public RFQResult statusChange(Integer id, RFQStatus rfqStatus) {
 		RFQResult result = new RFQResult(null, null);
 		try {
-			RFQDTO rfqdto = findById(id);
-			RFQStatus rfqPreviousStatus = rfqdto.getRfqStatus();
+			final RFQDTO rfqdto = findById(id);
+			final RFQStatus rfqPreviousStatus = rfqdto.getRfqStatus();
 			if (rfqStatus != null) {
 				if (rfqStatus.equals(RFQStatus.SENT)) {
 					rfqdto.setRfqStatus(RFQStatus.SENT);
@@ -485,15 +507,15 @@ public class RFQServiceImpl implements RFQService {
 			result = update(rfqdto);
 			sendStatusChangeMail(result, rfqPreviousStatus);
 			return result;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	private void sendStatusChangeMail(RFQResult result, RFQStatus prestatus) {
-		List<RFQNotification> domainOut = rfqDao.findByNotificationById(result.getDtoEntity().getId());
-		for (RFQNotification notification : domainOut) {
+		final List<RFQNotification> domainOut = rfqDao.findByNotificationById(result.getDtoEntity().getId());
+		for (final RFQNotification notification : domainOut) {
 			if (notification.getUser() != null && notification.getNotifyOnStatusChannged()) {
 				rfqStatusChangeMail(result, prestatus, notification.getUser());
 			}
@@ -501,7 +523,7 @@ public class RFQServiceImpl implements RFQService {
 	}
 
 	private void rfqStatusChangeMail(RFQResult result, RFQStatus prestatus, User user) {
-		VelocityMail velocityMail = new VelocityMail();
+		final VelocityMail velocityMail = new VelocityMail();
 		velocityMail.getModel().put("rfqCode", result.getDtoEntity().getCode());
 		velocityMail.getModel().put("previousstatus", prestatus.getName());
 		velocityMail.getModel().put("currentstatus", result.getDtoEntity().getRfqStatus().getName());
@@ -513,15 +535,15 @@ public class RFQServiceImpl implements RFQService {
 
 	@Override
 	public RFQDTO createRFQFromPoItems(String poItemIds) {
-		RFQDTO dto = new RFQDTO();
-		List<RFQItemDTO> items = new ArrayList<>();
-		String[] ids = poItemIds.split(",");
+		final RFQDTO dto = new RFQDTO();
+		final List<RFQItemDTO> items = new ArrayList<>();
+		final String[] ids = poItemIds.split(",");
 
 		RFQItemDTO item;
 
-		for (String id : ids) {
+		for (final String id : ids) {
 			item = new RFQItemDTO();
-			PurchaseOrderItem poItem = purchaseOrderItemDao.findOne(Integer.parseInt(id));
+			final PurchaseOrderItem poItem = purchaseOrderItemDao.findOne(Integer.parseInt(id));
 			item.setItemAssetId(poItem.getAsset().getId());
 			item.setItemAssetName(poItem.getAsset().getName());
 			item.setItemQtyRequested(poItem.getQtyOnOrder());
@@ -544,7 +566,7 @@ public class RFQServiceImpl implements RFQService {
 		try {
 			amazonS3ObjectUtil.uploadS3Object(key, file);
 			return key;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -556,9 +578,9 @@ public class RFQServiceImpl implements RFQService {
 	@Override
 	public void rfqFileDownload(Integer id, HttpServletResponse response) throws Exception {
 		if (id != null) {
-			RFQFile file = rfqDao.findByFileId(id);
-			int index = file.getFileLocation().lastIndexOf("\\");
-			String fileName = file.getFileLocation().substring(index + 1);
+			final RFQFile file = rfqDao.findByFileId(id);
+			final int index = file.getFileLocation().lastIndexOf("\\");
+			final String fileName = file.getFileLocation().substring(index + 1);
 			amazonS3ObjectUtil.downloadToResponse(file.getFileLocation(), fileName, response);
 
 		}
@@ -567,11 +589,11 @@ public class RFQServiceImpl implements RFQService {
 
 	@Override
 	public void rfqFileDelete(Integer id) throws Exception {
-		String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+		final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 
-		RFQFile rfqFile = rfqDao.findByFileId(id);
-		String externalFilePath = uploadLocation + rfqFile.getFileLocation();
-		File file = new File(externalFilePath);
+		final RFQFile rfqFile = rfqDao.findByFileId(id);
+		final String externalFilePath = uploadLocation + rfqFile.getFileLocation();
+		final File file = new File(externalFilePath);
 		if (file.delete()) {
 			System.out.println("File deleted successfully");
 		} else {
@@ -582,9 +604,9 @@ public class RFQServiceImpl implements RFQService {
 
 	@Override
 	public MRNResult generateRFQFromMrn(String idStr, Integer mrnId) {
-		MRNResult result = new MRNResult(null, null);
-		MRN mrn = mrnDao.findOne(mrnId);
-		RFQDTO rfqDTO = new RFQDTO();
+		final MRNResult result = new MRNResult(null, null);
+		final MRN mrn = mrnDao.findOne(mrnId);
+		final RFQDTO rfqDTO = new RFQDTO();
 		rfqDTO.setRfqStatus(RFQStatus.DRAFT);
 		rfqDTO.setCode("");
 		rfqDTO.setIsDeleted(Boolean.FALSE);
@@ -595,12 +617,12 @@ public class RFQServiceImpl implements RFQService {
 			rfqDTO.setSiteId(mrn.getSite().getId());
 		}
 
-		List<RFQItemDTO> rfqItemDTOs = new ArrayList<>();
-		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt)
+		final List<RFQItemDTO> rfqItemDTOs = new ArrayList<>();
+		final List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt)
 				.collect(Collectors.toList());
-		for (Integer id : ids) {
-			MRNItem item = mrnItemDao.findOne(id);
-			RFQItemDTO itemDTO = new RFQItemDTO();
+		for (final Integer id : ids) {
+			final MRNItem item = mrnItemDao.findOne(id);
+			final RFQItemDTO itemDTO = new RFQItemDTO();
 			itemDTO.setItemQtyRequested(item.getApprovedQuantity().intValue());
 			itemDTO.setItemAssetId(item.getPart().getId());
 			rfqItemDTOs.add(itemDTO);
@@ -608,13 +630,13 @@ public class RFQServiceImpl implements RFQService {
 		rfqDTO.setItems(rfqItemDTOs);
 
 		try {
-			RFQResult rfqResult = save(rfqDTO);
+			final RFQResult rfqResult = save(rfqDTO);
 			result.setStatus(ResultStatus.SUCCESS);
 			result.addToMessageList("Successfully Generated the RFQ as ");
 			result.addToMessageList(rfqResult.getDomainEntity().getId().toString());
 			result.addToMessageList("Link to rfq");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setStatus(ResultStatus.ERROR);
 			result.addToErrorList("Error while RFQ generate");

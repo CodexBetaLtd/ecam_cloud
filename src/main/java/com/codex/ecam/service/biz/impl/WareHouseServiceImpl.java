@@ -3,6 +3,7 @@ package com.codex.ecam.service.biz.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -47,10 +48,10 @@ public class WareHouseServiceImpl implements WareHouseService {
 
 	@Override
 	public WareHouseDTO findById(Integer id) {
-		Asset domain = wareHouseDao.findOne(id);
+		final Asset domain = wareHouseDao.findOne(id);
 		try {
 			return WarehouseMapper.getInstance().domainToDto(domain);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -58,12 +59,12 @@ public class WareHouseServiceImpl implements WareHouseService {
 
 	@Override
 	public WareHouseResult delete(Integer id) {
-		WareHouseResult result = new WareHouseResult(null, null);
+		final WareHouseResult result = new WareHouseResult(null, null);
 		try {
 			wareHouseDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Warehouse Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			logger.error(ex.getMessage());
 			ex.printStackTrace();
 			result.setResultStatusError();
@@ -73,15 +74,36 @@ public class WareHouseServiceImpl implements WareHouseService {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public WareHouseResult deleteMultiple(Integer[] ids) throws Exception {
+		final WareHouseResult result = new WareHouseResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				wareHouseDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("WareHouse(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("WareHouse(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public WareHouseResult save(WareHouseDTO dto) throws Exception {
-		WareHouseResult result = createPartResult(dto);
-        try {
-            saveOrUpdate(result);
-            result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		final WareHouseResult result = createPartResult(dto);
+		try {
+			saveOrUpdate(result);
+			result.addToMessageList(getMessageByAction(dto));
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Warehouse Already updated. Please Reload Warehouse.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -92,7 +114,7 @@ public class WareHouseServiceImpl implements WareHouseService {
 
 	private WareHouseResult createPartResult(WareHouseDTO dto) {
 		WareHouseResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new WareHouseResult(wareHouseDao.findOne(dto.getId()), dto);
 		} else {
 			result = new WareHouseResult(new Asset(), dto);
@@ -116,12 +138,12 @@ public class WareHouseServiceImpl implements WareHouseService {
 			setWarehouseData(result);
 			wareHouseDao.save(result.getDomainEntity());
 			result.setDtoEntity(findById(result.getDomainEntity().getId()));
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
 			result.addToErrorList("Warehouse Already updated. Please Reload Warehouse.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
 			result.setResultStatusError();
@@ -146,100 +168,100 @@ public class WareHouseServiceImpl implements WareHouseService {
 	}
 
 	@Override
-    public DataTablesOutput<WareHouseDTO> findWearHouseByType(FocusDataTablesInput input, AssetCategoryType type) throws Exception {
-        Specification<Asset> specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
-        DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
-		DataTablesOutput<WareHouseDTO> out = WarehouseMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+	public DataTablesOutput<WareHouseDTO> findWearHouseByType(FocusDataTablesInput input, AssetCategoryType type) throws Exception {
+		final Specification<Asset> specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"), type);
+		final DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
+		final DataTablesOutput<WareHouseDTO> out = WarehouseMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
 	private void setSite(WareHouseResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getSiteId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(wareHouseDao.findOne(result.getDtoEntity().getSiteId()));
 		}
 	}
 
 	private void setBusiness(WareHouseResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setWearHouseCountry(WareHouseResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getCountryId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getCountryId() != null) {
 			result.getDomainEntity().setCountry(countryDao.findById(result.getDtoEntity().getCountryId()));
 		}
 	}
 
 	private void setAssetCategory(WareHouseResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAssetCategoryId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAssetCategoryId() != null) {
 			result.getDomainEntity().setAssetCategory(assetCategoryDao.findById(result.getDtoEntity().getAssetCategoryId()));
 		}
 
 	}
 
 	private void setParentAsset(WareHouseResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getParentAssetId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getParentAssetId() != null) {
 			result.getDomainEntity().setParentAsset(wareHouseDao.findOne(result.getDtoEntity().getParentAssetId()));
 		}
 	}
 
 	@Override
-    public DataTablesOutput<WareHouseDTO> findWarehouseWithRemainQty(FocusDataTablesInput input,
-                                                                     AssetCategoryType assetCategoryType, Integer partId) {
-        DataTablesOutput<WareHouseDTO> out = null;
+	public DataTablesOutput<WareHouseDTO> findWarehouseWithRemainQty(FocusDataTablesInput input,
+			AssetCategoryType assetCategoryType, Integer partId) {
+		DataTablesOutput<WareHouseDTO> out = null;
 
 		try {
-			Specification<Asset> specification = (root, query, cb) -> {
+			final Specification<Asset> specification = (root, query, cb) -> {
 				query.groupBy(root.get("id"));
-				Join<Asset, Stock> warehouseStockJoin = root.joinList("warehouseStocks", JoinType.LEFT);
-				Predicate predicateEqualWarehouseStock = cb.equal(warehouseStockJoin.get("part").get("id"), partId);
-                Predicate predicateEqualCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"),
-                        AssetCategoryType.WAREHOUSE);
-                return cb.and(predicateEqualWarehouseStock, predicateEqualCategory);
-            };
-			DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
+				final Join<Asset, Stock> warehouseStockJoin = root.joinList("warehouseStocks", JoinType.LEFT);
+				final Predicate predicateEqualWarehouseStock = cb.equal(warehouseStockJoin.get("part").get("id"), partId);
+				final Predicate predicateEqualCategory = cb.equal(root.get("assetCategory").get("assetCategoryType"),
+						AssetCategoryType.WAREHOUSE);
+				return cb.and(predicateEqualWarehouseStock, predicateEqualCategory);
+			};
+			final DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
 			out = WarehouseMapper.getInstance().domainToDTODataTablesOutputCustom(domainOut, partId);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return out;
 	}
 
-    @Override
-    public List<WareHouseDTO> findWarehouseList(Integer id) {
-        List<Asset> assets = wareHouseDao.findWarehouseListByTypeAndParentWarehouseId(AssetCategoryType.WAREHOUSE, id);
-        try {
-            return WarehouseMapper.getInstance().domainToDTOListForDataTables(assets);
-        } catch (Exception e) {
-            e.printStackTrace();
+	@Override
+	public List<WareHouseDTO> findWarehouseList(Integer id) {
+		final List<Asset> assets = wareHouseDao.findWarehouseListByTypeAndParentWarehouseId(AssetCategoryType.WAREHOUSE, id);
+		try {
+			return WarehouseMapper.getInstance().domainToDTOListForDataTables(assets);
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-    @Override
-    public List<WareHouseDTO> findParentWarehouseList() {
-        List<Asset> assets = wareHouseDao.findWarehouseListByType(AssetCategoryType.WAREHOUSE);
-        try {
-            return WarehouseMapper.getInstance().domainToDTOList(assets);
-        } catch (Exception e) {
-            e.printStackTrace();
+	@Override
+	public List<WareHouseDTO> findParentWarehouseList() {
+		final List<Asset> assets = wareHouseDao.findWarehouseListByType(AssetCategoryType.WAREHOUSE);
+		try {
+			return WarehouseMapper.getInstance().domainToDTOList(assets);
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-    @Override
-    public DataTablesOutput<WareHouseDTO> findWarehouseByBusiness(FocusDataTablesInput input,
-                                                                  AssetCategoryType warehouse, Integer id) {
-        Specification<Asset> specification = (root, query, cb) -> cb.and(
-                cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.WAREHOUSE),
-                cb.equal(root.get("business").get("id"), id));
+	@Override
+	public DataTablesOutput<WareHouseDTO> findWarehouseByBusiness(FocusDataTablesInput input,
+			AssetCategoryType warehouse, Integer id) {
+		final Specification<Asset> specification = (root, query, cb) -> cb.and(
+				cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.WAREHOUSE),
+				cb.equal(root.get("business").get("id"), id));
 
-		DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
+		final DataTablesOutput<Asset> domainOut = wareHouseDao.findAll(input, specification);
 		DataTablesOutput<WareHouseDTO> out = null;
 		try {
 			out = WarehouseMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;

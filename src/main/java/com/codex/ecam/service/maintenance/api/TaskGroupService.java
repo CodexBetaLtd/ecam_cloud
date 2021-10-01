@@ -1,7 +1,7 @@
 package com.codex.ecam.service.maintenance.api;
 
 import java.util.List;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.maintenance.task.TaskDTO;
@@ -24,7 +24,7 @@ public interface TaskGroupService {
 	List<TaskGroupDTO> findAll() throws Exception;
 
 	List<TaskDTO> findAllTasksByTaskGroup(Integer id) throws Exception;
-	
+
 	List<TaskDTO> findAllTasksByAssetCategory(Integer assetId) throws Exception;
 
 	DataTablesOutput<TaskGroupDTO> findAll(FocusDataTablesInput input) throws Exception;
@@ -32,5 +32,7 @@ public interface TaskGroupService {
 	DataTablesOutput<TaskDTO> findAllTasksByTaskGroup(FocusDataTablesInput input, Integer id) throws Exception;
 
 	DataTablesOutput<TaskGroupDTO> findTaskGroupByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
+
+	TaskGroupResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

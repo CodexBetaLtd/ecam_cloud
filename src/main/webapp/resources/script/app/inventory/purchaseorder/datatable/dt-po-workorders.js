@@ -101,7 +101,8 @@ var dtPurchaseOrderWorkOrders = function () {
     });
 
     var dtPOWorkOrderList = function () {
-        var oTable = $('#wo_tbl').dataTable({
+        
+        var oTable = $('#wo_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -112,7 +113,7 @@ var dtPurchaseOrderWorkOrders = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -125,15 +126,7 @@ var dtPurchaseOrderWorkOrders = function () {
                 }, {
                     data: 'description'
                 }],
-            aoColumnDefs: [{
-                width: "2%",
-                searchable: false,
-                targets: 4,
-                data: "id",
-                render: function (data, type, row, meta) {
-                    return "<a id='link" + data + "' onclick='ItemAddModal.setWorkOrder(\"" + data + "\",\"" + row.code + "\");' type='button' class='btn btn-primary btn-squared btn-xs' >Select</a>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -147,7 +140,20 @@ var dtPurchaseOrderWorkOrders = function () {
                 [5, 10, 15, 20, "All"]],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "ItemAddModal.setWorkOrder",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "code"
+                    }
+                ],
+            },
         });
         $('#wo_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#wo_tbl_wrapper .dataTables_length select').addClass("m-wrap small");

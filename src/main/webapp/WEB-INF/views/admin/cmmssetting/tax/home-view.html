@@ -20,13 +20,14 @@
 		<div class="row">
 			<div class="btn-bar">
 				<a class="btn btn-default btn-sm active tooltips" id="new" onclick="TaxHome.addTax();"
-                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_ASSET_CATEGORY_VIEW.id)"
+                   sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_TAX_VIEW.id)"
                    data-placement="top" data-original-title="Add"> <i class="clip-plus-circle-2  btn-new"></i> New
 				</a> 
 				<a class="btn btn-default btn-sm active tooltips" id="save" th:disabled="disabled" data-placement="top" data-original-title="Save">
 					<i class="clip-checkmark-circle-2 btn-save"></i> Save
 				</a> 
-				<a class="btn btn-default btn-sm active tooltips" id="delete" th:disabled="disabled" data-placement="top"
+				<a class="btn btn-default btn-sm active tooltips" id="taxDelete" data-placement="top"
+				sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_TAX_VIEW.id)"
 					data-original-title="Delete"> <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				</a> 
 				<a class="btn btn-default btn-sm active tooltips" id="cancel" th:disabled="disabled" data-placement="top" data-original-title="Back"> <i class="clip-arrow-left-2 "></i> Cancel
@@ -45,7 +46,6 @@
 					<th>valid </th> 
 					<th>current value </th> 
 					<th>Type</th> 
-	                <th class="last-col">More</th>
 				</tr>
 			</thead>
 			<tbody>

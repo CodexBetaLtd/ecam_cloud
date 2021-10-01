@@ -48,14 +48,10 @@
 
 		<!-- start: PAGE -->
 		<div class="main-content">
-			<div id="common-modal" class="modal datatable fade" role="dialog"
-				tabindex="-1"
-				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div id="item-add-modal" class="modal datatable fade" role="dialog"
-				tabindex="-1"
-				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div
-				th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
+			<div id="item-add-modal" class="modal datatable fade" role="dialog"tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
+			
+			<div th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
 
 
 			<div align='center'>
@@ -349,71 +345,42 @@
 	<!-- end: MAIN JAVASCRIPTS -->
 
 	<!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/select2.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/dropzone.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.maskedinput.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
+	<script type="text/javascript"th:src="@{/resources/script/libs/moment.min.js}"></script>
 
+	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/init.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/item-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/discussion-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/notification-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/tax-tab.js}"></script>
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/init.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/item-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/discussion-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/notification-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/tab/tax-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/discussion-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/file-add-modal.js}"></script>
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/modal/discussion-modal.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/modal/file-add-modal.js}"></script>
-
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-workorders.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-tax.js}"></script>
 

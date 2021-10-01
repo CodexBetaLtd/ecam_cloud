@@ -100,15 +100,35 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResult delete(Integer id) {
-		UserResult result = new UserResult(null, null);
+		final UserResult result = new UserResult(null, null);
 		try {
 			userDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("User Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Already Assigned. Please Remove from Assigned User and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public UserResult deleteMultiple(Integer[] ids) throws Exception {
+		final UserResult result = new UserResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				userDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("User(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("User(s) Already Assigned. Please Remove from Assigned User and try again.");
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -117,14 +137,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResult save(UserDTO dto) throws Exception {
-		UserResult result = createUserResult(dto);
+		final UserResult result = createUserResult(dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("User Already updated. Please Reload User.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -143,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
 	private UserResult createUserResult(UserDTO dto) {
 		UserResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new UserResult(userDao.findOne(dto.getId()), dto);
 		} else {
 			result = new UserResult(new User(), dto);
@@ -171,13 +191,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setBusiness(UserResult result) throws Exception {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	private void setUserBusiness(UserResult result) throws Exception {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
@@ -192,7 +212,7 @@ public class UserServiceImpl implements UserService {
 
 	private void setUserCredentials(UserResult result) {
 		UserCredential userCredentials = new UserCredential();
-		if ((result.getDtoEntity().getId() != null) && (result.getDtoEntity().getId() > 0)) {
+		if (result.getDtoEntity().getId() != null && result.getDtoEntity().getId() > 0) {
 			userCredentials = userCredentialDao.findOne(result.getDtoEntity().getUserCredentialDTO().getId());
 			if (result.getDtoEntity().getChangePassword() == true) {
 				userCredentials.setPassword(
@@ -222,26 +242,26 @@ public class UserServiceImpl implements UserService {
 	private void setPassword(UserCredential userCredential, UserResult result) {
 		if (result.getDtoEntity().getUserCredentialDTO().getPassword() != null) {
 			userCredential
-					.setPassword(passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
+			.setPassword(passwordEncoder.encode(result.getDtoEntity().getUserCredentialDTO().getPassword()));
 		} else {
 			userCredential.setPassword(passwordEncoder.encode(getSystemPassword()));
 		}
 	}
 
 	private String getSystemUserName(String fullName) {
-		String username[] = fullName.trim().split("\\s+");
+		final String username[] = fullName.trim().split("\\s+");
 		return username[0].toLowerCase();
 	}
 
 	@Override
 	public String getSystemPassword() {
-		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$&";
+		final String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$&";
 		return RandomStringUtils.random(6, characters);
 	}
 
 	private void sendEmailToUser(UserResult result) {
 		try {
-			VelocityMail velocityMail = new VelocityMail();
+			final VelocityMail velocityMail = new VelocityMail();
 			velocityMail.getModel().put("user", result.getDtoEntity().getFullName());
 			velocityMail.getModel().put("password", result.getDtoEntity().getUserCredentialDTO().getPassword());
 			velocityMail.getModel().put("userName", result.getDtoEntity().getUserCredentialDTO().getUserName());
@@ -249,15 +269,15 @@ public class UserServiceImpl implements UserService {
 			velocityMail.setTo(result.getDtoEntity().getEmailAddress());
 			velocityMail.setVmTemplate("usercredentials");
 			velocityEmailSender.sendEmail(velocityMail);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	protected void setUserSiteGroups(UserSite userSite, UserSiteDTO dto) {
-		Set<UserSiteGroup> userSiteGroups = new HashSet<UserSiteGroup>();
-		for (UserGroupDTO userGroupId : dto.getSiteUserGroupDTOList()) {
-			UserSiteGroup userSiteGroup = new UserSiteGroup();
+		final Set<UserSiteGroup> userSiteGroups = new HashSet<UserSiteGroup>();
+		for (final UserGroupDTO userGroupId : dto.getSiteUserGroupDTOList()) {
+			final UserSiteGroup userSiteGroup = new UserSiteGroup();
 			userSiteGroup.setIsDeleted(Boolean.FALSE);
 			userSiteGroup.setUserSite(userSite);
 			userSiteGroup.setUserGroup(userGroupDao.findById(userGroupId.getId()));
@@ -267,8 +287,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setUserSite(UserResult result) {
-		Set<UserSite> sites = new HashSet<>();
-		for (UserSiteDTO site : result.getDtoEntity().getUserSiteDTOList()) {
+		final Set<UserSite> sites = new HashSet<>();
+		for (final UserSiteDTO site : result.getDtoEntity().getUserSiteDTOList()) {
 			UserSite userSite;
 
 			if (site.getSiteId() != null) {
@@ -292,9 +312,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setUserCertification(UserResult result) throws Exception {
-		Set<UserCertification> userCertifications = new HashSet<UserCertification>();
+		final Set<UserCertification> userCertifications = new HashSet<UserCertification>();
 
-		for (UserCertificationDTO userCertificationDTO : result.getDtoEntity().getUseCertificationDTOs()) {
+		for (final UserCertificationDTO userCertificationDTO : result.getDtoEntity().getUseCertificationDTOs()) {
 
 			UserCertification userCertification;
 
@@ -308,7 +328,7 @@ public class UserServiceImpl implements UserService {
 
 			UserCertificationMapper.getInstance().dtoToDomain(userCertificationDTO, userCertification);
 			userCertification
-					.setCertification(certificationDao.findById(userCertificationDTO.getCertificationTypeId()));
+			.setCertification(certificationDao.findById(userCertificationDTO.getCertificationTypeId()));
 			userCertification.setUser(result.getDomainEntity());
 			userCertifications.add(userCertification);
 		}
@@ -318,16 +338,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void setAssignedUserSites(User domain, UserDTO dto) {
-		List<Integer> assignedUserSites = domain.getUserSites().stream().map(e -> e.getSite().getId())
+		final List<Integer> assignedUserSites = domain.getUserSites().stream().map(e -> e.getSite().getId())
 				.collect(Collectors.toList());
 		dto.setAssignedUserSites(assignedUserSites);
 	}
 
 	@Override
 	public UserDTO findById(Integer id) throws Exception {
-		User domain = userDao.findOne(id);
+		final User domain = userDao.findOne(id);
 		if (domain != null) {
-			UserDTO dto = UserMapper.getInstance().domainToDto(domain);
+			final UserDTO dto = UserMapper.getInstance().domainToDto(domain);
 			setUserData(domain, dto);
 			return dto;
 		}
@@ -336,9 +356,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO findUserById(Integer userId) throws Exception {
-		User user = findEntityById(userId);
-		UserDTO dto = UserMapper.getInstance().domainToDto(user);
-		List<Integer> assignedUserSites = user.getUserSites().stream().map(e -> e.getSite().getId())
+		final User user = findEntityById(userId);
+		final UserDTO dto = UserMapper.getInstance().domainToDto(user);
+		final List<Integer> assignedUserSites = user.getUserSites().stream().map(e -> e.getSite().getId())
 				.collect(Collectors.toList());
 		dto.setAssignedUserSites(assignedUserSites);
 
@@ -354,12 +374,12 @@ public class UserServiceImpl implements UserService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = userDao.findAll(input);
 		} else {
-			Specification<User> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<User> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = userDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<UserDTO> out = UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<UserDTO> out = UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
@@ -368,7 +388,7 @@ public class UserServiceImpl implements UserService {
 	public UserDTO findUser(UserDTO dto) {
 		try {
 			return UserMapper.getInstance().domainToDto(userDao.findOne(dto.getId()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -377,37 +397,37 @@ public class UserServiceImpl implements UserService {
 	public List<UserDTO> findUserList() {
 		try {
 			return UserMapper.getInstance().domainToDTOList(userDao.findAll());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public User findByEmail(String email) throws Exception {
-		User user = userDao.findByEmail(email);
+		final User user = userDao.findByEmail(email);
 		return user;
 	}
 
 	@Override
 	public User findEntityById(Integer id) {
-		User user = userDao.findOne(id);
+		final User user = userDao.findOne(id);
 		return user;
 	}
 
 	@Override
 	public DataTablesOutput<UserDTO> findAllUsersByGroup(FocusDataTablesInput dataTablesInput, Integer groupId) {
 
-		Specification<User> specification = (root, query, cb) -> {
-			Join<User, UserSite> joinUserSite = root.joinList("userSites");
-			Join<UserSite, UserSiteGroup> joinUserSiteGroup = joinUserSite.joinList("userSiteGroups");
+		final Specification<User> specification = (root, query, cb) -> {
+			final Join<User, UserSite> joinUserSite = root.joinList("userSites");
+			final Join<UserSite, UserSiteGroup> joinUserSiteGroup = joinUserSite.joinList("userSiteGroups");
 			query.distinct(true);
 			return cb.equal(joinUserSiteGroup.get("userGroup").get("id"), groupId);
 		};
-		DataTablesOutput<User> domainOut = userDao.findAll(dataTablesInput, specification);
+		final DataTablesOutput<User> domainOut = userDao.findAll(dataTablesInput, specification);
 		DataTablesOutput<UserDTO> out = null;
 		try {
 			out = UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;
@@ -416,9 +436,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public DataTablesOutput<UserDTO> findAllByBusiness(FocusDataTablesInput input, Integer id) {
 		try {
-			DataTablesOutput<User> domainOut = userDao.findAll(input, findAllUserByBusinessSpec(id));
+			final DataTablesOutput<User> domainOut = userDao.findAll(input, findAllUserByBusinessSpec(id));
 			return UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
@@ -436,18 +456,18 @@ public class UserServiceImpl implements UserService {
 			}
 
 			return UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return new DataTablesOutput<>();
 		}
 	}
 
 	private Specification<User> findAllUserByBusinessSpec(Integer id) {
-		Specification<User> spec = (root, query, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
-//			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
+		final Specification<User> spec = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			//			if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 			predicates.add(cb.equal(root.get("business").get("id"), id));
-//			}
+			//			}
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 		return spec;
@@ -455,16 +475,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public DataTablesOutput<UserDTO> findUsersBySite(FocusDataTablesInput dataTablesInput, Integer id) {
-		Specification<User> specification = (root, query, cb) -> {
-			Join<User, UserSite> joinUserSite = root.joinList("userSites");
+		final Specification<User> specification = (root, query, cb) -> {
+			final Join<User, UserSite> joinUserSite = root.joinList("userSites");
 			query.distinct(true);
 			return cb.equal(joinUserSite.get("site").get("id"), id);
 		};
-		DataTablesOutput<User> domainOut = userDao.findAll(dataTablesInput, specification);
+		final DataTablesOutput<User> domainOut = userDao.findAll(dataTablesInput, specification);
 		DataTablesOutput<UserDTO> out = null;
 		try {
 			out = UserMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return out;
@@ -472,10 +492,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDTO> findAll() {
-		List<User> userList = (List<User>) userDao.findAll();
+		final List<User> userList = (List<User>) userDao.findAll();
 		try {
 			return UserMapper.getInstance().domainToDTOList(userList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -485,8 +505,8 @@ public class UserServiceImpl implements UserService {
 	public byte[] getUserAvatar(Integer id, HttpServletRequest request) throws IOException {
 
 		if (id != null) {
-			String imagePath = userDao.getUserAvatarPath(id);
-			String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
+			final String imagePath = userDao.getUserAvatarPath(id);
+			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				// return FileDownloadUtil.getByteInputStream( uploadLocation + imagePath );
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);

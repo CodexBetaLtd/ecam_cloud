@@ -53,19 +53,19 @@ public class TaxServiceImpl implements TaxService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = taxDao.findAll(input);
 		} else {
-			Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business"),
+			final Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business"),
 					AuthenticationUtil.getLoginUserBusiness());
 			domainOut = taxDao.findAll(input, specification);
 		}
 
-		DataTablesOutput<TaxDTO> out = TaxMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<TaxDTO> out = TaxMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public TaxDTO findById(Integer id) throws Exception {
-		Tax domain = findEntityById(id);
+		final Tax domain = findEntityById(id);
 		if (domain != null) {
 			return TaxMapper.getInstance().domainToDto(domain);
 		}
@@ -79,15 +79,36 @@ public class TaxServiceImpl implements TaxService {
 
 	@Override
 	public TaxResult delete(Integer id) {
-		TaxResult result = new TaxResult(null, null);
+		final TaxResult result = new TaxResult(null, null);
 		try {
 			taxDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Tax Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Tax Already Assigned. Please Remove from Assigned Tax and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public TaxResult deleteMultiple(Integer[] ids) throws Exception {
+		final TaxResult result = new TaxResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				taxDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Tax(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Tax(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -96,14 +117,14 @@ public class TaxServiceImpl implements TaxService {
 
 	@Override
 	public TaxResult save(TaxDTO dto) throws Exception {
-		TaxResult result = createAccountResult(dto);
+		final TaxResult result = createAccountResult(dto);
 		try {
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Tax Already updated. Please Reload Tax.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -122,7 +143,7 @@ public class TaxServiceImpl implements TaxService {
 
 	private TaxResult createAccountResult(TaxDTO dto) {
 		TaxResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new TaxResult(taxDao.findOne(dto.getId()), dto);
 		} else {
 			result = new TaxResult(new Tax(), dto);
@@ -140,19 +161,19 @@ public class TaxServiceImpl implements TaxService {
 	}
 
 	private void setTaxValues(TaxResult result) {
-		Set<TaxValue> taxValues = new HashSet<>();
-		List<TaxValueDTO> taxValueDTOs = result.getDtoEntity().getTaxValueDTOs();
+		final Set<TaxValue> taxValues = new HashSet<>();
+		final List<TaxValueDTO> taxValueDTOs = result.getDtoEntity().getTaxValueDTOs();
 
 		if (taxValueDTOs != null && taxValueDTOs.size() > 0) {
 
-			Set<TaxValue> currentTaxValues = result.getDomainEntity().getTaxValues();
+			final Set<TaxValue> currentTaxValues = result.getDomainEntity().getTaxValues();
 
-			for (TaxValueDTO taxValueDTO : taxValueDTOs) {
+			for (final TaxValueDTO taxValueDTO : taxValueDTOs) {
 
 				TaxValue taxValue = new TaxValue();
 
-				if ((currentTaxValues != null) && (currentTaxValues.size() > 0)) {
-					TaxValue optional = currentTaxValues.stream().filter((x) -> x.getId().equals(taxValueDTO.getId()))
+				if (currentTaxValues != null && currentTaxValues.size() > 0) {
+					final TaxValue optional = currentTaxValues.stream().filter((x) -> x.getId().equals(taxValueDTO.getId()))
 							.findAny().orElseGet(TaxValue::new);
 					taxValue = optional;
 				} else {
@@ -178,7 +199,7 @@ public class TaxServiceImpl implements TaxService {
 	}
 
 	private void setBusiness(TaxResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		}
 	}
@@ -190,12 +211,12 @@ public class TaxServiceImpl implements TaxService {
 			if (AuthenticationUtil.isAuthUserAdminLevel()) {
 				domainList = taxDao.findAll();
 			} else {
-				Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business"),
+				final Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business"),
 						AuthenticationUtil.getLoginUserBusiness());
 				domainList = taxDao.findAll(specification);
 			}
 			return TaxMapper.getInstance().domainToDTOList(domainList);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -205,14 +226,14 @@ public class TaxServiceImpl implements TaxService {
 	public List<TaxDTO> findAllByBusiness(Integer id) {
 		try {
 			List<TaxDTO> dtoOut = new ArrayList<>();
-			Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
+			final Specification<Tax> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
 
 			if (specification != null) {
-				List<Tax> domainList = taxDao.findAll(specification);
+				final List<Tax> domainList = taxDao.findAll(specification);
 				dtoOut = TaxMapper.getInstance().domainToDTOList(domainList);
 			}
 			return dtoOut;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

@@ -117,8 +117,10 @@ var BusinessClassificationHome = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#businessClassificationTbl').dataTable().fnDestroy();
-		var oTable = $('#businessClassificationTbl').dataTable( {
+		
+		var oTable = $('#businessClassificationTbl').DataTable( {
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable.pipeline({
@@ -127,30 +129,23 @@ var BusinessClassificationHome = function() {
 					}),
 			columns : [
 					{
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'name'
-					}, {
-						data : 'id'
 					} ],
 	
 			"aoColumnDefs" : [
 					{
 						"bSearchable" : false,
-						"aTargets" : [ 0, 2 ]
+						"aTargets" : [ 0 ]
 					},
 					{
 						"orderable" : false,
-						"aTargets" : [ 0, 2 ]
-					},
-					{
-						"targets" : 2,//index of column starting from 0
-						"data" : "id", //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-								return ButtonUtil.getEditBtnWithURL('businessClassification', data, 'BusinessClassificationHome');
-						}
+						"aTargets" : [ 0 ]
 					} ],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
@@ -169,15 +164,29 @@ var BusinessClassificationHome = function() {
 					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
 			
 			initComplete : function() {
-				$("div.dtblbusinessClassification")
-						.html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='business-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+				$("div.dtblbusinessClassification").html(
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='business-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>\t" +
+                        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='businessClassificationDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+                        );
 			},
 			bAutoWidth : false,
 			sScrollXInner : "100%",
 			iDisplayLength : 10,
 			bLengthChange : false,
 			sPaginationType : "full_numbers",
-			sPaging : 'pagination'
+			sPaging : 'pagination',
+			select: {
+                style:    'multi',
+                selector: 'td:first-child',
+           },
+           rowClick : {
+                sFunc: "BusinessClassificationHome.editModal",
+                aoData:[  
+                    {
+                        sName : "id",
+                    },
+                ],
+           },
 	
 		});
 
@@ -192,6 +201,8 @@ var BusinessClassificationHome = function() {
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+		
+        DataTableUtil.deleteRowsFunc(oTable, "businessClassificationDelete", "BusinessClassificationHome.deleteMutiple", "id");
 	};
 
 	var addModal = function() {
@@ -275,6 +286,17 @@ var BusinessClassificationHome = function() {
 			}
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../businessClassification/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseTwo").find('.panel-body').empty().append(response);
+                BusinessClassificationHome.init();
+            }
+        });
+    };
 	
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -285,23 +307,33 @@ var BusinessClassificationHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

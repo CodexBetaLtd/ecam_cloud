@@ -64,6 +64,27 @@ public class AssetBrandServiceImpl implements AssetBrandService{
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AssetBrandResult deleteMultiple(Integer[] ids) throws Exception {
+		final AssetBrandResult result = new AssetBrandResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				assetBrandDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Asset Brand(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Asset Brand(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
 	public AssetBrandResult save(AssetBrandDTO dto) throws Exception {
 		final AssetBrandResult result = createAssetBrandResult(dto);
 		try{

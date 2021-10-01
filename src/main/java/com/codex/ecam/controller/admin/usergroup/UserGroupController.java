@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -111,13 +112,36 @@ public class UserGroupController {
 		return "admin/usergroups/add-view";
 	}
 
-	private void setCommonData(Model model, UserGroupDTO userGroup) throws Exception {
-		model.addAttribute("checkBoxList", userGroupService.getMenuPermissions());
-		model.addAttribute("pageList", userGroupService.findPageListByBusiness());
-		model.addAttribute("pageCBox", userGroupService.findPagePermissions());
-		model.addAttribute("userGroup", userGroup);
-		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-		model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final UserGroupResult result = userGroupService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "User Group already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/usergroups/home-view";
+	}
+
+	private void setCommonData(Model model, UserGroupDTO userGroup) {
+		try {
+			model.addAttribute("checkBoxList", userGroupService.getMenuPermissions());
+			model.addAttribute("pageList", userGroupService.findPageListByBusiness());
+			model.addAttribute("pageCBox", userGroupService.findPagePermissions());
+			model.addAttribute("userGroup", userGroup);
+			model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
+			model.addAttribute("businessWigets", appService.findAllWigetByUserLevel());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

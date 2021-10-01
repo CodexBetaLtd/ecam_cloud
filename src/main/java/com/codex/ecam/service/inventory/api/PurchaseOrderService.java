@@ -21,11 +21,11 @@ public interface PurchaseOrderService {
 	DataTablesOutput<PurchaseOrderDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
 
 	PurchaseOrderDTO findById(Integer id) throws Exception;
-	
+
 	PurchaseOrderResult statusChange(Integer id,PurchaseOrderStatus status);
-	
+
 	RFQResult createPurchaseOrderFromRFQItems(String rfqItemIds,String supplierIds);
-	
+
 	PurchaseOrderDTO createPurchaseOrderFromRFQItems(List<Integer> rfqItemIds);
 
 	PurchaseOrderResult update(PurchaseOrderDTO purchaseOrder);
@@ -39,15 +39,17 @@ public interface PurchaseOrderService {
 	String purchaseOrderFileUpload(MultipartFile fileData, String refId);
 
 	void purchaseOrderFileDelete(Integer id);
-	
-    MRNResult generatePoFromMrn(String ids, Integer mrnId);
-    
-    String getNextCode(Integer businessId);
-    
-    PurchaseOrderResult createNewPurchaseorder();
 
-    
-    DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input);
+	MRNResult generatePoFromMrn(String ids, Integer mrnId);
+
+	String getNextCode(Integer businessId);
+
+	PurchaseOrderResult createNewPurchaseorder();
+
+
+	DataTablesOutput<PurchaseOrderItemDTO> findAllApproved(FocusDataTablesInput input);
+
+	PurchaseOrderResult deleteMultiple(Integer[] ids) throws Exception;
 
 
 }

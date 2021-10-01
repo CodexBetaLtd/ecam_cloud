@@ -8,18 +8,20 @@ import com.codex.ecam.result.maintenance.ProjectResult;
 
 public interface ProjectService {
 
-    ProjectResult newProject();
+	ProjectResult newProject();
 
-    ProjectResult findById(Integer id) throws Exception;
+	ProjectResult findById(Integer id) throws Exception;
 
-    ProjectResult save(ProjectDTO project);
+	ProjectResult save(ProjectDTO project);
 
-    ProjectResult update(ProjectDTO project);
+	ProjectResult update(ProjectDTO project);
 
-    ProjectResult delete(Integer id);
+	ProjectResult delete(Integer id);
 
-    DataTablesOutput<ProjectDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
+	DataTablesOutput<ProjectDTO> findAll(FocusDataTablesInput dataTablesInput) throws Exception;
 
-    DataTablesOutput<ProjectDTO> findProjectByBusiness(FocusDataTablesInput input, Integer id);
+	DataTablesOutput<ProjectDTO> findProjectByBusiness(FocusDataTablesInput input, Integer id);
+
+	ProjectResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

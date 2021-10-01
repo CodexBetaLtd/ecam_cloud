@@ -98,76 +98,71 @@ var TaskGroup = function () {
     });
 
     var runDataTable = function () {
-        var oTable = $('#tbl_task_group').dataTable(
+        
+        var oTable = $('#tbl_task_group').DataTable({
+        	responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: $.fn.dataTable.pipeline({
+                url: "../restapi/taskGroup/taskGroupHomeList",
+                pages: 5
+            }),
+            columns: [
                 {
-                	responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    ajax: $.fn.dataTable.pipeline({
-                        url: "../restapi/taskGroup/taskGroupHomeList",
-                        pages: 5
-                    }),
-                    columns: [
-                        {
-                            orderable: false,
-                            searchable: false, 
-                            width:"2%",
-                            render: function (data, type, row, meta) {
-                                return meta.row
-                                    + meta.settings._iDisplayStart
-                                    + 1;
-                            },
-                            responsivePriority: 2,
-                        },
-                        {	
-                        	data: 'name',
-                        	responsivePriority: 2,
-                        },
-                        {
-                        	data: 'description',
-                        	responsivePriority: 4
-                        },
-                        {
-                        	data : 'businessName',
-                        	responsivePriority: 4
-                        }
-                    ],
-                    aoColumnDefs: [{ 
-                        searchable: false,
-                        targets: 4,
-                        data: "id",
-                        render: function (data, type, full, meta) {
-                        	return ButtonUtil.getHomeBtnWithURL("taskGroup", data); 
-                        }
-                    }],
-                    oLanguage: {
-                        sLengthMenu: "Show _MENU_ Rows",
-                        sSearch: "",
-                        oPaginate: {
-                            sPrevious: "&laquo;",
-                            sNext: "&raquo;"
-                        }
-                    },
-                    aaSorting: [[1, 'asc']],
-                    aLengthMenu: [[5, 10, 15, 20, -1],
-                        [5, 10, 15, 20, "All"]],
-                    iDisplayLength: 10,
-                    sPaginationType: "full_numbers",
-                    sPaging: 'pagination'
-                });
+                    orderable: false,
+                    searchable: false, 
+                    width:"4%",
+                    defaultContent: '',
+                    className: 'select-checkbox',
+                    responsivePriority: 2,
+                },
+                {	
+                	data: 'name',
+                	responsivePriority: 2,
+                },
+                {
+                	data: 'description',
+                	responsivePriority: 4
+                },
+                {
+                	data : 'businessName',
+                	responsivePriority: 4
+                }
+            ],
+            aoColumnDefs: [],
+            oLanguage: {
+                sLengthMenu: "Show _MENU_ Rows",
+                sSearch: "",
+                oPaginate: {
+                    sPrevious: "&laquo;",
+                    sNext: "&raquo;"
+                }
+            },
+            aaSorting: [[1, 'asc']],
+            aLengthMenu: [[5, 10, 15, 20, -1],
+                [5, 10, 15, 20, "All"]],
+            iDisplayLength: 10,
+            sPaginationType: "full_numbers",
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../taskGroup/edit?id",
+            },
+        });
         $('#tbl_task_group_wrapper .dataTables_filter input').addClass( "form-control input-sm").attr("placeholder", "Search");
-
         $('#tbl_task_group_wrapper .dataTables_length select').addClass( "m-wrap small");
-
         $('#tbl_task_group_wrapper .dataTables_length select').select2();
-
-        $('#tbl_task_group_column_toggler input[type="checkbox"]').change(
-        function () {
-
+        $('#tbl_task_group_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
+        
+        DataTableUtil.deleteRows(oTable, "delete", "taskGroup", "id"); 
     };
 
     return {

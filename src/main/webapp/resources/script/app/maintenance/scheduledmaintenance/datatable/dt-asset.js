@@ -1,16 +1,11 @@
-var StockSelectModal = function () {
-
-    /**********************************************************
-     * Init Datatable
-     * ********************************************************/
+﻿var AssetSelectModal = function () {
 
     $.fn.dataTable.pipeline = function (opts) {
-        // Configuration options
         var conf = $.extend({
-            pages: 5, // number of pages to cache
-            url: '', // script url
-            data: null, // function or object with parameters to send to the
-            method: 'GET' // Ajax HTTP method
+        	pages: 5,
+        	url: '',
+        	data: null,
+        	method: 'GET'
         }, opts);
 
         // Private variables for storing the cache
@@ -27,35 +22,36 @@ var StockSelectModal = function () {
             var requestEnd = requestStart + requestLength;
 
             if (settings.clearCache) {
+                // API requested that the cache be cleared
                 ajax = true;
                 settings.clearCache = false;
-            } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
+            } else if (cacheLower < 0 || requestStart < cacheLower
+                || requestEnd > cacheUpper) {
+                // outside cached data - need to make a request
                 ajax = true;
-            } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)
-                || JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns)
-                || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)) {
+            } else if (JSON.stringify(request.order) !== JSON
+                    .stringify(cacheLastRequest.order)
+                || JSON.stringify(request.columns) !== JSON
+                    .stringify(cacheLastRequest.columns)
+                || JSON.stringify(request.search) !== JSON
+                    .stringify(cacheLastRequest.search)) {
                 ajax = true;
             }
-
-            // Store the request for checking next time around
             cacheLastRequest = $.extend(true, {}, request);
-
             if (ajax) {
-                // Need data from the server
                 if (requestStart < cacheLower) {
-                    requestStart = requestStart - (requestLength * (conf.pages - 1));
+                    requestStart = requestStart
+                        - (requestLength * (conf.pages - 1));
 
                     if (requestStart < 0) {
                         requestStart = 0;
                     }
                 }
-
                 cacheLower = requestStart;
                 cacheUpper = requestStart + (requestLength * conf.pages);
 
                 request.start = requestStart;
                 request.length = requestLength * conf.pages;
-
                 if ($.isFunction(conf.data)) {
                     var d = conf.data(request);
                     if (d) {
@@ -101,71 +97,77 @@ var StockSelectModal = function () {
         });
     });
 
-    /**********************************************************
-     * Part Select Datatable
-     * ********************************************************/
-
-    var initStockSelectTable = function (assetId, func) {
-        var oTable = $('#stock_tbl').dataTable({
+    var initDataTable = function (bizId) {
+        
+        $('#asset_tbl').dataTable().fnDestroy();
+        
+        var oTable = $('#asset_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/stock/stockByAsset",
-                pages: 5,
-                data: function (d) {
-                    d.assetId = assetId;
-                }
+                url: "../restapi/asset/findNotPartByBusiness?id=" + parseInt(bizId),
+                pages: 5
             }),
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            },
-                {data: 'site'},
-                {data: 'partName'},
-                {data: 'minQty'},
-                {data: 'qtyOnHand'}
-            ],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.partName), row.partId, EncodeDecodeComponent.getBase64().encode(row.site)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
+            }, {
+                data: 'name'
+            }, {
+                data: 'code'
             }],
+            aoColumnDefs: [],
             oLanguage: {
-                sLengthMenu: "Show _MENU_ Rows",
+                sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
                 oPaginate: {
                     sPrevious: "&laquo;",
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[1, 'asc']],
-            aLengthMenu: [[5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]],
+            aaSorting: [
+                [1, 'asc']
+            ],
+            aLengthMenu: [
+                [5, 10, 15, 20, -1],
+                [5, 10, 15, 20, "All"] // change per page values here
+            ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "TabAsset.addAsset",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },{
+                        sName : "code"
+                    }
+                ],
+            },
         });
-        $('#stock_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#stock_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#stock_tbl_wrapper .dataTables_length select').select2();
-        $('#stock_tbl_column_toggler input[type="checkbox"]').change(function () {
-            var iCol = parseInt($(this).attr("data-column"));
-            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });
+        $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        // modify table search input
+        $('#asset_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
+        // modify table per page dropdown
+        $('#asset_tbl_wrapper .dataTables_length select').select2();
+        // initialzie select2 dropdown
     };
+
 
     return {
-        init: function (assetId, func) {
-            initStockSelectTable(assetId, func);
+
+        init: function (bizId) {
+            initDataTable(bizId);
         }
     };
-
 }();

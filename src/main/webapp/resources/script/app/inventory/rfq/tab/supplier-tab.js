@@ -120,6 +120,7 @@ var TabSupplier = function() {
 		item['supplierPostalCode'] = CustomValidation.nullValueReplace(postalcode);
 		item['supplierCountry'] = CustomValidation.nullValueReplace(countryName);
 		supplires.push(item);
+		$('#common-modal').modal('toggle');
 
 		populateRFQSupplier();
 	};

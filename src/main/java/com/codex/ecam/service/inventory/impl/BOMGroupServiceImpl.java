@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -48,20 +49,20 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = bomGroupDao.findAll(input);
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			final Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
 			domainOut = bomGroupDao.findAll(input, specification);
 		} else {
-			Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness());
+			final Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginSite().getSite().getBusiness());
 			domainOut = bomGroupDao.findAll(input, specification);
 		}
-		DataTablesOutput<BOMGroupDTO> out = BomGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<BOMGroupDTO> out = BomGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}
 
 	@Override
 	public BOMGroupDTO findById(Integer id) throws Exception {
-		BOMGroup domain = bomGroupDao.findOne(id);
+		final BOMGroup domain = bomGroupDao.findOne(id);
 		BOMGroupDTO bomGroupDTO = new BOMGroupDTO();
 		bomGroupDTO = BomGroupMapper.getInstance().domainToDto(domain);
 		return bomGroupDTO;
@@ -70,12 +71,33 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public BOMGroupResult delete(Integer id) {
-		BOMGroupResult result = new BOMGroupResult(null, null);
+		final BOMGroupResult result = new BOMGroupResult(null, null);
 		try {
 			bomGroupDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("BOMGroup Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public BOMGroupResult deleteMultiple(Integer[] ids) throws Exception {
+		final BOMGroupResult result = new BOMGroupResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				bomGroupDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("BOM Group(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("BOM Group(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -86,14 +108,14 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public BOMGroupResult update(BOMGroupDTO dto) {
-		BOMGroupResult result = new BOMGroupResult(null, dto);
+		final BOMGroupResult result = new BOMGroupResult(null, dto);
 		try {
-			BOMGroup domain = bomGroupDao.findOne(dto.getId());
+			final BOMGroup domain = bomGroupDao.findOne(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("BOMGroup Updated Successfully.");
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -104,7 +126,7 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public BOMGroupResult save(BOMGroupDTO dto) {
-		BOMGroupResult result = new BOMGroupResult(new BOMGroup(), dto);
+		final BOMGroupResult result = new BOMGroupResult(new BOMGroup(), dto);
 		saveOrUpdate(result);
 		result.addToMessageList("BOM Group Added Successfully.");
 		return result;
@@ -117,10 +139,10 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 			setPartsAndAssets(result);
 			bomGroupDao.save(result.getDomainEntity());
 			result.getDtoEntity().setId(result.getDomainEntity().getId());
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("BOMGroup Already updated. Please Reload BOMGroup.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
@@ -128,8 +150,8 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	}
 
 	private void setPartsAndAssets(BOMGroupResult result) {
-		List<BOMGroupPart> groupParts = new ArrayList<>();
-		List<BOMGroupPart> currentParts = result.getDomainEntity().getBomGroupParts();
+		final List<BOMGroupPart> groupParts = new ArrayList<>();
+		final List<BOMGroupPart> currentParts = result.getDomainEntity().getBomGroupParts();
 
 		addAssetToGroupParts(result, groupParts, currentParts);
 		addPartsToGroupParts(result, groupParts, currentParts);
@@ -139,16 +161,16 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	}
 
 	private void addAssetToGroupParts(BOMGroupResult result, List<BOMGroupPart> groupParts, List<BOMGroupPart> currentParts) {
-		for (AssetDTO dto : result.getDtoEntity().getAssets()) {
-			BOMGroupPart part = updateGroupParts(result.getDomainEntity(), dto.getId(), currentParts);
+		for (final AssetDTO dto : result.getDtoEntity().getAssets()) {
+			final BOMGroupPart part = updateGroupParts(result.getDomainEntity(), dto.getId(), currentParts);
 			groupParts.add(part);
 			result.addAsset(part);
 		}
 	}
 
 	private void addPartsToGroupParts(BOMGroupResult result, List<BOMGroupPart> groupParts, List<BOMGroupPart> currentParts) {
-		for (PartDTO dto : result.getDtoEntity().getParts()) {
-			BOMGroupPart groupPart = updateGroupParts(result.getDomainEntity(), dto.getId(), currentParts);
+		for (final PartDTO dto : result.getDtoEntity().getParts()) {
+			final BOMGroupPart groupPart = updateGroupParts(result.getDomainEntity(), dto.getId(), currentParts);
 			addAssetConsumeReferences(groupPart, result.getAssets());
 			groupParts.add(groupPart);
 		}
@@ -158,13 +180,13 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 		List<AssetConsumingReference> assetConsumingRefs;
 		AssetConsumingReference assetConsumeRef;
 
-		if ((groupPart.getAssetConsumingReferences() != null) && (groupPart.getAssetConsumingReferences().size() > 0)) {
+		if (groupPart.getAssetConsumingReferences() != null && groupPart.getAssetConsumingReferences().size() > 0) {
 			assetConsumingRefs = groupPart.getAssetConsumingReferences();
 		} else {
 			assetConsumingRefs = new ArrayList<>();
 		}
 
-		for (BOMGroupPart asset : assets) {
+		for (final BOMGroupPart asset : assets) {
 			assetConsumeRef = new AssetConsumingReference();
 			assetConsumeRef.setBomGroupAsset(asset);
 			assetConsumeRef.setPart(groupPart.getPart());
@@ -177,9 +199,9 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 
 	private BOMGroupPart updateGroupParts(BOMGroup bomGroup, Integer assetId, List<BOMGroupPart> currentParts) {
 		BOMGroupPart part;
-		if ((currentParts != null) && (currentParts.size() > 0)) {
+		if (currentParts != null && currentParts.size() > 0) {
 
-			Optional<BOMGroupPart> groupPart = currentParts.stream().filter((x) -> x.getPart().getId() == assetId).findAny();
+			final Optional<BOMGroupPart> groupPart = currentParts.stream().filter((x) -> x.getPart().getId() == assetId).findAny();
 
 			if (groupPart.isPresent()) {
 				part = groupPart.get();
@@ -194,7 +216,7 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	}
 
 	private BOMGroupPart createBOMGroupPart(BOMGroup bomGroup, Asset part) {
-		BOMGroupPart groupPart = new BOMGroupPart();
+		final BOMGroupPart groupPart = new BOMGroupPart();
 
 		groupPart.setBomGroup(bomGroup);
 		groupPart.setPart(part);
@@ -205,18 +227,18 @@ public class BOMGroupServiceImpl implements BOMGroupService {
 	}
 
 	private void setBusiness(BOMGroupResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getBusinessId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getBusinessId() != null) {
 			result.getDomainEntity().setBusiness(businessDao.findById(result.getDtoEntity().getBusinessId()));
 		}
 	}
 
 	@Override
 	public DataTablesOutput<BOMGroupDTO> findBOMGroupsByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
- 
+
 		BOMGroupSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), bizId);
-		DataTablesOutput<BOMGroup> domainOut = bomGroupDao.findAll(input, specification); 
-		DataTablesOutput<BOMGroupDTO> out = BomGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final Specification<BOMGroup> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), bizId);
+		final DataTablesOutput<BOMGroup> domainOut = bomGroupDao.findAll(input, specification);
+		final DataTablesOutput<BOMGroupDTO> out = BomGroupMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 
 		return out;
 	}

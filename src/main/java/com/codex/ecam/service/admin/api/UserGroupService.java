@@ -41,4 +41,6 @@ public interface UserGroupService {
 
 	List<GenericCheckBox<Page, PagePermission>> findPagePermissions();
 
+	UserGroupResult deleteMultiple(Integer[] ids) throws Exception;
+
 }

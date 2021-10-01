@@ -120,7 +120,7 @@ var AssetBrandHome = function() {
 	    
 		$('#assetBrandsTbl').dataTable().fnDestroy();
 		
-		var oTable = $('#assetBrandsTbl') .dataTable({
+		var oTable = $('#assetBrandsTbl').DataTable({
 			"processing" : true,
 			"serverSide" : true,
 			"ajax" : $.fn.dataTable
@@ -130,34 +130,25 @@ var AssetBrandHome = function() {
 					}),
 			columns : [
 					{
-						width : "10%",
-						render : function(data, type, row, meta) {
-							return meta.row + meta.settings._iDisplayStart + 1;
-						}
+					    orderable: false, 
+                        searchable: false, 
+                        width: "4%",
+                        defaultContent: '',
+                        className: 'select-checkbox'
 					}, {
 						data : 'brandName'
 					},{
 					    data : 'brandBusinessName'
-					}, {
-						width : "10%",
-						data : 'brandId'
-					} ],
+					}],
 			"aoColumnDefs" : [
 					{
 						"bSearchable" : false,
-						"aTargets" : [ 0, 2 ]
+						"aTargets" : [ 0]
 					},
 					{
 						"orderable" : false,
-						"aTargets" : [ 0, 2 ]
-					},
-					{
-						"targets" : 3,//index of column starting from 0
-						"data" : 'brandId', //this name should exist in your JSON response
-						"render" : function(data, type, full, meta) {
-                            return ButtonUtil.getEditBtnWithURL('assetbrand', data, 'AssetBrandHome');
-						}
-					} ],
+						"aTargets" : [ 0 ]
+					}],
 			oLanguage : {
 				"sLengthMenu" : "Show _MENU_ Rows",
 				"sSearch" : "",
@@ -179,8 +170,23 @@ var AssetBrandHome = function() {
 			sPaginationType : "full_numbers",
 			sPaging : 'pagination',
 			initComplete : function() {		
-				$("div.dtblassetbrand") .html( "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='brand-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-			},
+				$("div.dtblassetbrand") .html( 
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='brand-new'><i class='clip-plus-circle-2  btn-new'></i> New </button>\t" +
+				        "<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='assetBrandDelete'><i class='clip-cancel-circle-2 btn-delete'></i> Delete </button>"
+				        );
+			},   
+			select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sFunc: "AssetBrandHome.editModal",
+                aoData:[  
+                    {
+                        sName : "brandId",
+                    },
+                ],
+            },
 		});
 		$('#assetBrandsTbl_wrapper .dataTables_filter input').addClass( "form-control input-sm").attr("placeholder", "Search");
 		// modify table search input
@@ -194,6 +200,10 @@ var AssetBrandHome = function() {
 			var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
 			oTable.fnSetColumnVis(iCol, (bVis ? false : true));
 		});
+        
+        DataTableUtil.deleteRowsFunc(oTable, "assetBrandDelete", "AssetBrandHome.deleteMutiple", "id");
+       
+        
 	};
 
 	var addModal = function() {
@@ -268,6 +278,17 @@ var AssetBrandHome = function() {
 			error : function(response) { }
 		});
 	};
+    
+    var deleteMutiple = function(ids) {
+        $.ajax({
+            url: "../assetbrand/delete-multiple?ids="+ ids,
+            type: 'GET',
+            success: function(response) {
+                $("#collapseFourteen").find('.panel-body').empty().append(response);
+                runDataTable();
+            }
+        });
+    };
 
 	var closeModal = function() {
 		$('#cmms-setting-add-modal').modal('toggle');
@@ -278,23 +299,33 @@ var AssetBrandHome = function() {
 		init : function() {
 			runDataTable();
 		},
+		
 		addModal : function() {
 			addModal();
 		},
+		
 		editModal : function(id) {
 			editModal(id);
 		},
+		
 		saveModal : function() {
 			saveModal();
 		},
+		
 		closeModal : function() {
 			closeModal();
 		},
+		
 		deleteModal : function(id) {
 			deleteModal(id);
 		},
+		
 		deleteInsideModal : function(id) {
 			deleteInsideModal(id);
-		}
+		},
+        
+        deleteMutiple : function(ids) {
+            deleteMutiple(ids)
+        },
 	};
 }();

@@ -98,8 +98,10 @@ var dtRFQPart = function () {
     });
 
     var initRFQAssetTable = function () {
+        
         var URL = "../restapi/part/tabledata";
-        var oTable = $('#rfq_part_select_tbl').dataTable({
+        
+        var oTable = $('#rfq_part_select_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -115,17 +117,10 @@ var dtRFQPart = function () {
                 }
             },
             {data: 'name'},
-                {data: 'code'},
-                {data : 'businessName'}],
-                aoColumnDefs: [{
-                    targets: 4,//index of column starting from 0
-                    data: "id",  //this name should exist in your JSON response
-                    render: function (data, type, row, meta) {
-                    	console.log(row.name)
-                    	var vars = [data, row.name]; 
-                    	return ButtonUtil.getCommonBtnSelectWithMultipleVars( 'ItemAddModal.setRFQItemPart', data, vars );
-                    }
-                }],
+            {data: 'code'},
+            {data : 'businessName'}
+            ],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -144,7 +139,20 @@ var dtRFQPart = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "ItemAddModal.setRFQItemPart",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    }
+                ],
+            },
         });
         $('#rfq_part_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#rfq_part_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -156,11 +164,6 @@ var dtRFQPart = function () {
         });
 		
 	};
-
-
-    var tblButton = function (data) {
-        return "<a id='link" + data.id + "' onclick='TabItem.setRFQItemAsset(this,\"" + data.id + "\",\"" + data.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</a>";
-    };
 
     return {
 

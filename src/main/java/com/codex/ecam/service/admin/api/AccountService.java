@@ -1,7 +1,7 @@
 package com.codex.ecam.service.admin.api;
 
 import java.util.List;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.AccountDTO;
@@ -24,9 +24,11 @@ public interface AccountService {
 	void deleteAll();
 
 	Account findEntityById(Integer id) throws Exception;
-	
+
 	List<AccountDTO> findAll();
 
 	List<AccountDTO> findAllByBusiness(Integer id);
+
+	AccountResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

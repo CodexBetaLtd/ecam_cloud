@@ -109,8 +109,10 @@ var CustomerSelectModal = function () {
     });
 
     var runDataTable = function () {
+        
         $('#customer_select_tbl').dataTable().fnDestroy();
-        var oTable = $('#customer_select_tbl').dataTable({
+        
+        var oTable = $('#customer_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -121,6 +123,7 @@ var CustomerSelectModal = function () {
                 {
                     orderable: false,
                     searchable: false, 
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -135,14 +138,7 @@ var CustomerSelectModal = function () {
                     data: 'address'
                 }
             ],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response 
-                render: function (data, type, row, meta) {
-                    var vars = [data, row.name];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('AssetAdd.setCustomer', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -160,7 +156,20 @@ var CustomerSelectModal = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetAdd.setCustomer",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#customer_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

@@ -10,27 +10,29 @@ import java.util.List;
 
 public interface SupplierService {
 
-    SupplierResult newSupplier();
+	SupplierResult newSupplier();
 
-    SupplierResult findById(Integer id);
+	SupplierResult findById(Integer id);
 
-    SupplierResult save(SupplierDTO supplierDTO);
+	SupplierResult save(SupplierDTO supplierDTO);
 
-    SupplierResult update(SupplierDTO supplierDTO);
+	SupplierResult update(SupplierDTO supplierDTO);
 
-    SupplierResult delete(Integer id);
+	SupplierResult delete(Integer id);
 
-    DataTablesOutput<SupplierDTO> findAllByLevel(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<SupplierDTO> findAllByLevel(FocusDataTablesInput input) throws Exception;
 
-    DataTablesOutput<SupplierDTO> findAllVirtualSupplier(FocusDataTablesInput input) throws Exception;
-    
-    DataTablesOutput<SupplierDTO> findAllOriginalSupplier(FocusDataTablesInput input) throws Exception;
-    
-    List<SupplierDTO> findAllVirtualSupplierList();
+	DataTablesOutput<SupplierDTO> findAllVirtualSupplier(FocusDataTablesInput input) throws Exception;
 
-    List<SupplierDTO> findAllOriginalSupplierList();
-    
-    List<SupplierDTO> findAllSupplierByUserLevel();
+	DataTablesOutput<SupplierDTO> findAllOriginalSupplier(FocusDataTablesInput input) throws Exception;
+
+	List<SupplierDTO> findAllVirtualSupplierList();
+
+	List<SupplierDTO> findAllOriginalSupplierList();
+
+	List<SupplierDTO> findAllSupplierByUserLevel();
+
+	SupplierResult deleteMultiple(Integer[] ids) throws Exception;
 
 }
 

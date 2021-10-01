@@ -115,9 +115,12 @@
     });
 
     var runDataTable = function (func, bizId) {
+        
         var tableId = "project_tbl";
+        
         $('#' + tableId).dataTable().fnDestroy();
-        var oTable = $('#' + tableId).dataTable({
+        
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -127,7 +130,7 @@
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -136,14 +139,7 @@
                 {data: 'description'},
                 {data: 'siteName'}
             ],
-            aoColumnDefs: [{
-                targets: 4,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(rowData.name)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -164,7 +160,21 @@
 //            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

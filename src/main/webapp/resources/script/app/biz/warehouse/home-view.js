@@ -117,7 +117,7 @@
 	} );
 	
     var runDataTable = function () {
-        var oTable = $('#wearhouse_tbl').dataTable({
+        var oTable = $('#wearhouse_tbl').DataTable({
         	"processing": true,
             "serverSide": true,
             "ajax": $.fn.dataTable.pipeline( {
@@ -127,10 +127,11 @@
             columns : [ {
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "4%",
                 render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
+                    return "";
+                },
+                className: 'select-checkbox',
             },{
      			data : 'name'
      		},{
@@ -138,19 +139,7 @@
      		},{
      			data : 'description'
      		}],
-            aoColumnDefs: [{
-            	targets: 4,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function ( data, type, full, meta ) {
-                  return "<div align=\"center\"><div class=\"btn-group\"><a class=\"btn btn-xs btn-blue dropdown-toggle btn-sm\" data-toggle=\"dropdown\" href=\"#\">"
-                  + "<i class=\"fa fa-cog\"></i> <span class=\"caret\"></span></a><ul role=\"menu\" class=\"dropdown-menu pull-right\">"
-                      + "<li role=\"presentation\"><a role=\"menuitem\" tabindex=\"-1\" href=\"../warehouse/edit?id=" + data + "\"><i class=\"fa fa-edit\"></i> Edit</a></li>"
-                  + "<li role=\"presentation\"><a data-toggle=\"modal\" role=\"menuitem\" tabindex=\"-1\" href=\"#model"+data+"\"><i class=\"fa fa-times\"></i> Remove</a></li></ul></div>"
-                  +	"<div id=\"model"+data+"\" class=\"modal fade\" tabindex=\"-1\" data-backdrop=\"static\" data-keyboard=\"false\" style=\"display: none;\">"
-                      + "<div class=\"modal-body\"><p>Are You Sure You want to delete Warehouse ?</p></div><div class=\"modal-footer\"><a data-dismiss=\"modal\" class=\"btn btn-green \" >"
-                      + "Cancel</a> <a href=\"../warehouse/delete?id=" + data + "\" class=\"btn btn-red \">Delete</a></div></div></div>";
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -169,7 +158,15 @@
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../warehouse/edit?id",
+            },
         });
         $('#wearhouse_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -182,7 +179,9 @@
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });        
+        });   
+
+        DataTableUtil.deleteRows(oTable, "delete", "warehouse", "id");  
     };    
     
     return {

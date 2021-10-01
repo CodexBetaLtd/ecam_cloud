@@ -8,7 +8,9 @@ var WorkOrderTaskGroup = function () {
     var dtTaskGroups = function (businessId) {
     	
         var tableId = "wo_task_group_tbl";
+        
         $("#" + tableId).dataTable().fnDestroy();
+        
         var oTable = $("#" + tableId).dataTable({
             processing: true,
             serverSide: true,
@@ -20,7 +22,7 @@ var WorkOrderTaskGroup = function () {
                 {
                     orderable: false,
                     searchable: false,
-                    width: "2%",
+                    width: "8%",
                     render: function (data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -28,15 +30,7 @@ var WorkOrderTaskGroup = function () {
                 {data: 'name'},
                 {data: 'description'}
             ],
-            aoColumnDefs: [{
-                targets: 3,
-                width: "10%",
-                data: "id",
-                render: function (data, type, row, meta) {
-                    var vars = [data, EncodeDecodeComponent.getBase64().encode(row.name), EncodeDecodeComponent.getBase64().encode(row.description)];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars('WorkOrderTaskGroup.setTaskGroup', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -54,7 +48,24 @@ var WorkOrderTaskGroup = function () {
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "WorkOrderTaskGroup.setTaskGroup",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    },{
+                        sName : "description",
+                        sRender : "EncodeDecodeComponent.getBase64().encode"
+                    }
+                ],
+            },
         });
 
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

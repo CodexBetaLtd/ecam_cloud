@@ -19,7 +19,7 @@ var DataTableUtil = function () {
 	};
 	
 	var deleteMultipleFunc = function(oTable, elementId, func, id){
-		$("#" + elementId).on('click', function() {
+		$(document).on('click',"#" + elementId, function() {
 			var data = oTable.rows( { selected: true }).data();
 			var ids = [];
 			for (var i = 0; i < data.length; i++) {

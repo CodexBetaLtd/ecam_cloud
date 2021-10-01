@@ -313,8 +313,6 @@
 
     <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
@@ -326,6 +324,9 @@
     <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
     
+    <!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	<div th:include="template/commonjs :: commonjstables"></div>
+	<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
 
 	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/util/base64.js}"></script>
@@ -349,7 +350,6 @@
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/task-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/task-group-add-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/part-add-modal.js}"></script>
-    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/stock-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/meter-reading-add-modal.js}"></script>  
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/meter-reading-value-add-modal.js}"></script> 
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/miscellaneous-cost-add-modal.js}"></script> 
@@ -358,6 +358,7 @@
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/file-add-modal.js}"></script>      
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/modals/status-change-note-add-modal.js}"></script>      
 
+    <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/stock-select-modal.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-assets.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-users.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/maintenance/workorder/datatable/dt-wo-log.js}"></script>

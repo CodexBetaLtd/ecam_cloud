@@ -118,7 +118,7 @@ var UserHome = function () {
 
 
     var initUserTable = function () {
-        var oTable = $('#tbl-users').dataTable({
+        var oTable = $('#tbl-users').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -129,9 +129,8 @@ var UserHome = function () {
                 {
                 	orderable: false, 
                     searchable: false, 
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
+                    defaultContent: '',
+                    className: 'select-checkbox',
                 },
                 {data: 'fullName'},
                 {data: 'emailAddress'},
@@ -139,16 +138,7 @@ var UserHome = function () {
                 {data: 'notes'},
                 {data: 'businessName'}
             ],
-            aoColumnDefs: [
-            	{
-            		orderable: false, 
-                    searchable: false,
-	                targets: 6,	//index of column starting from 0
-	                data: "id", 	//this name should exist in your JSON response
-	                render: function (data, type, full, meta) {
-	                	 return ButtonUtil.getHomeBtnWithURL('userProfile', data);
-	                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 "sLengthMenu": "Show _MENU_ Rows",
                 "sSearch": "",
@@ -167,19 +157,23 @@ var UserHome = function () {
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style:    'multi',
+                selector: 'td:first-child',
+            },
+            rowClick : {
+                sId : 'id',
+                sUrl: "../userProfile/edit?id",
+            },
         });
 
         // modify table search input
         $('#tbl-users_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-
         // modify table per page dropdown
         $('#tbl-users_wrapper .dataTables_length select').addClass("m-wrap small");
-
         // initialzie select2 dropdown
         $('#tbl-users_wrapper .dataTables_length select').select2();
-
-
         $('input[type="checkbox"]').change(function () {
             /* Get the DataTables object again - this is not a recreation, just a get of the object */
             var iCol = parseInt($(this).attr("data-column"));
@@ -187,8 +181,9 @@ var UserHome = function () {
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
 
-    }
-
+        DataTableUtil.deleteRows(oTable, "delete", "userProfile", "id");  
+        
+    };
 
     return {
         init: function () {

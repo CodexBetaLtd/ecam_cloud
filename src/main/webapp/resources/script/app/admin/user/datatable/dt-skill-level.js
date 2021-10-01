@@ -117,72 +117,76 @@ var UserSkillLevel = function() {
 	});
 
 	var runDataTable = function() {
+	    
 		$('#userSkillLevelTbl').dataTable().fnDestroy();
-		var oTable = $('#userSkillLevelTbl')
-				.dataTable(
-						{
-							"processing" : true,
-							"serverSide" : true,
-							"ajax" : $.fn.dataTable
-									.pipeline({
-										url : "../restapi/lookuptable/tabledataUserSkillLevel",
-										pages : 5
-									}),
-							columns : [
-									{ 
-										render : function(data, type, row, meta) {
-											return meta.row + meta.settings._iDisplayStart + 1;
-										}
-									}, {
-										data : 'skill'
-									}, {
-										data : 'description'
-									}, { 
-										data : 'id'
-									} ],
-							"aoColumnDefs" : [
-									{
-										"bSearchable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"orderable" : false,
-										"aTargets" : [ 0, 3 ]
-									},
-									{
-										"targets" : 3,//index of column starting from 0
-										"data" : "id", //this name should exist in your JSON response
-										"render" : function(data, type,row, full, meta) { 
-											return ButtonUtil.getCommonBtnSelect('UserAdd.setSkillLevel', data, row.skill);										}
-									} ],
-							oLanguage : {
-								"sLengthMenu" : "Show _MENU_ Rows",
-								"sSearch" : "",
-								"oPaginate" : {
-									"sPrevious" : "&laquo;",
-									"sNext" : "&raquo;"
-								}
-							},
-							
-							"aaSorting" : [ [ 1, 'asc' ] ],
-							"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
-									[ 5, 10, 15, 20, "All" ] // change per page values here
-							],
-							dom : "<'row'<'col-sm-4 dtbluserskilllevel'><'col-sm-8'f>>"
-									+ "<'row'<'col-sm-12'tr>>"
-									+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
-							initComplete : function() {
-								$("div.dtbluserskilllevel")
-										.html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='user-skill-level-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
-							},
-							bAutoWidth : false,
-							sScrollXInner : "100%",
-							iDisplayLength : 10,
-							bLengthChange : false,
-							sPaginationType : "full_numbers",
-							sPaging : 'pagination',
+		
+		var oTable = $('#userSkillLevelTbl').DataTable({
+			"processing" : true,
+			"serverSide" : true,
+			"ajax" : $.fn.dataTable.pipeline({
+						url : "../restapi/lookuptable/tabledataUserSkillLevel",
+						pages : 5
+					}),
+			columns : [
+					{ 
+						render : function(data, type, row, meta) {
+							return meta.row + meta.settings._iDisplayStart + 1;
+						}
+					}, {
+						data : 'skill'
+					}, {
+						data : 'description'
+					}],
+			"aoColumnDefs" : [
+					{
+						"bSearchable" : false,
+						"aTargets" : [ 0]
+					},
+					{
+						"orderable" : false,
+						"aTargets" : [ 0 ]
+					}],
+			oLanguage : {
+				"sLengthMenu" : "Show _MENU_ Rows",
+				"sSearch" : "",
+				"oPaginate" : {
+					"sPrevious" : "&laquo;",
+					"sNext" : "&raquo;"
+				}
+			},
+			
+			"aaSorting" : [ [ 1, 'asc' ] ],
+			"aLengthMenu" : [ [ 5, 10, 15, 20, -1 ],
+					[ 5, 10, 15, 20, "All" ] // change per page values here
+			],
+			dom : "<'row'<'col-sm-4 dtbluserskilllevel'><'col-sm-8'f>>"
+					+ "<'row'<'col-sm-12'tr>>"
+					+ "<'row'<'col-sm-6'i><'col-sm-6'p>>",
+			initComplete : function() {
+				$("div.dtbluserskilllevel")
+						.html("<button class='btn btn-default btn-sm active tooltips' data-toggle='modal' type='button' id='user-skill-level-new'><i class='clip-plus-circle-2  btn-new'></i> New</button>");
+			},
+			bAutoWidth : false,
+			sScrollXInner : "100%",
+			iDisplayLength : 10,
+			bLengthChange : false,
+			sPaginationType : "full_numbers",
+			sPaging : 'pagination',
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "UserAdd.setSkillLevel",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "skill"
+                    },
+                ],
+            },
 
-						});
+		});
 
 		$('#userSkillLevelTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
 		// modify table search input

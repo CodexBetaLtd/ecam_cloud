@@ -120,7 +120,8 @@
     var initDataTable = function (bizId, method) {
 
         $('#user_select_tbl').dataTable().fnDestroy();
-        var oTable = $('#user_select_tbl').dataTable({
+        
+        var oTable = $('#user_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -142,17 +143,8 @@
                 },
                 {
                     data: 'personalCode'
-                }, { 
-                    data: 'id'
                 }],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data, row.fullName]; 
-                	return ButtonUtil.getCommonBtnSelectWithMultipleVars( method, data, vars );
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -170,7 +162,20 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: method,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "fullNameh"
+                    }
+                ],
+            },
         });
         $('#user_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

@@ -1,6 +1,6 @@
 package com.codex.ecam.service.admin.api;
 
-import java.util.List; 
+import java.util.List;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.admin.ChargeDepartmentDTO;
@@ -16,7 +16,7 @@ public interface ChargeDepartmentService {
 
 	ChargeDepartmentResult delete(Integer id);
 
-	ChargeDepartmentResult save(ChargeDepartmentDTO chargeDepartmentDTO) throws Exception; 
+	ChargeDepartmentResult save(ChargeDepartmentDTO chargeDepartmentDTO) throws Exception;
 
 	void saveAll(List<ChargeDepartmentDTO> list);
 
@@ -27,5 +27,7 @@ public interface ChargeDepartmentService {
 	List<ChargeDepartmentDTO> findAll();
 
 	List<ChargeDepartmentDTO> findAllByBusiness(Integer id);
+
+	ChargeDepartmentResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

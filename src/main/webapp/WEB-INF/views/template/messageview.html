@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 	<div id="message-div" th:fragment="message">
-        <div th:if="${success != null && success.size() > 0 }" th:each="msg : ${success}" class="alert alert-success">
+        <div th:if="${success != null && !success.isEmpty() }" th:each="msg : ${success}" class="alert alert-success">
             <button data-dismiss="alert" class="close">&times;</button>
             <i class="fa fa-check-circle"></i> <span th:text="${msg}"></span>
         </div>
-        <div th:if="${error != null && error.size() > 0}" th:each="msg : ${error}" class="alert alert-danger">
+        <div th:if="${error != null && !error.isEmpty()}" th:each="msg : ${error}" class="alert alert-danger">
             <button data-dismiss="alert" class="close">&times;</button>
             <i class="fa fa-times-circle"></i> <span th:text="${msg}"></span>
     	</div>

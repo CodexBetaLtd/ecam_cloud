@@ -122,7 +122,9 @@
 
     var initDataTable = function () {
 
-        var oTable = $('#asset_select_tbl').dataTable({
+        $('#asset_select_tbl').dataTable().fnDestroy();
+        
+        var oTable = $('#asset_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -132,7 +134,7 @@
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -174,7 +176,20 @@
             ],
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetSelectModel.setData",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#asset_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input
@@ -190,11 +205,20 @@
         });
 
     };
+    
+    function setData(id, name){        
+        BomTab.addAssetConsumeRef('', id, name, '', '', '', '')
+        $('#common-modal').modal('toggle');
+    }
 
 
     return {
         init: function () {
         	initDataTable();
+        },
+    
+        setData: function (id, name) {
+            setData(id, name)
         }
     };
 }();

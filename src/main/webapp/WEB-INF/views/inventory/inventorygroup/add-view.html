@@ -204,14 +204,16 @@
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-switch.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jQuery-Smart-Wizard/jquery.smartWizard.js}"></script>
-
+	
+<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
+<div th:include="template/commonjs :: commonjstables"></div>
+<!-- end: DATATABLE RESPONSIVE JAVASCRIPTS -->
+	
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>

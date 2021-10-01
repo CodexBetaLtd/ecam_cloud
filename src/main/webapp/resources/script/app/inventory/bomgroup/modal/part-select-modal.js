@@ -127,7 +127,7 @@
 
     var runDataTable = function (bizId) {
 
-        var oTable = $('#part_tbl').dataTable({
+        var oTable = $('#part_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -137,22 +137,14 @@
             columns: [{
                 orderable: false,
                 searchable: false, 
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
             }, {
                 data: 'name'
-            }, { 
-                data: 'id'
             }],
-            aoColumnDefs: [{
-                targets: 2,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data , row.name];
-                	return ButtonUtil.getCommonBtnSelectWithMultipleVars('PartSelectModal.addPart', data, vars); 
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -173,14 +165,24 @@
             //   scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "PartSelectModal.addPart",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#part_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        // modify table search input
         $('#part_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        // modify table per page dropdown
         $('#part_tbl_wrapper .dataTables_length select').select2();
-        // initialzie select2 dropdown
         $('#part_tbl_column_toggler input[type="checkbox"]').change(function () {
             /* Get the DataTables object again - this is not a recreation, just a get of the object */
             var iCol = parseInt($(this).attr("data-column"));

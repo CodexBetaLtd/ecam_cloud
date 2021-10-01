@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.admin.cmmssettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,23 +38,23 @@ public class ChargeDepartmentController {
 	@RequestMapping(value = "/edit",method= RequestMethod.GET)
 	public  String  findByIdAccount(Integer id,Model model) {
 		try {
-			ChargeDepartmentDTO chargeDepartmentDTO = chargeDeparmentService.findById(id);
+			final ChargeDepartmentDTO chargeDepartmentDTO = chargeDeparmentService.findById(id);
 			setCommonData(model, chargeDepartmentDTO);
 			return "admin/cmmssetting/lookuptable/chargedepartments/add-view";
-		} catch (Exception e) {
-            model.addAttribute("error", new ArrayList<String>().add(e.getMessage()));
-            return "redirect:/cmmssettings/";
-        }
+		} catch (final Exception e) {
+			model.addAttribute("error", new ArrayList<String>().add(e.getMessage()));
+			return "redirect:/cmmssettings/";
+		}
 	}
 
 	@RequestMapping(value = "/delete", method = {RequestMethod.POST,RequestMethod.GET})
 	public String deleteAccount(Integer id, Model model, RedirectAttributes ra) {
-		ChargeDepartmentResult result = chargeDeparmentService.delete(id);
+		final ChargeDepartmentResult result = chargeDeparmentService.delete(id);
 		if(result.getStatus().equals(ResultStatus.ERROR)){
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, new ChargeDepartmentDTO());
 		return "admin/cmmssetting/lookuptable/chargedepartments/add-view";
@@ -62,18 +63,37 @@ public class ChargeDepartmentController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public String saveOrUpdate(@ModelAttribute("chargeDepartment") ChargeDepartmentDTO chargeDepartmentDTO, Model model) throws Exception {
 
-		ChargeDepartmentResult result = chargeDeparmentService.save(chargeDepartmentDTO);
+		final ChargeDepartmentResult result = chargeDeparmentService.save(chargeDepartmentDTO);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
-            model.addAttribute("error", result.getErrorList());
-        } else {
-            model.addAttribute("success", result.getMsgList());
-        }
+			model.addAttribute("error", result.getErrorList());
+		} else {
+			model.addAttribute("success", result.getMsgList());
+		}
 
 		setCommonData(model, chargeDepartmentDTO);
 
 		return "admin/cmmssetting/lookuptable/chargedepartments/add-view";
 
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final ChargeDepartmentResult result = chargeDeparmentService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Charge Department already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/cmmssetting/lookuptable/chargeDepartment/home-view";
 	}
 
 	private void setCommonData(Model model, ChargeDepartmentDTO chargeDepartmentDTO) {

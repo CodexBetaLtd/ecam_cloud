@@ -1,6 +1,5 @@
 package com.codex.ecam.controller.asset;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,6 +27,7 @@ import com.codex.ecam.dto.admin.AssetBrandDTO;
 import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
+import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.asset.AssetResult;
 import com.codex.ecam.service.admin.api.AssetBrandService;
 import com.codex.ecam.service.admin.api.AssetEventTypeService;
@@ -39,8 +40,6 @@ import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.biz.api.BusinessTypeService;
 import com.codex.ecam.service.biz.api.SupplierService;
-import com.codex.ecam.util.AzureEventHubUtil;
-import com.codex.ecam.util.SendGridUtil;
 
 @Controller
 @RequestMapping(AssetController.REQUEST_MAPPING_URL)
@@ -84,7 +83,7 @@ public class AssetController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
 
-	return "asset/home-view";
+		return "asset/home-view";
 	}
 
 	@RequestMapping(value = "/machine", method = RequestMethod.GET)
@@ -95,14 +94,14 @@ public class AssetController {
 
 		return "asset/machine/home-view";
 	}
-	
+
 	@RequestMapping(value = "/facility", method = RequestMethod.GET)
 	public String indexFacility(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
 		model.addAttribute("error", error);
 		return "asset/facility/home-view";
-	} 
-	
+	}
+
 	@RequestMapping(value = "/facility-table", method = RequestMethod.GET)
 	public String facilityTableView(final Model model, @ModelAttribute("success") final ArrayList<String> success,
 			@ModelAttribute("error") final ArrayList<String> error) {
@@ -119,47 +118,47 @@ public class AssetController {
 
 		return "asset/machine/home-view :: tableDiv";
 	}
-	
+
 	@RequestMapping(value = "/facility/edit", method = RequestMethod.GET)
 	public String editFacilityForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			AssetDTO asset = assetService.findById(id);
+			final AssetDTO asset = assetService.findById(id);
 			setCommonData(model, asset.getAssetCategoryType(), asset);
 			return "asset/facility/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/asset/facility";
 		}
-	}  
-	
+	}
+
 	@RequestMapping(value = "/machine/edit", method = RequestMethod.GET)
 	public String editMachineForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			AssetDTO asset = assetService.findById(id);
+			final AssetDTO asset = assetService.findById(id);
 			setCommonData(model, asset.getAssetCategoryType(), asset);
 			return "asset/machine/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/asset/machine";
 		}
-	}  
-	
+	}
+
 	@RequestMapping(value = "/machine/delete", method = RequestMethod.GET)
-	public String deleteMachine(Integer id, Model model, RedirectAttributes ra) { 
+	public String deleteMachine(Integer id, Model model, RedirectAttributes ra) {
 		delete(id, ra);
 		return "redirect:/asset/machine/";
 	}
-	
+
 	@RequestMapping(value = "/facility/delete", method = RequestMethod.GET)
-	public String deleteFacility(Integer id, Model model, RedirectAttributes ra) { 
+	public String deleteFacility(Integer id, Model model, RedirectAttributes ra) {
 		delete(id, ra);
 		return "redirect:/asset/facility/";
 	}
 
 	private void delete(Integer id, RedirectAttributes ra) {
-		AssetResult result = assetService.delete(id);
+		final AssetResult result = assetService.delete(id);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			ra.addFlashAttribute("error", result.getErrorList());
@@ -167,7 +166,7 @@ public class AssetController {
 			ra.addFlashAttribute("success", result.getMsgList());
 		}
 	}
-	
+
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(Model model, @ModelAttribute("success") final ArrayList<String> success, @ModelAttribute("error") final ArrayList<String> error) {
 		model.addAttribute("success", success);
@@ -215,12 +214,12 @@ public class AssetController {
 	public String modelView(Model model) {
 		return "asset/modals/model/asset-model-select-modal";
 	}
-	
+
 	@RequestMapping(value = "/sparepartaddview", method = RequestMethod.GET)
 	public String modelSparePartAddView(Model model) {
 		return "asset/modals/spare-part-add-modal";
 	}
-	
+
 	@RequestMapping(value = "/sparepartselectmodalview", method = RequestMethod.GET)
 	public String modelSparePartSelectView(Model model) {
 		return "asset/modals/part-select-modal";
@@ -323,24 +322,24 @@ public class AssetController {
 		model.addAttribute("businesses", businessService.findAll());
 		return "asset/modals/asset-import-modal";
 	}
-	
+
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String addForm(Model model, AssetCategoryType type, RedirectAttributes ra) {
 		try {
 			setCommonData(model, type, new AssetDTO());
 			return "asset/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/asset/index";
 		}
 	}
-	
+
 	@RequestMapping(value = "/machine/add", method = RequestMethod.GET)
 	public String addMachineForm(Model model, AssetCategoryType type, RedirectAttributes ra) {
 		try {
 			setCommonData(model, type, new AssetDTO());
 			return "asset/machine/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/asset/machine/";
 		}
@@ -351,7 +350,7 @@ public class AssetController {
 		try {
 			setCommonData(model, type, new AssetDTO());
 			return "asset/facility/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error While Loading Initial Data."));
 			return "redirect:/asset/facility/";
 		}
@@ -360,10 +359,10 @@ public class AssetController {
 	@RequestMapping(value = "/edit", method = RequestMethod.GET)
 	public String editForm(Integer id, Model model, RedirectAttributes ra) {
 		try {
-			AssetDTO asset = assetService.findById(id);
+			final AssetDTO asset = assetService.findById(id);
 			setCommonData(model, asset.getAssetCategoryType(), asset);
 			return "asset/add-view";
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			ra.addFlashAttribute("error", new ArrayList<String>().add("Error occured. Please Try again."));
 			return "redirect:/asset/index";
@@ -371,13 +370,13 @@ public class AssetController {
 	}
 
 	@RequestMapping(value = "/delete", method = RequestMethod.GET)
-	public String delete(Integer id, Model model, RedirectAttributes ra) { 
+	public String delete(Integer id, Model model, RedirectAttributes ra) {
 		delete(id, ra);
 		return "redirect:/asset/index";
 	}
-	
+
 	@RequestMapping(value = "/machine/save", method = RequestMethod.POST)
-	public String machineSave(@ModelAttribute("asset") @Valid AssetDTO asset, @RequestParam("assetImage") MultipartFile image, @ModelAttribute("type") AssetCategoryType type, Model model) throws Exception {	
+	public String machineSave(@ModelAttribute("asset") @Valid AssetDTO asset, @RequestParam("assetImage") MultipartFile image, @ModelAttribute("type") AssetCategoryType type, Model model) throws Exception {
 		saveOrUpdate(asset, image, type, model);
 		return "asset/machine/add-view";
 	}
@@ -390,7 +389,7 @@ public class AssetController {
 
 	private void saveOrUpdate(AssetDTO asset, MultipartFile image, AssetCategoryType type, Model model)
 			throws Exception {
-		AssetResult result = assetService.save(asset, image);
+		final AssetResult result = assetService.save(asset, image);
 
 		if (result.getStatus().equals(ResultStatus.ERROR)) {
 			model.addAttribute("error", result.getErrorList());
@@ -403,19 +402,19 @@ public class AssetController {
 
 	@RequestMapping(value = "/getsites", method = RequestMethod.GET)
 	public @ResponseBody List<AssetDTO> selectParent(Integer id, Model model) throws Exception {
-		List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
+		final List<AssetDTO> assetDTOs = assetService.findSiteByBusinessId(id, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		return assetDTOs;
 	}
 
 	@RequestMapping(value = "/selectBusiness/{assetId}", method = RequestMethod.GET)
 	public @ResponseBody List<AssetDTO> selectParent(@PathVariable("assetId") Integer assetId) throws Exception {
-		List<AssetDTO> assetDTOs = assetService.findAllSiteByBusiness(assetId);
+		final List<AssetDTO> assetDTOs = assetService.findAllSiteByBusiness(assetId);
 		return assetDTOs;
 	}
 
 	@RequestMapping(value = "/upload-file", method = RequestMethod.POST)
 	public @ResponseBody List<String>  uploadFile(@RequestParam("fileData") MultipartFile fileData, @RequestParam("fileRefId")String refId) throws Exception {
-		List<String> list = new ArrayList<String>();
+		final List<String> list = new ArrayList<String>();
 		list.add(fileData.getContentType());
 		list.add(assetService.assetFileUpload(fileData,refId));
 		return list;
@@ -429,10 +428,41 @@ public class AssetController {
 	public void  downloadQR(@RequestParam("id")Integer id, HttpServletResponse response) throws Exception {
 		assetService.assetQRDownload(id,response);
 	}
-	
+
 	@RequestMapping(value = "/import-assets", method = RequestMethod.POST)
 	public void  importAssets(@RequestParam("fileData")MultipartFile file,@RequestParam("bussinessId")Integer bussinessId, HttpServletResponse response) throws Exception {
 		assetService.importBulkAssets(file,bussinessId);
+	}
+
+	@RequestMapping(value = "/machine/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultipleMachine(Integer ids[], Model model) {
+
+		deleteMultiple(ids, model);
+
+		return "asset/machine/home-view";
+	}
+
+	@RequestMapping(value = "/facility/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultipleFacility(Integer ids[], Model model) {
+
+		deleteMultiple(ids, model);
+
+		return "asset/facility/home-view";
+	}
+
+	private void deleteMultiple(Integer[] ids, Model model) {
+		try {
+			final AssetResult result = assetService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Asset already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
 	}
 
 	private void setCommonData(Model model, AssetCategoryType type, AssetDTO asset) {

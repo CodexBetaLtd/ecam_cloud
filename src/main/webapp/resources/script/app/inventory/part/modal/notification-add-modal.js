@@ -45,6 +45,7 @@ var NotificationAddModal = function () {
     var setNotifyUser = function (id, userName) { 
         $('#partNotificationUserId').val(id);
         $('#partNotificationUserName').val(userName); 
+        $("#part-notification-add-child-modal").modal('toggle');
     };
 	
 	var initValidator = function () {

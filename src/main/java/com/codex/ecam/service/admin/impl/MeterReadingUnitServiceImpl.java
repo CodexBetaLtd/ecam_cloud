@@ -28,11 +28,11 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 	@Override
 	public DataTablesOutput<MeterReadingUnitDTO> findAll(FocusDataTablesInput input) throws Exception {
 		MeterReadingUnitSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		DataTablesOutput<MeterReadingUnit> domainOut = meterReadingUnitDao.findAll(input);
+		final DataTablesOutput<MeterReadingUnit> domainOut = meterReadingUnitDao.findAll(input);
 		DataTablesOutput<MeterReadingUnitDTO> out = null;
 		try {
 			out = MeterReadingUnitMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -41,7 +41,7 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 	@Override
 	public MeterReadingUnitDTO findById(Integer id) throws Exception {
-		MeterReadingUnit domain = meterReadingUnitDao.findById(id);
+		final MeterReadingUnit domain = meterReadingUnitDao.findById(id);
 		if (domain != null) {
 			return MeterReadingUnitMapper.getInstance().domainToDto(domain);
 		}
@@ -50,15 +50,36 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 	@Override
 	public MeterReadingUnitResult delete(Integer id) {
-		MeterReadingUnitResult result = new MeterReadingUnitResult(null, null);
+		final MeterReadingUnitResult result = new MeterReadingUnitResult(null, null);
 		try {
 			meterReadingUnitDao.delete(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("Meter Reading Unit Deleted Successfully.");
-		} catch (DataIntegrityViolationException e) {
+		} catch (final DataIntegrityViolationException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Meter Reading Unit Already Assigned. Please Remove from Assigned Meter Reading Unit and try again.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public MeterReadingUnitResult deleteMultiple(Integer[] ids) throws Exception {
+		final MeterReadingUnitResult result = new MeterReadingUnitResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				meterReadingUnitDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("Meter Reading Unit(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("Meter Reading Unit(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -67,14 +88,14 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 	@Override
 	public MeterReadingUnitResult save(MeterReadingUnitDTO dto) throws Exception {
-		MeterReadingUnitResult result = createMeterReadingUnitResult(dto);
+		final MeterReadingUnitResult result = createMeterReadingUnitResult(dto);
 		try{
 			saveOrUpdate(result);
 			result.addToMessageList(getMessageByAction(dto));
-		} catch (ObjectOptimisticLockingFailureException e) {
+		} catch (final ObjectOptimisticLockingFailureException e) {
 			result.setResultStatusError();
 			result.addToErrorList("Meter Reading Unit Already updated. Please Reload Meter Reading Unit.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			result.setResultStatusError();
 			result.addToErrorList(ex.getMessage());
 		}
@@ -91,7 +112,7 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 	private MeterReadingUnitResult createMeterReadingUnitResult(MeterReadingUnitDTO dto) {
 		MeterReadingUnitResult result;
-		if ((dto.getId() != null) && (dto.getId() > 0)) {
+		if (dto.getId() != null && dto.getId() > 0) {
 			result = new MeterReadingUnitResult(meterReadingUnitDao.findOne(dto.getId()), dto);
 		} else {
 			result = new MeterReadingUnitResult(new MeterReadingUnit(), dto);
@@ -110,10 +131,10 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 	@Override
 	public void saveAll(List<MeterReadingUnitDTO> allDummyData) {
-		for (MeterReadingUnitDTO dto : allDummyData) {
+		for (final MeterReadingUnitDTO dto : allDummyData) {
 			try {
 				save(dto);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -131,14 +152,14 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 
 			Iterable<MeterReadingUnit> domainList;
 			//if(AuthenticationUtil.isAuthUserAdminLevel()){
-				domainList = meterReadingUnitDao.findAll();
+			domainList = meterReadingUnitDao.findAll();
 			//} else {
-				//Specification<MeterReadingUnit> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-				//domainList = meterReadingUnitDao.findAll(specification);
+			//Specification<MeterReadingUnit> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
+			//domainList = meterReadingUnitDao.findAll(specification);
 			//}
 			return MeterReadingUnitMapper.getInstance().domainToDTOList(domainList);
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}

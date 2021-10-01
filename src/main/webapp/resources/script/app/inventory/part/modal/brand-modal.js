@@ -1,3 +1,4 @@
+
 var AssetBrandSelectModal = function(){
 	
     var setAssetBrand  = function(id,name){

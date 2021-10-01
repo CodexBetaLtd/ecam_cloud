@@ -22,11 +22,13 @@ public interface ReceiptOrderService {
 	ReceiptOrderResult statusChange(Integer id, ReceiptOrderStatus receiptOrderStatus);
 
 	DataTablesOutput<ReceiptOrderDTO> findAll(FocusDataTablesInput input) throws Exception;
-	
-	ReceiptOrderResult generateGrnFromPo(String ids, Integer poId);
-	
-    String getNextCode(Integer businessId);
 
-    ReceiptOrderResult createNewReceiptOrder();
+	ReceiptOrderResult generateGrnFromPo(String ids, Integer poId);
+
+	String getNextCode(Integer businessId);
+
+	ReceiptOrderResult createNewReceiptOrder();
+
+	ReceiptOrderResult deleteMultiple(Integer[] ids) throws Exception;
 
 }

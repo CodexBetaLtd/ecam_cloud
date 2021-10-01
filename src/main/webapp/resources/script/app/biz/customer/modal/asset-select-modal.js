@@ -121,6 +121,8 @@
     });
 
     var runDataTable = function () {
+        
+        $('#asset_select_tbl').dataTable().fnDestroy();
 
         var oTable = $('#asset_select_tbl').dataTable({
             processing: true,
@@ -132,7 +134,7 @@
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }
@@ -144,18 +146,8 @@
                 data: 'assetCategoryName'
             }, {
                 data: 'location'
-            }, {
-                width: "5%",
-                data: 'id'
             }],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data, row.name, row.code, row.assetCategoryName, row.location];
-                    return "<div align='center'>" + ButtonUtil.getCommonBtnSelectWithMultipleVars('TabAsset.addAsset', data, vars);
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -176,27 +168,51 @@
             //   scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetSelectModel.setData",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },{
+                        sName : "code"                        
+                    },{
+                        sName : "assetCategoryName"                                                
+                    }, {
+                        sName : "location"                                                                        
+                    }
+                ],
+            },
         });
         $('#asset_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        // modify table search input
         $('#asset_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
-        // modify table per page dropdown
         $('#asset_select_tbl_wrapper .dataTables_length select').select2();
-        // initialzie select2 dropdown
         $('#asset_select_tbl_column_toggler input[type="checkbox"]').change(function () {
-            /* Get the DataTables object again - this is not a recreation, just a get of the object */
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
 
     };
-
+    
+    function setData(id, name, code, category, location){
+        TabAsset.addAsset(id, name, code, category, location);
+        $("#common-modal").modal('toggle');
+    };
 
     return {
         init: function () {
             runDataTable();
+        },
+        
+        setData: function (id, name, code, category, location) {
+            setData(id, name, code, category, location);
         }
+    
     };
 }();

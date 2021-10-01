@@ -207,7 +207,7 @@ public enum PagePermission {
 	HAS_CANCEL_BUTTON_RFQ_VIEW(163, Page.RFQ_VIEW, "Has 'Cancel' Button On The 'RFQ View' Page"),
 	HAS_EDIT_BUTTON_RFQ_VIEW(164, Page.RFQ_VIEW, "Has 'Edit' Button On The 'RFQ View' Page"),
 
-//	HAS_UPDATE_BUTTON_USER_PROFILE_VIEW(165, Page.USER_PROFILE_ADD, "Has 'Update' Button On The 'User Profile Add' Page"),
+	//	HAS_UPDATE_BUTTON_USER_PROFILE_VIEW(165, Page.USER_PROFILE_ADD, "Has 'Update' Button On The 'User Profile Add' Page"),
 
 	HAS_SAVE_BUTTON_APP_ADD(166, Page.APP_ADD, "Has 'Save' Button On The 'App Add ' Page"),
 	HAS_NEW_BUTTON_APP_ADD(167, Page.APP_ADD, "Has 'New' Button On The 'App Add' Page"),
@@ -265,34 +265,40 @@ public enum PagePermission {
 	HAS_DELETE_BUTTON_WEARHOUSE_VIEW(209, Page.WEARHOUSE_VIEW, "Has 'Delete' Button On The 'Warehouse View' Page"),
 	HAS_CANCEL_BUTTON_WEARHOUSE_VIEW(210, Page.WEARHOUSE_VIEW, "Has 'Cancel' Button On The 'Warehouse View' Page"),
 	HAS_EDIT_FUNCTION_WEARHOUSE_VIEW(211, Page.WEARHOUSE_VIEW, "Has 'Edit' Button On The 'Warehouse View' Page"),
-	
+
 	HAS_SAVE_BUTTON_WEARHOUSE_ADD(212, Page.WEARHOUSE_ADD, "Has 'Save' Button On The 'Wear Housee Add' Page"),
 	HAS_NEW_BUTTON_WEARHOUSE_ADD(213, Page.WEARHOUSE_ADD, "Has 'New' Button On The 'Warehouse Add' Page"),
 	HAS_DELETE_BUTTON_WEARHOUSE_ADD(214, Page.WEARHOUSE_ADD, "Has 'Delete' Button On The 'Warehouse Add' Page"),
 	HAS_CANCEL_BUTTON_WEARHOUSE_ADD(215, Page.WEARHOUSE_ADD, "Has 'Cancel' Button On The 'Warehouse Add' Page"),
-	
+
 	HAS_ASSET_WIGET(216, Page.DASHBOARD_VIEW, "Has 'Asset' Widget On The 'Dashboard' "),
 	HAS_MAINTAINACE_WIGET(217, Page.DASHBOARD_VIEW, "Has 'Maintainace' Widget On The 'Dashboard'"),
 	HAS_INVENTORY_WIGET(218, Page.DASHBOARD_VIEW, "Has 'Inventory' Widget On The 'Dashboard'"),
 	HAS_NOTIFICATION_WIGET(219, Page.DASHBOARD_VIEW, "Has 'Notification' Widget On The 'Dashboard'"),
 	HAS_BIZ_WIGET(220, Page.DASHBOARD_VIEW, "Has 'Biz' Widget On The 'Dashboard'"),
 	HAS_SETTINGS_WIGET(221, Page.DASHBOARD_VIEW, "Has 'Settings' Widget On The 'Dashboard'"),
-	
+
 	HAS_SAVE_BUTTON_MRN_VIEW(222, Page.MRN_VIEW, "Has 'Save' Button On The 'MRN View Page' "),
 	HAS_NEW_BUTTON_MRN_VIEW(223, Page.MRN_VIEW, "Has 'New' Button On The 'MRN View Page'"),
 	HAS_DELETE_BUTTON_MRN_VIEW(224, Page.MRN_VIEW, "Has 'Delete' Button On The 'MRN View Page'"),
 	HAS_CANCEL_BUTTON_MRN_VIEW(225, Page.MRN_VIEW, "Has 'Cancel' Button On The 'MRN View Page'"),
 	HAS_EDIT_FUNCTION_MRN_VIEW(226, Page.MRN_VIEW, "Has 'Edit' Button On The 'MRN View' Page"),
 
-	
+
 	HAS_SAVE_BUTTON_MRN_ADD(227, Page.MRN_ADD, "Has 'Save' Button On The 'MRN Add Page' "),
 	HAS_NEW_BUTTON_MRN_ADD(228, Page.MRN_ADD, "Has 'New' Button On The 'MRN Add Page'"),
 	HAS_DELETE_BUTTON_MRN_ADD(229, Page.MRN_ADD, "Has 'Delete' Button On The 'MRN Add Page'"),
-	HAS_CANCEL_BUTTON_MRN_ADD(230, Page.MRN_ADD, "Has 'Cancel' Button On The 'MRN Add Page'");
+	HAS_CANCEL_BUTTON_MRN_ADD(230, Page.MRN_ADD, "Has 'Cancel' Button On The 'MRN Add Page'"),
 	//HAS_BIZ_WIGET(220, Page.DASHBOARD_VIEW, "Has 'Biz' Widget On The 'Dashboard'"),
 	//HAS_SETTINGS_WIGET(221, Page.DASHBOARD_VIEW, "Has 'Settings' Widget On The 'Dashboard'");
 
-	
+	HAS_NEW_BUTTON_TAX_VIEW(231, Page.TAX_VIEW, "Has 'New' Button On The 'Tax View Page'"),
+	HAS_DELETE_BUTTON_TAX_VIEW(232, Page.TAX_VIEW, "Has 'Delete' Button On The 'View Add Page'");
+
+	/***********************
+	 * LAST ID =
+	 ************************/
+
 	private Integer id;
 	private String name;
 	private Page page;
@@ -304,10 +310,10 @@ public enum PagePermission {
 	}
 
 	public static List<PagePermission> getPagePermissionsByPage(Page page) {
-		List<PagePermission> list = new ArrayList<PagePermission>();
+		final List<PagePermission> list = new ArrayList<PagePermission>();
 
-		PagePermission[] arry = PagePermission.values();
-		for (PagePermission element : arry) {
+		final PagePermission[] arry = PagePermission.values();
+		for (final PagePermission element : arry) {
 			if (element.getPage().equals(page)) {
 				list.add(element);
 			}

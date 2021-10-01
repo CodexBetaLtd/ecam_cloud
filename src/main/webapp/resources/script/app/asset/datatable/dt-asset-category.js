@@ -117,7 +117,7 @@ var AssetCategoryDataTable = function () {
     var runDataTable = function () {
     	$('#assetCategoryTbl').dataTable().fnDestroy();
     
-        var oTable = $('#assetCategoryTbl').dataTable({
+        var oTable = $('#assetCategoryTbl').DataTable({
         	
         	responsive: true,
             processing: true,
@@ -129,10 +129,10 @@ var AssetCategoryDataTable = function () {
             columns: [{            	
                 orderable: false,
                 searchable: false,
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
-                className: 'first-th',
                 responsivePriority: 1,
             },
                 {
@@ -148,14 +148,7 @@ var AssetCategoryDataTable = function () {
             		responsivePriority: 2,
             	}
             ],
-            aoColumnDefs: [{
-            	className:"dt-center",
-                targets: 4,
-                data: "id",
-                render: function (data, type, rowData, meta) {
-                    return ButtonUtil.getCommonBtnSelect('AssetAdd.setAssetCategory', data, rowData.name); 
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -171,14 +164,26 @@ var AssetCategoryDataTable = function () {
                 [5, 10, 15, 20, -1],
                 [5, 10, 15, 20, "All"] // change per page values here
             ],
-            dom : "<'row'<'col-sm-4 col-xs-4 dtblassetcategory'><'col-sm-8 col-xs-8'f>>" + "<'row '<'col-sm-12 col-xs-12 'tr>>" + "<'row panel-body'<'col-sm-4'i><'col-sm-8'p>>",
+            dom : "<'row'<'col-sm-8 col-xs-8 dtblassetcategory'><'col-sm-4 col-xs-4'f>>" + "<'row '<'col-sm-12 col-xs-12 'tr>>" + "<'row panel-body'<'col-sm-4'i><'col-sm-8'p>>",
 			initComplete : function() {
 				$("div.dtblassetcategory").html( "<button class='btn btn-blue btn-sm active tooltips' data-toggle='modal' type='button' id='btnAssetCategoryNew' onclick='AssetAdd.assetCategoryAddView();' ><i class='clip-plus-circle-2  btn-new'></i> New</button>");
 			},
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false, 
-//            sDom: 'Rlfrtip'
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "AssetAdd.setAssetCategory",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
 
         $('#assetCategoryTbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");

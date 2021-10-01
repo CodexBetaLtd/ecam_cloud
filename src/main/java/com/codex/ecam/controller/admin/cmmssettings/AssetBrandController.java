@@ -1,6 +1,7 @@
 package com.codex.ecam.controller.admin.cmmssettings;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -77,6 +78,25 @@ public class AssetBrandController {
 			return "admin/cmmssetting/lookuptable/assetbrands/add-view";
 		}
 
+	}
+
+	@RequestMapping(value = "/delete-multiple", method = RequestMethod.GET)
+	public String deleteMultiple(Integer ids[], Model model) {
+
+		try {
+			final AssetBrandResult result = assetBrandService.deleteMultiple(ids);
+			if (result.getStatus().equals(ResultStatus.ERROR)) {
+				model.addAttribute("error", result.getErrorList().get(0));
+			} else {
+				model.addAttribute("success", result.getMsgList().get(0));
+			}
+		} catch (final DataIntegrityViolationException e) {
+			model.addAttribute("error", "Asset Brand already assigned. Please remove from where assigned and try again.");
+		}  catch (final Exception e) {
+			model.addAttribute("error", e.getMessage());
+		}
+
+		return "admin/cmmssetting/lookuptable/assetbrands/home-view";
 	}
 
 	private void setCommonData(Model model, AssetBrandDTO assetBrandDTO) {

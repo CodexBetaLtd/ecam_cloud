@@ -115,7 +115,10 @@
     });
 
     var runDataTable = function (func) {
-        var oTable = $('#tbl_supplier').dataTable({
+
+        $("#tbl_supplier").dataTable().fnDestroy();
+        
+        var oTable = $('#tbl_supplier').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
@@ -123,22 +126,17 @@
                 pages: 5
             }),
             columns: [{
-                orderable: false,
-                searchable: false, 
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            {data: 'name'},
+                    orderable: false,
+                    searchable: false, 
+                    width: "8%",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {data: 'name'},
                 {data: 'code'},
                 {data : 'businessName'}],
-            aoColumnDefs: [{
-                targets: 4,//index of column starting from 0
-                data: "id", //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data, row.name];
-                    return ButtonUtil.getCommonBtnSelectWithMultipleVars(func, data, vars);                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show _MENU_ Rows",
                 sSearch: "",
@@ -157,7 +155,20 @@
             // set the initial value
             iDisplayLength: 10,
             sPaginationType: "full_numbers",
-            sPaging: 'pagination'
+            sPaging: 'pagination',
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: func,
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    },
+                ],
+            },
         });
         $('#tbl_supplier_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         // modify table search input

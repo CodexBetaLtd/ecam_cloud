@@ -1,5 +1,5 @@
 package com.codex.ecam.service.inventory.api;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.inventory.stock.StockDTO;
@@ -16,59 +16,61 @@ import com.codex.ecam.result.inventory.StockResult;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface StockService { 
-	
+public interface StockService {
+
 	void adjustStock(StockAdjustmentDTO dto) throws Exception;
-	
-	void updateItemAVGPrice(Integer partId) throws Exception; 
-	
+
+	void updateItemAVGPrice(Integer partId) throws Exception;
+
 	void saveUpdatePartStock(List<StockDTO> stockDTOs);
 
-    StockResult stockReceived(ReceiptOrderItem receiptOrderItem, BigDecimal subTotal, List<ReceiptOrderTax> receiptOrderTaxes);
+	StockResult stockReceived(ReceiptOrderItem receiptOrderItem, BigDecimal subTotal, List<ReceiptOrderTax> receiptOrderTaxes);
 
-    StockResult dispatchStock(AOD aod) throws Exception;
-    
-    StockResult save(StockDTO dto);
+	StockResult dispatchStock(AOD aod) throws Exception;
 
-    StockResult findByIdWithOpenPOs(Integer id);
+	StockResult save(StockDTO dto);
 
-    StockResult delete(Integer id); 
-    
-    StockResult findStockOnHand(Integer partId, Integer warehouse) throws Exception;
+	StockResult findByIdWithOpenPOs(Integer id);
 
-    Stock dispatchedReturn(Integer stockId, BigDecimal returnQty) throws Exception; 
-    
-    Stock findOne(Integer stockId) throws Exception; 
+	StockResult delete(Integer id);
 
-    StockDTO findById(Integer id) throws Exception;
+	StockResult findStockOnHand(Integer partId, Integer warehouse) throws Exception;
 
-    List<StockDTO> getStockSummary(StockViewFilterDTO stockViewFilterDTO);
+	Stock dispatchedReturn(Integer stockId, BigDecimal returnQty) throws Exception;
 
-    List<StockDTO> getStockDetailList(StockViewFilterDTO stockViewFilterDTO);
+	Stock findOne(Integer stockId) throws Exception;
 
-    List<StockDTO> findStockByPart(Integer assetId); 
+	StockDTO findById(Integer id) throws Exception;
 
-    List<StockHistoryDTO> findStockHistoryByStock(Integer stockId); 
+	List<StockDTO> getStockSummary(StockViewFilterDTO stockViewFilterDTO);
 
-    DataTablesOutput<StockDTO> findStockByPart(FocusDataTablesInput input, Integer partId) throws Exception;
+	List<StockDTO> getStockDetailList(StockViewFilterDTO stockViewFilterDTO);
 
-    DataTablesOutput<StockDTO> findStockByAsset(FocusDataTablesInput input, Integer assetId) throws Exception;
+	List<StockDTO> findStockByPart(Integer assetId);
 
-    DataTablesOutput<StockDTO> findStockByAssetTemp(FocusDataTablesInput input, Integer assetId) throws Exception;
+	List<StockHistoryDTO> findStockHistoryByStock(Integer stockId);
 
-    DataTablesOutput<StockDTO> findStockByUserLevel(FocusDataTablesInput input, Integer assetId) throws Exception;
+	DataTablesOutput<StockDTO> findStockByPart(FocusDataTablesInput input, Integer partId) throws Exception;
 
-    DataTablesOutput<StockDTO> findStockByPartAndWarehouse(FocusDataTablesInput input, Integer partId, Integer warehouseId) throws Exception;
+	DataTablesOutput<StockDTO> findStockByAsset(FocusDataTablesInput input, Integer assetId) throws Exception;
 
-    DataTablesOutput<StockDTO> findRemainStockPartList(FocusDataTablesInput input);
+	DataTablesOutput<StockDTO> findStockByAssetTemp(FocusDataTablesInput input, Integer assetId) throws Exception;
 
-    DataTablesOutput<StockDTO> findStockPartList(FocusDataTablesInput input) throws Exception;
-    
-    DataTablesOutput<StockDTO> findLowStockPartItem(FocusDataTablesInput input) throws Exception;  
-    DataTablesOutput<StockDTO> findStock(FocusDataTablesInput input) throws Exception;  
-    
-    Integer findMinimumStock();
-    
-     StockDTO createNewStock(Integer partId);
-    
+	DataTablesOutput<StockDTO> findStockByUserLevel(FocusDataTablesInput input, Integer assetId) throws Exception;
+
+	DataTablesOutput<StockDTO> findStockByPartAndWarehouse(FocusDataTablesInput input, Integer partId, Integer warehouseId) throws Exception;
+
+	DataTablesOutput<StockDTO> findRemainStockPartList(FocusDataTablesInput input);
+
+	DataTablesOutput<StockDTO> findStockPartList(FocusDataTablesInput input) throws Exception;
+
+	DataTablesOutput<StockDTO> findLowStockPartItem(FocusDataTablesInput input) throws Exception;
+	DataTablesOutput<StockDTO> findStock(FocusDataTablesInput input) throws Exception;
+
+	Integer findMinimumStock();
+
+	StockDTO createNewStock(Integer partId);
+
+	StockResult deleteMultiple(Integer[] ids) throws Exception;
+
 }

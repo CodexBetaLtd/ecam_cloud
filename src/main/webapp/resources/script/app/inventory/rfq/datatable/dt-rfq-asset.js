@@ -98,8 +98,10 @@ var dtRFQItemAsset = function () {
     });
 
     var initRFQAssetTable = function () {
+        
         var URL = "../restapi/asset/machine-tabledata";
-        var oTable = $('#rfq_asset_select_tbl').dataTable({
+        
+        var oTable = $('#rfq_asset_select_tbl').DataTable({
         	responsive: true,
             processing: true,
             serverSide: true,
@@ -110,7 +112,7 @@ var dtRFQItemAsset = function () {
             columns: [{
                 orderable: false,
                 searchable: false,
-                width: "2%",
+                width: "8%",
                 render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
@@ -135,14 +137,7 @@ var dtRFQItemAsset = function () {
             		responsivePriority: 4,
             	},
             ],
-            aoColumnDefs: [{
-                targets: 5,//index of column starting from 0
-                data: "id",  //this name should exist in your JSON response
-                render: function (data, type, row, meta) {
-                	var vars = [data, row.name]; 
-                	return ButtonUtil.getCommonBtnSelectWithMultipleVars( 'ItemAddModal.setRFQItemAsset', data, vars );
-                }
-            }],
+            aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
                 sSearch: "",
@@ -161,7 +156,20 @@ var dtRFQItemAsset = function () {
             // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
-            bLengthChange: false
+            bLengthChange: false,
+            select: {
+                style: 'os',
+            },
+            rowClick : {
+                sFunc: "ItemAddModal.setRFQItemAsset",
+                aoData:[  
+                    {
+                        sName : "id",
+                    }, {
+                        sName : "name"
+                    }
+                ],
+            },
         });
         $('#rfq_asset_select_tbl_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#rfq_asset_select_tbl_wrapper .dataTables_length select').addClass("m-wrap small");
@@ -173,11 +181,6 @@ var dtRFQItemAsset = function () {
         });
 		
 	};
-
-
-    var tblButton = function (data) {
-        return "<a id='link" + data.id + "' onclick='TabItem.setRFQItemAsset(this,\"" + data.id + "\",\"" + data.name + "\");' type='button' class='btn btn-blue btn-squared btn-xs' >Select</a>";
-    };
 
     return {
 

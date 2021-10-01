@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.persistence.criteria.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -72,10 +73,10 @@ public class AODServiceImpl implements AODService {
 
 	@Autowired
 	private AssetDao assetDao;
-	
+
 	@Autowired
 	private MRNDao mrnDao;
-	
+
 	@Autowired
 	private MRNItemDao mrnItemDao;
 
@@ -90,7 +91,7 @@ public class AODServiceImpl implements AODService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private WorkOrderDao workOrderDao;
 
@@ -107,12 +108,12 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public AODResult newAOD() {
-		AODResult result = new AODResult(null, null);
+		final AODResult result = new AODResult(null, null);
 		try {
 			result.setDtoEntity(nextAOD());
 			result.setResultStatusSuccess();
 			result.addToErrorList("New AOD Return Created!");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("AOD Return NOT Created ".concat(e.getMessage()));
@@ -122,19 +123,19 @@ public class AODServiceImpl implements AODService {
 	}
 
 	private AODDTO nextAOD() {
-		AODDTO dto = new AODDTO();
+		final AODDTO dto = new AODDTO();
 		dto.setAodNo(getNextCode());
 		return dto;
 	}
 
 	private String getNextCode() {
-		AOD lastDomain = aodDao.findLastDomain();
-		Integer year = Calendar.getInstance().get(Calendar.YEAR);
+		final AOD lastDomain = aodDao.findLastDomain();
+		final Integer year = Calendar.getInstance().get(Calendar.YEAR);
 		Integer nextNo = 0;
-		if ((lastDomain == null) || (lastDomain.getId() == null)) {
+		if (lastDomain == null || lastDomain.getId() == null) {
 			nextNo = 1;
 		} else {
-			List<String> codeList = Arrays.asList(lastDomain.getAodNo().split("/"));
+			final List<String> codeList = Arrays.asList(lastDomain.getAodNo().split("/"));
 			if (!codeList.get(0).equalsIgnoreCase(AffixList.AOD.getCode())) {
 				nextNo = 1;
 			} else if (Integer.parseInt(codeList.get(1)) == year) {
@@ -149,7 +150,7 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public AODResult save(AODDTO dto) throws Exception {
-		AODResult result = new AODResult(new AOD(), dto);		
+		final AODResult result = new AODResult(new AOD(), dto);
 		saveOrUpdate(result);
 		result.addToMessageList("AOD Added Successfully.");
 		return result;
@@ -158,16 +159,16 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public AODResult update(AODDTO dto) throws Exception {
-		AODResult result = new AODResult(null, dto);
+		final AODResult result = new AODResult(null, dto);
 		try {
-			AOD domain = findEntityById(dto.getId());
+			final AOD domain = findEntityById(dto.getId());
 			result.setDomainEntity(domain);
 			saveOrUpdate(result);
 			result.addToMessageList("AOD Updated Successfully.");
-		} catch (ObjectOptimisticLockingFailureException ex) {
+		} catch (final ObjectOptimisticLockingFailureException ex) {
 			result.setResultStatusError();
 			result.addToErrorList("AOD Already updated. Please Reload AOD.");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList(e.getMessage());
@@ -179,10 +180,10 @@ public class AODServiceImpl implements AODService {
 	private void saveOrUpdate(AODResult result) throws Exception {
 		AODMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setAODData(result);
-		aodDao.save(result.getDomainEntity()); 
+		aodDao.save(result.getDomainEntity());
 		result.updateDtoIdAndVersion();
 
-		//result.setDtoEntity(findDTOById(result.getDomainEntity().getId())); 
+		//result.setDtoEntity(findDTOById(result.getDomainEntity().getId()));
 	}
 
 	private void setAODData(AODResult result) throws Exception {
@@ -197,23 +198,23 @@ public class AODServiceImpl implements AODService {
 	}
 
 	private void setAODCustomer(AODResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAodCustomerId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAodCustomerId() != null) {
 			result.getDomainEntity().setCustomer(businessDao.findOne(result.getDtoEntity().getAodCustomerId()));
 		}
 	}
 
 	private void setAODRequestUser(AODResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getRequestedUserId() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getRequestedUserId() != null) {
 			result.getDomainEntity().setRequestedBy(userDao.findOne(result.getDtoEntity().getRequestedUserId()));
 		}
 	}
 
 	private void setAODStatus(AODResult result) {
-		if ((result.getDtoEntity() != null) && (result.getDtoEntity().getAodStatus() != null)) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getAodStatus() != null) {
 			result.getDomainEntity().setAodStatus(result.getDtoEntity().getAodStatus());
 		}
 	}
-	
+
 	private void setWorkOrder(AODResult result) {
 		if (result.getDtoEntity() != null && result.getDtoEntity().getWoId() != null) {
 			result.getDomainEntity().setWorkOrder(workOrderDao.findOne(result.getDtoEntity().getWoId()));
@@ -222,25 +223,25 @@ public class AODServiceImpl implements AODService {
 
 
 	private void setAODItem(AODResult result) {
-		
-		Set<AODItem> aodItems = new HashSet<>();
-		List<AODItemDTO> aodItemDTOs = result.getDtoEntity().getAodItemList();
-		
+
+		final Set<AODItem> aodItems = new HashSet<>();
+		final List<AODItemDTO> aodItemDTOs = result.getDtoEntity().getAodItemList();
+
 		if (aodItemDTOs != null && aodItemDTOs.size() > 0) {
-			
-			Set<AODItem> currentAODItems = result.getDomainEntity().getAodItemList();
-			
-			for ( AODItemDTO aodItemDTO : aodItemDTOs ) {
-				
+
+			final Set<AODItem> currentAODItems = result.getDomainEntity().getAodItemList();
+
+			for ( final AODItemDTO aodItemDTO : aodItemDTOs ) {
+
 				AODItem aodItem = new AODItem();
-				
-				if ((currentAODItems != null) && (currentAODItems.size() > 0)) {
-					AODItem optional = currentAODItems.stream().filter((x) -> x.getId().equals(aodItemDTO.getId())).findAny().orElseGet(AODItem :: new);
-					aodItem = optional; 
+
+				if (currentAODItems != null && currentAODItems.size() > 0) {
+					final AODItem optional = currentAODItems.stream().filter((x) -> x.getId().equals(aodItemDTO.getId())).findAny().orElseGet(AODItem :: new);
+					aodItem = optional;
 				} else {
 					aodItem = new AODItem();
 				}
-				
+
 				createAODItem(result, aodItemDTO, aodItem);
 				aodItems.add(aodItem);
 			}
@@ -249,28 +250,28 @@ public class AODServiceImpl implements AODService {
 	}
 
 	private void createAODItem(AODResult result, AODItemDTO aodItemDTO, AODItem aodItem) {
-		
+
 		if (aodItemDTO.getPartId() != null) {
 			aodItem.setPart(assetDao.findOne(aodItemDTO.getPartId()));
 		}
-		if ((aodItemDTO.getStockId() != null) && (aodItemDTO.getStockId() > 0)) {
+		if (aodItemDTO.getStockId() != null && aodItemDTO.getStockId() > 0) {
 			aodItem.setStock(stockDao.findOne(aodItemDTO.getStockId()));
 		}else{
 			result.setResultStatusError();
 			result.addToErrorList("Please select stock for "+aodItem.getPart().getName());
 		}
-		if ((aodItemDTO.getWarehouseId() != null) && (aodItemDTO.getWarehouseId() > 0)) {
+		if (aodItemDTO.getWarehouseId() != null && aodItemDTO.getWarehouseId() > 0) {
 			aodItem.setWarehouse(assetDao.findOne(aodItemDTO.getWarehouseId()));
 		}
-		
-		aodItem.setAod(result.getDomainEntity()); 
+
+		aodItem.setAod(result.getDomainEntity());
 		aodItem.setQuantity(aodItemDTO.getItemQuantity());
 		aodItem.setDescription(aodItemDTO.getDescription());
 		setMRNitem(aodItem);
 	}
-	
 
-	
+
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void approveAndDispatch(final AODResult result) throws Exception, StockException {
 		if (result.getDomainEntity().getAodStatus().equals(AODStatus.APPROVED)) {
@@ -278,10 +279,10 @@ public class AODServiceImpl implements AODService {
 			updateApproveAOD(result);
 		}
 	}
-	
 
 
-	
+
+
 	private void updateApproveAOD(final AODResult result) throws AODException {
 		result.getDomainEntity().setAodStatus(AODStatus.APPROVED);
 		try {
@@ -289,7 +290,7 @@ public class AODServiceImpl implements AODService {
 			result.setDtoEntity(findDTOById(result.getDomainEntity().getId()));
 		} catch (final AODException e) {
 			throw new AODException("ERROR! AOD Save operation not completed. ");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -301,12 +302,12 @@ public class AODServiceImpl implements AODService {
 	}
 
 	private void setBusinessSite(AODResult result) {
-		if ((result.getDtoEntity().getBusinessId() != null) && (result.getDtoEntity().getBusinessId() > 0)) {
+		if (result.getDtoEntity().getBusinessId() != null && result.getDtoEntity().getBusinessId() > 0) {
 			result.getDomainEntity().setBusiness(businessDao.findOne(result.getDtoEntity().getBusinessId()));
 		} else {
 			result.getDomainEntity().setBusiness(AuthenticationUtil.getLoginUserBusiness());
 		}
-		if ((result.getDtoEntity().getSiteId() != null) && (result.getDtoEntity().getSiteId() > 0)) {
+		if (result.getDtoEntity().getSiteId() != null && result.getDtoEntity().getSiteId() > 0) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
 		} else if (!AuthenticationUtil.isAuthUserAdminLevel()) {
 			result.getDomainEntity().setSite(AuthenticationUtil.getLoginSite().getSite());
@@ -317,16 +318,16 @@ public class AODServiceImpl implements AODService {
 		if (result.getDomainEntity().getId() == null) {
 			result.getDomainEntity().setAodNo(getNextCode());
 		}
-	} 
+	}
 
 	@Override
 	public AODResult delete(Integer id) throws Exception {
-		AODResult result = new AODResult(null, null);
+		final AODResult result = new AODResult(null, null);
 		try {
 			deleteEntityById(id);
 			result.setResultStatusSuccess();
 			result.addToMessageList("AOD Deleted Successfully.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("AOD Deleted Unsuccessful. ".concat(ex.getMessage()));
@@ -334,19 +335,40 @@ public class AODServiceImpl implements AODService {
 		return result;
 	}
 
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public AODResult deleteMultiple(Integer[] ids) throws Exception {
+		final AODResult result = new AODResult(null, null);
+		try {
+			for (final Integer id : ids) {
+				aodDao.delete(id);
+			}
+			result.setResultStatusSuccess();
+			result.addToMessageList("AOD(s) Deleted Successfully.");
+		} catch (final DataIntegrityViolationException e) {
+			result.setResultStatusError();
+			result.addToErrorList("AOD(s) Already Used. Cannot delete.");
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(ex.getMessage());
+		}
+		return result;
+	}
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void deleteEntityById(Integer id) throws Exception {
 		aodDao.delete(id);
-	} 
+	}
 
 	@Override
 	public AODResult findById(Integer id) throws Exception {
-		AODResult result = new AODResult(null, null);
+		final AODResult result = new AODResult(null, null);
 		try {
 			result.setDtoEntity(findDTOById(id));
 			result.setResultStatusSuccess();
 			result.addToMessageList("AOD Found.");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			result.setResultStatusError();
 			result.addToMessageList("Error Occurred! AOD NOT Found.".concat(ex.getMessage()));
@@ -356,18 +378,18 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public AODResult statusChange(Integer id, AODStatus status) {
-		AODResult result = new AODResult(null, null);
+		final AODResult result = new AODResult(null, null);
 		try {
 			result.setDomainEntity(findEntityById(id));
 			aodStatusChange(result);
 			result.setResultStatusSuccess();
 			result.addToMessageList("AOD status change successful.");
-		} catch (StockQuantityExceedException e) {
+		} catch (final StockQuantityExceedException e) {
 			e.printStackTrace();
 			result.setResultStatusError();
-			result.addToErrorList("Error Occurred! AOD Status Cannot change. ".concat(e.getMessage())); 
-		} 
-		catch (Exception e) {
+			result.addToErrorList("Error Occurred! AOD Status Cannot change. ".concat(e.getMessage()));
+		}
+		catch (final Exception e) {
 			e.printStackTrace();
 			result.setResultStatusError();
 			result.addToErrorList("Error Occurred! AOD Status Cannot change. ".concat(e.getMessage()));
@@ -377,22 +399,22 @@ public class AODServiceImpl implements AODService {
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void aodStatusChange(AODResult result) throws Exception {
-		approveAOD(result); 
+		approveAOD(result);
 	}
-	
-	private void approveAOD(AODResult result) throws Exception { 
-		stockService.dispatchStock(result.getDomainEntity()); 
+
+	private void approveAOD(AODResult result) throws Exception {
+		stockService.dispatchStock(result.getDomainEntity());
 		result.getDomainEntity().setAodStatus(AODStatus.APPROVED);
 		aodDao.save(result.getDomainEntity());
 		result.setDtoEntity(findDTOById(result.getDomainEntity().getId()));
-		result.setResultStatusSuccess(); 
+		result.setResultStatusSuccess();
 	}
 
 	@Override
 	public AODRepDTO findAODRepById(Integer id) throws Exception {
 		try {
 			return AODReportMapper.getInstance().domainToRepDTO(findEntityById(id));
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
@@ -400,7 +422,7 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public BigDecimal getAODItemRemainQty(Integer aodItemId) {
-		AODItem aodItem = aodItemDao.findOne(aodItemId);
+		final AODItem aodItem = aodItemDao.findOne(aodItemId);
 		return aodItem.getQuantity().subtract(aodItem.getReturnQuantity());
 	}
 
@@ -408,34 +430,34 @@ public class AODServiceImpl implements AODService {
 	public List<AODRepDTO> findAll(AODFilterDTO aodFilterDTO) throws Exception {
 		List<AOD> domainList = null;
 		try {
-			Specification<AOD> specification = (root, query, cb) -> {
-				List<Predicate> predicates = new ArrayList<>();
-				if ((aodFilterDTO != null) && (aodFilterDTO.getAodStatus() != null) && (aodFilterDTO.getAodStatus().getId() != null)) {
+			final Specification<AOD> specification = (root, query, cb) -> {
+				final List<Predicate> predicates = new ArrayList<>();
+				if (aodFilterDTO != null && aodFilterDTO.getAodStatus() != null && aodFilterDTO.getAodStatus().getId() != null) {
 					predicates.add(cb.equal(root.get("aodStatus"), aodFilterDTO.getAodStatus()));
 				}
-				if ((aodFilterDTO != null) && (!aodFilterDTO.getAodNo().equalsIgnoreCase("") == Boolean.TRUE)) {
+				if (aodFilterDTO != null && !aodFilterDTO.getAodNo().equalsIgnoreCase("") == Boolean.TRUE) {
 					predicates.add(cb.like(cb.lower(root.get("aodNo")), "%" + aodFilterDTO.getAodNo().toLowerCase() + "%"));
 				}
-				if ((aodFilterDTO != null) && (aodFilterDTO.getAodType() != null) && (aodFilterDTO.getAodType().getId() != null)) {
+				if (aodFilterDTO != null && aodFilterDTO.getAodType() != null && aodFilterDTO.getAodType().getId() != null) {
 					predicates.add(cb.equal(root.get("aodType"), aodFilterDTO.getAodType()));
 				}
-				if ((aodFilterDTO != null) && (aodFilterDTO.getAodDate() != null)) {
+				if (aodFilterDTO != null && aodFilterDTO.getAodDate() != null) {
 					predicates.add(cb.equal(root.get("date"), aodFilterDTO.getAodDate()));
 				}
-				if ((aodFilterDTO != null) && (aodFilterDTO.getRequestedByUserId() != null)) {
+				if (aodFilterDTO != null && aodFilterDTO.getRequestedByUserId() != null) {
 					predicates.add(cb.equal(root.get("requestedBy").get("id"), aodFilterDTO.getRequestedByUserId()));
 				}
-				if ((aodFilterDTO != null) && (aodFilterDTO.getCustomerId() != null)) {
+				if (aodFilterDTO != null && aodFilterDTO.getCustomerId() != null) {
 					predicates.add(cb.equal(root.get("customer").get("id"), aodFilterDTO.getCustomerId()));
 				}
-				if ((aodFilterDTO != null) && (aodFilterDTO.getJobId() != null)) {
+				if (aodFilterDTO != null && aodFilterDTO.getJobId() != null) {
 					predicates.add(cb.equal(root.get("job").get("id"), aodFilterDTO.getJobId()));
 				}
 				return cb.and(predicates.toArray(new Predicate[0]));
 			};
 			domainList = aodDao.findAll(specification);
 			return AODReportMapper.getInstance().domainToRepDTOList(domainList);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -445,7 +467,7 @@ public class AODServiceImpl implements AODService {
 	public List<AODDTO> findAll() {
 		try {
 			return AODMapper.getInstance().domainToDTOList(aodDao.findAll());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -457,10 +479,10 @@ public class AODServiceImpl implements AODService {
 		DataTablesOutput<AOD> domainOut;
 		Specification<AOD> specification;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			specification = (root, query, cb) -> 
-					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE) ;
+			specification = (root, query, cb) ->
+			cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE) ;
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			 specification = (root, query, cb) ->  cb.and(
+			specification = (root, query, cb) ->  cb.and(
 					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
 			domainOut = aodDao.findAll(input, specification);
@@ -472,7 +494,7 @@ public class AODServiceImpl implements AODService {
 		}
 		domainOut = aodDao.findAll(input, specification);
 
-		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -482,19 +504,19 @@ public class AODServiceImpl implements AODService {
 		DataTablesOutput<AOD> domainOut;
 		Specification<AOD> specification;
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			 specification = (root, query, cb) ->
-			 cb.and(
-					 cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
-					 cb.equal(root.get("aodStatus"), AODStatus.APPROVED))
-			 ;
+			specification = (root, query, cb) ->
+			cb.and(
+					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
+					cb.equal(root.get("aodStatus"), AODStatus.APPROVED))
+			;
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			specification = (root, query, cb) -> 
+			specification = (root, query, cb) ->
 			cb.and(
 					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("aodStatus"), AODStatus.APPROVED));
 		} else {
-			 specification = (root, query, cb) -> cb.and(
+			specification = (root, query, cb) -> cb.and(
 					cb.notEqual(root.get("aodType"), AODType.ISSUE_NOTE),
 					cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()),
 					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()),
@@ -502,7 +524,7 @@ public class AODServiceImpl implements AODService {
 					);
 		}
 		domainOut = aodDao.findAll(input, specification);
-		DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		final DataTablesOutput<AODDTO> out = AODMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		return out;
 	}
 
@@ -514,16 +536,16 @@ public class AODServiceImpl implements AODService {
 		try {
 			if (id != null) {
 				if (AuthenticationUtil.isAuthUserAdminLevel()) {
-					Specification<AODItem> specification = (root, query, cb) -> cb.equal(root.get("aod").get("id"), id);
+					final Specification<AODItem> specification = (root, query, cb) -> cb.equal(root.get("aod").get("id"), id);
 					domainOut = aodItemDao.findAll(input, specification);
 				} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-					Specification<AODItem> specification = (root, query, cb) -> cb.and(
+					final Specification<AODItem> specification = (root, query, cb) -> cb.and(
 							cb.equal(root.get("aod").get("business"), AuthenticationUtil.getLoginUserBusiness()),
 							cb.equal(root.get("aod").get("id"), id)
 							);
 					domainOut = aodItemDao.findAll(input, specification);
 				} else {
-					Specification<AODItem> specification = (root, query, cb) -> cb.and(
+					final Specification<AODItem> specification = (root, query, cb) -> cb.and(
 							cb.equal(root.get("aod").get("business"), AuthenticationUtil.getLoginUserBusiness()),
 							cb.equal(root.get("aod").get("site"), AuthenticationUtil.getLoginSite().getSite()),
 							cb.equal(root.get("aod").get("id"), id)
@@ -532,7 +554,7 @@ public class AODServiceImpl implements AODService {
 				}
 			}
 			out = AODItemMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return out;
@@ -540,9 +562,9 @@ public class AODServiceImpl implements AODService {
 
 	@Override
 	public MRNResult generateAodFromMrn(String idStr, Integer mrnId) {
-		MRNResult result=new MRNResult(null, null);
-		MRN mrn =mrnDao.findOne(mrnId);
-		AODDTO aoddto=newAOD().getDtoEntity();
+		final MRNResult result=new MRNResult(null, null);
+		final MRN mrn =mrnDao.findOne(mrnId);
+		final AODDTO aoddto=newAOD().getDtoEntity();
 		aoddto.setAodStatus(AODStatus.DRAFT);
 		aoddto.setAodNo("");
 		aoddto.setAodType(AODType.OTHER);
@@ -558,28 +580,28 @@ public class AODServiceImpl implements AODService {
 			aoddto.setRequestedUserId(mrn.getRequestedBy().getId());
 
 		}
-		List<AODItemDTO> aodItemDTOs=new ArrayList<>();
-		List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
-		for (Integer id : ids) {
-			MRNItem item=mrnItemDao.findOne(id);
-			AODItemDTO aodItem=new AODItemDTO();
+		final List<AODItemDTO> aodItemDTOs=new ArrayList<>();
+		final List<Integer> ids = Arrays.asList(idStr.split(",")).stream().map(Integer::parseInt).collect(Collectors.toList());
+		for (final Integer id : ids) {
+			final MRNItem item=mrnItemDao.findOne(id);
+			final AODItemDTO aodItem=new AODItemDTO();
 			aodItem.setItemQuantity(item.getApprovedQuantity());
 			aodItem.setPartId(item.getPart().getId());
 			aodItem.setItemQuantity(item.getApprovedQuantity());
 			aodItemDTOs.add(aodItem);
 		}
 		aoddto.setAodItemList(aodItemDTOs);
-		
 
-		  try {
-			AODResult aodResult=save(aoddto);
+
+		try {
+			final AODResult aodResult=save(aoddto);
 			result.setStatus(ResultStatus.SUCCESS);
 			result.addToMessageList("Successfully Generated the AOD  ");
-		result.addToMessageList(aodResult.getDomainEntity().getId().toString());
+			result.addToMessageList(aodResult.getDomainEntity().getId().toString());
 			result.addToMessageList(aodResult.getDomainEntity().getAodNo());
 
-		} catch (Exception e) {
-		e.printStackTrace();
+		} catch (final Exception e) {
+			e.printStackTrace();
 			result.setStatus(ResultStatus.ERROR);
 			result.addToErrorList("Error while AOD generate");
 		}
