@@ -10,23 +10,30 @@ import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
 public class AssetDTO extends BaseDTO {
 
 	private Integer id;
+	private Integer assetCategoryId;
+	private Integer businessId;
+	private Integer siteId;
+	private Integer businessTypeId;
+	private Integer parentAssetId;
+	private Integer countryId;
+	private Integer model;
+	private Integer customerId;
+	private Integer currentAssetEventId;
+	private Integer childCount;
+	private Integer brand;
+
 	private String name;
 	private String code;
 	private String description;
-	private String imageLocation; 
-	private Boolean isOnline = false;
-	private Integer assetCategoryId;
-	private Integer businessId;
+	private String imageLocation;
 	private String businessName;
-	private Integer businessTypeId;
-	private Integer siteId;
 	private String notes;
+	private String assetCategoryName;
+	private String parentAssetName;
+
 	private AssetCategoryType assetCategoryType;
 
-	private String assetCategoryName;
-
-	private Integer parentAssetId;
-	private String parentAssetName;
+	private Boolean isOnline = true;
 
 	// location
 	private String location;
@@ -34,19 +41,11 @@ public class AssetDTO extends BaseDTO {
 	private String city;
 	private String province;
 	private String postalCode;
-	private Integer countryId;
-
-	private Integer brand;
 	private String brandName;
-	private Integer model;
 	private String modelName;
 	private String serialNo;
-
-	private Integer customerId;
 	private String customerName;
 	private String assetUrl;
-
-	private Integer currentAssetEventId;
 
 	private AssetPurchasingDTO assetPurchasingDetail = new AssetPurchasingDTO();
 	private LocationDTO locationDTO = new LocationDTO();
@@ -62,8 +61,6 @@ public class AssetDTO extends BaseDTO {
 	private List<AssetFileDTO> assetFileDTOs = new ArrayList<>();
 	private List<AssetDTO> children = new ArrayList<>();
 	private List<SparePartDTO> sparePartDTOs = new ArrayList<>();
-	
-	private Integer childCount;
 
 	public Integer getId() {
 		return id;
@@ -425,6 +422,6 @@ public class AssetDTO extends BaseDTO {
 		this.assetUrl = assetUrl;
 	}
 
-	
-	
+
+
 }

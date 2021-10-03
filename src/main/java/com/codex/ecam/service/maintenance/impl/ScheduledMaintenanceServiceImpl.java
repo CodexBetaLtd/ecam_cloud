@@ -119,6 +119,7 @@ public class ScheduledMaintenanceServiceImpl implements ScheduledMaintenanceServ
 
 	@Autowired
 	private StockDao stockDao;
+
 	@Autowired
 	private WorkOrderDao workORderDao;
 

@@ -220,7 +220,15 @@ public class ScheduledMaintenanceController {
 
 	@RequestMapping(value = "/manual-trigger", method = RequestMethod.GET)
 	public @ResponseBody WorkOrderResult manualTrigger(String ids, Integer smId) {
-		return scheduledMaintenanceTriggerService.manualTrigger(ids, smId);
+		WorkOrderResult result = new WorkOrderResult(null, null);
+		try {
+			result = scheduledMaintenanceTriggerService.manualTrigger(ids, smId);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			result.setResultStatusError();
+			result.addToErrorList(e.getMessage());
+		}
+		return result;
 	}
 
 	@RequestMapping(value = "/code-by-business", method = RequestMethod.GET)

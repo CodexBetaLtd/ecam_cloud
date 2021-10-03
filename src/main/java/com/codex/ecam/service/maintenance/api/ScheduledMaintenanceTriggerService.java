@@ -1,12 +1,12 @@
 package com.codex.ecam.service.maintenance.api;
- 
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.dto.maintenance.scheduledmaintenance.ScheduledMaintenanceTriggerDTO;
 import com.codex.ecam.model.maintenance.scheduledmaintenance.ScheduledMaintenanceTrigger;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.maintenance.WorkOrderResult; 
+import com.codex.ecam.result.maintenance.WorkOrderResult;
 
 public interface ScheduledMaintenanceTriggerService {
 
@@ -18,7 +18,7 @@ public interface ScheduledMaintenanceTriggerService {
 
 	WorkOrder createWorkOrderFromTrigger(ScheduledMaintenanceTrigger smt) throws Exception;
 
-	WorkOrderResult manualTrigger(String ids, Integer smId);
+	WorkOrderResult manualTrigger(String ids, Integer smId)throws Exception;
 
 
 }

@@ -22,7 +22,7 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 
 	@Override
 	public ScheduledMaintenanceTriggerDTO domainToDto(ScheduledMaintenanceTrigger domain) throws Exception {
-		ScheduledMaintenanceTriggerDTO dto = new ScheduledMaintenanceTriggerDTO();
+		final ScheduledMaintenanceTriggerDTO dto = new ScheduledMaintenanceTriggerDTO();
 		dto.setId(domain.getId());
 		dto.setTtCreateWOOnStartDate(domain.getTtCreateWOOnStartDate());
 		dto.setScheduleIsFixed(domain.getScheduleIsFixed());
@@ -37,9 +37,9 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 		dto.setSmabcTriggerType(domain.getSmabcTriggerType());
 		dto.setLastTriggeredDate(domain.getLastTriggeredDate());
 		dto.setMrtNextMeterReading(domain.getMrtNextMeterReading());
-//		if(domain.getAmrtNextMeterReading()!=null && domain.getBmrtNextMeterReading()!=null && domain.getCmrtNextMeterReading()!=null){
-//			dto.setMrtNextMeterReading(getNextTriggerFromABC(domain));
-//		}
+		//		if(domain.getAmrtNextMeterReading()!=null && domain.getBmrtNextMeterReading()!=null && domain.getCmrtNextMeterReading()!=null){
+		//			dto.setMrtNextMeterReading(getNextTriggerFromABC(domain));
+		//		}
 		dto.setMrtStartMeterReading(domain.getMrtStartMeterReading());
 		dto.setMrtEndMeterReading(domain.getMrtEndMeterReading());
 		dto.setMrtType(domain.getMrtType());
@@ -79,9 +79,9 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 			dto.setMrtLogicTypeName(domain.getMrtLogicType().getName());
 		}
 
-		if ((domain.getTriggerType() != null) && domain.getTriggerType().equals(SMTriggerType.TIME_TRIGGER)) {
+		if (domain.getTriggerType() != null && domain.getTriggerType().equals(SMTriggerType.TIME_TRIGGER)) {
 			dto.setTtNoEndDate(domain.getNoEndValue());
-		} else if ((domain.getTriggerType() != null) && domain.getTriggerType().equals(SMTriggerType.METER_READING_TRIGGER)) {
+		} else if (domain.getTriggerType() != null && domain.getTriggerType().equals(SMTriggerType.METER_READING_TRIGGER)) {
 			dto.setMrtNoEndReading(domain.getNoEndValue());
 		}
 
@@ -91,17 +91,18 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 
 		return dto;
 	}
-	
+
 	private Double getNextTriggerFromABC(ScheduledMaintenanceTrigger domain){
 		Double nextTrigger=0.0;
-	       double [] arr = new double [] {domain.getAmrtNextMeterReading(), domain.getBmrtNextMeterReading(), domain.getCmrtNextMeterReading()};  
-	       nextTrigger= arr[0];  
-	        for (int i = 0; i < arr.length; i++) {  
-	           if(arr[i] <nextTrigger)  
-	        	   nextTrigger = arr[i];  
-	        } 
-		return nextTrigger;
+		final double [] arr = new double [] {domain.getAmrtNextMeterReading(), domain.getBmrtNextMeterReading(), domain.getCmrtNextMeterReading()};
+		nextTrigger= arr[0];
+		for (final double element : arr) {
+			if(element <nextTrigger) {
+				nextTrigger = element;
 			}
+		}
+		return nextTrigger;
+	}
 
 	private void setNextTriggerDetail(ScheduledMaintenanceTriggerDTO dto, ScheduledMaintenanceTrigger domain) {
 		switch (domain.getTriggerType()) {
@@ -111,7 +112,7 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 				dto.setNextTrigger(DateUtil.getCommonDateString(domain.getTtNextCalenderEvent().getScheduledDate()));
 			}
 			break;
-			
+
 		case METER_READING_TRIGGER:
 			dto.setNextTrigger("" + domain.getMrtNextMeterReading() + " " + domain.getMrtAssetMeterReading().getMeterReadingUnit().getSymbol());
 			break;
@@ -144,7 +145,7 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 		if(dto.getTtEndDate()!=null){
 			domain.setTtEndDate(DateUtil.getDateObj(dto.getTtEndDate()));
 		}
-		if(dto.getTtStartDate()!=null){
+		if(dto.getTtStartDate() != null && !dto.getTtStartDate().isEmpty()){
 			domain.setTtStartDate(DateUtil.getDateObj(dto.getTtStartDate()));
 		}
 		domain.setLastTriggeredDate(dto.getLastTriggeredDate());
@@ -173,7 +174,7 @@ public class ScheduledMaintenanceTriggerMapper extends GenericMapper<ScheduledMa
 
 	@Override
 	public ScheduledMaintenanceTriggerDTO domainToDtoForDataTable(ScheduledMaintenanceTrigger domain) throws Exception {
-		ScheduledMaintenanceTriggerDTO dto = new ScheduledMaintenanceTriggerDTO();
+		final ScheduledMaintenanceTriggerDTO dto = new ScheduledMaintenanceTriggerDTO();
 		dto.setId(domain.getId());
 		dto.setTriggerType(domain.getTriggerType());
 		dto.setScheduleDescription(domain.getScheduleDescription());
