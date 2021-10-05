@@ -25,7 +25,6 @@ import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.BusinessResult;
-import com.codex.ecam.result.admin.BusinessResult;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.util.AuthenticationUtil;
 
@@ -163,8 +162,8 @@ public class BusinessServiceImpl implements BusinessService {
 	}
 
 	private void setBusisnessClassification(BusinessDTO dto, Business domain) {
-		if (dto.getBusinessClassficationId() != null && dto.getBusinessClassficationId() > 0) {
-			domain.setBusinessClassification(businessClassificationDao.findOne(dto.getBusinessClassficationId()));
+		if (dto.getBusinessClassificationId() != null && dto.getBusinessClassificationId() > 0) {
+			domain.setBusinessClassification(businessClassificationDao.findOne(dto.getBusinessClassificationId()));
 		}
 	}
 

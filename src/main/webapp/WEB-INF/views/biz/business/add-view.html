@@ -5,6 +5,8 @@
 
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
 <link rel="stylesheet" type="text/css" th:href="@{/resources/style/dataTables.bootstrap.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
 
 <body>
 
@@ -35,6 +37,8 @@
 
         <!-- start: PAGE -->
         <div class="main-content">
+            
+            <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
             
             <div class="container">
                 
@@ -155,16 +159,25 @@
     
     <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
     <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 
 	<div th:include="template/commonjs :: commonjstables"></div>
-    <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 
-
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/business/datatable/dt-currencies.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/business/datatable/dt-countries.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/business/datatable/dt-business-classifications.js}"></script>
+	
     <script type="text/javascript" th:src="@{/resources/script/app/biz/business/init.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/biz/business/add-view.js}"></script>
+    
     <script type="text/javascript" th:src="@{/resources/script/app/biz/business/tab/personnel-tab.js}"></script>
     <script type="text/javascript" th:src="@{/resources/script/app/biz/business/tab/general-tab.js}"></script>
+    <script type="text/javascript" th:src="@{/resources/script/app/biz/business/tab/location-tab.js}"></script>
+    
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
     <!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
 </body>

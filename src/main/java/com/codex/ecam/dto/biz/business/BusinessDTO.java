@@ -3,14 +3,20 @@ package com.codex.ecam.dto.biz.business;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.codex.ecam.dto.BaseDTO; 
+import com.codex.ecam.dto.BaseDTO;
 
 public class BusinessDTO extends BaseDTO {
-	
-	private Integer id;	
-	private String name;	
+
+	private Integer id;
+	private Integer businessClassificationId;
+	private Integer currencyId;
+	private Integer virtualBusinessId;
+	private Integer virtualBusinessOwnerId;
+	private Integer countryId;
+
+	private String name;
 	private String code;
-	
+
 	//general
 	private String phone;
 	private String phone2;
@@ -19,26 +25,23 @@ public class BusinessDTO extends BaseDTO {
 	private String primaryEmail;
 	private String secondaryEmail;
 	private String notes;
-//	private Integer businessTypeId;
-	private Integer businessClassficationId;
-	private Integer currencyId; 
+	private String businessClassificationName;
+	private String currencyName;
+	private String countryName;
+	//	private Integer businessTypeId;
 
-    private Integer virtualBusinessId;
-    private Integer virtualBusinessOwnerId; 
-	
 	//location
 	private String address;
 	private String city;
 	private String province;
 	private String postalCode;
-	private Integer countryId;	
-	
-	private Boolean roleCustomer; 
+
+	private Boolean roleCustomer;
 	private Boolean roleSupplier;
 	private Boolean isFIFO=Boolean.FALSE;
-	 
+
 	private List<BusinessContactDTO> businessContactDTOs=new ArrayList<>();
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -159,19 +162,13 @@ public class BusinessDTO extends BaseDTO {
 		this.countryId = countryId;
 	}
 
-//	public Integer getBusinessTypeId() {
-//		return businessTypeId;
-//	}
-	public Integer getBusinessClassficationId() {
-		return businessClassficationId;
-	}
+	//	public Integer getBusinessTypeId() {
+	//		return businessTypeId;
+	//	}
 
 	//	public void setBusinessTypeId(Integer businessTypeId) {
-//		this.businessTypeId = businessTypeId;
-//	}
-	public void setBusinessClassficationId(Integer businessClassficationId) {
-		this.businessClassficationId = businessClassficationId;
-	}
+	//		this.businessTypeId = businessTypeId;
+	//	}
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -223,8 +220,38 @@ public class BusinessDTO extends BaseDTO {
 
 	public void setIsFIFO(Boolean isFIFO) {
 		this.isFIFO = isFIFO;
-	} 
-	
-	
+	}
+
+	public String getCurrencyName() {
+		return currencyName;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCurrencyName(String currencyName) {
+		this.currencyName = currencyName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	public Integer getBusinessClassificationId() {
+		return businessClassificationId;
+	}
+
+	public String getBusinessClassificationName() {
+		return businessClassificationName;
+	}
+
+	public void setBusinessClassificationId(Integer businessClassificationId) {
+		this.businessClassificationId = businessClassificationId;
+	}
+
+	public void setBusinessClassificationName(String businessClassificationName) {
+		this.businessClassificationName = businessClassificationName;
+	}
 
 }

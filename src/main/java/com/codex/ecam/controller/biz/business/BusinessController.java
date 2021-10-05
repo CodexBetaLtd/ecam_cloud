@@ -15,7 +15,6 @@ import com.codex.ecam.controller.admin.AdminBaseController;
 import com.codex.ecam.dto.biz.business.BusinessDTO;
 import com.codex.ecam.mappers.admin.BusinessMapper;
 import com.codex.ecam.result.admin.BusinessResult;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
 import com.codex.ecam.service.biz.api.BusinessClassificationService;
@@ -70,6 +69,18 @@ public class BusinessController extends AdminBaseController {
 	public String getCurrencyModalView(Model model, @RequestParam(name = "title", defaultValue = "Currency(s)")String title) {
 		model.addAttribute("title", title);
 		return "general/table/currencies";
+	}
+
+	@RequestMapping(value = "/view/modal/business-classification", method = RequestMethod.GET)
+	public String getBusinessClassificationModalView(Model model, @RequestParam(name = "title", defaultValue = "Business Classification(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/business-classifications";
+	}
+
+	@RequestMapping(value = "/view/modal/countries", method = RequestMethod.GET)
+	public String getCountryModalView(Model model, @RequestParam(name = "title", defaultValue = "Country(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/countries";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)

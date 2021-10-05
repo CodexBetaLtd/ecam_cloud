@@ -1,29 +1,8 @@
 var BusinessAdd = function () {
 	
-	var runCurrencySelect = function () {
-        $("#currencyId").select2({
-            placeholder: "Select a Primary Currency",
-            allowClear: true
-        });
-    };
-    
-    var runClassificationSelect = function () {
-        $("#businessClassficationId").select2({
-            placeholder: "Select a Business Classification",
-            allowClear: true
-        });
-    };
-    
     var runVirtualBusinessSelect = function () {
         $("#virtualBusinessOwnerId").select2({
             placeholder: "Select a Business ",
-            allowClear: true
-        });
-    };
-    
-    var runCountrySelect = function () {
-        $("#countryId").select2({
-            placeholder: "Select a Country",
             allowClear: true
         });
     };
@@ -109,10 +88,7 @@ var BusinessAdd = function () {
     return {    
     	init: function () {
     		runValidator();
-    		runCurrencySelect();
-    		runClassificationSelect();
     		runVirtualBusinessSelect();
-    		runCountrySelect(); 
     	}	
     };
 }();

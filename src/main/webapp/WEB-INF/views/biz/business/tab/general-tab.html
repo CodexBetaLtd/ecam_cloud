@@ -61,25 +61,24 @@
 		            <input type="email" placeholder="Insert the Secondary Email" th:field="*{secondaryEmail}" class="form-control" id="secondaryEmail" name="secondaryEmail">
 		        </div>
 		    </div>
-		</div>
-		<div class="row">
+		</div><div class="row">
 			<div class="col-md-6">
 				<div class="form-group">
-                    <label for="form-field-select-3">Primary Currency <span class="symbol required"></span> </label>
-                    <select th:field="*{currencyId}" class="search-select" style="width:100%;">
-                        <option value="">&nbsp;</option>
-                        <option th:each="currency : ${currencyList}" th:value="${currency.id}" th:text="${currency.name}" ></option>
-                    </select>
-                </div>			
+	                   <label class="control-label"> Primary Currency </label>
+	                   <div class="input-group">
+	                       <input type="hidden" id="currencyId" th:field="*{currencyId}">
+	                       <input type="text" id="currencyName" th:field="*{currencyName}" readonly class="form-control" placeholder="Please specify a currency">                     
+	                   </div>
+	            </div>		
 			</div>
 			<div class="col-md-6">
 				<div class="form-group">
-                    <label for="form-field-select-3">Business Classification <span class="symbol required"></span> </label>
-                    <select th:field="*{businessClassficationId}" class="search-select" style="width:100%;">
-                        <option value="">&nbsp;</option>
-                        <option th:each="classification : ${businessClassifications}" th:value="${classification.id}" th:text="${classification.name}" ></option>
-                    </select>
-                </div>			
+	                   <label class="control-label"> Business Classification </label>
+	                   <div class="input-group">
+	                       <input type="hidden" id="businessClassificationId" th:field="*{businessClassificationId}">
+	                       <input type="text" id="businessClassificationName" th:field="*{businessClassificationName}" readonly class="form-control" >                     
+	                   </div>
+	            </div>		
 			</div>
 		</div>
 		<div class="row">

@@ -21,7 +21,7 @@ public class BusinessMapper extends GenericMapper<Business, BusinessDTO> {
 
 	@Override
 	public BusinessDTO domainToDto(Business domain) throws Exception {
-		BusinessDTO dto = new BusinessDTO();
+		final BusinessDTO dto = new BusinessDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
@@ -36,24 +36,27 @@ public class BusinessMapper extends GenericMapper<Business, BusinessDTO> {
 		dto.setCity(domain.getCity());
 		dto.setProvince(domain.getProvince());
 		dto.setPostalCode(domain.getPostalcode());
-		
+
 		dto.setIsFIFO(domain.getIsFIFO());
 
 		if (domain.getCountry() != null) {
 			dto.setCountryId(domain.getCountry().getId());
+			dto.setCountryName(domain.getCountry().getName());
 		}
 
 		if (domain.getBusinessClassification() != null) {
-			dto.setBusinessClassficationId(domain.getBusinessClassification().getId());
+			dto.setBusinessClassificationId(domain.getBusinessClassification().getId());
+			dto.setBusinessClassificationName(domain.getBusinessClassification().getName());
 		}
 		if (domain.getCurrency() != null) {
 			dto.setCurrencyId(domain.getCurrency().getId());
-		}	 
-		
+			dto.setCurrencyName(domain.getCurrency().getName());
+		}
+
 		if (domain.getRoleCustomer() != null) {
 			dto.setRoleCustomer(domain.getRoleCustomer());
 		}
-		
+
 		if (domain.getRoleSupplier() != null) {
 			dto.setRoleSupplier(domain.getRoleSupplier());
 		}
@@ -88,7 +91,7 @@ public class BusinessMapper extends GenericMapper<Business, BusinessDTO> {
 
 	@Override
 	public BusinessDTO domainToDtoForDataTable(Business domain) throws Exception {
-		BusinessDTO dto = new BusinessDTO();
+		final BusinessDTO dto = new BusinessDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
