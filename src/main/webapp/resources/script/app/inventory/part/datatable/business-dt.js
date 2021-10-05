@@ -102,7 +102,7 @@ var dtBusiness = function () {
     });
 
     var getBusinessTable = function (func) {
-        var url = "../restapi/business/getActualBusinesses";
+        var url = "../restapi/business/actual-business/tabledata";
         var tableId = "dt_biz_part_stock";
         var oTable = $('#' + tableId).DataTable({
             // processing: true,
