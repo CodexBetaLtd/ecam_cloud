@@ -4,28 +4,22 @@
 
 <div th:fragment="recivingTabFragment">
 	<div class="row">
-
 		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label"> Ship to <span
-					class="symbol required"></span>
-				</label> <select id="shipToId" th:field="*{shipToId}" class="search-select"
-					style="width: 100%;">
-					<option value="">&nbsp;</option>
-					<option th:each="site : ${sites}" th:value="${site.id}"
-						th:text="${site.name}"></option>
-				</select>
-			</div>
+	            <label class="control-label"> Ship to </label>
+	            <div class="input-group">
+	                <input type="hidden" id="shipToId" th:field="*{shipToId}">
+	                <input type="text" id="shipToName" th:field="*{shipToName}" readonly class="form-control" >                     
+	            </div>
+            </div>		
 		</div>
-				<div class="col-md-6">
+		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label">City</label> <input type="text"
-					th:field="*{shippingCity}" class="form-control">
+				<label class="control-label">City</label> 
+				<input type="text" th:field="*{shippingCity}" class="form-control">
 			</div>
 		</div>
-
 	</div>
-
 	<div class="row">
 		<div class="col-md-6">
 			<div class="form-group">
@@ -41,18 +35,14 @@
 		</div>
 	</div>
 	<div class="row">
-
-				<div class="col-md-6">
+		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label"> Country <span
-					class="symbol required"></span>
-				</label> <select id="shipToCountry" th:field="*{shipToCountry}"
-					class="search-select" style="width: 100%;">
-					<option value="">&nbsp;</option>
-					<option th:each="country : ${countries}" th:value="${country.id}"
-						th:text="${country.name}"></option>
-				</select>
-			</div>
+	            <label class="control-label"> Country </label>
+	            <div class="input-group">
+	                <input type="hidden" id="shipToCountry" th:field="*{shipToCountry}">
+	                <input type="text" id="shipToCountryName" th:field="*{shipToCountryName}" readonly class="form-control" >                     
+	            </div>
+            </div>		
 		</div>
 	</div>
 		<div class="row">

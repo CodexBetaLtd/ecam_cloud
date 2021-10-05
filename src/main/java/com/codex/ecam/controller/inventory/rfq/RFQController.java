@@ -111,9 +111,22 @@ public class RFQController {
 	public String getSupplierSelectView(Model model) {
 		return "inventory/rfq/modal/supplier-select-modal";
 	}
+
 	@RequestMapping(value = "/supplier-fetch-modal-view", method = RequestMethod.GET)
 	public String getSupplierfetchView(Model model) {
 		return "inventory/rfq/modal/supplier-fetch-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/countries", method = RequestMethod.GET)
+	public String getCountryModalView(Model model, @RequestParam(name = "title", defaultValue = "Country(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/countries";
+	}
+
+	@RequestMapping(value = "/view/modal/sites", method = RequestMethod.GET)
+	public String getSiteModalView(Model model, @RequestParam(name = "title", defaultValue = "Site(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/sites";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)

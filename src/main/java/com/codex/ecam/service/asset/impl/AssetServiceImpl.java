@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,22 +41,18 @@ import org.springframework.web.multipart.MultipartFile;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.SMTriggerType;
 import com.codex.ecam.constants.inventory.PartType;
-import com.codex.ecam.constants.inventory.ReceiptOrderStatus;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetEventTypeDao;
 import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.admin.CountryDao;
-import com.codex.ecam.dao.admin.CurrencyDao;
 import com.codex.ecam.dao.admin.MeterReadingUnitDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.asset.AssetMeterReadingDao;
 import com.codex.ecam.dao.biz.BusinessDao;
-import com.codex.ecam.dao.biz.SupplierDao;
 import com.codex.ecam.dao.inventory.BOMGroupDao;
 import com.codex.ecam.dao.inventory.BOMGroupPartDao;
-import com.codex.ecam.dao.inventory.ReceiptOrderDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceAssetDao;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
@@ -69,7 +64,6 @@ import com.codex.ecam.dto.asset.AssetMeterReadingConsumptionValueDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingConsumptionVariableDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingValueDTO;
-import com.codex.ecam.dto.asset.AssetPurchasingDTO;
 import com.codex.ecam.dto.asset.AssetUserDTO;
 import com.codex.ecam.dto.asset.SparePartDTO;
 import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
@@ -97,7 +91,6 @@ import com.codex.ecam.model.asset.AssetUser;
 import com.codex.ecam.model.asset.SparePart;
 import com.codex.ecam.model.inventory.bom.BOMGroup;
 import com.codex.ecam.model.inventory.bom.BOMGroupPart;
-import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrder;
 import com.codex.ecam.model.inventory.receiptOrder.ReceiptOrderItem;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.asset.AssetResult;
@@ -152,14 +145,14 @@ public class AssetServiceImpl implements AssetService {
 	@Autowired
 	private BOMGroupDao bomGroupDao;
 
-	@Autowired
-	private ReceiptOrderDao receiptOrderDao;
+	//	@Autowired
+	//	private ReceiptOrderDao receiptOrderDao;
 
 	@Autowired
 	private ReceiptOrderItemDao receiptOrderItemDao;
 
-	@Autowired
-	private CurrencyDao currencyDao;
+	//	@Autowired
+	//	private CurrencyDao currencyDao;
 
 	@Autowired
 	private CountryDao countryDao;
@@ -170,8 +163,8 @@ public class AssetServiceImpl implements AssetService {
 	@Autowired
 	private AssetModelDao assetModelDao;
 
-	@Autowired
-	private SupplierDao supplierDao;
+	//	@Autowired
+	//	private SupplierDao supplierDao;
 
 	@Autowired
 	AssetCategoryService assetCategoryService;
@@ -662,6 +655,7 @@ public class AssetServiceImpl implements AssetService {
 		}
 
 		AssetEvent assetEvent;
+
 		for (final AssetEventDTO assetEventDto : assetEventDtos) {
 
 			assetEvent = new AssetEvent();
@@ -681,82 +675,82 @@ public class AssetServiceImpl implements AssetService {
 		domain.setAssetEvents(assetEvents);
 	}
 
-	private void addReceiptOrder(AssetResult result) {
-		final AssetCategoryType type = result.getDomainEntity().getAssetCategory().getAssetCategoryType();
-		if (type.equals(AssetCategoryType.EQUIPMENTS_OR_MACHINES) || type.equals(AssetCategoryType.TOOLS)) {
-			final ReceiptOrder receiptOrder = createReceiptOrder(result.getDtoEntity().getAssetPurchasingDetail(),
-					result.getDomainEntity());
-			receiptOrderDao.save(receiptOrder);
-		}
-
-	}
-
-	private ReceiptOrder createReceiptOrder(AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
-		ReceiptOrder ro;
-
-		if (assetPurchasingDetail.getReceiptOrderId() != null && assetPurchasingDetail.getReceiptOrderId() > 0) {
-			ro = receiptOrderDao.findOne(assetPurchasingDetail.getReceiptOrderId());
-		} else {
-			ro = new ReceiptOrder();
-			ro.setCode("RO_" + asset.getCode());
-		}
-
-		ro.setReceiptOrderStatus(ReceiptOrderStatus.RECEIVED);
-		addReceiptOrderItem(ro, assetPurchasingDetail, asset);
-
-		if (assetPurchasingDetail.getPurchasedCurrencyId() != null
-				&& assetPurchasingDetail.getPurchasedCurrencyId() > 0) {
-			ro.setCurrency(currencyDao.findById(assetPurchasingDetail.getPurchasedCurrencyId()));
-		}
-
-		if (assetPurchasingDetail.getPurchasedSupplierId() != null
-				&& assetPurchasingDetail.getPurchasedSupplierId() > 0) {
-			ro.setSupplier(supplierDao.findOne(assetPurchasingDetail.getPurchasedSupplierId()));
-		}
-
-		if (assetPurchasingDetail.getOrderedDate() != null) {
-			ro.setDateOrdered(assetPurchasingDetail.getOrderedDate());
-		}
-
-		if (assetPurchasingDetail.getReceivedDate() != null) {
-			ro.setDateReceived(assetPurchasingDetail.getReceivedDate());
-		}
-
-		ro.setIsDeleted(false);
-		ro.setVersion(assetPurchasingDetail.getOrderVersion());
-
-		return ro;
-	}
-
-	private void addReceiptOrderItem(ReceiptOrder ro, AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
-		final Set<ReceiptOrderItem> items = new HashSet<>();
-		ReceiptOrderItem item = new ReceiptOrderItem();
-		if (ro.getReceiptOrderItems() != null && ro.getReceiptOrderItems().size() > 0) {
-			// item = ro.getReceiptOrderItems().get(0);
-			final Optional<ReceiptOrderItem> first = ro.getReceiptOrderItems().stream().findFirst();
-			if (first.isPresent()) {
-				item = first.get();
-			}
-
-		} else {
-			item = new ReceiptOrderItem();
-		}
-		item.setAsset(asset);
-		item.setReceiptOrder(ro);
-		if (assetPurchasingDetail.getPurchasedPrice() != null && assetPurchasingDetail.getPurchasedPrice() > 0) {
-			item.setTotalPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
-			item.setUnitPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
-			item.setQuantityReceived(BigDecimal.ONE);
-		}
-
-		if (assetPurchasingDetail.getExpiryDate() != null) {
-			item.setDateExpiryOfInventoryItems(assetPurchasingDetail.getExpiryDate());
-		}
-		item.setIsDeleted(Boolean.FALSE);
-		item.setVersion(assetPurchasingDetail.getItemVersion());
-		items.add(item);
-		ro.setReceiptOrderItems(items);
-	}
+	//	private void addReceiptOrder(AssetResult result) {
+	//		final AssetCategoryType type = result.getDomainEntity().getAssetCategory().getAssetCategoryType();
+	//		if (type.equals(AssetCategoryType.EQUIPMENTS_OR_MACHINES) || type.equals(AssetCategoryType.TOOLS)) {
+	//			final ReceiptOrder receiptOrder = createReceiptOrder(result.getDtoEntity().getAssetPurchasingDetail(),
+	//					result.getDomainEntity());
+	//			receiptOrderDao.save(receiptOrder);
+	//		}
+	//
+	//	}
+	//
+	//	private ReceiptOrder createReceiptOrder(AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
+	//		ReceiptOrder ro;
+	//
+	//		if (assetPurchasingDetail.getReceiptOrderId() != null && assetPurchasingDetail.getReceiptOrderId() > 0) {
+	//			ro = receiptOrderDao.findOne(assetPurchasingDetail.getReceiptOrderId());
+	//		} else {
+	//			ro = new ReceiptOrder();
+	//			ro.setCode("RO_" + asset.getCode());
+	//		}
+	//
+	//		ro.setReceiptOrderStatus(ReceiptOrderStatus.RECEIVED);
+	//		addReceiptOrderItem(ro, assetPurchasingDetail, asset);
+	//
+	//		if (assetPurchasingDetail.getPurchasedCurrencyId() != null
+	//				&& assetPurchasingDetail.getPurchasedCurrencyId() > 0) {
+	//			ro.setCurrency(currencyDao.findById(assetPurchasingDetail.getPurchasedCurrencyId()));
+	//		}
+	//
+	//		if (assetPurchasingDetail.getPurchasedSupplierId() != null
+	//				&& assetPurchasingDetail.getPurchasedSupplierId() > 0) {
+	//			ro.setSupplier(supplierDao.findOne(assetPurchasingDetail.getPurchasedSupplierId()));
+	//		}
+	//
+	//		if (assetPurchasingDetail.getOrderedDate() != null) {
+	//			ro.setDateOrdered(assetPurchasingDetail.getOrderedDate());
+	//		}
+	//
+	//		if (assetPurchasingDetail.getReceivedDate() != null) {
+	//			ro.setDateReceived(assetPurchasingDetail.getReceivedDate());
+	//		}
+	//
+	//		ro.setIsDeleted(false);
+	//		ro.setVersion(assetPurchasingDetail.getOrderVersion());
+	//
+	//		return ro;
+	//	}
+	//
+	//	private void addReceiptOrderItem(ReceiptOrder ro, AssetPurchasingDTO assetPurchasingDetail, Asset asset) {
+	//		final Set<ReceiptOrderItem> items = new HashSet<>();
+	//		ReceiptOrderItem item = new ReceiptOrderItem();
+	//		if (ro.getReceiptOrderItems() != null && ro.getReceiptOrderItems().size() > 0) {
+	//			// item = ro.getReceiptOrderItems().get(0);
+	//			final Optional<ReceiptOrderItem> first = ro.getReceiptOrderItems().stream().findFirst();
+	//			if (first.isPresent()) {
+	//				item = first.get();
+	//			}
+	//
+	//		} else {
+	//			item = new ReceiptOrderItem();
+	//		}
+	//		item.setAsset(asset);
+	//		item.setReceiptOrder(ro);
+	//		if (assetPurchasingDetail.getPurchasedPrice() != null && assetPurchasingDetail.getPurchasedPrice() > 0) {
+	//			item.setTotalPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
+	//			item.setUnitPrice(BigDecimal.valueOf(assetPurchasingDetail.getPurchasedPrice()));
+	//			item.setQuantityReceived(BigDecimal.ONE);
+	//		}
+	//
+	//		if (assetPurchasingDetail.getExpiryDate() != null) {
+	//			item.setDateExpiryOfInventoryItems(assetPurchasingDetail.getExpiryDate());
+	//		}
+	//		item.setIsDeleted(Boolean.FALSE);
+	//		item.setVersion(assetPurchasingDetail.getItemVersion());
+	//		items.add(item);
+	//		ro.setReceiptOrderItems(items);
+	//	}
 
 	private void addAssetToBOMGroup(Asset asset) throws Exception {
 		final List<BOMGroup> assetBOMGroups = bomGroupDao.findGroupsByAssetId(asset.getId());
@@ -1451,24 +1445,18 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public DataTablesOutput<AssetDTO> findAllFacilitiesByLevel(FocusDataTablesInput input) throws Exception {
 
-		Specification<Asset> specification;
 		AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
-		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			specification = (root, query, cb) -> cb.equal(root.get("assetCategory").get("assetCategoryType"),
-					AssetCategoryType.LOCATIONS_OR_FACILITIES);
-		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
-			specification = (root, query, cb) -> {
-				return cb.and(
-						cb.equal(root.get("assetCategory").get("assetCategoryType"),
-								AssetCategoryType.LOCATIONS_OR_FACILITIES),
-						cb.equal(root.get("business").get("id"), AuthenticationUtil.getLoginUserBusiness().getId()));
-			};
-		} else {
-			specification = (root, query, cb) -> cb.and(
-					cb.equal(root.get("assetCategory").get("assetCategoryType"),
-							AssetCategoryType.LOCATIONS_OR_FACILITIES),
-					cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
-		}
+
+		final Specification<Asset> specification = (root, query, cb)->{
+			final List<Predicate> predicates = new ArrayList<>();
+			if (AuthenticationUtil.isAuthUserSystemLevel()) {
+				predicates.add(cb.equal(root.get("business").get("id"), AuthenticationUtil.getLoginUserBusiness().getId()));
+			} else if(AuthenticationUtil.isAuthUserGeneralLevel()) {
+				predicates.add(cb.equal(root.get("site"), AuthenticationUtil.getLoginSite().getSite()));
+			}
+			predicates.add(cb.equal(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
 
 		final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specification);
 		final DataTablesOutput<AssetDTO> out = AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
@@ -1579,7 +1567,6 @@ public class AssetServiceImpl implements AssetService {
 
 		if (id != null) {
 			final String imagePath = assetDao.getAssetImageLocation(id);
-			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				// return FileDownloadUtil.getByteInputStream(uploadLocation + imagePath);
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);
@@ -1595,7 +1582,6 @@ public class AssetServiceImpl implements AssetService {
 
 		if (id != null) {
 			final String imagePath = assetDao.getAssetQRLocation(id);
-			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);
 				// return FileDownloadUtil.getByteInputStream(imagePath);
@@ -1681,8 +1667,7 @@ public class AssetServiceImpl implements AssetService {
 		final Sheet location = workbook.getSheetAt(0);
 
 		final Iterator<Row> iterator = location.iterator();
-		final List<Asset> assetList = new ArrayList<>();
-		System.out.println("location");
+
 		while (iterator.hasNext()) {
 			final Row nextRow = iterator.next();
 			final int rowIndex = nextRow.getRowNum();

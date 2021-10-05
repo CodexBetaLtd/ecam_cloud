@@ -14,7 +14,6 @@ import com.codex.ecam.result.asset.AssetResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -89,6 +88,7 @@ public interface AssetService {
 	DataTablesOutput<AssetDTO> findAssetByCategoryTypeBusiness(FocusDataTablesInput input, Integer businessId, AssetCategoryType type);
 
 	DataTablesOutput<AssetDTO> findPartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
+
 	DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
 
 	String assetFileUpload(MultipartFile file,String refId) throws Exception;

@@ -33,21 +33,21 @@ public class BusinessServiceUpdateTestCase extends TestCase {
 		Integer id = null;
 		try {
 
-			BusinessDTO business = BusinessDummyData.getInstance().getDummyDTOBusinessOne();
+			final BusinessDTO business = BusinessDummyData.getInstance().getDummyDTOBusinessOne();
 
-			BusinessResult result = businessService.save(business);
+			final BusinessResult result = businessService.save(business);
 			id = result.getDomainEntity().getId();
 			business.setId(id);
 
 			setGivenValue((String) getTestCondition(UPDATE_ENTITY_NAME), getTestCondition(UPDATE_ENTITY_VALUE), business);
 
 			businessService.save(business);
-			BusinessDTO updatedBusiness = businessService.findById(id);
+			final BusinessDTO updatedBusiness = businessService.findById(id);
 
 			Assert.assertNotNull("Business is null.", updatedBusiness);
 			Assert.assertTrue("Business not updated.", isFieldUpdated(updatedBusiness, (String)getTestCondition(UPDATE_ENTITY_NAME), getTestCondition(UPDATE_ENTITY_VALUE)));
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			isError = true;
 		} finally {
 			businessService.delete(id);
@@ -84,7 +84,7 @@ public class BusinessServiceUpdateTestCase extends TestCase {
 			return business.getNotes().equals(value);
 
 		} else if (name.equals(FieldName.BUSINESS_CLASSIFICATION_ID.name())) {
-			return business.getBusinessClassficationId().equals(value);
+			return business.getBusinessClassificationId().equals(value);
 
 		} else if (name.equals(FieldName.CURRENCY_ID.name())) {
 			return business.getCurrencyId().equals(value);
@@ -138,7 +138,7 @@ public class BusinessServiceUpdateTestCase extends TestCase {
 			business.setNotes((String) value);
 
 		} else if (name.equals(FieldName.BUSINESS_CLASSIFICATION_ID.name())) {
-			business.setBusinessClassficationId((Integer) value);
+			business.setBusinessClassificationId((Integer) value);
 
 		} else if (name.equals(FieldName.CURRENCY_ID.name())) {
 			business.setCurrencyId((Integer) value);

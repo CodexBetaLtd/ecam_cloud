@@ -7,17 +7,16 @@ jQuery(document).ready(function () {
     TabItem.init();
     TabSupplier.init();
     NotificationTab.init();
+    TabReceiving.init();
 
 
     for (var i = 0; i < thymeLeafItems.length; i++) {
         TabItem.addItemToList(thymeLeafItems[i])
-    }
-    ;
+    };
 
     if ($("#rfqId").val() !== undefined || $("#rfqId").val() !== "" || $("#rfqId").val() !== " ") {
         TabItem.populateRFQItems();
-    }
-    ;
+    };
     
     $(function(){    
         $('#rfqView').on('click',function(){
@@ -31,8 +30,7 @@ jQuery(document).ready(function () {
             });
             return false;        
         });    
-    })
-
+    });
 
     /*********************************************************************
      * RFQ Item Tab
@@ -51,9 +49,6 @@ jQuery(document).ready(function () {
         TabItem.addRFQItem();
         TabItem.populateRFQItems();
     });
-
-
-
 
     $(document).on('click', '#btnaddRFQ', function (event) {
         event.preventDefault();
@@ -78,7 +73,6 @@ jQuery(document).ready(function () {
         $('#sendRFQ').modal('show');
     });
 
-
     $(document).on('click', '#btnsendRFQ', function (event) {
         event.preventDefault();
         $("submit").attr("disabled", true);
@@ -95,7 +89,6 @@ jQuery(document).ready(function () {
         }
     });
 
-
     /*********************************************************************
      * RFQ Toggle Tab
      *********************************************************************/
@@ -107,9 +100,5 @@ jQuery(document).ready(function () {
             $("#supplieraddressinvoice").text(shipToAddress);
         }
     });
-
-
-
-
-
+    
 });

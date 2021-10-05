@@ -48,12 +48,8 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="common-modal" class="modal datatable fade" role="dialog"
-				tabindex="-1"
-				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
-			<div id="item-add-modal" class="modal datatable fade" role="dialog"
-				tabindex="-1"
-				style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
+			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 
 			<div class="container">
 
@@ -333,19 +329,24 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/add-view.js}"></script>
 
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/item-tab.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/file-tab.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/supplier-tab.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/tab/notification-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/item-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/file-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/supplier-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/notification-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/tab/receiving-tab.js}"></script>
 
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/file-add-modal.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/item-add-modal.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/modal/notification-add-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/file-add-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/item-add-modal.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/modal/notification-add-modal.js}"></script>
 
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-user.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-supplier.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-asset.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-part.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-user.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-supplier.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-asset.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-part.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-countries.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/rfq/datatable/dt-rfq-sites.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-bu.js}"></script>
 
 	<script th:inline="javascript">
         var items = [];

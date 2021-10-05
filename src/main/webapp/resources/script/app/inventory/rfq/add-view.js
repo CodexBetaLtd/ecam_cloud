@@ -13,23 +13,9 @@ var RFQAdd = function () {
 			allowClear: true
 		});
 	};
-
-    var runShipToLocationSelect = function () {
-    	$("#shipToId").select2({
-    		placeholder: "Select a Location",
-    		allowClear: true
-    	});
-    };
     
     var runSupplierContrySelect = function () {
     	$("#supplierCountry").select2({
-    		placeholder: "Select a Country",
-    		allowClear: true
-    	});
-    };
-
-    var runShipingContrySelect = function () {
-    	$("#shipToCountry").select2({
     		placeholder: "Select a Country",
     		allowClear: true
     	});
@@ -142,9 +128,7 @@ var RFQAdd = function () {
 
         init: function () {
             runSupplierBusinessSelect();
-            runShipToLocationSelect();
             runSupplierContrySelect();
-            runShipingContrySelect();
             runDatePicker();
             runCheckboxes();
             runValidator();
