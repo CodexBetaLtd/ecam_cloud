@@ -1,10 +1,39 @@
-var CustomerAdd=function (){
+var CustomerAdd = function (){
 	
-    var initCountrySelect = function () {
-        $("#customerCountryId").select2({
-            placeholder: "Select a Country",
-            allowClear: true
+    /********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearCountry()
+    };
+    
+    function initInputClearCountry(){
+        $("#countryName").inputClear({
+            placeholder:"Please specify a country",
+            btnMethod:"CustomerAdd.addCountry()",
         });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalCountrySelect() {
+        var $modal = $('#common-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../customer/view/modal/countries';
+            $modal.load(url, '', function () {
+                DatatableModalCountries.init(
+                        "common-modal",
+                        "tbl_countries",
+                        "../restapi/country/tabledata",
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
     };
     
     var initBusinessSelect = function () {
@@ -15,10 +44,12 @@ var CustomerAdd=function (){
     };
     
     var runValidator = function () {
+        
         var form = $('#customer_add_frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
-        $('#customer_add_frm').validate({
+        
+        form.validate({
             errorElement: "span", // contain the error msg in a span tag
             errorClass: 'help-block',
             errorPlacement: function (error, element) { // render error placement for each input type
@@ -90,8 +121,12 @@ var CustomerAdd=function (){
 
         init: function () {            
             initBusinessSelect();
-            initCountrySelect();
+            initInputClearComponents();
             runValidator();
+        },
+        
+        addCountry: function () {
+            initModalCountrySelect(); 
         }
     };
 }();
