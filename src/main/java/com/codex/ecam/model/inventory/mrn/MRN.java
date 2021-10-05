@@ -29,68 +29,68 @@ import com.codex.ecam.model.biz.customer.Customer;
 import com.codex.ecam.model.maintenance.workorder.WorkOrder;
 
 @Entity
-@EntityListeners( { MRNPrePersistListener.class,MRNLogListener.class } )
+@EntityListeners( { MRNPrePersistListener.class } )
 @Table(name = "tbl_mrn")
 public class MRN extends BaseModel {
 
-    private static final long serialVersionUID = -5566712823688332116L;
+	private static final long serialVersionUID = -5566712823688332116L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "mrn_s")
-    @SequenceGenerator(name = "mrn_s", sequenceName = "mrn_s", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "mrn_s")
+	@SequenceGenerator(name = "mrn_s", sequenceName = "mrn_s", allocationSize = 1)
+	@Column(name = "id")
+	private Integer id;
 
-    @JoinColumn(name = "business_id")
-    @ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-    private Business business;
+	@JoinColumn(name = "business_id")
+	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Business business;
 
-    @JoinColumn(name = "site_id")
-    @ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
-    private Asset site;
+	@JoinColumn(name = "site_id")
+	@ManyToOne(targetEntity = Asset.class, fetch = FetchType.LAZY)
+	private Asset site;
 
-    @Column(name = "mrn_type_id")
-    private MRNType mrnType;
+	@Column(name = "mrn_type_id")
+	private MRNType mrnType;
 
-    @JoinColumn(name = "customer_id")
-    @ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-    private Customer customer;
-    
-    @JoinColumn(name = "requested_by", nullable = true)
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    private User requestedBy;
-    
-    @JoinColumn(name = "workorder_id")
-    @ManyToOne(targetEntity = WorkOrder.class, fetch = FetchType.LAZY)
-    private WorkOrder workOrder;
+	@JoinColumn(name = "customer_id")
+	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Customer customer;
 
-    @Column(name = "mrn_status_id")
-    private MRNStatus mrnStatus;
+	@JoinColumn(name = "requested_by", nullable = true)
+	@ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+	private User requestedBy;
 
-    @Column(name = "contact_person")
-    private String customerContactPerson;
+	@JoinColumn(name = "workorder_id")
+	@ManyToOne(targetEntity = WorkOrder.class, fetch = FetchType.LAZY)
+	private WorkOrder workOrder;
 
-    @Column(name = "mrn_no")
-    private String mrnNo;
+	@Column(name = "mrn_status_id")
+	private MRNStatus mrnStatus;
 
-    @Column(name = "date")
-    private Date date;
+	@Column(name = "contact_person")
+	private String customerContactPerson;
 
-    @OneToMany(mappedBy = "mrn", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private Set<MRNItem> mrnItems;
+	@Column(name = "mrn_no")
+	private String mrnNo;
 
+	@Column(name = "date")
+	private Date date;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	@OneToMany(mappedBy = "mrn", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+	private Set<MRNItem> mrnItems;
 
 
+	public Integer getId() {
+		return id;
+	}
 
-    public MRNType getMrnType() {
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
+
+	public MRNType getMrnType() {
 		return mrnType;
 	}
 
@@ -115,23 +115,23 @@ public class MRN extends BaseModel {
 	}
 
 	public Date getDate() {
-        return date;
-    }
+		return date;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-    public User getRequestedBy() {
-        return requestedBy;
-    }
+	public User getRequestedBy() {
+		return requestedBy;
+	}
 
-    public void setRequestedBy(User requestedBy) {
-        this.requestedBy = requestedBy;
-    }
+	public void setRequestedBy(User requestedBy) {
+		this.requestedBy = requestedBy;
+	}
 
 
-    public Set<MRNItem> getMrnItems() {
+	public Set<MRNItem> getMrnItems() {
 		return mrnItems;
 	}
 
@@ -139,29 +139,29 @@ public class MRN extends BaseModel {
 		this.mrnItems = mrnItems;
 	}
 
-    public Business getBusiness() {
-        return business;
-    }
+	public Business getBusiness() {
+		return business;
+	}
 
-    public void setBusiness(Business business) {
-        this.business = business;
-    }
+	public void setBusiness(Business business) {
+		this.business = business;
+	}
 
-    public Asset getSite() {
-        return site;
-    }
+	public Asset getSite() {
+		return site;
+	}
 
-    public void setSite(Asset site) {
-        this.site = site;
-    }
+	public void setSite(Asset site) {
+		this.site = site;
+	}
 
-    public String getCustomerContactPerson() {
-        return customerContactPerson;
-    }
+	public String getCustomerContactPerson() {
+		return customerContactPerson;
+	}
 
-    public void setCustomerContactPerson(String customerContactPerson) {
-        this.customerContactPerson = customerContactPerson;
-    }
+	public void setCustomerContactPerson(String customerContactPerson) {
+		this.customerContactPerson = customerContactPerson;
+	}
 
 	public WorkOrder getWorkOrder() {
 		return workOrder;

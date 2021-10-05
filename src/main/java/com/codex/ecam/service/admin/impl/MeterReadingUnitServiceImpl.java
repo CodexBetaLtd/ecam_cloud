@@ -29,14 +29,7 @@ public class MeterReadingUnitServiceImpl implements MeterReadingUnitService {
 	public DataTablesOutput<MeterReadingUnitDTO> findAll(FocusDataTablesInput input) throws Exception {
 		MeterReadingUnitSearchPropertyMapper.getInstance().generateDataTableInput(input);
 		final DataTablesOutput<MeterReadingUnit> domainOut = meterReadingUnitDao.findAll(input);
-		DataTablesOutput<MeterReadingUnitDTO> out = null;
-		try {
-			out = MeterReadingUnitMapper.getInstance().domainToDTODataTablesOutput(domainOut);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-
-		return out;
+		return MeterReadingUnitMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 	}
 
 	@Override

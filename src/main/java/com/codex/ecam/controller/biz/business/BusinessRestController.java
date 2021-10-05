@@ -2,8 +2,11 @@ package com.codex.ecam.controller.biz.business;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +21,8 @@ public class BusinessRestController {
 
 	public static final String REQUEST_MAPPING_URL = "/restapi/business";
 
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	private BusinessService businessService;
 
@@ -25,20 +30,22 @@ public class BusinessRestController {
 	public DataTablesOutput<BusinessDTO> findAllBusinesses(@Valid FocusDataTablesInput input) {
 		try {
 			return businessService.findAllByLevel(input);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
 
-	@RequestMapping(value = "/getActualBusinesses", method = RequestMethod.GET)
+	@RequestMapping(value = "/actual-business/tabledata", method = RequestMethod.GET)
 	public DataTablesOutput<BusinessDTO> findAllActualBusinesses(@Valid FocusDataTablesInput input) {
 		try {
 			return businessService.findActualBusinesses(input);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
-		return null;
+		return new DataTablesOutput<BusinessDTO> ();
 	}
 
 }

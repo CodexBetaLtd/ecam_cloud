@@ -1,4 +1,4 @@
-package com.codex.ecam.dao.inventory;
+package com.codex.ecam.dao.inventory.mrn;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

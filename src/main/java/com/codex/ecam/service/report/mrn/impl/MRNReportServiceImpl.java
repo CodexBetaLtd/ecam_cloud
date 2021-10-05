@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 
 import com.codex.ecam.constants.util.PrintType;
 import com.codex.ecam.dao.inventory.AODDao;
-import com.codex.ecam.dao.inventory.MRNDao;
+import com.codex.ecam.dao.inventory.mrn.MRNDao;
 import com.codex.ecam.dto.report.data.aod.AODRepDTO;
 import com.codex.ecam.dto.report.data.aod.AODRepItemDataDTO;
 import com.codex.ecam.dto.report.data.mrn.MRNRepDTO;

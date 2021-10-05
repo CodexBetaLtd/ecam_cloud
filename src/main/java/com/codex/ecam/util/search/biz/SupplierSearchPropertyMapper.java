@@ -20,8 +20,11 @@ public class SupplierSearchPropertyMapper extends BaseSearchPropertyMapper {
 	protected void mapSearchParamsToPropertyParams(String tableColumn) {
 
 		switch (tableColumn) {
-		
-		
+
+		case "businessName" :
+			addColumns("business.name");
+			break;
+
 		default:
 			break;
 

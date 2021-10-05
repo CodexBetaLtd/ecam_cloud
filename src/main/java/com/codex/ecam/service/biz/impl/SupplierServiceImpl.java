@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.dao.admin.CountryDao;
 import com.codex.ecam.dao.admin.CurrencyDao;
+import com.codex.ecam.dao.biz.BusinessClassificationDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.biz.BusinessVirtualDao;
 import com.codex.ecam.dao.biz.SupplierDao;
@@ -58,6 +59,9 @@ public class SupplierServiceImpl implements SupplierService {
 
 	@Autowired
 	private CountryDao countryDao;
+
+	@Autowired
+	private BusinessClassificationDao businessClassificationDao;
 
 	private SupplierDTO getDTOById(Integer id) throws SupplierException {
 		try {
@@ -176,7 +180,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	private void saveOrUpdate(SupplierResult result) throws SupplierException, BusinessClassificationException, CurrencyException {
+	private void saveOrUpdate(SupplierResult result) throws Exception {
 		SupplierMapper.getInstance().dtoToDomain(result.getDtoEntity(), result.getDomainEntity());
 		setSupplierData(result);
 		supplierDao.save(result.getDomainEntity());
@@ -186,7 +190,7 @@ public class SupplierServiceImpl implements SupplierService {
 		result.setDtoEntity(getDTOById(result.getDomainEntity().getId()));
 	}
 
-	private void setSupplierData(SupplierResult result) throws BusinessClassificationException, CurrencyException {
+	private void setSupplierData(SupplierResult result) throws Exception {
 		setRoleSupplier(result);
 		setVirtualBusiness(result);
 		setCurrency(result);
@@ -232,13 +236,13 @@ public class SupplierServiceImpl implements SupplierService {
 		}
 	}
 
-	private void setBusinessClassification(SupplierResult result) throws BusinessClassificationException {
+	private void setBusinessClassification(SupplierResult result) throws Exception {
 		if (result.getDtoEntity().getBusinessClassificationId() != null && result.getDtoEntity().getBusinessClassificationId() > 0) {
-			//result.getDomainEntity().setBusinessClassification(businessClassificationDao.findOne(result.getDtoEntity().getBusinessClassificationId()));
+			result.getDomainEntity().setBusinessClassification(businessClassificationDao.findOne(result.getDtoEntity().getBusinessClassificationId()));
 		}
 	}
 
-	private void setCurrency(SupplierResult result) throws CurrencyException {
+	private void setCurrency(SupplierResult result) throws Exception {
 		if (result.getDtoEntity().getCurrencyId() != null && result.getDtoEntity().getCurrencyId() > 0) {
 			result.getDomainEntity().setCurrency(currencyDao.findById(result.getDtoEntity().getCurrencyId()));
 		}

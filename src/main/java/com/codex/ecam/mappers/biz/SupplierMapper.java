@@ -21,7 +21,7 @@ public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 
 	@Override
 	public SupplierDTO domainToDto(Supplier domain) throws Exception {
-		SupplierDTO dto = new SupplierDTO();
+		final SupplierDTO dto = new SupplierDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
@@ -36,15 +36,36 @@ public class SupplierMapper extends GenericMapper<Supplier, SupplierDTO> {
 		dto.setCity(domain.getCity());
 		dto.setProvince(domain.getProvince());
 		dto.setPostalCode(domain.getPostalcode());
-dto.setIsServiceProvider(domain.getIsServiceProvider());
-		if (domain.getCountry() != null) {
-			dto.setCountryId(domain.getCountry().getId());
-		}
+		dto.setIsServiceProvider(domain.getIsServiceProvider());
 
+		setSupplierCountry(domain, dto);
+		setSupplierCurrency(domain, dto);
+		setSupplierBusinessClassification(domain, dto);
 
 		setCommanDTOFields(dto, domain);
 
 		return dto;
+	}
+
+	private void setSupplierCountry(Supplier domain, SupplierDTO dto) {
+		if (domain.getCountry() != null) {
+			dto.setCountryId(domain.getCountry().getId());
+			dto.setCountryName(domain.getCountry().getName());
+		}
+	}
+
+	private void setSupplierCurrency(Supplier domain, SupplierDTO dto) {
+		if (domain.getCurrency() != null) {
+			dto.setCurrencyId(domain.getCurrency().getId());
+			dto.setCurrencyName(domain.getCurrency().getName());
+		}
+	}
+
+	private void setSupplierBusinessClassification(Supplier domain, SupplierDTO dto) {
+		if (domain.getBusinessClassification() != null) {
+			dto.setBusinessClassificationId(domain.getBusinessClassification().getId());
+			dto.setBusinessClassificationName(domain.getBusinessClassification().getName());
+		}
 	}
 
 	@Override
@@ -72,7 +93,7 @@ dto.setIsServiceProvider(domain.getIsServiceProvider());
 
 	@Override
 	public SupplierDTO domainToDtoForDataTable(Supplier domain) throws Exception {
-		SupplierDTO dto = new SupplierDTO();
+		final SupplierDTO dto = new SupplierDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
@@ -88,10 +109,7 @@ dto.setIsServiceProvider(domain.getIsServiceProvider());
 		dto.setProvince(domain.getProvince());
 		dto.setPostalCode(domain.getPostalcode());
 
-		if (domain.getCountry() != null) {
-			dto.setCountryId(domain.getCountry().getId());
-			dto.setCountryName(domain.getCountry().getName());
-		}
+		setSupplierCountry(domain, dto);
 		return dto;
 	}
 
