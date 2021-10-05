@@ -15,6 +15,7 @@ import com.codex.ecam.model.BaseModel;
 import com.codex.ecam.model.admin.Country;
 import com.codex.ecam.model.admin.Currency;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.model.biz.business.BusinessClassification;
 
 @Entity
 @Table(name="tbl_supplier")
@@ -28,24 +29,12 @@ public class Supplier extends BaseModel {
 	@Column (name = "id")
 	private Integer id;
 
-	@JoinColumn( name = "primary_currency_id" )
-	@ManyToOne( targetEntity = Currency.class, fetch = FetchType.LAZY)
-	private Currency currency;
-
-	@JoinColumn( name = "country_id" )
-	@ManyToOne( targetEntity = Country.class, fetch = FetchType.LAZY)
-	private Country country;
-	
-	@JoinColumn( name="business_id" )
-	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business business;
-
 	@Column(name="address")
 	private String address;
 
 	@Column(name="city")
 	private String city;
-	
+
 	@Column(name="is_service_provider")
 	private Boolean isServiceProvider;
 
@@ -87,6 +76,22 @@ public class Supplier extends BaseModel {
 
 	@Column(name="web_site")
 	private String webSite;
+
+	@JoinColumn( name = "primary_currency_id" )
+	@ManyToOne( targetEntity = Currency.class, fetch = FetchType.LAZY)
+	private Currency currency;
+
+	@JoinColumn( name = "country_id" )
+	@ManyToOne( targetEntity = Country.class, fetch = FetchType.LAZY)
+	private Country country;
+
+	@JoinColumn( name="business_id" )
+	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Business business;
+
+	@JoinColumn( name="business_classification_id" )
+	@ManyToOne( targetEntity = BusinessClassification.class, fetch = FetchType.LAZY)
+	private BusinessClassification businessClassification;
 
 	public Integer getId() {
 		return id;
@@ -246,6 +251,14 @@ public class Supplier extends BaseModel {
 
 	public void setIsServiceProvider(Boolean isServiceProvider) {
 		this.isServiceProvider = isServiceProvider;
+	}
+
+	public BusinessClassification getBusinessClassification() {
+		return businessClassification;
+	}
+
+	public void setBusinessClassification(BusinessClassification businessClassification) {
+		this.businessClassification = businessClassification;
 	}
 
 }

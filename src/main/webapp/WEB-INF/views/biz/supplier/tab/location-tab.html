@@ -31,15 +31,15 @@
                 <input type="text" placeholder="Insert the Postal Code" th:field="*{postalCode}" class="form-control" name="postalCode">
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label for="form-field-select-3">Country</label>
-                <select th:field="*{countryId}" class="search-select" style="width:100%;">
-                    <!--<option value="">&nbsp;</option>-->
-                    <option th:each="country : ${countryList}" th:value="${country.id}" th:text="${country.name}"></option>
-                </select>
-            </div>
-        </div>
+		<div class="col-md-6">
+			<div class="form-group">
+	            <label class="control-label"> Country </label>
+	            <div class="input-group">
+	                <input type="hidden" id="countryId" th:field="*{countryId}">
+	                <input type="text" id="countryName" th:field="*{countryName}" readonly class="form-control" >                     
+	            </div>
+            </div>		
+		</div>
     </div>
 </div>
 

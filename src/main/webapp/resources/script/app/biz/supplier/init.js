@@ -1,5 +1,6 @@
 jQuery(document).ready(function () {
     Main.init();
     SupplierBusinessAdd.init();
-    //PersonnelTab.init();
+    GeneralTab.init();
+    LocationTab.init();
 });

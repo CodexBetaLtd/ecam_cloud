@@ -5,18 +5,16 @@
 
 <head th:include="template/commoncss :: commoncss"></head>
 
-<link type="text/css" rel="stylesheet"
-	th:href="@{/resources/style/select2.css}" />
-<link rel="stylesheet" type="text/css"
-	th:href="@{/resources/style/dataTables.bootstrap.css}" />
-	<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.css}" />
+<link rel="stylesheet" type="text/css" th:href="@{/resources/style/dataTables.bootstrap.css}" />
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-switch.css}"/>
 	
-
 <body>
 
 	<!-- start: HEADER -->
-	<div class="navbar navbar-inverse navbar-fixed-top"
-		th:replace="template/commonheader :: commonheader"></div>
+	<div class="navbar navbar-inverse navbar-fixed-top" th:replace="template/commonheader :: commonheader"></div>
 	<!-- end: HEADER -->
 
 	<!-- start: MAIN CONTAINER -->
@@ -41,9 +39,11 @@
 
 		<!-- start: PAGE -->
 		<div class="main-content">
+		
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 
 			<div class="container">
-
+		
 				<!-- start: PAGE HEADER -->
 				<div class="row" th:replace="biz/supplier/page-header :: pageheader"></div>
 				<!-- end: PAGE HEADER -->
@@ -145,10 +145,12 @@
 										<div class="col-sm-12">
 											<div class="tabbable">
 												<ul id="myTab" class="nav nav-tabs tab-bricky">
-													<li class="active"><a href="#generalTab"
-														data-toggle="tab"> General </a></li>
-													<li><a href="#locationTab" data-toggle="tab">
-															Location </a></li>
+													<li class="active">
+														<a href="#generalTab" data-toggle="tab"> General </a>
+													</li>
+													<li>
+														<a href="#locationTab" data-toggle="tab"> Location </a>
+													</li>
 													<!--<li>
                                                     <a href="#personnelTab" data-toggle="tab"> Personnel </a>
                                                 </li>-->
@@ -206,6 +208,15 @@
 
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/add-view.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/tab/general-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/tab/location-tab.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/datatable/dt-currencies.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/datatable/dt-countries.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/datatable/dt-business-classifications.js}"></script>
+	
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
 	<!--<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/tab/personnel-tab.js}"></script>-->
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 

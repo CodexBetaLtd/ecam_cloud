@@ -1,34 +1,17 @@
 var SupplierBusinessAdd = function () {
 
-    var initDropDownBusiness = function () {
+    function initSelect2Components(){
+        initSelect2Business();
+    };
+    
+    function initSelect2Business() {
         $("#businessId").select2({
             placeholder: "Please Specify the Business",
             allowClear: true
         });
     };
 
-    var runCurrencySelect = function () {
-        $("#currencyId").select2({
-            placeholder: "Select a Primary Currency",
-            allowClear: true
-        });
-    };
-
-    var runClassificationSelect = function () {
-        $("#businessClassificationId").select2({
-            placeholder: "Select a Business Classification",
-            allowClear: true
-        });
-    };
-
-    var runCountrySelect = function () {
-        $("#countryId").select2({
-            placeholder: "Select a Country",
-            allowClear: true
-        });
-    };
-
-    var runProviderSwitch = function () {
+    var initProviderSwitch = function () {
         var state = false;
         if ($('#isProvider').val() == 'true') {
             state = true;
@@ -45,11 +28,12 @@ var SupplierBusinessAdd = function () {
             }
         });
     };
-    var runValidator = function () {
+    var initValidator = function () {
+        
         var form = $('#supplierBusinessAddForm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
-        $('#supplierBusinessAddForm').validate({
+        form.validate({
             errorElement: "span", // contain the error msg in a span tag
             errorClass: 'help-block',
             errorPlacement: function (error, element) { // render error placement for each input type
@@ -131,12 +115,9 @@ var SupplierBusinessAdd = function () {
 
     return {
         init: function () {
-           // runValidator();
-            runCurrencySelect();
-            initDropDownBusiness();
-            runClassificationSelect();
-            runCountrySelect();
-            runProviderSwitch();
+            initValidator();
+            initSelect2Components();
+            initProviderSwitch();
         }
     };
 }();

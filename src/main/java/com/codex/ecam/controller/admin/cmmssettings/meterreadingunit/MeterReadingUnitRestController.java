@@ -6,12 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.admin.MeterReadingUnitDTO;
-import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.service.admin.api.MeterReadingUnitService;
-import com.codex.ecam.service.asset.api.AssetCategoryService;
 
 import javax.validation.Valid;
 

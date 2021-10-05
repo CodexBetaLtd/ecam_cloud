@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.biz.business.BusinessClassificationDTO;
 import com.codex.ecam.result.admin.BusinessClassificationResult;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.service.biz.api.BusinessClassificationService;
 import com.codex.ecam.service.biz.api.BusinessService;
 
