@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
@@ -67,6 +68,12 @@ public class WarehouseController {
 	@RequestMapping(value = "/assetview", method = RequestMethod.GET)
 	public  String parentAssetSelectView(Model model){
 		return "biz/warehouse/modal/warehouse-select-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/countries", method = RequestMethod.GET)
+	public String getCountryModalView(Model model, @RequestParam(name = "title", defaultValue = "Country(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/countries";
 	}
 
 	@RequestMapping(value = "/assetcategoryadd", method = RequestMethod.GET)

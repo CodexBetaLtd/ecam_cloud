@@ -1,4 +1,5 @@
 var LocationTab = function () {
+    
     /********************************************
      * Initialize InputClear Components
      ********************************************/

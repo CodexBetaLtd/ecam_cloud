@@ -26,23 +26,24 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 
 	@Override
 	public WareHouseDTO domainToDto(Asset  domain) throws Exception {
-		WareHouseDTO dto = new WareHouseDTO();
+		final WareHouseDTO dto = new WareHouseDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
-        dto.setDescription(domain.getDescription());
-        dto.setCity(domain.getCity());
-        dto.setAddress(domain.getAddress());
-        dto.setProvince(domain.getProvince());
-        dto.setPostalCode(domain.getPostalcode());
+		dto.setDescription(domain.getDescription());
+		dto.setCity(domain.getCity());
+		dto.setAddress(domain.getAddress());
+		dto.setProvince(domain.getProvince());
+		dto.setPostalCode(domain.getPostalcode());
 
-        if (domain.getParentAsset() != null) {
-            dto.setParentAssetId(domain.getParentAsset().getId());
-        }
+		if (domain.getParentAsset() != null) {
+			dto.setParentAssetId(domain.getParentAsset().getId());
+		}
 
-        if (domain.getCountry() != null) {
-            dto.setCountryId(domain.getCountry().getId());
-        }
+		if (domain.getCountry() != null) {
+			dto.setCountryId(domain.getCountry().getId());
+			dto.setCountryName(domain.getCountry().getName());
+		}
 
 		if (domain.getSite() != null) {
 			dto.setSiteId(domain.getSite().getId());
@@ -69,32 +70,32 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 			dto.setChildCount(domain.getChildCount());
 		}
 		if(domain.getParentAsset()!=null){
-		dto.setParentAssetId(domain.getParentAsset().getId());
-		dto.setParentAssetName(domain.getParentAsset().getName());
+			dto.setParentAssetId(domain.getParentAsset().getId());
+			dto.setParentAssetName(domain.getParentAsset().getName());
 		}
 		dto.setChildCount(domain.getChildCount());
 
 		setLocation(dto, domain);
-        setCommanDTOFields(dto, domain);
+		setCommanDTOFields(dto, domain);
 
 		return dto;
 	}
 
 	private void setLocation(WareHouseDTO dto, Asset domain){
-        LocationDTO locationDTO = new LocationDTO();
+		final LocationDTO locationDTO = new LocationDTO();
 
-        if (domain.getLatitude() != null) {
-            locationDTO.setLatitude(domain.getLatitude());
-        }
-        if (domain.getLongitude() != null) {
-            locationDTO.setLongitude(domain.getLongitude());
+		if (domain.getLatitude() != null) {
+			locationDTO.setLatitude(domain.getLatitude());
+		}
+		if (domain.getLongitude() != null) {
+			locationDTO.setLongitude(domain.getLongitude());
 		}
 
-        dto.setLocationDTO(locationDTO);
-    }
+		dto.setLocationDTO(locationDTO);
+	}
 
-    @Override
-    public void dtoToDomain(WareHouseDTO dto, Asset  domain) throws Exception {
+	@Override
+	public void dtoToDomain(WareHouseDTO dto, Asset  domain) throws Exception {
 		domain.setIsDeleted(false);
 		domain.setIsOnline(dto.getIsDefault());
 		domain.setCode(dto.getCode());
@@ -106,20 +107,20 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 		domain.setProvince(dto.getProvince());
 		domain.setPostalcode(dto.getPostalCode());
 
-        if (domain.getAssetCategory() != null) {
-            if(domain.getAssetCategory().getParentAssetCategory() != null){
+		if (domain.getAssetCategory() != null) {
+			if(domain.getAssetCategory().getParentAssetCategory() != null){
 				dto.setParentAssetCategoryId(domain.getAssetCategory().getParentAssetCategory().getId());
 				dto.setParentAssetCategoryName(domain.getAssetCategory().getParentAssetCategory().getName());
 			}
 		}
 
-        setCommanDomainFields(dto, domain);
-    }
+		setCommanDomainFields(dto, domain);
+	}
 
 
 	@Override
 	public WareHouseDTO domainToDtoForDataTable(Asset domain) throws Exception {
-		WareHouseDTO dto = new WareHouseDTO();
+		final WareHouseDTO dto = new WareHouseDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
@@ -130,37 +131,37 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 		}
 		dto.setChildCount(domain.getChildCount());
 		if(domain.getParentAsset()!=null){
-		dto.setParentAssetId(domain.getParentAsset().getId());
-		dto.setParentAssetName(domain.getParentAsset().getName());
+			dto.setParentAssetId(domain.getParentAsset().getId());
+			dto.setParentAssetName(domain.getParentAsset().getName());
 		}
 
-        return dto;
-    }
+		return dto;
+	}
 
 	public DataTablesOutput<WareHouseDTO> domainToDTODataTablesOutputCustom(DataTablesOutput<Asset> domainOut, Integer partId) throws Exception {
-		DataTablesOutput<WareHouseDTO> out = new DataTablesOutput<WareHouseDTO>();
+		final DataTablesOutput<WareHouseDTO> out = new DataTablesOutput<WareHouseDTO>();
 		out.setData(domainToDTOListForDataTablesCustom(domainOut.getData(), partId));
 		out.setDraw(domainOut.getDraw());
 		out.setError(domainOut.getError());
 		out.setRecordsFiltered(domainOut.getRecordsFiltered());
 		out.setRecordsTotal(domainOut.getRecordsTotal());
 
-        return out;
-    }
+		return out;
+	}
 
 	public List<WareHouseDTO> domainToDTOListForDataTablesCustom(Iterable<Asset> domainList, Integer partId) throws Exception {
 		if (domainList == null) {
 			return new ArrayList<WareHouseDTO>();
 		}
-		List<WareHouseDTO> dtoList = new ArrayList<WareHouseDTO>();
-		for (Asset domain : domainList) {
+		final List<WareHouseDTO> dtoList = new ArrayList<WareHouseDTO>();
+		for (final Asset domain : domainList) {
 			dtoList.add(domainToDtoForDataTableCustom(domain, partId));
 		}
 		return dtoList;
 	}
 
 	public WareHouseDTO domainToDtoForDataTableCustom(Asset domain, Integer partId) throws Exception {
-		WareHouseDTO dto = new WareHouseDTO();
+		final WareHouseDTO dto = new WareHouseDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
@@ -171,8 +172,8 @@ public class WarehouseMapper extends GenericMapper<Asset, WareHouseDTO> {
 			dto.setParentAssetName(domain.getParentAsset().getName());
 		}
 
-        return dto;
-    }
+		return dto;
+	}
 
 
 }

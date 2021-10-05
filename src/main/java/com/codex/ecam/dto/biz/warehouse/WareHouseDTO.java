@@ -12,24 +12,24 @@ import com.codex.ecam.dto.asset.LocationDTO;
 public class WareHouseDTO extends BaseDTO {
 
 	private Integer id;
+	private Integer assetCategoryId;
+	private Integer parentAssetCategoryId;
+	private Integer parentAssetId;
+	private Integer businessId;
+	private Integer siteId;
+	private Integer countryId;
+
 	private AssetCategoryType assetCategoryType;
 
-	private Integer assetCategoryId;
 	private String assetCategoryName;
-	private Integer parentAssetCategoryId;
 	private String parentAssetCategoryName;
 	private String name;
 	private String code;
 	private String description;
-	private Integer parentAssetId;
 	private String parentAssetName;
-
 	private String location;
-
-	private Integer businessId;
 	private String businessName;
 	private String siteName;
-	private Integer siteId;
 
 	private String addressLine1;
 	private String addressLine2;
@@ -38,10 +38,10 @@ public class WareHouseDTO extends BaseDTO {
 	private String city;
 	private String province;
 	private String postalCode;
-	private Integer countryId;
-	
+	private String countryName;
+
 	private List<AssetDTO> children = new ArrayList<>();
-	
+
 	private Integer childCount;
 
 	private BigDecimal itemQty = new BigDecimal(50);
@@ -227,9 +227,15 @@ public class WareHouseDTO extends BaseDTO {
 	public void setParentAssetName(String parentAssetName) {
 		this.parentAssetName = parentAssetName;
 	}
+	public String getCountryName() {
+		return countryName;
+	}
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
 
 
-	
+
 
 
 }

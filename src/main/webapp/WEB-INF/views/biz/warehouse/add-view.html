@@ -39,10 +39,7 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="common-modal" class="modal datatable fade"
-				data-backdrop="static" role="dialog" tabindex="-1"
-				style="margin-top: 10px; position: relative;"
-				data-focus-on="input:first"></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 			<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
 			<div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
 
@@ -177,8 +174,10 @@
 									</div>
 									<div class="row">
 <!-- 										<div id="map-container-custome" class="col-md-6"></div>
- -->										<div class="col-md-6">
-<!-- 										  <div class="form-group">
+ -->										
+<!--
+ 										<div class="col-md-6">
+ 										  <div class="form-group">
 										      <label class="control-label"> Longitude
 										      </label>
 										      <input type="number" class="form-control" id="longitude" th:field="*{locationDTO.longitude}" >
@@ -187,17 +186,18 @@
 											    <label class="control-label"> Latitude 
 											    </label>
 											    <input type="number"  class="form-control" id="latitude" th:field="*{locationDTO.latitude}" >
-											</div> -->
-											<div class="form-group">
-												<label for="form-field-select-3">Country</label> <select
-													id="countryId" th:field="*{countryId}"
-													class="search-select" style="width: 100%;">
-													<option value="">&nbsp;</option>
-													<option th:each="country : ${countryList}"
-														th:value="${country.id}" th:text="${country.name}"></option>
-												</select>
-											</div>
+											</div> 
 										</div>
+											-->
+											<div class="col-md-6">
+												<div class="form-group">
+										            <label class="control-label"> Country </label>
+										            <div class="input-group">
+										                <input type="hidden" id="countryId" th:field="*{countryId}">
+										                <input type="text" id="countryName" th:field="*{countryName}" readonly class="form-control" >                     
+										            </div>
+									            </div>		
+											</div>
 										<div class="col-md-6">
 												<div class="form-group">
 												<label class="control-label">Postal Code</label> <input
@@ -296,28 +296,23 @@
 		
 	<div th:include="template/commonjs :: commonjstables"></div>
 
-	<script type="text/javascript"
-            th:src="@{/resources/script/app/biz/warehouse/init.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/add-view.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/datatable/dt-warehouse-category.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/modal/warehouse-category-add-modal.js}"></script>
-	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/datatable/dt-warehouse.js}"></script>
-<!-- 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu5nZKbeK-WHQ70oqOWo-_4VmwOwKP9YQ"></script>
- -->	
 	
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/datatable/dt-warehouse-category.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/warehouse/datatable/dt-warehouse.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/biz/customer/datatable/dt-countries.js}"></script>
 
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/common-component-util.js}"></script>
-	<script type="text/javascript"
-		th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-<script th:inline="javascript">
-var categoryType  = [[${type}]];
-var locationDetails=[[${warehouse.locationDTO}]];
-</script>
+	<script th:inline="javascript">
+		var categoryType  = [[${type}]];
+		var locationDetails=[[${warehouse.locationDTO}]];
+	</script>
 </body>
 
 </html>

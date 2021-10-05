@@ -15,13 +15,6 @@ var WearHouseAdd = function () {
         });
     };
 
-    var runCountrySelect = function () {
-        $("#countryId").select2({
-            placeholder: "Select a Country",
-            allowClear: true
-        });
-    };
-
     var initWarehouseCategorySelect = function(){
     	$("#warehouseCategoryName").inputClear({
     		placeholder:"Select a Warehouse Category",
@@ -39,6 +32,42 @@ var WearHouseAdd = function () {
     		placeholder:"Select a Warehouse Category",
         	btnMethod:"WearHouseAdd.parentAssetCategoryView()",
     	});
+    };
+    
+    /********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearCountry()
+    };
+    
+    function initInputClearCountry(){
+        $("#countryName").inputClear({
+            placeholder:"Please specify a country",
+            btnMethod:"WearHouseAdd.addCountry()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalCountrySelect() {
+        var $modal = $('#common-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../warehouse/view/modal/countries';
+            $modal.load(url, '', function () {
+                DatatableModalCountries.init(
+                        "common-modal",
+                        "tbl_countries",
+                        "../restapi/country/tabledata",
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
     };
     
     var initMap=function(){
@@ -88,10 +117,12 @@ var WearHouseAdd = function () {
     }
 
     var runValidator = function () {
+        
         var form = $('#wearhouse_add_frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
-        $('#wearhouse_add_frm').validate({
+        
+        form.validate({
             errorElement: "span", // contain the error msg in a span tag
             errorClass: 'help-block',
             errorPlacement: function (error, element) { // render error placement for each input type
@@ -211,6 +242,7 @@ var WearHouseAdd = function () {
     		});
     	}, 1000);
     };
+    
     var parentAssetCategoryView = function () {
     	var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
@@ -235,6 +267,7 @@ var WearHouseAdd = function () {
     		});
     	}, 1000);
     };
+    
     var parentAssetAddView = function () {
     	var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
@@ -267,7 +300,7 @@ var WearHouseAdd = function () {
 
         init: function () {
             runValidator();
-            runCountrySelect();
+            initInputClearComponents();
             runBusinessSelect();
             runSiteSelect();
             runBusinessSiteFetch();
@@ -277,28 +310,38 @@ var WearHouseAdd = function () {
           //  initMap();
 
         },
+        
         assetCategoryView:function(){
         	assetCategoryView();
         },
+        
         assetCategoryAddView:function(){
         	assetCategoryAddView();
         },
+        
         setAssetCategory(id,name){
         	setAssetCategory(id,name)
         },
+        
         parentAssetCategoryView(id,name){
         	parentAssetCategoryView(id,name)
         },
+        
         parentAssetAddView(){
         	parentAssetAddView()
         },
+        
         setParentAssetCategoryView(id,name){
         	setParentAssetCategoryView(id,name)
         },
+        
         setParentAssetView(id,name){
         	setParentAssetView(id,name)
+        },
+        
+        addCountry: function () {
+            initModalCountrySelect(); 
         }
-
-
+        
     };
 }();
