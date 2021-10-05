@@ -1,6 +1,5 @@
 package com.codex.ecam.service.admin.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +23,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codex.ecam.dao.admin.CertificationDao;
+import com.codex.ecam.dao.admin.CurrencyDao;
 import com.codex.ecam.dao.admin.UserCredentialDao;
 import com.codex.ecam.dao.admin.UserDao;
 import com.codex.ecam.dao.admin.UserGroupDao;
@@ -86,10 +85,10 @@ public class UserServiceImpl implements UserService {
 	private UserSkillLevelDao userSkillLevelDao;
 
 	@Autowired
-	private VelocityEmailSender velocityEmailSender;
+	private CurrencyDao currencyDao;
 
 	@Autowired
-	private Environment environment;
+	private VelocityEmailSender velocityEmailSender;
 
 	@Autowired
 	private AmazonS3ObjectUtil amazonS3ObjectUtil;
@@ -188,6 +187,7 @@ public class UserServiceImpl implements UserService {
 		setUserBusiness(result);
 		setUserJobTitle(result);
 		setUserSkillLevel(result);
+		setUserCurrency(result.getDtoEntity(), result.getDomainEntity());
 	}
 
 	private void setBusiness(UserResult result) throws Exception {
@@ -208,6 +208,12 @@ public class UserServiceImpl implements UserService {
 
 	private void setUserSkillLevel(UserResult result) {
 		result.getDomainEntity().setUserSkillLevel(userSkillLevelDao.findById(result.getDtoEntity().getSkillLevel()));
+	}
+
+	private void setUserCurrency(UserDTO dto, User domain) {
+		if (dto.getCurrencyId() != null) {
+			domain.setCurrency(currencyDao.findOne(dto.getCurrencyId()));
+		}
 	}
 
 	private void setUserCredentials(UserResult result) {
@@ -506,7 +512,6 @@ public class UserServiceImpl implements UserService {
 
 		if (id != null) {
 			final String imagePath = userDao.getUserAvatarPath(id);
-			final String uploadLocation = new File(environment.getProperty("upload.location")).getPath();
 			if (imagePath != null) {
 				// return FileDownloadUtil.getByteInputStream( uploadLocation + imagePath );
 				return amazonS3ObjectUtil.downloadByteArray(imagePath);

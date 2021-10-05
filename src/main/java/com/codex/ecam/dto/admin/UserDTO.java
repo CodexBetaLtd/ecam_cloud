@@ -14,6 +14,12 @@ public class UserDTO extends BaseDTO {
 	// @Email(message = "incorrect email address")
 	// @NotBlank(message = "Name is required")
 	private Integer id;
+	private Integer businessId;
+	private Integer jobTitle;
+	private Integer skillLevel;
+	private Integer currencyId;
+	private Integer userGroupId;
+
 	private String fullName;
 	private String address;
 	private String emailAddress;
@@ -22,18 +28,14 @@ public class UserDTO extends BaseDTO {
 	private String telephone1;
 	private String telephone2;
 	private String userTitle;
-	private Integer jobTitle;
 	private String jobTitleName;
-	private Integer skillLevel;
 	private String skillLevelName;
-	private Integer currencyId;
-
-	private Integer businessId;
-    private String businessName;
-
+	private String businessName;
 	private String imagePath;
 	private String currentPassword;
 	private String newPassword;
+	private String currencyName;
+
 	private Boolean changePassword;
 
 	private Double hourlyRate;
@@ -42,14 +44,12 @@ public class UserDTO extends BaseDTO {
 
 	private Boolean emailNotification;
 	//	private Boolean emailAllAlert;
-//	private Boolean emailAllMsg;
+	//	private Boolean emailAllMsg;
 	private Boolean emailSystemError;
 
 	private Boolean welcomeEmailSent;
 	private Boolean internalMailAllMsg;
 	private Boolean sendMailOnExpire;
-
-	private Integer userGroupId;
 
 	private UserCredentialDTO userCredentialDTO = new UserCredentialDTO();
 
@@ -340,13 +340,13 @@ public class UserDTO extends BaseDTO {
 		this.businessId = businessId;
 	}
 
-    public String getBusinessName() {
-        return businessName;
-    }
+	public String getBusinessName() {
+		return businessName;
+	}
 
-    public void setBusinessName(String businessName) {
-        this.businessName = businessName;
-    }
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
 
 	public Boolean getEmailNotification() {
 		return emailNotification;
@@ -354,5 +354,13 @@ public class UserDTO extends BaseDTO {
 
 	public void setEmailNotification(Boolean emailNotification) {
 		this.emailNotification = emailNotification;
+	}
+
+	public String getCurrencyName() {
+		return currencyName;
+	}
+
+	public void setCurrencyName(String currencyName) {
+		this.currencyName = currencyName;
 	}
 }

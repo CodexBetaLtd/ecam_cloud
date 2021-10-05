@@ -35,7 +35,6 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 
 	private void domainToDto(User domain, UserDTO dto) throws Exception {
 
-		dto.setCurrencyId(domain.getCurrencyId());
 		dto.setImagePath(domain.getImagePath());
 		dto.setHourlyRate(domain.getHourlyRate());
 		dto.setIsActive(domain.getActive());
@@ -47,7 +46,10 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 		dto.setSendMailOnExpire(domain.getSendMailOnExpire());
 		dto.setUserSiteDTOList(UserSiteMapper.getInstance().domainToDTOList(domain.getUserSites()));
 
-
+		if (domain.getCurrency() != null) {
+			dto.setCurrencyId(domain.getCurrency().getId());
+			dto.setCurrencyName(domain.getCurrency().getName());
+		}
 		setUserBusiness(domain, dto);
 		setUserCredentials(domain, dto);
 		setUserTitle(domain, dto);
@@ -126,7 +128,6 @@ public class UserMapper extends GenericMapper<User, UserDTO> {
 		domain.setTelephone2(dto.getTelephone2());
 		domain.setUserTitle(dto.getUserTitle());
 
-		domain.setCurrencyId(dto.getCurrencyId());
 		domain.setHourlyRate(dto.getHourlyRate());
 		domain.setActive(dto.getIsActive());
 		domain.setUserLevel(dto.getUserLevel());

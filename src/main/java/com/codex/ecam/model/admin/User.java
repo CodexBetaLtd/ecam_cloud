@@ -23,18 +23,6 @@ public class User extends BaseModel implements Serializable {
 	@Column(name="id")
 	private Integer id;
 
-	@JoinColumn( name="business_id" )
-	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business business;
-
-	@JoinColumn( name="user_skill_level_id" )
-	@ManyToOne( targetEntity = UserSkillLevel.class, fetch = FetchType.LAZY)
-	private UserSkillLevel userSkillLevel;
-
-	@JoinColumn( name="user_job_title_id" )
-	@ManyToOne( targetEntity = UserJobTitle.class, fetch = FetchType.LAZY)
-	private UserJobTitle userJobTitel;
-
 	@Column(name="full_Name")
 	private String fullName;
 
@@ -68,9 +56,6 @@ public class User extends BaseModel implements Serializable {
 	@Column(name="user_title")
 	private String userTitle;
 
-	@Column(name="currency_id")
-	private Integer currencyId;
-
 	@Column(name="notify_expire_days_before")
 	private Integer notifyExpireDaysBefore;
 
@@ -98,8 +83,8 @@ public class User extends BaseModel implements Serializable {
 	@Column(name="api_user")
 	private Boolean apiUser;
 
-    @Column(name = "email_notification")
-    private Boolean emailNotification;
+	@Column(name = "email_notification")
+	private Boolean emailNotification;
 
 	@Column(name="email_system_error")
 	private Boolean emailSystemError;
@@ -167,8 +152,24 @@ public class User extends BaseModel implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date userApproveDate;
 
+	@JoinColumn( name="business_id" )
+	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Business business;
+
+	@JoinColumn( name="user_skill_level_id" )
+	@ManyToOne( targetEntity = UserSkillLevel.class, fetch = FetchType.LAZY)
+	private UserSkillLevel userSkillLevel;
+
+	@JoinColumn( name="user_job_title_id" )
+	@ManyToOne( targetEntity = UserJobTitle.class, fetch = FetchType.LAZY)
+	private UserJobTitle userJobTitel;
+
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
 	private UserCredential userCredential;
+
+	@JoinColumn(name="currency_id")
+	@ManyToOne( targetEntity = Currency.class, fetch = FetchType.LAZY)
+	private Currency currency;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<UserSite> userSites;
@@ -275,12 +276,12 @@ public class User extends BaseModel implements Serializable {
 		this.userTitle = userTitle;
 	}
 
-	public Integer getCurrencyId() {
-		return currencyId;
+	public Currency getCurrency() {
+		return currency;
 	}
 
-	public void setCurrencyId(Integer currencyId) {
-		this.currencyId = currencyId;
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
 	}
 
 	public Integer getNotifyExpireDaysBefore() {
@@ -583,11 +584,11 @@ public class User extends BaseModel implements Serializable {
 		this.business = business;
 	}
 
-    public Boolean getEmailNotification() {
-        return emailNotification;
-    }
+	public Boolean getEmailNotification() {
+		return emailNotification;
+	}
 
-    public void setEmailNotification(Boolean emailNotification) {
-        this.emailNotification = emailNotification;
-    }
+	public void setEmailNotification(Boolean emailNotification) {
+		this.emailNotification = emailNotification;
+	}
 }

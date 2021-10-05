@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
@@ -144,6 +145,12 @@ public class UserController extends AdminBaseController {
 		model.addAttribute("userSkillLevel", userSkillLevelService.findById(id));
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		return "admin/user/modal/userskilllevel/user-skill-level-add-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/currencies", method = RequestMethod.GET)
+	public String getCurrencyModalView(Model model, @RequestParam(name = "title", defaultValue = "Currency(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/currencies";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)

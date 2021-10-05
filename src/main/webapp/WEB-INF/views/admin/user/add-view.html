@@ -37,7 +37,7 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 		
-        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: auto; top: 50%; position: fixed;z-index:1050 !important;"></div>
+        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
         	<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
             <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
         	
@@ -251,6 +251,8 @@
 <script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-certification-type.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-job-title.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-skill-level.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/admin/user/datatable/dt-skill-level.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/biz/supplier/datatable/dt-currencies.js}"></script>
 
 <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/add-view.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/admin/cmmssetting/certification/home-view.js}"></script>

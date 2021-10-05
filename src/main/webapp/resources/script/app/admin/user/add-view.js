@@ -19,13 +19,6 @@ var UserAdd = function () {
             setUserLevelElements(getUserLevel());
 	     });
 	};
-
-	var runCurrencySelect = function () {
-		$("#currencyId").select2({
-			allowClear: true,
-			placeholder: "Select a Currency",
-		});
-	};	
 	
 	var initUserSkillLevelSelect = function () {
         $("#userSkillLevelName").inputClear({
@@ -63,6 +56,42 @@ var UserAdd = function () {
         	$('#userSitesTabFragment').show();
         }
 	};
+	
+	/********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearCurrency();
+    };
+    
+    function initInputClearCurrency(){
+        $("#currencyName").inputClear({
+            placeholder:"Please specify a currency",
+            btnMethod:"UserAdd.addCurrency()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalCurrencySelect() {
+        var $modal = $('#common-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../userProfile/view/modal/currencies';
+            $modal.load(url, '', function () {
+                DatatableModalCurrencies.init(
+                        "common-modal",
+                        "tbl_currencies",
+                        "../restapi/currency/tabledata",
+                        "setData"
+                        );
+                $modal.modal();
+            });
+        }, 1000);
+    };
 
     var initValidator = function () {
     	
@@ -259,7 +288,7 @@ var UserAdd = function () {
         init: function () {
         	runBusinessSelect();
         	runUserLevelSelect();
-            runCurrencySelect();
+        	initInputClearComponents();
             getSelectedUserLevel();
             initUserSkillLevelSelect();
             initUserJobTitleSelect();
@@ -309,6 +338,10 @@ var UserAdd = function () {
         skillLevelEditView:function(id){
     	   skillLevelEditView(id);
         },
+        
+        addCurrency: function () {
+            initModalCurrencySelect(); 
+        }
     };
 
 }();

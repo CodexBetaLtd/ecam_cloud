@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.biz.supplier.SupplierDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.biz.SupplierResult;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
