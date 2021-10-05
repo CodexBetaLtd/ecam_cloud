@@ -11,6 +11,9 @@ jQuery(document).ready(function () {
     TabBom.init();
     TabLog.init();
     TabFile.init();
-    SparePartTab.init();
     LocationTreeView.init();
+    
+    if ($("#type").val() != "LOCATIONS_OR_FACILITIES") {
+        SparePartTab.init();        
+    }
 });

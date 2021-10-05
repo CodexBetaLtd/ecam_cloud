@@ -30,6 +30,7 @@ public class AssetDTO extends BaseDTO {
 	private String notes;
 	private String assetCategoryName;
 	private String parentAssetName;
+	private String countryName;
 
 	private AssetCategoryType assetCategoryType;
 
@@ -420,6 +421,14 @@ public class AssetDTO extends BaseDTO {
 
 	public void setAssetUrl(String assetUrl) {
 		this.assetUrl = assetUrl;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
 	}
 
 

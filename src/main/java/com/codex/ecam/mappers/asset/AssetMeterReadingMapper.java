@@ -24,16 +24,17 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 
 	@Override
 	public AssetMeterReadingDTO domainToDto(AssetMeterReading domain) throws Exception {
-		AssetMeterReadingDTO dto = new AssetMeterReadingDTO();
+		final AssetMeterReadingDTO dto = new AssetMeterReadingDTO();
+
 		dto.setMeterReadingId(domain.getId());
 		dto.setMeterReadingName(domain.getMeterReadingName());
-		dto.setMeterReadingUnitId(domain.getMeterReadingUnit().getId());
-		dto.setMeterReadingUnitName(domain.getMeterReadingUnit().getName());
-		dto.setMeterReadingAssetId(domain.getAsset().getId());
 		dto.setMeterReadingDescription(domain.getDescription());
 		dto.setMeterReadingAvgValue(domain.getAvgMeterReadingValue());
 		dto.setIsMultipleMeterReading(domain.getIsMultipleMeterReading());
 		dto.setConsumptionFormula(domain.getConsumptionFormula());
+
+		setMeterReadingAsset(domain, dto);
+		setMeterReadingUnit(domain, dto);
 		setMeterReadingValues(domain, dto);
 		setMeterReadingConsumptionVariables(domain, dto);
 
@@ -42,16 +43,29 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 		return dto;
 	}
 
+	private void setMeterReadingAsset(AssetMeterReading domain, AssetMeterReadingDTO dto) {
+		if (domain.getAsset() != null) {
+			dto.setMeterReadingAssetId(domain.getAsset().getId());
+		}
+	}
+
+	private void setMeterReadingUnit(AssetMeterReading domain, AssetMeterReadingDTO dto) {
+		if (domain.getMeterReadingUnit() != null) {
+			dto.setMeterReadingUnitId(domain.getMeterReadingUnit().getId());
+			dto.setMeterReadingUnitName(domain.getMeterReadingUnit().getName() + "(" + domain.getMeterReadingUnit().getSymbol() + ")");
+		}
+	}
+
 	private void setMeterReadingConsumptionVariables(AssetMeterReading domain, AssetMeterReadingDTO dto){
 		if (domain.getFormulaVariables().size() > 0) {
-			for (AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable : domain.getFormulaVariables()) {
-				AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO=new AssetMeterReadingConsumptionVariableDTO();
+			for (final AssetMeterReadingFormulaVariable assetMeterReadingConsumptionVariable : domain.getFormulaVariables()) {
+				final AssetMeterReadingConsumptionVariableDTO consumptionVariableDTO=new AssetMeterReadingConsumptionVariableDTO();
 				consumptionVariableDTO.setVariable(assetMeterReadingConsumptionVariable.getVariableName());
 				consumptionVariableDTO.setId(assetMeterReadingConsumptionVariable.getId());
 				consumptionVariableDTO.setVersion(assetMeterReadingConsumptionVariable.getVersion());
 				if(assetMeterReadingConsumptionVariable.getMeterReadingUnit()!=null){
 					consumptionVariableDTO.setMeteReadingUnitId(assetMeterReadingConsumptionVariable.getMeterReadingUnit().getId());
-					consumptionVariableDTO.setMeteReadingUnitName(assetMeterReadingConsumptionVariable.getMeterReadingUnit().getSymbol());
+					consumptionVariableDTO.setMeteReadingUnitName(assetMeterReadingConsumptionVariable.getMeterReadingUnit().getName() + "(" + assetMeterReadingConsumptionVariable.getMeterReadingUnit().getSymbol() + ")");
 				}
 
 				dto.getConsumptionVariableDTO().add(consumptionVariableDTO);
@@ -60,12 +74,12 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 	}
 	private void setMeterReadingValues(AssetMeterReading domain, AssetMeterReadingDTO dto) throws Exception {
 		if (domain.getAssetMeterReadingValues().size() > 0) {
-			for (AssetMeterReadingValue assetMeterReadingValue : domain.getAssetMeterReadingValues()) {
+			for (final AssetMeterReadingValue assetMeterReadingValue : domain.getAssetMeterReadingValues()) {
 				dto.setMeterReadingCurrentValue(assetMeterReadingValue.getMeterReadingValue());
 				dto.setMeterReadingCurrentValueId(domain.getCurrentAssetMeterReadingValue().getId());
 				if( domain.getCurrentAssetMeterReadingValue().getAssetMeterReadingFormulaValues().size()>0){
 					String meterVariable="";
-					for(AssetMeterReadingFormulaValue formulaValue:domain.getCurrentAssetMeterReadingValue().getAssetMeterReadingFormulaValues()){
+					for(final AssetMeterReadingFormulaValue formulaValue:domain.getCurrentAssetMeterReadingValue().getAssetMeterReadingFormulaValues()){
 						if(meterVariable==""){
 							meterVariable=formulaValue.getValue().toString();
 
@@ -93,7 +107,7 @@ public class AssetMeterReadingMapper extends GenericMapper<AssetMeterReading, As
 
 	@Override
 	public AssetMeterReadingDTO domainToDtoForDataTable(AssetMeterReading domain) throws Exception {
-		AssetMeterReadingDTO dto = new AssetMeterReadingDTO();
+		final AssetMeterReadingDTO dto = new AssetMeterReadingDTO();
 		dto.setMeterReadingId(domain.getId());
 		dto.setMeterReadingName(domain.getMeterReadingName());
 		dto.setMeterReadingUnitName(domain.getMeterReadingUnit().getName());

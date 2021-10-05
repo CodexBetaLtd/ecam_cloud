@@ -317,10 +317,34 @@ public class AssetController {
 	public String getEventHistoryTableView(Model model) {
 		return "asset/modals/asset-event-history-modal";
 	}
+
 	@RequestMapping(value = "/assetimportview", method = RequestMethod.GET)
 	public String getAssetImportView(Model model) throws Exception {
 		model.addAttribute("businesses", businessService.findAll());
 		return "asset/modals/asset-import-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/meter-reading-units", method = RequestMethod.GET)
+	public String getMeterReadiingUnitView(Model model) throws Exception {
+		return "general/table/meter-reading-units";
+	}
+
+	@RequestMapping(value = "/view/modal/suppliers", method = RequestMethod.GET)
+	public String getSuppliersModalView(Model model, @RequestParam(name = "title", defaultValue = "Supplier(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/suppliers";
+	}
+
+	@RequestMapping(value = "/view/modal/providers", method = RequestMethod.GET)
+	public String getProviderModalView(Model model, @RequestParam(name = "title", defaultValue = "Provider(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/providers";
+	}
+
+	@RequestMapping(value = "/view/modal/currencies", method = RequestMethod.GET)
+	public String getCurrencyModalView(Model model, @RequestParam(name = "title", defaultValue = "Currency(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/currencies";
 	}
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
@@ -469,7 +493,6 @@ public class AssetController {
 		model.addAttribute("asset", asset);
 		model.addAttribute("type", type);
 		model.addAttribute("categories", assetCategoryService.findByAssetCategoyType(type));
-		model.addAttribute("meterReadingUnits", meterReadingUnitsService.findAllMeterReadings());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 		model.addAttribute("businessTypes", businessTypeService.findAll());

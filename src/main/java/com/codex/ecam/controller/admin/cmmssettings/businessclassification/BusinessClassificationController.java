@@ -1,4 +1,4 @@
-package com.codex.ecam.controller.biz.business;
+package com.codex.ecam.controller.admin.cmmssettings.businessclassification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

@@ -5,16 +5,19 @@ import java.util.Date;
 public class AssetPurchasingDTO {
 
 	private Integer receiptOrderId;
-	private String receiptOrderCode;
 	private Integer purchasedSupplierId;
 	private Integer purchasedCurrencyId;
+	private Integer itemVersion;
+	private Integer orderVersion;
+
 	private Date orderedDate;
 	private Date receivedDate;
 	private Date expiryDate;
 	private Double purchasedPrice;
 
-	private Integer itemVersion;
-	private Integer orderVersion;
+	private String receiptOrderCode;
+	private String purchasedSupplierName;
+	private String purchasedCurrencyName;
 
 	public Integer getReceiptOrderId() {
 		return receiptOrderId;
@@ -94,6 +97,22 @@ public class AssetPurchasingDTO {
 
 	public void setOrderVersion(Integer orderVersion) {
 		this.orderVersion = orderVersion;
+	}
+
+	public String getPurchasedSupplierName() {
+		return purchasedSupplierName;
+	}
+
+	public void setPurchasedSupplierName(String purchasedSupplierName) {
+		this.purchasedSupplierName = purchasedSupplierName;
+	}
+
+	public String getPurchasedCurrencyName() {
+		return purchasedCurrencyName;
+	}
+
+	public void setPurchasedCurrencyName(String purchasedCurrencyName) {
+		this.purchasedCurrencyName = purchasedCurrencyName;
 	}
 
 }

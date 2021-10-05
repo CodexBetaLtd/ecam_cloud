@@ -96,21 +96,13 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="name")
 	private String name;
-	
+
 	@Column(name="asset_url")
 	private String assetUrl;
 
-	public String getAssetUrl() {
-		return assetUrl;
-	}
-
-	public void setAssetUrl(String assetUrl) {
-		this.assetUrl = assetUrl;
-	}
-
 	@Column(name="description")
 	private String description;
-	
+
 	@Column(name="code")
 	private String code;
 
@@ -137,34 +129,33 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="postal_code")
 	private String postalcode;
-	
+
 	@Column(name="longitude")
 	private String longitude;
-	
+
 	@Column(name="latitude")
 	private String latitude;
 
 	@Column(name="department_id")
 	private Integer departmentId;
-	
+
 	@Column(name="inventory_code")
 	private String inventoryCode;
-	
+
 	@Column(name="unspc_code")
 	private String unspcCode;
-	
+
 	@Column(name="barcode")
 	private String barcode;
-	
+
 	@Column(name="last_price")
 	private Integer lastPrice;
-	
+
 	@Column(name="part_type_id")
 	private PartType partType;
-	
+
 	@Column(name="part_usage_type")
 	private PartUsageType partUsageType;
-
 
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReading> assetMeterReadings;
@@ -192,31 +183,31 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@OneToMany(mappedBy = "part", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<Stock> stocks;
-	
+
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetFile> assetFiles;
-	
+
 	@OneToMany(mappedBy = "part", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<PartNotification> partNotifications;
-	
+
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private Set<AssetLog> assetLogs;
-	
+
 	@OneToMany(mappedBy = "part", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private Set<BOMGroupPart> bomGroupParts;
-	
+
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private Set<ReceiptOrderItem> receiptOrderItems;
-	
+
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private Set<RFQItem> rfqItems;
-	
+
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<SparePart> spareParts;
-	
+
 	@Transient
 	private Integer childCount;
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -485,7 +476,7 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	public void setAssetFiles(Set<AssetFile> assetFiles) {
 		updateCollection("assetFiles", assetFiles);
 	}
-	
+
 	public String getInventoryCode() {
 		return inventoryCode;
 	}
@@ -557,7 +548,7 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 		this.latitude = latitude;
 	}
 
-	
+
 	public Set<BOMGroupPart> getBomGroupParts() {
 		return bomGroupParts;
 	}
@@ -594,7 +585,7 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash = (31 * hash) + getId();
+		hash = 31 * hash + getId();
 		return hash;
 	}
 
@@ -634,7 +625,15 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	public void setSpareParts(Set<SparePart> spareParts) {
 		updateCollection("spareParts", spareParts);
 	}
-	
-	
-	
+
+
+	public String getAssetUrl() {
+		return assetUrl;
+	}
+
+	public void setAssetUrl(String assetUrl) {
+		this.assetUrl = assetUrl;
+	}
+
+
 }

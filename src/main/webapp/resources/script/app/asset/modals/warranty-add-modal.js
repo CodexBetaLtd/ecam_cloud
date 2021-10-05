@@ -1,5 +1,66 @@
 var WarrantyAddModal = function () {
-	
+    
+    /********************************************
+     * Initialize buttons
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearMeterReadingUnit();
+        initInputClearProvider();
+    };
+    
+    function initInputClearMeterReadingUnit(){
+        $("#warrantyMeterReadingUnitName").inputClear({
+            placeholder:"Please specify a unit",
+            btnMethod:"WarrantyAddModal.addMeterReadingUnit()",
+        });
+    };
+    
+    function initInputClearProvider(){
+        $("#warrantyProviderName").inputClear({
+            placeholder:"Please specify a provider",
+            btnMethod:"WarrantyAddModal.addProvider()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalViewMeterReadingUnitSelect() {
+        var $modal = $('#warranty-child-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../../asset/view/modal/meter-reading-units';
+            $modal.load(url, '', function () {
+                DataTableModalMeterReadingUnits.init(
+                        "warranty-child-modal",
+                        "tbl_meter_reading_units",
+                        "../../restapi/meterreading-units/tabledata",
+                        "setWarrantyData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    function initModalViewProviderSelect() {
+        var $modal = $('#warranty-child-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../../asset/view/modal/providers';
+            $modal.load(url, '', function () {
+                DatatableModalProviders.init(
+                        "warranty-child-modal",
+                        "tbl_providers",
+                        "../../restapi/business/actual-business/tabledata",
+                        "DatatableModalProviders.setData"
+                        );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
 	 /*********************************************************************
      * Init Buttons
      *********************************************************************/
@@ -24,25 +85,9 @@ var WarrantyAddModal = function () {
         });
     };
     
-    var runProviderSelect = function () {
-        $("#warrantyProviderId").select2({
-            placeholder: "Select a Provider",
-            allowClear: true,
-            dropdownParent: $("#master-modal-datatable")
-        });
-    };
-    
     var runWarrantyUsageTermTypeSelect = function () {
         $("#warrantyUsageTermType").select2({
             placeholder: "Select a Warranty Usage Term Type",
-            allowClear: true,
-            dropdownParent: $("#master-modal-datatable")
-        });
-    };
-    
-    var runMeterReadingUnitIdSelect = function () {
-        $("#warrantyMeterReadingUnitId").select2({
-            placeholder: "Select a Meter Reading Unit",
             allowClear: true,
             dropdownParent: $("#master-modal-datatable")
         });
@@ -66,7 +111,8 @@ var WarrantyAddModal = function () {
     	if ($('#warrantyUsageTermType').val() == "METER_READING") {
         	$('#meterReadingDataDiv').fadeIn("slow");
         } else {
-        	$('#warrantyMeterReadingUnitId').select2("val", "");
+            $('#warrantyMeterReadingUnitId').val("");
+        	$('#warrantyMeterReadingUnitName').val("");
         	$('#warrantyMeterReadingValueLimit').val("");
         	$('#meterReadingDataDiv').hide();
         }
@@ -173,17 +219,24 @@ var WarrantyAddModal = function () {
 
         init: function () {
         	runWarrantyTypeSelect();
-        	runProviderSelect();
         	runWarrantyUsageTermTypeSelect();
         	runWarrantyDatePicker();
-        	runMeterReadingUnitIdSelect();
         	initWarrantyUsageTermOnChangeEvent();
+        	initInputClearComponents();
         	initValidator();
         	initButtons();
         },
         
         addWarranty: function () {
             addWarranty();
+        },
+        
+        addProvider: function () {
+            initModalViewProviderSelect();
+        },
+        
+        addMeterReadingUnit: function () {
+            initModalViewMeterReadingUnitSelect();
         }
     };
 }();

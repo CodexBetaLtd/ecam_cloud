@@ -8,21 +8,25 @@ import com.codex.ecam.dto.BaseDTO;
 import com.codex.ecam.util.DateUtil;
 
 public class WarrantyDTO extends BaseDTO {
-	
-	private Integer warrantyId;	
+
+	private Integer warrantyId;
 	private Integer warrantyAssetId;
-	private Integer warrantyMeterReadingUnitId;	
+	private Integer warrantyMeterReadingUnitId;
 	private Integer warrantyProviderId;
-	private String warrantyAssetName;	
+
+	private String warrantyAssetName;
 	private String warrantyCertificateNo;
 	private String warrantyDescription;
-	private String warrantyProviderName;	
+	private String warrantyProviderName;
+	private String warrantyMeterReadingUnitName;
+
 	private WarrantyType warrantyType;
-	private WarrantyUsageTermType warrantyUsageTermType;	
+	private WarrantyUsageTermType warrantyUsageTermType;
+
 	private Double warrantyMeterReadingValueLimit;
 	private Date warrantyExpiryDate;
-	
-	
+
+
 	public Integer getWarrantyId() {
 		return warrantyId;
 	}
@@ -94,6 +98,12 @@ public class WarrantyDTO extends BaseDTO {
 	}
 	public void setWarrantyDescription(String warrantyDescription) {
 		this.warrantyDescription = warrantyDescription;
+	}
+	public String getWarrantyMeterReadingUnitName() {
+		return warrantyMeterReadingUnitName;
+	}
+	public void setWarrantyMeterReadingUnitName(String warrantyMeterReadingUnitName) {
+		this.warrantyMeterReadingUnitName = warrantyMeterReadingUnitName;
 	}
 
 }

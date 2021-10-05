@@ -7,10 +7,13 @@
         </div>
 
         <div class="modal-body">
-
+       
+			<div id="warranty-child-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
+           
            <input type="hidden" id="warrantyId">
            <input type="hidden" id="warrantyIndex">
            <input type="hidden" id="warrantyVersion">
+           
 		   <form id="asset-warranty-frm">
            <div class="row">
                <div class="col-md-6">
@@ -22,15 +25,15 @@
 						</select>
                    </div>
                </div>
-               <div class="col-md-6">
-                   	<div class="form-group">
-               			<label class="control-label"> Provider </label>
-                       	<select id="warrantyProviderId" name="warrantyProviderId" class="search-select" style="width: 100%;">
-							<option value="">&nbsp;</option>
-							<option th:each="provider : ${providers}" th:value="${provider.id}" th:text="${provider.name}"></option>
-						</select>
-                   </div>
-               </div>
+				<div class="col-md-6">
+		            <div class="form-group">
+	                    <label class="control-label"> Provider <span class="symbol required"></span></label>
+	                    <div class="input-group">
+	                        <input type="hidden" id="warrantyProviderId" name="warrantyProviderId">
+	                        <input type="text" id="warrantyProviderName" name="warrantyProviderName" readonly class="form-control" placeholder="Please specify a provider" >                     
+	                    </div>
+		            </div>
+	            </div>
            </div>
 
            <div class="row">
@@ -55,15 +58,15 @@
            </div>
            
            <div class="row" id="meterReadingDataDiv" >
-           		<div class="col-md-6">
-                   <div class="form-group">
-                       <label class="control-label"> Meter Reading Units <span class="symbol required"></span> </label><br/>
-                    	<select id="warrantyMeterReadingUnitId" name="warrantyMeterReadingUnitId" class="search-select" style="width: 100%;">
-							<option value="">&nbsp;</option>
-							<option th:each="unit : ${meterReadingUnits}" th:value="${unit.id}" th:text="${unit.name}"></option>
-						</select>
-                   </div>
-               	</div>
+				<div class="col-md-6">
+		            <div class="form-group">
+	                    <label class="control-label"> Meter Reading Unit <span class="symbol required"></span> </label>
+	                    <div class="input-group">
+	                        <input type="hidden" id="warrantyMeterReadingUnitId" name="warrantyMeterReadingUnitId">
+	                        <input type="text" id="warrantyMeterReadingUnitName" name="warrantyMeterReadingUnitName" readonly class="form-control" placeholder="Please specify a unit" >                     
+	                    </div>
+		            </div>
+	            </div>
                	<div class="col-md-6">
                    <div class="form-group">
                        <label class="control-label"> Meter Reading Value Limit <span class="symbol required"></span> </label><br/>

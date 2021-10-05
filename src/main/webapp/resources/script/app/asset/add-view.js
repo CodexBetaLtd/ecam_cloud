@@ -21,8 +21,6 @@ var AssetAdd = function () {
         }
     }
     
-
-  
     var initMap=function(){
         var var_location = new google.maps.LatLng(locationDetails['latitude'],locationDetails['longitude']);
         var var_mapoptions = {
@@ -279,9 +277,6 @@ var AssetAdd = function () {
     	$('#common-modal').modal('toggle');
     };
 
-    /* 
-     *load siteList relevant to business
-     */
     var runAssetBusinessSelect = function () {
 
         $("#businessId").change(function () {
@@ -374,6 +369,17 @@ var AssetAdd = function () {
     	}, 1000);
     };
     
+    function initDocumentOnLoad(){
+        var id = $("#id").val();
+        if (id == null || id == "") {
+            var siteId = $("#siteId option:selected").val();
+            if ( siteId == null || siteId == "" ) {
+                var businessId = $("#businessId option:selected").val();
+                setSites(businessId);
+            }
+        }
+    };
+    
     return {
 
         init: function () {  
@@ -391,6 +397,7 @@ var AssetAdd = function () {
             runImageInput();
             initValidator();
             generateQRCode();
+            initDocumentOnLoad();
           //  initMap();
         },
     

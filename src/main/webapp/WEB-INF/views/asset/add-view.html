@@ -41,7 +41,7 @@
     <!-- start: PAGE -->
     <div class="main-content">
 
-        <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 10%; top: auto; position: fixed;"></div> 
+        <div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div> 
 		
 		<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
         <div th:replace="general/modal/modal-base :: modalDatatableFragment "></div>
@@ -307,9 +307,13 @@
 <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-brand.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-model.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-event-type.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-meter-reading-units.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-suppliers.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-currencies.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-providers.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/asset/datatable/dt-asset-log.js}"></script>
-<script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.js}"></script>
 
+<script type="text/javascript" th:src="@{https://cdnjs.cloudflare.com/ajax/libs/mathjs/6.2.2/math.js}"></script>
 
 <!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjstables"></div>

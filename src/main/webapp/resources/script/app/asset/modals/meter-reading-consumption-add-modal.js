@@ -1,33 +1,63 @@
 var MeterReadingConsumptionVariableAddModal = function () {
-	
+
+    /********************************************
+     * Initialize buttons
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearMeterReadingUnit()
+    };
+    
+    function initInputClearMeterReadingUnit(){
+        $("#consumptionMeterReadingUnitName").inputClear({
+            placeholder:"Please specify a unit",
+            btnMethod:"MeterReadingConsumptionVariableAddModal.addMeterReadingUnit()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalViewMeterReadingUnitSelect() {
+        var $modal = $('#consumption-child-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../../asset/view/modal/meter-reading-units';
+            $modal.load(url, '', function () {
+                DataTableModalMeterReadingUnits.init(
+                        "consumption-child-modal",
+                        "tbl_meter_reading_units",
+                        "../../restapi/meterreading-units/tabledata",
+                        "setCunsumptionData"
+                        );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+
 	var initButtons = function () {		
 		$('#btn-add-meter-reading-consumption-variable').on('click', function () {
 			MeterReadingConsumptionVariableAddModal.addAssetMeterReadingConsumption();			
 	    });	
 	};	
-	var runMeterReadingUnitSelect = function() {
-
-		$("#meterReadingUnitIdForConsumption").select2({
-			placeholder : "Select a Meter Reading Unit",
-			allowClear : true,
-			dropdownParent : $("#meter-reading-consumption-variable-modal")
-		});
-	};
+	
 	var addAssetMeterReadingConsumption = function() {		
 		if ( $('#meter-reading-consumption-variable-add-frm').valid() ) {
 			MeterReadingConsumptionVariableAddModal.addMeterReadingConsumption();	
 		}		
 	};
-	
-
     
     var initValidator = function () {
+        
         var form = $('#meter-reading-consumption-variable-add-frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
+        
         jQuery.validator.addMethod("alphanumeric", function(value, element) {
             return this.optional(element) || /^\w+$/i.test(value);
         }, "Letters, numbers, and underscores only please");
+        
         form.validate({
             errorElement: "span", // contain the error msg in a span tag
             errorClass: 'help-block',
@@ -48,7 +78,7 @@ var MeterReadingConsumptionVariableAddModal = function () {
                     required: true,
                     alphanumeric:true
                 },
-                meterReadingUnitIdForConsumption: {
+                consumptionMeterReadingUnitName: {
                     required: true,
                 }
             },
@@ -57,7 +87,7 @@ var MeterReadingConsumptionVariableAddModal = function () {
                     required: "Please Specify Varible Name",
                     alphanumeric:"Please enter alphanumeric chanters only"	
             	},
-            	meterReadingUnitIdForConsumption:  "Please Insert Meter Reading Unit",
+            	consumptionMeterReadingUnitName:  "Please Insert Meter Reading Unit",
         
             	
             },
@@ -87,6 +117,7 @@ var MeterReadingConsumptionVariableAddModal = function () {
     let scope = {}
     
 	var meterReadingVariableList = [];
+    
 	var resetVariableTable = function() {
 		if (meterReadingVariableList.length > 0) {
 			var row, meterReadingVariable;
@@ -123,8 +154,8 @@ var MeterReadingConsumptionVariableAddModal = function () {
 				index : meterReadingVariableList.length,
 				version : $('#variableVersion').val(),
 				variable : $('#consumptionVariable').val(),
-				meteReadingUnitId : $('#meterReadingUnitIdForConsumption').val(),
-				meteReadingUnitName : $('#meterReadingUnitIdForConsumption option:selected').text()
+				meteReadingUnitId : $('#consumptionMeterReadingUnitId').val(),
+				meteReadingUnitName : $('#consumptionMeterReadingUnitName').val()
 			}
 		
 		if(!isVariableAlreadyDefined(meterVariable)){
@@ -168,14 +199,14 @@ var MeterReadingConsumptionVariableAddModal = function () {
     }
 
 
-    var checkParamId=function(){   
-        var entry=$("#formula").val();
-        var value=0;      
-   		value=math.evaluate(entry, scope);	
+    var checkParamId = function(){   
+        var entry = $("#formula").val();
+        var value = 0;      
+   		value = math.evaluate(entry, scope);	
     	$("#value").val(value)
     }
     
-    var initScope=function(){
+    var initScope = function(){
     	   var entry=$("#formula").val();
         for(var i=0;i<entry.length;i++){
         	if(isLetter(entry.charAt(i))){
@@ -217,36 +248,49 @@ var MeterReadingConsumptionVariableAddModal = function () {
         init: function () {
         	initButtons();
         	initValidator();
-        	runMeterReadingUnitSelect();
+        	initInputClearComponents();
         	resetVariableTable();
         },
         
         addAssetMeterReading: function () {
         	addAssetMeterReading();
         },
+        
         addMeterReadingConsumption:function(){
         	addMeterReadingConsumption();
         },
+        
         addAssetMeterReadingConsumption:function(){
         	addAssetMeterReadingConsumption();
         },
+        
         checkParamId:function(){
         	checkParamId();
         },
+        
         removeMeterReadingConsumptionVariable:function(index){
         	removeMeterReadingConsumptionVariable(index);
         },
+        
         resetConsumptionTable:function(){
         	resetConsumptionTable();
         },
+        
         resetVariableTable:function(){
         	resetVariableTable()
         },
+        
         loadMeterReadingVariable:function(variables){
         	loadMeterReadingVariable(variables)
         },
+        
         removeMeterReadingAllConsumptionVariable:function(){
         	removeMeterReadingAllConsumptionVariable();
+        },
+
+        
+        addMeterReadingUnit: function () {
+            initModalViewMeterReadingUnitSelect();
         }
         
    };

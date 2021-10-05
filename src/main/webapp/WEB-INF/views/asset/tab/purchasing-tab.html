@@ -9,26 +9,24 @@
     <div class="row">
         <div class="col-md-12" style="padding-top: 15px;">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="control-label"> Purchase From <span class="symbol required"></span></label>
-                        <select id="purchasedSupplierId" th:field="*{assetPurchasingDetail.purchasedSupplierId}"
-                                class="search-select" style="width:100%;">
-                            <option th:each="business : ${suppliers}" th:value="${business.id}"
-                                    th:text="${business.name}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="control-label"> Purchase Currency <span class="symbol required"></span></label>
-                        <select id="purchasedCurrencyId" th:field="*{assetPurchasingDetail.purchasedCurrencyId}"
-                                class="search-select" style="width:100%;">
-                            <option th:each="currency : ${currencies}" th:value="${currency.id}"
-                                    th:text="${currency.name}"></option>
-                        </select>
-                    </div>
-                </div>
+            	<div class="col-md-6">
+		            <div class="form-group">
+	                    <label class="control-label"> Purchase From <span class="symbol required"></span> </label>
+	                    <div class="input-group">
+	                        <input type="hidden" id="purchasedSupplierId" th:field="*{assetPurchasingDetail.purchasedSupplierId}">
+	                        <input type="text" id="purchasedSupplierName" th:field="*{assetPurchasingDetail.purchasedSupplierName}" readonly class="form-control">                     
+	                    </div>
+		            </div>
+	            </div>
+            	<div class="col-md-6">
+		            <div class="form-group">
+	                    <label class="control-label"> Purchase Currency <span class="symbol required"></span> </label>
+	                    <div class="input-group">
+	                        <input type="hidden" id="purchasedCurrencyId" th:field="*{assetPurchasingDetail.purchasedCurrencyId}">
+	                        <input type="text" id="purchasedCurrencyName" th:field="*{assetPurchasingDetail.purchasedCurrencyName}" readonly class="form-control">                     
+	                    </div>
+		            </div>
+	            </div>
             </div>
             <div class="row">
                 <div class="col-md-6">

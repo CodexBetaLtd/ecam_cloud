@@ -35,13 +35,26 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 
 	@Override
 	public AssetDTO domainToDto(Asset domain) throws Exception {
-		AssetDTO dto = new AssetDTO();
+
+		final AssetDTO dto = new AssetDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
 		dto.setDescription(domain.getDescription());
 		dto.setIsOnline(domain.getIsOnline());
-dto.setAssetUrl(domain.getAssetUrl());
+		dto.setAssetUrl(domain.getAssetUrl());
+		dto.setNotes(domain.getNotes());
+		dto.setAddress(domain.getAddress());
+		dto.setCity(domain.getCity());
+		dto.setProvince(domain.getProvince());
+		setLocationString(dto, domain);
+		dto.setPostalCode(domain.getPostalcode());
+		dto.setSerialNo(domain.getSerialNo());
+		dto.setIsDeleted(domain.getIsDeleted());
+		dto.setVersion(domain.getVersion());
+		dto.setImageLocation(domain.getImageLocation());
+		dto.setChildCount(domain.getChildCount());
+
 		if (domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
 			dto.setBusinessName(domain.getBusiness().getName());
@@ -76,11 +89,11 @@ dto.setAssetUrl(domain.getAssetUrl());
 			dto.setCustomerId(domain.getCustomer().getId());
 			dto.setCustomerName(domain.getCustomer().getName());
 		}
-		
+
 		if (domain.getChildCount() != null) {
 			dto.setChildCount(domain.getChildCount());
 		}
-		
+
 		setMeterReadings(domain, dto);
 		setLocation(dto, domain);
 		setAssetEventTypeAssets(domain, dto);
@@ -89,56 +102,46 @@ dto.setAssetUrl(domain.getAssetUrl());
 		setWarranties(dto, domain);
 		setAssetFile( domain,dto);
 		setAssetSparePart( domain,dto);
-
-		dto.setNotes(domain.getNotes());
-
-		dto.setAddress(domain.getAddress());
-		dto.setCity(domain.getCity());
-		dto.setProvince(domain.getProvince());
-		setLocationString(dto, domain);
-		dto.setPostalCode(domain.getPostalcode());
-		
-		if (domain.getCountry() != null) {
-			dto.setCountryId(domain.getCountry().getId());
-		}
-
-		dto.setSerialNo(domain.getSerialNo());
-		dto.setIsDeleted(domain.getIsDeleted());
-		dto.setVersion(domain.getVersion()); 		
-		dto.setImageLocation(domain.getImageLocation());
-		dto.setChildCount(domain.getChildCount());
+		setAssetCountry(domain, dto);
 
 		return dto;
 	}
 
+	private void setAssetCountry(Asset domain, final AssetDTO dto) {
+		if (domain.getCountry() != null) {
+			dto.setCountryId(domain.getCountry().getId());
+			dto.setCountryName(domain.getCountry().getName());
+		}
+	}
+
 	private void setPartConsumingReferences(AssetDTO dto, Asset domain) throws Exception {
-		if ((domain.getPartConsumingReferences() != null) && (domain.getPartConsumingReferences().size() > 0)) {
-			List<AssetConsumingReferenceDTO> assetConsumingDTOs = new ArrayList<>();
-			for ( AssetConsumingReference assetConsumePref : domain.getPartConsumingReferences()) {
-				AssetConsumingReferenceDTO assetConsumingDTO = AssetConsumingReferenceMapper.getInstance().domainToDto(assetConsumePref);
+		if (domain.getPartConsumingReferences() != null && domain.getPartConsumingReferences().size() > 0) {
+			final List<AssetConsumingReferenceDTO> assetConsumingDTOs = new ArrayList<>();
+			for ( final AssetConsumingReference assetConsumePref : domain.getPartConsumingReferences()) {
+				final AssetConsumingReferenceDTO assetConsumingDTO = AssetConsumingReferenceMapper.getInstance().domainToDto(assetConsumePref);
 				assetConsumingDTOs.add(assetConsumingDTO);
 			}
 			dto.setPartConsumeRefs(assetConsumingDTOs);
 		}
 	}
 	private void setLocation(AssetDTO dto, Asset domain){
-		 LocationDTO locationDTO=new LocationDTO();
-			
-		 if(domain.getLatitude() !=null){
-			 locationDTO.setLatitude(domain.getLatitude());
-		 }
+		final LocationDTO locationDTO=new LocationDTO();
+
+		if(domain.getLatitude() !=null){
+			locationDTO.setLatitude(domain.getLatitude());
+		}
 		if(domain.getLongitude() !=null){
 			locationDTO.setLongitude(domain.getLongitude());
 		}
-		
+
 		dto.setLocationDTO(locationDTO);
 	}
 
 	private void setWarranties(AssetDTO dto, Asset domain) throws Exception {
-		if ((domain.getWarranties() != null) && (domain.getWarranties().size() > 0)) {
-			List<WarrantyDTO> warrantyDTOs = new ArrayList<>();
-			for (Warranty warranty : domain.getWarranties()) {
-				WarrantyDTO warrantyDTO = WarrantyMapper.getInstance().domainToDto(warranty);
+		if (domain.getWarranties() != null && domain.getWarranties().size() > 0) {
+			final List<WarrantyDTO> warrantyDTOs = new ArrayList<>();
+			for (final Warranty warranty : domain.getWarranties()) {
+				final WarrantyDTO warrantyDTO = WarrantyMapper.getInstance().domainToDto(warranty);
 				warrantyDTOs.add(warrantyDTO);
 			}
 			dto.setWarranties(warrantyDTOs);
@@ -146,10 +149,10 @@ dto.setAssetUrl(domain.getAssetUrl());
 	}
 
 	private void setAssetConsumingReferences(AssetDTO dto, Asset domain) throws Exception {
-		if ((domain.getAssetConsumingReferences() != null) && (domain.getAssetConsumingReferences().size() > 0)) {
-			List<AssetConsumingReferenceDTO> assetConsumingDTOs = new ArrayList<>();
-			for ( AssetConsumingReference assetConsumePref : domain.getAssetConsumingReferences()) {
-				AssetConsumingReferenceDTO assetConsumingDTO = AssetConsumingReferenceMapper.getInstance().domainToDto(assetConsumePref);
+		if (domain.getAssetConsumingReferences() != null && domain.getAssetConsumingReferences().size() > 0) {
+			final List<AssetConsumingReferenceDTO> assetConsumingDTOs = new ArrayList<>();
+			for ( final AssetConsumingReference assetConsumePref : domain.getAssetConsumingReferences()) {
+				final AssetConsumingReferenceDTO assetConsumingDTO = AssetConsumingReferenceMapper.getInstance().domainToDto(assetConsumePref);
 				assetConsumingDTOs.add(assetConsumingDTO);
 			}
 			dto.setAssetConsumeRefs(assetConsumingDTOs);
@@ -157,20 +160,20 @@ dto.setAssetUrl(domain.getAssetUrl());
 	}
 
 	private void setLocationString(AssetDTO dto, Asset domain) {
-		StringBuilder strBuilder = new StringBuilder("");
+		final StringBuilder strBuilder = new StringBuilder("");
 
-		if ((domain.getAddress() != null) && !domain.getAddress().isEmpty()) {
+		if (domain.getAddress() != null && !domain.getAddress().isEmpty()) {
 			strBuilder.append(domain.getAddress());
 		}
 
-		if ((domain.getCity() != null) && !domain.getCity().isEmpty()) {
+		if (domain.getCity() != null && !domain.getCity().isEmpty()) {
 			if (!strBuilder.toString().isEmpty()) {
 				strBuilder.append(", ");
 			}
 			strBuilder.append(domain.getCity());
 		}
 
-		if ((domain.getProvince() != null) && !domain.getProvince().isEmpty()) {
+		if (domain.getProvince() != null && !domain.getProvince().isEmpty()) {
 			if (!strBuilder.toString().isEmpty()) {
 				strBuilder.append(", ");
 			}
@@ -182,7 +185,7 @@ dto.setAssetUrl(domain.getAssetUrl());
 
 	private void setMeterReadings(Asset domain, AssetDTO dto) throws Exception {
 		if (domain.getAssetMeterReadings().size() > 0) {
-			for (AssetMeterReading assetMeterReading : domain.getAssetMeterReadings()) {
+			for (final AssetMeterReading assetMeterReading : domain.getAssetMeterReadings()) {
 				dto.getAssetMeterReadings().add(AssetMeterReadingMapper.getInstance().domainToDto(assetMeterReading));
 			}
 		}
@@ -190,16 +193,16 @@ dto.setAssetUrl(domain.getAssetUrl());
 
 	private void setAssetEventTypeAssets(Asset domain, AssetDTO dto) throws Exception {
 		if (domain.getAssetEventTypeAssets().size() > 0) {
-			for (AssetEventTypeAsset assetEventTypeAsset : domain.getAssetEventTypeAssets()) {
+			for (final AssetEventTypeAsset assetEventTypeAsset : domain.getAssetEventTypeAssets()) {
 				dto.getAssetEventTypeAssets().add(AssetEventTypeAssetMapper.getInstance().domainToDto(assetEventTypeAsset));
-				
+
 			}
 		}
 	}
 	private void setAssetFile(Asset domain, AssetDTO dto) throws Exception {
 		if (domain.getAssetFiles().size() > 0) {
-			for (AssetFile assetFile :domain.getAssetFiles()) {
-				AssetFileDTO assetFileDTO=new AssetFileDTO();
+			for (final AssetFile assetFile :domain.getAssetFiles()) {
+				final AssetFileDTO assetFileDTO=new AssetFileDTO();
 				assetFileDTO.setId(assetFile.getId());
 				assetFileDTO.setItemDescription(assetFile.getItemDescription());
 				assetFileDTO.setVersion(assetFile.getVersion());
@@ -211,11 +214,11 @@ dto.setAssetUrl(domain.getAssetUrl());
 			}
 		}
 	}
-	
+
 	private void setAssetSparePart(Asset domain, AssetDTO dto) throws Exception {
 		if (domain.getSpareParts().size() > 0) {
-			for (SparePart sparePart :domain.getSpareParts()) {
-				SparePartDTO sparePartDTO=new SparePartDTO();
+			for (final SparePart sparePart :domain.getSpareParts()) {
+				final SparePartDTO sparePartDTO=new SparePartDTO();
 				sparePartDTO.setId(sparePart.getId());
 				sparePartDTO.setQuantity(sparePart.getQuantity());
 				sparePartDTO.setVersion(sparePart.getVersion());
@@ -251,20 +254,20 @@ dto.setAssetUrl(domain.getAssetUrl());
 
 	@Override
 	public AssetDTO domainToDtoForDataTable(Asset domain) throws Exception {
-		AssetDTO dto = new AssetDTO();
+		final AssetDTO dto = new AssetDTO();
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
 		setLocationString(dto, domain);
 		dto.setAssetCategoryName(domain.getAssetCategory().getName());
 
-		if (domain.getBusiness() != null) { 
+		if (domain.getBusiness() != null) {
 			dto.setBusinessName(domain.getBusiness().getName());
 		}
-		
-		if ( domain.getCustomer() != null ) { 
+
+		if ( domain.getCustomer() != null ) {
 			dto.setCustomerName(domain.getCustomer().getName());
-		}   
+		}
 		if (domain.getChildCount() != null) {
 			dto.setChildCount(domain.getChildCount());
 		}

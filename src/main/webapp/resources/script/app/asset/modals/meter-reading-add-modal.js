@@ -1,5 +1,45 @@
 var MeterReadingAddModal = function() {
 
+    /********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearMeterReadingUnit()
+    };
+    
+    function initInputClearMeterReadingUnit(){
+        $("#meterReadingUnitName").inputClear({
+            placeholder:"Please specify a unit",
+            btnMethod:"MeterReadingAddModal.addMeterReadingUnit()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalViewMeterReadingUnitSelect() {
+        var $modal = $('#meter-reading-child-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../../asset/view/modal/meter-reading-units';
+            $modal.load(url, '', function () {
+                DataTableModalMeterReadingUnits.init(
+                        "meter-reading-child-modal",
+                        "tbl_meter_reading_units",
+                        "../../restapi/meterreading-units/tabledata",
+                        "setData"
+                        );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+
+    /********************************************
+     * Initialize buttons 
+     ********************************************/
+    
 	var initButtons = function() {
 		$('#btn-add-meter-reading').on('click', function() {
 			MeterReadingAddModal.addAssetMeterReading();
@@ -7,10 +47,10 @@ var MeterReadingAddModal = function() {
 
 		$('#btn-new-meter-reading-consumption-variable').on('click', function() {
 			MeterReadingAddModal.addAssetMeterReadingVariableModal();
-			
 		});
 
 	};
+	
 	var initCheckBoxes = function() {
 
 		$('input[type="checkbox"].grey, input[type="radio"].grey').iCheck({
@@ -30,8 +70,7 @@ var MeterReadingAddModal = function() {
 
 	};
 
-
-	var initMultipleMeterReadingEnable=function(){
+	var initMultipleMeterReadingEnable = function(){
 		if($('#isMultipleMeterReading').prop("checked")){
 			$('#formula').prop('readonly', false);
 			$("#btn-new-meter-reading-consumption-variable").attr("disabled", false);
@@ -45,49 +84,23 @@ var MeterReadingAddModal = function() {
 			$(".multipleReading").hide();
 		}
 	}
+	
 	var addAssetMeterReading = function() {
 		if ($('#asset-meter-reading-add-frm').valid()) {
 			TabMeterReading.addAssetMeterReading();
 		}
 	};
 
-	var runMeterReadingUnitSelect = function() {
-
-		$("#meterReadingUnitId").select2({
-			placeholder : "Select a Meter Reading Unit",
-			allowClear : true,
-			dropdownParent : $("#master-modal-datatable")
-		});
-	};
-
 	var initValidator = function() {
 		var form = $('#asset-meter-reading-add-frm');
 		var errorHandler = $('.errorHandler', form);
 		var successHandler = $('.successHandler', form);
-		form
-				.validate({
+		form.validate({
 					errorElement : "span", // contain the error msg in a span
-											// tag
 					errorClass : 'help-block',
-					errorPlacement : function(error, element) { // render error
-																// placement for
-																// each input
-																// type
-						if (element.attr("type") == "radio"
-								|| element.attr("type") == "checkbox") { // for
-																			// chosen
-																			// elements,
-																			// need
-																			// to
-																			// insert
-																			// the
-																			// error
-																			// after
-																			// the
-																			// chosen
-																			// container
-							error.insertAfter($(element).closest('.form-group')
-									.children('div').children().last());
+					errorPlacement : function(error, element) {
+					 if (element.attr("type") == "radio" || element.attr("type") == "checkbox") {
+							error.insertAfter($(element).closest('.form-group').children('div').children().last());
 						} else if (element.attr("name") == "dd"
 								|| element.attr("name") == "mm"
 								|| element.attr("name") == "yyyy"
@@ -107,7 +120,7 @@ var MeterReadingAddModal = function() {
 					},
 					ignore : "",
 					rules : {
-						meterReadingUnitId : {
+					    meterReadingUnitName : {
 							required : true
 						},
 						meterReadingName : {
@@ -115,15 +128,11 @@ var MeterReadingAddModal = function() {
 						}
 					},
 					messages : {
-						meterReadingUnitId : "Please Select a Meter Reading Unit",
+					    meterReadingUnitName : "Please Select a Meter Reading Unit",
 						meterReadingName : "Please Insert a Name"
 					},
-					invalidHandler : function(event, validator) { // display
-																	// error
-																	// alert on
-																	// form
-																	// submit
-						successHandler.hide();
+					invalidHandler : function(event, validator) {
+					    successHandler.hide();
 						errorHandler.show();
 					},
 					highlight : function(element) {
@@ -154,7 +163,7 @@ var MeterReadingAddModal = function() {
 	};
 
     var addAssetMeterReadingVariableModal = function () {
-        var $modal = $('#meter-reading-consumption-variable-modal');
+        var $modal = $('#meter-reading-child-modal');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../../asset/assetmeterreadingconsumptionvariablemodelview';
@@ -168,10 +177,9 @@ var MeterReadingAddModal = function() {
 
 		init : function() {
 			initButtons();
-			runMeterReadingUnitSelect();
+			initInputClearComponents();
 			initValidator();
 			initCheckBoxes()
-		//	$(".multipleReading").hide();
 
 		},
 
@@ -182,9 +190,14 @@ var MeterReadingAddModal = function() {
 		addMeterReadingVariable:function(){
 			addMeterReadingVariable();
 		},
+		
 		addAssetMeterReadingVariableModal:function(){
 			addAssetMeterReadingVariableModal();
-		}
+		},
+		
+		addMeterReadingUnit: function () {
+		    initModalViewMeterReadingUnitSelect();
+        }
 
 	};
 

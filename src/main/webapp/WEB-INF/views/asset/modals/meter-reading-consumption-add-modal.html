@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" class="no-js">
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h4 class="modal-title">Meter Reading Variable</h4>
 </div>
 <div class="modal-body">
-
+	<div id="consumption-child-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
 	<form id="meter-reading-consumption-variable-add-frm">
 
 	    <input type="hidden" id="variableId">
@@ -21,16 +21,16 @@
 	                <input type="text" class="form-control" id="consumptionVariable" name="consumptionVariable" >
 	            </div>
 	        </div>
-	        <div class="col-md-6">
-	                <div class="form-group">
-	                    <label class="control-label"> Meter Reading Unit <span class="symbol required"></span></label>
-	                    <select id="meterReadingUnitIdForConsumption" name="meterReadingUnitIdForConsumption" class="search-select" style="width: 100%;">
-	                        <option value="">&nbsp;</option>
-	                        <option th:each="meterReadingUnit : ${meterReadingUnits}" th:value="${meterReadingUnit.id}" th:text="${meterReadingUnit.symbol}">
-	                        </option>
-	                    </select>
-	                </div>
-	        </div>
+			<div class="col-md-6">
+	            <div class="form-group">
+                    <label class="control-label"> Meter Reading Unit <span class="symbol required"></span>
+                    </label>
+                    <div class="input-group">
+                        <input type="hidden" id="consumptionMeterReadingUnitId" name="consumptionMeterReadingUnitId">
+                        <input type="text" id="consumptionMeterReadingUnitName" name="consumptionMeterReadingUnitName" readonly class="form-control" placeholder="Please specify a unit" >                     
+                    </div>
+	            </div>
+            </div>
 	    </div>
     </form>
 </div>
