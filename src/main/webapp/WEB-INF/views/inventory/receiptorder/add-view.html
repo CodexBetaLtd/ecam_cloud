@@ -44,8 +44,8 @@
 		<!-- start: PAGE -->
 		<div class="main-content">
 
-			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
-			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div> 
+			<div id="item-add-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div> 
 				
 			<div align='center'>
 				<div id='model' class='modal fade alert-warning' tabindex='-1'
@@ -181,17 +181,14 @@
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label class="control-label"> Supplier <span
-													class="symbol required"></span></label> <select id="supplierId"
-													th:field="*{supplierId}" class="search-select"
-													style="width: 100%;">
-													<option value="">&nbsp;</option>
-													<option th:each="business : ${suppliers}"
-														th:value="${business.id}" th:text="${business.name}"></option>
-												</select>
+												<label class="control-label"> Supplier </label>
+												<div class="input-group">
+													<input type="hidden" th:field="*{supplierId}" id="supplierId">
+													<input type="text" th:field="*{supplierName}" id="supplierName" readonly placeholder="Please specify a supplier">
+												</div>
 											</div>
 										</div>
-										</div>
+									</div>
 										<div class="row">
 											<div class="col-md-6">
 												<div class="form-group">
@@ -293,14 +290,18 @@
 
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/init.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/add-view.js}"></script>
+	
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/tab/item-tab.js}"></script>
+	
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/modal/item-modal.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/modal/refurbish-item-modal.js}"></script>
+	
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-refurbish-assets.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-assets.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-stock.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-refurbish-stock.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-purchase-assets.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/receiptorder/datatable/dt-receipt-suppliers.js}"></script>
 
 	<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>

@@ -13,16 +13,19 @@ public class ReceiptOrderDTO extends BaseDTO {
 	private Integer id;
 	private Integer supplierId;
 	private Integer businessId;
+
 	private Date dateOrdered;
 	private Date dateReceived;
+
 	private String statusName;
 	private String supplierName;
 	private String code;
+
 	private ReceiptOrderStatus receiptOrderStatus=ReceiptOrderStatus.DRAFT;
 	private ReceiptOrderType receiptOrderType=ReceiptOrderType.NORMAL;
 
 	private List<ReceiptOrderItemDTO> items = new ArrayList<>();
-    private List<ReceiptOrderTaxDTO> taxDTOs = new ArrayList<>();
+	private List<ReceiptOrderTaxDTO> taxDTOs = new ArrayList<>();
 
 
 	public Integer getId() {
@@ -67,26 +70,26 @@ public class ReceiptOrderDTO extends BaseDTO {
 	public void setCode(String code) {
 		this.code = code;
 	}
-    public ReceiptOrderStatus getReceiptOrderStatus() {
-        return receiptOrderStatus;
-    }
-    public void setReceiptOrderStatus(ReceiptOrderStatus receiptOrderStatus) {
-        this.receiptOrderStatus = receiptOrderStatus;
-    }
-    public List<ReceiptOrderItemDTO> getItems() {
-        return items;
-    }
-    public void setItems(List<ReceiptOrderItemDTO> items) {
-        this.items = items;
-    }
+	public ReceiptOrderStatus getReceiptOrderStatus() {
+		return receiptOrderStatus;
+	}
+	public void setReceiptOrderStatus(ReceiptOrderStatus receiptOrderStatus) {
+		this.receiptOrderStatus = receiptOrderStatus;
+	}
+	public List<ReceiptOrderItemDTO> getItems() {
+		return items;
+	}
+	public void setItems(List<ReceiptOrderItemDTO> items) {
+		this.items = items;
+	}
 
-    public List<ReceiptOrderTaxDTO> getTaxDTOs() {
-        return taxDTOs;
-    }
+	public List<ReceiptOrderTaxDTO> getTaxDTOs() {
+		return taxDTOs;
+	}
 
-    public void setTaxDTOs(List<ReceiptOrderTaxDTO> taxDTOs) {
-        this.taxDTOs = taxDTOs;
-    }
+	public void setTaxDTOs(List<ReceiptOrderTaxDTO> taxDTOs) {
+		this.taxDTOs = taxDTOs;
+	}
 	public Integer getBusinessId() {
 		return businessId;
 	}
@@ -99,6 +102,6 @@ public class ReceiptOrderDTO extends BaseDTO {
 	public void setReceiptOrderType(ReceiptOrderType receiptOrderType) {
 		this.receiptOrderType = receiptOrderType;
 	}
-    
-    
+
+
 }

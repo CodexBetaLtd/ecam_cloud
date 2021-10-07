@@ -185,17 +185,14 @@ var AODReturnHome = function () {
                 sUrl: "../aodReturn/edit?id",
             },
         });
-
-        var wapperSet = function () {
-            $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-            $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
-            $('#' + table_name + '_wrapper .dataTables_length select').select2();
-            $('#' + table_name + '_column_toggler input[type="checkbox"]').change(function () {
-                var iCol = parseInt($(this).attr("data-column"));
-                var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-                oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-            });
-        }
+        $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
+        $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
+        $('#' + table_name + '_wrapper .dataTables_length select').select2();
+        $('#' + table_name + '_column_toggler input[type="checkbox"]').change(function () {
+            var iCol = parseInt($(this).attr("data-column"));
+            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
+            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
+        });
         
         DataTableUtil.deleteRows(oTable, "delete", "aodReturn", "id"); 
 

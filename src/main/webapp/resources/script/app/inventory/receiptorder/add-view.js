@@ -1,33 +1,67 @@
 var ReceiptOrderAdd = function () {
-
-	var runSupplierBusinessSelect = function () {
+    
+	var initSupplierBusinessSelect = function () {
 		$("#supplierId").select2({
 			placeholder: "Select a Supplier",
 			allowClear: true
 		});
 	};
-	var runBusinessSelect = function () {
+	var initBusinessSelect = function () {
 		$("#businessId").select2({
 			placeholder: "Select a Business",
 			allowClear: true
 		});
 	};
-	var runReceiptOrderTypeSelect = function () {
+	var initReceiptOrderTypeSelect = function () {
 		$("#receiptOrderTypeId").select2({
 			placeholder: "Select a ReceiptOrder Type",
 			allowClear: true
 		});
 	};
 
-    var runDatePicker = function () {
+    var initDatePicker = function () {
         $('.date-picker').datepicker({
             autoclose: true
         });
+    }; 
+    
+    /********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearSupplier();
+    };    
+    
+    function initInputClearSupplier(){
+        $("#supplierName").inputClear({
+            placeholder:"Please specify a supplier",
+            btnMethod:"ReceiptOrderAdd.addSupplier()",
+        });
+    };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalSupplierSelect() {
+        var $modal = $('#common-modal');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../receiptorder/view/modal/suppliers';
+            $modal.load(url, '', function () {
+                DatatableModalSuppliers.init(
+                        "common-modal",
+                        "tbl_suppliers",
+                        "../restapi/supplier/tabledata",
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
     };
     
-    
-   
-    var runValidator = function () {
+    var initValidator = function () {
         var form = $('#receipt_order_add_frm');
         var errorHandler = $('.errorHandler', form);
         var successHandler = $('.successHandler', form);
@@ -86,7 +120,7 @@ var ReceiptOrderAdd = function () {
         });
     };
     
-    var runReceiptOrdeBusinessSelect = function(){
+    var initReceiptOrdeBusinessSelect = function(){
     	$("#businessId").change(function() {
 			var businessId = $("#businessId option:selected").val(); 
 			setReceiptOrderCode(businessId);  
@@ -122,13 +156,17 @@ var ReceiptOrderAdd = function () {
     return {
 
         init: function () {
-            runValidator();
-            runSupplierBusinessSelect();
-            runBusinessSelect();
-            runDatePicker();
-            runReceiptOrderTypeSelect();
-            runReceiptOrdeBusinessSelect();
+            initValidator();
+            initInputClearComponents();
+            initBusinessSelect();
+            initDatePicker();
+            initReceiptOrderTypeSelect();
+            initReceiptOrdeBusinessSelect();
    
+        },
+    
+        addSupplier: function () {
+            initModalSupplierSelect(); 
         }
     };
 }();

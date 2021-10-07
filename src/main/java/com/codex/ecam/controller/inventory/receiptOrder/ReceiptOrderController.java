@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,7 +20,6 @@ import com.codex.ecam.dto.inventory.receiptOrder.ReceiptOrderDTO;
 import com.codex.ecam.result.RestResult;
 import com.codex.ecam.result.purchasing.ReceiptOrderResult;
 import com.codex.ecam.service.biz.api.BusinessService;
-import com.codex.ecam.service.biz.api.SupplierService;
 import com.codex.ecam.service.inventory.api.ReceiptOrderService;
 
 @Controller
@@ -33,9 +33,6 @@ public class ReceiptOrderController {
 
 	@Autowired
 	private BusinessService businessService;
-
-	@Autowired
-	private SupplierService supplierService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
@@ -87,8 +84,13 @@ public class ReceiptOrderController {
 	public @ResponseBody RestResult<String> codeByBusiness(Integer businessId) {
 		final RestResult<String> result = new RestResult<>();
 		result.setData(receiptOrderService.getNextCode(businessId).toString());
-
 		return result ;
+	}
+
+	@RequestMapping(value = "/view/modal/suppliers", method = RequestMethod.GET)
+	public String getSupplierModalView(Model model, @RequestParam(name = "title", defaultValue = "Supplier(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/suppliers";
 	}
 
 	/*********************************************************************
@@ -198,7 +200,6 @@ public class ReceiptOrderController {
 		model.addAttribute("receiptOrder", receiptOrder);
 		model.addAttribute("types", ReceiptOrderType.getAllReceiptOrderType());
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
-		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 	}
 
 }

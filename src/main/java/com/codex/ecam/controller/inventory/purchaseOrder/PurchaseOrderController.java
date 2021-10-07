@@ -50,12 +50,6 @@ public class PurchaseOrderController {
 	private ChargeDepartmentService chargeDeparmentService;
 
 	@Autowired
-	private CountryService countryService;
-
-	@Autowired
-	private CurrencyService currencyService;
-
-	@Autowired
 	private UserService userService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -158,7 +152,6 @@ public class PurchaseOrderController {
 	/*********************************************************************
 	 * CRUD Ops
 	 *********************************************************************/
-
 
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String add(Model model, RedirectAttributes ra) {
@@ -300,10 +293,6 @@ public class PurchaseOrderController {
 		model.addAttribute("purchaseOrder", purchaseOrder);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("sites", assetService.findAllSiteByLevel());
-		model.addAttribute("accounts", accountService.findAll());
-		model.addAttribute("chargeDepartments", chargeDeparmentService.findAll());
-		model.addAttribute("countries", countryService.findAll());
-		model.addAttribute("currencies", currencyService.findAll());
 		model.addAttribute("billingTerms", BillingTerm.getBillingTermList());
 		model.addAttribute("poAdditionalCostTypes",PurchaseOrderAdditionalCostType.getAdditionalCostTypeList());
 		model.addAttribute("shippingTypes", ShippingType.getShippingTypeList());

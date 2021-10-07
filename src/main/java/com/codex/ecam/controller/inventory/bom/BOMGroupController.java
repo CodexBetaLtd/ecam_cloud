@@ -11,7 +11,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.inventory.bom.BOMGroupDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.BOMGroupResult;
 import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.inventory.api.BOMGroupService;

@@ -21,7 +21,6 @@ import com.codex.ecam.dto.admin.AssetBrandDTO;
 import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.biz.part.PartDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.PartResult;
 import com.codex.ecam.service.admin.api.MeterReadingUnitService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;

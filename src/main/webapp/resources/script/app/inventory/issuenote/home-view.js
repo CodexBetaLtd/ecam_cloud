@@ -114,7 +114,8 @@ var IssueNoteHome = function () {
         });
     });
 
-    var dtAOD = function () {
+    var initTable = function () {
+        
         var oTable = $('#tbl_issuenote_list').DataTable({
         	responsive: true,
             "processing": true,
@@ -128,6 +129,7 @@ var IssueNoteHome = function () {
                     orderable: false,
                     searchable: false,    
                     defaultContent: '',
+                    width: "4%",
                     className: 'select-checkbox',
                     responsivePriority: 1 
                 }, {
@@ -157,7 +159,7 @@ var IssueNoteHome = function () {
                     sNext: "&raquo;"
                 }
             },
-            aaSorting: [[4, 'desc']],
+            aaSorting: [[3, 'desc']],
             aLengthMenu: [[5, 10, 15, 20],
                 [5, 10, 15, 20]],
             iDisplayLength: 20,
@@ -186,7 +188,7 @@ var IssueNoteHome = function () {
 
     return {
         initDataTable: function () {
-            dtAOD();
+            initTable();
         }
     };
 

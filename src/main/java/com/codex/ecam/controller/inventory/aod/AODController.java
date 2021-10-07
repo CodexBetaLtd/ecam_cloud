@@ -15,7 +15,6 @@ import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.inventory.AODStatus;
 import com.codex.ecam.constants.inventory.AODType;
 import com.codex.ecam.dto.inventory.aod.AODDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.service.asset.api.AssetService;

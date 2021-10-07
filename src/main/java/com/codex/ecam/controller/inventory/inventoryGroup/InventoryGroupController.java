@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.dto.inventory.inventoryGroup.InventoryGroupDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.InventoryGroupResult;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
