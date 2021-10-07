@@ -1,39 +1,35 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/xhtml" class="no-js">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" class="no-js">
 
 <div th:fragment="accountTabFragment">
 	<div class="row">
 		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label"> Account <span class="symbol required"></span>
-				</label> 
-				<select  id="account" th:field="*{accountId}" class="search-select" style="width: 100%;">
-					<option value="">&nbsp;</option>
-					<option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.code}"></option>
-				</select>
+				<label class="control-label"> Account </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{accountId}" id="accountId">
+					<input type="text" th:field="*{accountName}" id="accountName" readonly placeholder="Please specify a account">
+				</div>
 			</div>
 		</div>
 		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label"> Charge Department <span class="symbol required"></span>
-				</label> 
-				<select id="chargeDepartment" th:field="*{chargeDepartmentId}"class="search-select" style="width: 100%;">
-					<option value="">&nbsp;</option>
-					<option th:each="chargeDepartment : ${chargeDepartments}" th:value="${chargeDepartment.id}" th:text="${chargeDepartment.code}"></option>
-				</select>
+				<label class="control-label"> Charge Department </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{chargeDepartmentId}" id="chargeDepartmentId">
+					<input type="text" th:field="*{chargeDepartmentName}" id="chargeDepartmentName" readonly placeholder="Please specify a account">
+				</div>
 			</div>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-6">
 			<div class="form-group">
-				<label class="control-label"> Purchase Currency <span class="symbol required"></span>
-				</label> 
-				<select id="purchaseCurrency" th:field="*{purchaseCurrencyId}"class="search-select" style="width: 100%;">
-					<option value="">&nbsp;</option>
-					<option th:each="currency : ${currencies}" th:value="${currency.id}" th:text="${currency.name}"></option>
-				</select>
+				<label class="control-label"> Purchase Currency </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{purchaseCurrencyId}" id="purchaseCurrencyId">
+					<input type="text" th:field="*{purchaseCurrencyName}" id="purchaseCurrencyName" readonly>
+				</div>
 			</div>
 		</div>
 		<div class="col-md-4">

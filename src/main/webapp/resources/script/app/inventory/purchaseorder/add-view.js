@@ -1,11 +1,4 @@
 var PurchaseOrderAdd = function () {
-
-	var runSupplierBusinessSelect = function () {
-		$("#supplierBusiness").select2({
-			placeholder: "Select a Supplier",
-			allowClear: true
-		});
-	};
 	
     var runWorkOrderInput = function () {
         $("#mrnWoNo").inputClear({
@@ -19,63 +12,10 @@ var PurchaseOrderAdd = function () {
 			allowClear: true
 		});
 	};
-
-    var runBillToLocationSelect = function () {
-        $("#shipToLocation").select2({
-            placeholder: "Select a Location",
-            allowClear: true
-        });
-    };
-
-    var runShipToLocationSelect = function () {
-    	$("#billToLocation").select2({
-    		placeholder: "Select a Location",
-    		allowClear: true
-    	});
-    };
-    
-    var runSupplierContrySelect = function () {
-    	$("#supplierCountry").select2({
-    		placeholder: "Select a Country",
-    		allowClear: true
-    	});
-    };
-    var runShipingContrySelect = function () {
-    	$("#shipToCountry").select2({
-    		placeholder: "Select a Country",
-    		allowClear: true
-    	});
-    };
-    var runBillingContrySelect = function () {
-        $("#billToCountry").select2({
-            placeholder: "Select a Country",
-            allowClear: true
-        });
-    };
-
-    var runChargeDepartmentSelect = function () {
-    	$("#chargeDepartment").select2({
-    		placeholder: "Select a Charge Department",
-    		allowClear: true
-    	});
-    };
-    var runAccountSelect = function () {
-    	$("#account").select2({
-    		placeholder: "Select a Account",
-    		allowClear: true
-    	});
-    };
     
     var runBillingTermSelect = function () {
     	$("#billingTerms").select2({
     		placeholder: "Select Billing Term",
-    		allowClear: true
-    	});
-    };
-    
-    var runCurrencySelect = function () {
-    	$("#purchaseCurrency").select2({
-    		placeholder: "Select Currency",
     		allowClear: true
     	});
     };
@@ -244,16 +184,7 @@ var PurchaseOrderAdd = function () {
 
         init: function () {
             runValidator();
-            runSupplierBusinessSelect();
-            runBillToLocationSelect();
-            runShipToLocationSelect();
-            runSupplierContrySelect();
-            runShipingContrySelect();
-            runBillingContrySelect();
-            runChargeDepartmentSelect();
-            runAccountSelect();
             runBillingTermSelect();
-            runCurrencySelect();
             runDatePicker();
             runSendUsingSelect();
             runAdditionalCostTypeSelect();

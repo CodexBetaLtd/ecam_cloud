@@ -1,19 +1,19 @@
-package com.codex.ecam.mappers.purchasing;
+package com.codex.ecam.mappers.purchasing.purchaseorder;
 
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderAdditionalCostDTO;
 import com.codex.ecam.mappers.GenericMapper;
 import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderAdditionalCost;
 
-public class PurchasOrderAdditionalCostMapper extends GenericMapper<PurchaseOrderAdditionalCost, PurchaseOrderAdditionalCostDTO> {
+public class PurchaseOrderAdditionalCostMapper extends GenericMapper<PurchaseOrderAdditionalCost, PurchaseOrderAdditionalCostDTO> {
 
-	private static PurchasOrderAdditionalCostMapper instance = null;
+	private static PurchaseOrderAdditionalCostMapper instance = null;
 
-    private PurchasOrderAdditionalCostMapper() {
+    private PurchaseOrderAdditionalCostMapper() {
     }
 
-    public static PurchasOrderAdditionalCostMapper getInstance() {
+    public static PurchaseOrderAdditionalCostMapper getInstance() {
         if (instance == null) {
-            instance = new PurchasOrderAdditionalCostMapper();
+            instance = new PurchaseOrderAdditionalCostMapper();
         }
         return instance;
     }

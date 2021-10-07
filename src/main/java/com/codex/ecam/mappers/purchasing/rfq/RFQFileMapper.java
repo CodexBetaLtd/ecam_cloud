@@ -1,26 +1,26 @@
-package com.codex.ecam.mappers.purchasing;
+package com.codex.ecam.mappers.purchasing.rfq;
 
-import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
+import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
 import com.codex.ecam.mappers.GenericMapper;
-import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
+import com.codex.ecam.model.inventory.rfq.RFQFile;
 
-public class PurchaseOrderFileMapper extends GenericMapper<PurchaseOrderFile, PurchaseOrderFileDTO>{
+public class RFQFileMapper extends GenericMapper<RFQFile, RFQFileDTO>{
 
-	private static PurchaseOrderFileMapper instance = null;
+	private static RFQFileMapper instance = null;
 
-	private PurchaseOrderFileMapper() {
+	private RFQFileMapper() {
 	}
 
-	public static PurchaseOrderFileMapper getInstance() {
+	public static RFQFileMapper getInstance() {
 		if (instance == null) {
-			instance = new PurchaseOrderFileMapper();
+			instance = new RFQFileMapper();
 		}
 		return instance;
 	}
 
 	@Override
-	public PurchaseOrderFileDTO domainToDto(PurchaseOrderFile domain) throws Exception {
-		PurchaseOrderFileDTO dto = new PurchaseOrderFileDTO();
+	public RFQFileDTO domainToDto(RFQFile domain) throws Exception {
+		RFQFileDTO dto = new RFQFileDTO();
 
 		dto.setId(domain.getId());
 		dto.setItemDescription(domain.getItemDescription());
@@ -34,8 +34,8 @@ public class PurchaseOrderFileMapper extends GenericMapper<PurchaseOrderFile, Pu
 	}
 
 	@Override
-	public PurchaseOrderFileDTO domainToDtoForDataTable(PurchaseOrderFile domain) throws Exception {
-		PurchaseOrderFileDTO dto = new PurchaseOrderFileDTO();
+	public RFQFileDTO domainToDtoForDataTable(RFQFile domain) throws Exception {
+		RFQFileDTO dto = new RFQFileDTO();
 
 		dto.setId(domain.getId());
 		dto.setItemDescription(domain.getItemDescription());
@@ -47,7 +47,7 @@ public class PurchaseOrderFileMapper extends GenericMapper<PurchaseOrderFile, Pu
 	}
 
 	@Override
-	public void dtoToDomain(PurchaseOrderFileDTO dto, PurchaseOrderFile domain) throws Exception {
+	public void dtoToDomain(RFQFileDTO dto, RFQFile domain) throws Exception {
 		domain.setId(dto.getId());
 		domain.setItemDescription(dto.getItemDescription());
 		domain.setFileLocation(dto.getFileLocation());

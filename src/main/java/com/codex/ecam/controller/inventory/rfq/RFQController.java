@@ -242,8 +242,6 @@ public class RFQController {
 		model.addAttribute("rfq", rfq);
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
-		model.addAttribute("sites", assetService.findAllSiteByLevel());
-		model.addAttribute("countries", countryService.findAll());
 		model.addAttribute("currencies", currencyService.findAll());
 		model.addAttribute("shippingTypes", ShippingType.getShippingTypeList());
 	}

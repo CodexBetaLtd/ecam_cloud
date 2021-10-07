@@ -10,14 +10,14 @@ var TabReceiving = function() {
     };
     
     function initInputClearShipTo(){
-        $("#shipToId").inputClear({
+        $("#shipToName").inputClear({
             placeholder:"Please specify a ship to location",
             btnMethod:"TabReceiving.addShipTo()",
         });
     };
     
     function initInputClearCountry(){
-        $("#shipToCountry").inputClear({
+        $("#shipToCountryName").inputClear({
             placeholder:"Please specify a country",
             btnMethod:"TabReceiving.addCountry()",
         });

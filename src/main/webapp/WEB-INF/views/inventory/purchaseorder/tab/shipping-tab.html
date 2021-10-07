@@ -5,38 +5,30 @@
 <div th:fragment="shippingTabFragment">
 	<div class="row">
 		<div class="col-md-4">
-           <div class="form-group">
-              <label class="control-label">
-              	Supplier <span class="symbol required"></span>
-              </label>
-              <select  id="supplierBusiness" th:field="*{supplierId}"class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
-              </select>
-          </div>
-		</div>
-		<div class="col-md-4">
 			<div class="form-group">
-              <label class="control-label">
-              	Ship to <span class="symbol required"></span>
-              </label>
-              <select id="shipToLocation" th:field="*{shipToId}" class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="site : ${sites}"
-					th:value="${site.id}" th:text="${site.name}"></option>
-              </select>
+				<label class="control-label"> Supplier </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{supplierId}" id="supplierId">
+					<input type="text" th:field="*{supplierName}" id="supplierName" readonly placeholder="Please specify a supplier">
+				</div>
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="form-group">
-              <label class="control-label">
-              	Bill to <span class="symbol required"></span>
-              </label>
-              <select id="billToLocation" th:field="*{billToId}" class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="site : ${sites}"
-					th:value="${site.id}" th:text="${site.name}"></option>
-              </select>
+				<label class="control-label"> Ship To </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{shipToId}" id="shipToId">
+					<input type="text" th:field="*{shipToName}" id="shipToName" readonly placeholder="Please specify a location">
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label"> Bill To </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{billToId}" id="billToId">
+					<input type="text" th:field="*{billToName}" id="billToName" readonly placeholder="Please specify a location">
+				</div>
 			</div>
 		</div>
 	</div>
@@ -122,39 +114,30 @@
 	</div>
 	<div class="row">
 		<div class="col-md-4">
-		 	<div class="form-group">
-              <label class="control-label">
-              	Country <span class="symbol required"></span>
-              </label>
-              <select id="supplierCountry" th:field="*{supplierCountry}" class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="country : ${countries}"
-					th:value="${country.id}" th:text="${country.name}"></option>
-              </select>
-          </div>
-		</div>
-		<div class="col-md-4">
 			<div class="form-group">
-              <label class="control-label">
-              	Country <span class="symbol required"></span>
-              </label>
-              <select  id="shipToCountry" th:field="*{shipToCountry}"class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="country : ${countries}"
-					th:value="${country.id}" th:text="${country.name}"></option>
-              </select>
+				<label class="control-label"> Country </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{supplierCountry}" id="supplierCountry">
+					<input type="text" th:field="*{supplierCountryName}" id="supplierCountryName" readonly>
+				</div>
 			</div>
 		</div>
 		<div class="col-md-4">
 			<div class="form-group">
-              <label class="control-label">
-              	Country <span class="symbol required"></span>
-              </label>
-              <select id="billToCountry" th:field="*{billToCountry}"class="search-select" style="width:100%;">
-				<option value="">&nbsp;</option>
-				<option th:each="country : ${countries}"
-					th:value="${country.id}" th:text="${country.name}"></option>
-              </select>
+				<label class="control-label"> Country </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{shipToCountry}" id="shipToCountry">
+					<input type="text" th:field="*{shipToCountryName}" id="shipToCountryName" readonly>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="form-group">
+				<label class="control-label"> Country </label>
+				<div class="input-group">
+					<input type="hidden" th:field="*{billToCountry}" id="billToCountry">
+					<input type="text" th:field="*{billToCountryName}" id="billToCountryName" readonly>
+				</div>
 			</div>
 		</div>
 	</div>

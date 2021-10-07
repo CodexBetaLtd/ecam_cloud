@@ -1,4 +1,4 @@
-package com.codex.ecam.mappers.purchasing;
+package com.codex.ecam.mappers.purchasing.purchaseorder;
 
 import com.codex.ecam.constants.PurchaseOrderStatus;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;

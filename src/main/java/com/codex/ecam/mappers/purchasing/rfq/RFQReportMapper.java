@@ -1,4 +1,4 @@
-package com.codex.ecam.mappers.purchasing;
+package com.codex.ecam.mappers.purchasing.rfq;
 
 import com.codex.ecam.dto.inventory.rfq.RFQDTO;
 import com.codex.ecam.dto.inventory.rfq.RFQRepDTO;

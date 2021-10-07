@@ -3,6 +3,8 @@ package com.codex.ecam.service.admin.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
@@ -34,16 +36,18 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public DataTablesOutput<AccountDTO> findAll(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<Account> domainOut;
 
 		AccountSearchPropertyMapper.getInstance().generateDataTableInput(input);
 
-		if(AuthenticationUtil.isAuthUserAdminLevel()){
-			domainOut = accountDao.findAll(input);
-		} else {
-			final Specification<Account> specification = (root, query, cb) -> cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness());
-			domainOut = accountDao.findAll(input, specification);
-		}
+		final Specification<Account> specification = (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			if (AuthenticationUtil.isAuthUserSystemLevel()) {
+				predicates.add(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+			}
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
+
+		final DataTablesOutput<Account> domainOut = accountDao.findAll(input, specification);
 
 		final DataTablesOutput<AccountDTO> out = AccountMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 

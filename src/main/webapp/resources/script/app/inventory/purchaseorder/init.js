@@ -4,6 +4,8 @@ jQuery(document).ready(function () {
     TabFile.init();
     TaxTab.init();
     PurchaseOrderAdd.init();
+    TabShippingReceiving.init();
+    TabAccount.init();
 
     /*********************************************************************
      * init

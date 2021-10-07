@@ -16,39 +16,47 @@ public class PurchaseOrderDTO extends BaseDTO {
 	private Integer siteId;
 	private Integer accountId;
 	private Integer chargeDepartmentId;
-	private String code;
-	private PurchaseOrderStatus purchaseOrderstatus = PurchaseOrderStatus.DRAFT;
 	private Integer purchaseCurrencyId;
-	private String statusName;
-	private Date expectedDeliveryDate;
-	private BillingTerm billingTermId;
-
 	private Integer supplierId;
+	private Integer supplierCountry;
+	private Integer billToId;
+	private Integer billToCountry;
+	private Integer shipToId;
+	private Integer shipToCountry;
+	private Integer taxId;
+
+	private String code;
+	private String statusName;
+	private String accountName;
+	private String purchaseCurrencyName;
 	private String supplierName;
 	private String supplierAddress;
 	private String supplierCity;
 	private String supplierProvince;
 	private String supplierPostalCode;
-	private Integer supplierCountry;
 	private String supplierEmail;
-
-	private Integer billToId;
+	private String supplierCountryName;
+	private String billToName;
 	private String billToAddress;
 	private String billingCity;
 	private String billingProvince;
 	private String billingPostalCode;
-	private Integer billToCountry;
-
-	private Integer shipToId;
+	private String billToCountryName;
+	private String shipToName;
 	private String shipToAddress;
 	private String shippingCity;
 	private String shippingProvince;
 	private String shippingPostalCode;
-	private Integer shipToCountry;
-	private User user;
-	
-	private Integer taxId;
+	private String shipToCountryName;
+	private String chargeDepartmentName;
 	private String taxName;
+
+	private User user;
+
+	private Date expectedDeliveryDate;
+
+	private PurchaseOrderStatus purchaseOrderstatus = PurchaseOrderStatus.DRAFT;
+	private BillingTerm billingTermId;
 
 	private List<PurchaseOrderAdditionalCostDTO> additionalCostDTOs = new ArrayList<>();
 	private List<PurchaseOrderItemDTO> items = new ArrayList<>();
@@ -56,7 +64,7 @@ public class PurchaseOrderDTO extends BaseDTO {
 	private List<PurchaseOrderNotificationDTO> notificationDTOs = new ArrayList<>();
 	private List<PurchaseOrderChangeLogDTO> purchaseOrderChangeLogDTOs = new ArrayList<>();
 	private List<PurchaseOrderFileDTO> purchaseOrderFileDTOs = new ArrayList<>();
-    private List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs = new ArrayList<>();
+	private List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs = new ArrayList<>();
 
 	public Integer getId() {
 		return id;
@@ -306,9 +314,9 @@ public class PurchaseOrderDTO extends BaseDTO {
 		this.items = items;
 	}
 
-    public List<PurchaseOrderAdditionalCostDTO> getAdditionalCostDTOs() {
-        return additionalCostDTOs;
-    }
+	public List<PurchaseOrderAdditionalCostDTO> getAdditionalCostDTOs() {
+		return additionalCostDTOs;
+	}
 
 	public void setAdditionalCostDTOs(List<PurchaseOrderAdditionalCostDTO> additionalCostDTOs) {
 		this.additionalCostDTOs = additionalCostDTOs;
@@ -338,13 +346,13 @@ public class PurchaseOrderDTO extends BaseDTO {
 		this.supplierEmail = supplierEmail;
 	}
 
-    public List<PurchaseOrderNotificationDTO> getNotificationDTOs() {
-        return notificationDTOs;
-    }
+	public List<PurchaseOrderNotificationDTO> getNotificationDTOs() {
+		return notificationDTOs;
+	}
 
-    public void setNotificationDTOs(List<PurchaseOrderNotificationDTO> notificationDTOs) {
-        this.notificationDTOs = notificationDTOs;
-    }
+	public void setNotificationDTOs(List<PurchaseOrderNotificationDTO> notificationDTOs) {
+		this.notificationDTOs = notificationDTOs;
+	}
 
 	public List<PurchaseOrderChangeLogDTO> getPurchaseOrderChangeLogDTOs() {
 		return purchaseOrderChangeLogDTOs;
@@ -385,7 +393,69 @@ public class PurchaseOrderDTO extends BaseDTO {
 	public void setPurchaseOrderTaxDTOs(List<PurchaseOrderTaxDTO> purchaseOrderTaxDTOs) {
 		this.purchaseOrderTaxDTOs = purchaseOrderTaxDTOs;
 	}
-    
-	
-    
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public String getSupplierCountryName() {
+		return supplierCountryName;
+	}
+
+	public String getBillToName() {
+		return billToName;
+	}
+
+	public String getBillToCountryName() {
+		return billToCountryName;
+	}
+
+	public String getShipToName() {
+		return shipToName;
+	}
+
+	public String getShipToCountryName() {
+		return shipToCountryName;
+	}
+
+	public String getChargeDepartmentName() {
+		return chargeDepartmentName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public void setSupplierCountryName(String supplierCountryName) {
+		this.supplierCountryName = supplierCountryName;
+	}
+
+	public void setBillToName(String billToName) {
+		this.billToName = billToName;
+	}
+
+	public void setBillToCountryName(String billToCountryName) {
+		this.billToCountryName = billToCountryName;
+	}
+
+	public void setShipToName(String shipToName) {
+		this.shipToName = shipToName;
+	}
+
+	public void setShipToCountryName(String shipToCountryName) {
+		this.shipToCountryName = shipToCountryName;
+	}
+
+	public void setChargeDepartmentName(String chargeDepartmentName) {
+		this.chargeDepartmentName = chargeDepartmentName;
+	}
+
+	public String getPurchaseCurrencyName() {
+		return purchaseCurrencyName;
+	}
+
+	public void setPurchaseCurrencyName(String purchaseCurrencyName) {
+		this.purchaseCurrencyName = purchaseCurrencyName;
+	}
+
 }

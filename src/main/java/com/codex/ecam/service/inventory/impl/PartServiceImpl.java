@@ -47,7 +47,7 @@ import com.codex.ecam.mappers.inventory.part.PartMapper;
 import com.codex.ecam.mappers.inventory.part.PartNotificationMapper;
 import com.codex.ecam.mappers.inventory.stock.StockMapper;
 import com.codex.ecam.mappers.inventory.stock.StockNotificationMapper;
-import com.codex.ecam.mappers.purchasing.PurchaseOrderItemMapper;
+import com.codex.ecam.mappers.purchasing.purchaseorder.PurchaseOrderItemMapper;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.asset.AssetConsumingReference;
 import com.codex.ecam.model.asset.AssetUser;

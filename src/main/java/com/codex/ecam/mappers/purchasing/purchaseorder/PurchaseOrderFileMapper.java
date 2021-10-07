@@ -1,26 +1,26 @@
-package com.codex.ecam.mappers.purchasing;
+package com.codex.ecam.mappers.purchasing.purchaseorder;
 
-import com.codex.ecam.dto.inventory.rfq.RFQFileDTO;
+import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderFileDTO;
 import com.codex.ecam.mappers.GenericMapper;
-import com.codex.ecam.model.inventory.rfq.RFQFile;
+import com.codex.ecam.model.inventory.purchaseOrder.PurchaseOrderFile;
 
-public class RFQFileMapper extends GenericMapper<RFQFile, RFQFileDTO>{
+public class PurchaseOrderFileMapper extends GenericMapper<PurchaseOrderFile, PurchaseOrderFileDTO>{
 
-	private static RFQFileMapper instance = null;
+	private static PurchaseOrderFileMapper instance = null;
 
-	private RFQFileMapper() {
+	private PurchaseOrderFileMapper() {
 	}
 
-	public static RFQFileMapper getInstance() {
+	public static PurchaseOrderFileMapper getInstance() {
 		if (instance == null) {
-			instance = new RFQFileMapper();
+			instance = new PurchaseOrderFileMapper();
 		}
 		return instance;
 	}
 
 	@Override
-	public RFQFileDTO domainToDto(RFQFile domain) throws Exception {
-		RFQFileDTO dto = new RFQFileDTO();
+	public PurchaseOrderFileDTO domainToDto(PurchaseOrderFile domain) throws Exception {
+		PurchaseOrderFileDTO dto = new PurchaseOrderFileDTO();
 
 		dto.setId(domain.getId());
 		dto.setItemDescription(domain.getItemDescription());
@@ -34,8 +34,8 @@ public class RFQFileMapper extends GenericMapper<RFQFile, RFQFileDTO>{
 	}
 
 	@Override
-	public RFQFileDTO domainToDtoForDataTable(RFQFile domain) throws Exception {
-		RFQFileDTO dto = new RFQFileDTO();
+	public PurchaseOrderFileDTO domainToDtoForDataTable(PurchaseOrderFile domain) throws Exception {
+		PurchaseOrderFileDTO dto = new PurchaseOrderFileDTO();
 
 		dto.setId(domain.getId());
 		dto.setItemDescription(domain.getItemDescription());
@@ -47,7 +47,7 @@ public class RFQFileMapper extends GenericMapper<RFQFile, RFQFileDTO>{
 	}
 
 	@Override
-	public void dtoToDomain(RFQFileDTO dto, RFQFile domain) throws Exception {
+	public void dtoToDomain(PurchaseOrderFileDTO dto, PurchaseOrderFile domain) throws Exception {
 		domain.setId(dto.getId());
 		domain.setItemDescription(dto.getItemDescription());
 		domain.setFileLocation(dto.getFileLocation());

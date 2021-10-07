@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.codex.ecam.constants.*;
 import com.codex.ecam.dto.inventory.purchaseOrder.PurchaseOrderDTO;
 import com.codex.ecam.result.RestResult;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.inventory.MRNResult;
 import com.codex.ecam.result.purchasing.PurchaseOrderResult;
 import com.codex.ecam.result.purchasing.RFQResult;
@@ -118,6 +117,42 @@ public class PurchaseOrderController {
 	@RequestMapping(value = "/file-add-modal-view", method = RequestMethod.GET)
 	public String getFileAddView(Model model) {
 		return "inventory/purchaseorder/modal/file-add-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/departments", method = RequestMethod.GET)
+	public String getDepartmentModalView(Model model, @RequestParam(name = "title", defaultValue = "Department(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/departments";
+	}
+
+	@RequestMapping(value = "/view/modal/suppliers", method = RequestMethod.GET)
+	public String getSupplierModalView(Model model, @RequestParam(name = "title", defaultValue = "Supplier(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/suppliers";
+	}
+
+	@RequestMapping(value = "/view/modal/accounts", method = RequestMethod.GET)
+	public String getAccountsModalView(Model model, @RequestParam(name = "title", defaultValue = "Account(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/accounts";
+	}
+
+	@RequestMapping(value = "/view/modal/currencies", method = RequestMethod.GET)
+	public String getCurrencyModalView(Model model, @RequestParam(name = "title", defaultValue = "Currency(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/currencies";
+	}
+
+	@RequestMapping(value = "/view/modal/countries", method = RequestMethod.GET)
+	public String getCountryModalView(Model model, @RequestParam(name = "title", defaultValue = "Country(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/countries";
+	}
+
+	@RequestMapping(value = "/view/modal/sites", method = RequestMethod.GET)
+	public String getSiteModalView(Model model, @RequestParam(name = "title", defaultValue = "Site(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/sites";
 	}
 
 	/*********************************************************************

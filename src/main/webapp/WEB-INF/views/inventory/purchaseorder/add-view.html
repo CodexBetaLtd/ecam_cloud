@@ -48,8 +48,8 @@
 
 		<!-- start: PAGE -->
 		<div class="main-content">
-			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
-			<div id="item-add-modal" class="modal datatable fade" role="dialog"tabindex="-1" style="margin-top:10px; position: relative; overflow:hidden" data-focus-on="input:first" ></div>
+			<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
+			<div id="item-add-modal" class="modal datatable fade" role="dialog"tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 			
 			<div th:replace="inventory/purchaseorder/modal/status-change-modal:: purchaseOrderStatusModalFragment"></div>
 
@@ -238,8 +238,7 @@
 												<label class="control-label"> Tax </label>
 												<div class="input-group">
 													<input type="hidden" th:field="*{taxId}" id="taxId">
-													<input type="text" th:field="*{taxName}" id="taxName"
-														readonly placeholder="Please Specify a Tax">
+													<input type="text" th:field="*{taxName}" id="taxName" readonly placeholder="Please Specify a Tax">
 												</div>
 											</div>
 										</div>
@@ -356,7 +355,7 @@
 	<script type="text/javascript" th:src="@{/resources/script/libs/ckeditor/ckeditor.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/dropzone.min.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
-	<script type="text/javascript"th:src="@{/resources/script/libs/moment.min.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
 
 	<!-- start: DATATABLE RESPONSIVE JAVASCRIPTS -->
 	<div th:include="template/commonjs :: commonjstables"></div>
@@ -373,6 +372,8 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/additional-cost-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/file-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/tax-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/account-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/tab/shipping-receiving-tab.js}"></script>
 
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/add-view.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/modal/item-modal.js}"></script>
@@ -382,6 +383,12 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-assets.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-workorders.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-tax.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-accounts.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-charge-departments.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-countries.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-currencies.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-suppliers.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/inventory/purchaseorder/datatable/dt-po-sites.js}"></script>
 
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 
@@ -393,7 +400,6 @@
         var thymeLeafDiscussions = [[${purchaseOrder.discussionDTOs}]];
         var thymeLeafPurchaseOrderNotifications = [[${purchaseOrder.notificationDTOs}]];
         var taxes = [[${purchaseOrder.purchaseOrderTaxDTOs}]];
-        console.log(thymeLeafItems)
 
 		var items = [];
 		var poItemtax = [];
