@@ -51,6 +51,19 @@ public class PriorityServiceImpl implements PriorityService {
 	}
 
 	@Override
+	public DataTablesOutput<PriorityDTO> findAllByBusiness(FocusDataTablesInput input, Integer id) throws Exception {
+
+		PrioritySearchPropertyMapper.getInstance().generateDataTableInput(input);
+
+		final Specification<Priority> specification = (root, query, cb) -> cb.equal(root.get("business").get("id"), id);
+
+		final DataTablesOutput<Priority> domainOut = priorityDao.findAll(input, specification);
+
+		return PriorityMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+
+	}
+
+	@Override
 	public PriorityDTO findById(Integer id) throws Exception {
 		final Priority domain = findEntityById(id);
 		if (domain != null) {

@@ -14,6 +14,8 @@ public interface MaintenanceTypeService {
 
 	DataTablesOutput<MaintenanceTypeDTO> findAll(FocusDataTablesInput input) throws Exception;
 
+	DataTablesOutput<MaintenanceTypeDTO> findByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
+
 	MaintenanceTypeDTO findById(Integer id) throws Exception;
 
 	MaintenanceTypeResult delete(Integer id);

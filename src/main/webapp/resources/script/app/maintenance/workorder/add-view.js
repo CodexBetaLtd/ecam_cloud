@@ -107,35 +107,123 @@ var WorkorderAdd = function () {
 //			WorkorderAdd.woClosedModalView();
 //		});		
 //	};
-	
-    var initBtnAssignedUser = function () {
-        $("#requestedByUserName").inputClear({
-            placeholder: "Select assigned User",
-            btnMethod: "WorkorderAdd.woAssignedUserView()",
-        });
+    
+    /************************************************
+     * Initialize InputClear Components
+     ************************************************/
+    
+    function initInputClearComponents() {
+        initInputClearProject();
+        initInputClearMaintenanceType();
+        initInputClearPriorities();
     };
 
-    var initBtnCompletedUser = function () {
-        $("#completedByUserName").inputClear({
-            placeholder: "Select Completed User",
-            btnMethod: "WorkorderAdd.woCompletedUserView()"
-        });
-    };
-
-    var initBtnProjectName = function () {
+    
+    function initInputClearProject() {
         $("#projectName").inputClear({
             placeholder: "Select Project",
             btnMethod: "WorkorderAdd.woProjectView()"
         });
     };
+    
+    function initInputClearMaintenanceType() {
+        $("#maintenanceTypeName").inputClear({
+            placeholder: "Please specify a maintenance type",
+            btnMethod: "WorkorderAdd.addMaintenanceType()"
+        });
+    };
 
+    function initInputClearPriorities() {
+        $("#priorityName").inputClear({
+            placeholder: "Please specify a priority",
+            btnMethod: "WorkorderAdd.addPriority()"
+        });
+    };
+    
+    /**********************************************
+     * Modals
+     **********************************************/
+    
+    var woProjectView = function () {
+        var $modal = $('#master-modal-datatable');
+        var bizId = $("#businessId option:selected").val();
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../workorder/project-select-modal-view';
+            $modal.load(url, '', function () {
+                woProject.woProjects("WorkorderAdd.setWOProject", bizId);
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    var woStatusChangeView = function(status) {
+        var $modal = $("#master-modal-datatable");
+        
+        var woId = $("#woId").val();
+        var note = "Status Change [ " + $("#workOrderStatus").val() + " -> " + status + " ]";
+        
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../workorder/statuschangeview';
+            $modal.load(url, '', function () {
+                StatusChangeModal.init(woId, status, note); 
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    function initModalMaintenanceTypeSelect() {
+        var $modal = $('#master-modal-datatable');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        var bizId = $("#businessId").val();
+        setTimeout(function () {
+            var url = '../workorder/view/modal/maintenance-types';
+            $modal.load(url, '', function () {
+                DatatableModalMaintenanceTypes.init(
+                        "master-modal-datatable",
+                        "tbl_maintenance_types",
+                        "../restapi/maintenance-type/tabledata?bizId=" + bizId,
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    function initModalPriotritySelect() {
+        var $modal = $('#master-modal-datatable');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        var bizId = $("#businessId").val();
+        setTimeout(function () {
+            var url = '../workorder/view/modal/priorities';
+            $modal.load(url, '', function () {
+                DatatableModalPriorities.init(
+                        "master-modal-datatable",
+                        "tbl_priorities",
+                        "../restapi/priority/tabledata?bizId=" + bizId,
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    /************************************************
+     * Initialize DatePickers
+     ************************************************/
+    
     var runDatePicker = function () {
         $('.date-picker').datepicker({
             autoclose: true,
             container: '#picker-container'
         });
     };
-
+    
+    /************************************************
+     * Initialize Select2 Components
+     ************************************************/
+    
     var runBusinessSelect = function () {
         $("#businessId").select2({
             placeholder: "Select a Business",
@@ -146,34 +234,6 @@ var WorkorderAdd = function () {
     var runSiteSelect = function () {
         $("#siteId").select2({
             placeholder: "Select a Site",
-            allowClear: true
-        });
-    };
-
-    var runMaintainanceTypeSelect = function () {
-        $("#maintenanceTypeId").select2({
-            placeholder: "Select a Maintanence Type",
-            allowClear: true
-        });
-    };
-
-    var runPrioritySelect = function () {
-        $("#priorityId").select2({
-            placeholder: "Select a priority",
-            allowClear: true
-        });
-    };
-
-    var runAccountSelect = function () {
-        $("#accountId").select2({
-            placeholder: "Select a Account",
-            allowClear: true
-        });
-    };
-
-    var runChargeDepartmentSelect = function () {
-        $("#chargeDepartmentId").select2({
-            placeholder: "Select a Charge Department",
             allowClear: true
         });
     };
@@ -240,11 +300,15 @@ var WorkorderAdd = function () {
     	$("#businessId").change(function() {
 			var businessId = $("#businessId option:selected").val(); 
 			setDataToSiteSelect2(businessId);
-			setDataToMaintenanceSelect2(businessId);
-			setDataToPrioritySelect2(businessId);
-			setWorkOrderCode(businessId);  
-			setDataToAccountSelect2(businessId);   
-			setDataToDepartmentSelect2(businessId);
+			setWorkOrderCode(businessId);
+			$("#maintenanceTypeName").val("");
+			$("#maintenanceTypeId").val("");
+			$("#priorityName").val("");
+			$("#priorityId").val("");
+			$("#accountName").val("");
+			$("#accountId").val("");
+			$("#chargeDepartmentName").val("");
+			$("#chargeDepartmentId").val("");
 		});
     };
     
@@ -272,105 +336,6 @@ var WorkorderAdd = function () {
 		});
 		
     };
-    
-    var setDataToMaintenanceSelect2 = function(id) { 
-    	
-		$.ajax({
-			type : "GET",
-			url: "../workorder/maintenance-type-by-business/" + id,
-			contentType : "application/json",
-			dataType : "json",
-			success : function(output) {
-				$("#maintenanceTypeId").find("option").remove();
-				$.each(output, function(key, typeList) {
-					$('#maintenanceTypeId').append($('<option>', {value: typeList.id}).text(typeList.name).trigger('change'));
-				});
-				runMaintainanceTypeSelect();
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				alert(xhr.status + " " + thrownError);
-			},
-			error : function(e) {
-				alert("Failed to load Maintainance Type");
-				console.log(e);
-			}
-		});
-    };
-    
-    var setDataToPrioritySelect2 = function(id) {
-		
-		$.ajax({
-			type : "GET",
-            url: "../workorder/priorities-by-business/" + id,
-			contentType : "application/json",
-			dataType : "json",
-			success : function(output) {
-				$("#priorityId").find("option").remove();
-				$.each(output, function(key, typeList) {
-                    $('#priorityId').append($('<option>', {value: typeList.id}).text(typeList.name).trigger('change'));
-				});
-				runPrioritySelect();
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				alert(xhr.status + " " + thrownError);
-			},
-			error : function(e) {
-				alert("Failed to load Priorities");
-				console.log(e);
-			}
-		});
-		
-	};
-    
-    var setDataToAccountSelect2 = function(id) {
-    	
-    	$.ajax({
-    		type : "GET",
-    		url: "../workorder/accounts-by-business/" + id,
-    		contentType : "application/json",
-    		dataType : "json",
-    		success : function(output) {
-    			$("#accountId").find("option").remove();
-    			$.each(output, function(key, accountList) {
-    				$('#accountId').append($('<option>', {value: accountList.id}).text(accountList.code).trigger('change'));
-    			}); 
-				runAccountSelect();
-    		},
-    		error : function(xhr, ajaxOptions, thrownError) {
-    			alert(xhr.status + " " + thrownError);
-    		},
-    		error : function(e) {
-    			alert("Failed to load Accounts");
-    			console.log(e);
-    		}
-    	});
-    	
-    };
-    
-    var setDataToDepartmentSelect2 = function(id) {
-		
-		$.ajax({
-			type : "GET",
-            url: "../workorder/departments-by-business/" + id,
-			contentType : "application/json",
-			dataType : "json",
-			success : function(output) {
-				$("#chargeDepartmentId").find("option").remove();
-				$.each(output, function(key, departmentList) {
-                    $('#chargeDepartmentId').append($('<option>', {value: departmentList.id}).text(departmentList.code).trigger('change'));
-				});
-	            runChargeDepartmentSelect(); 
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				alert(xhr.status + " " + thrownError);
-			},
-			error : function(e) {
-				alert("Failed to load Departments");
-				console.log(e);
-			}
-		});
-		
-	};
 	
 	var setWorkOrderCode = function(id) {
 		
@@ -408,87 +373,6 @@ var WorkorderAdd = function () {
         $('#projectName').val(EncodeDecodeComponent.getBase64().decode(name));
         $("#master-modal-datatable").modal('toggle');
     };
-
-    var setAssignedUser = function (id, name) {
-        $('#requestedByUserId').val(id);
-        $('#requestedByUserName').val(EncodeDecodeComponent.getBase64().decode(name));
-        $("#master-modal-datatable").modal('toggle');
-    };
-
-    var setCompletedUser = function (id, name) {
-        $('#completedByUserId').val(id);
-        $('#completedByUserName').val(EncodeDecodeComponent.getBase64().decode(name));
-        $("#master-modal-datatable").modal('toggle');
-    };
-
-
-    /*********************************************************************
-     * Modals
-     *********************************************************************/
-    var woProjectView = function () {
-        var $modal = $('#master-modal-datatable');
-        var bizId = $("#businessId").val();
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../workorder/project-select-modal-view';
-            $modal.load(url, '', function () {
-                woProject.woProjects("WorkorderAdd.setWOProject", bizId);
-                $modal.modal();
-            });
-        }, 1000);
-    };
-
-
-    var woAssignedUserView = function () {
-    	var businessId = $("#businessId option:selected").val(); 
-    	if (businessId != null && businessId != "" && businessId != undefined) { 
-            var $modal = $('#master-modal-datatable');
-            CustomComponents.ajaxModalLoadingProgressBar();
-            setTimeout(function () {
-                var url = '../workorder/user-select-modal-view';
-                $modal.load(url, '', function () {
-                    dtWorkOrderUser.getUserList("WorkorderAdd.setAssignedUser", businessId);
-                    $modal.modal();
-                });
-            }, 1000);
-		} else {
-			alert("Please Select a Bisuness first");
-		}
-
-    };
-
-    var woCompletedUserView = function () {
-    	var businessId = $("#businessId option:selected").val(); 
-    	if (businessId != null && businessId != "" && businessId != undefined) { 
-	        var $modal = $('#master-modal-datatable');
-	        CustomComponents.ajaxModalLoadingProgressBar();
-	        setTimeout(function () {
-	            var url = '../workorder/user-select-modal-view';
-	            $modal.load(url, '', function () {
-	                dtWorkOrderUser.getUserList("WorkorderAdd.setCompletedUser", businessId);
-	                $modal.modal();
-	            });
-	        }, 1000);		
-        } else {
-			alert("Please Select a Bisuness first");
-		}
-    };
-    
-    var woStatusChangeView = function(status) {
-    	var $modal = $("#master-modal-datatable");
-    	
-    	var woId = $("#woId").val();
-    	var note = "Status Change [ " + $("#workOrderStatus").val() + " -> " + status + " ]";
-    	
-        CustomComponents.ajaxModalLoadingProgressBar();
-    	setTimeout(function () {
-    		var url = '../workorder/statuschangeview';
-    		$modal.load(url, '', function () {
-    			StatusChangeModal.init(woId, status, note); 
-    			$modal.modal();
-    		});
-    	}, 1000);
-    }; 
     
     /**********************************************************
      * View Data Set
@@ -533,18 +417,9 @@ var WorkorderAdd = function () {
     return {
         init: function () {
             runValidator();
-            runMaintainanceTypeSelect();
-            runPrioritySelect();
-
+            initInputClearComponents();
             runDatePicker();
 
-//            initButtons();
-            initBtnAssignedUser();
-            initBtnCompletedUser();
-            initBtnProjectName();
-
-            runAccountSelect();
-            runChargeDepartmentSelect();
             runTaskTypeSelect();
             runAssingedUserSelect();
             runCompletedUserSelect();
@@ -561,17 +436,9 @@ var WorkorderAdd = function () {
         woAssignedUserView: function () {
             woAssignedUserView();
         },
-        
-        setAssignedUser: function (id, name) {
-            setAssignedUser(id, name);
-        },
 
         woCompletedUserView: function () {
             woCompletedUserView();
-        },
-        
-        setCompletedUser: function (id, name) {
-            setCompletedUser(id, name);
         },
 
         woProjectView: function () {
@@ -588,6 +455,14 @@ var WorkorderAdd = function () {
 		
 		woClosedModalView: function() {
 			woClosedModalView();
-		}
+		},
+		
+		addMaintenanceType: function () {
+		    initModalMaintenanceTypeSelect(); 
+		},
+		
+		addPriority: function () {
+		    initModalPriotritySelect(); 
+		},
     };
 }();

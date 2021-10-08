@@ -11,11 +11,7 @@ import com.codex.ecam.dto.asset.AssetMeterReadingValueDTO;
 
 public class WorkOrderDTO extends BaseDTO {
 
-	//Previous Details
-	public WorkOrderStatus previousWorkOrderStatus;
 	private Integer id;
-	private String code;
-	private String assetNameStr;
 	private Integer businessId;
 	private Integer siteId;
 	private Integer projectId;
@@ -30,9 +26,10 @@ public class WorkOrderDTO extends BaseDTO {
 	private Integer RCAActionId;
 	private Integer RCACauseId;
 	private Integer RCAProblemId;
-	private WorkOrderStatus workOrderStatus = WorkOrderStatus.OPEN;
 	private Integer currentStatusId;
-	
+	private Integer DWOENotificationsSent;
+	private Integer workOrderStatusGroup;
+
 	private String description;
 	private String businessName;
 	private String instruction;
@@ -47,19 +44,28 @@ public class WorkOrderDTO extends BaseDTO {
 	private String projectName;
 	private String completedByUserName;
 	private String requestedByUserName;
+	private String code;
+	private String assetNameStr;
+	private String priorityName;
+	private String maintenanceTypeName;
+	private String chargeDepartmentName;
+	private String accountName;
 
 	private Date forDate;
 	private Date startDate;
 	private Date dateCompleted;
 	private Date suggestedCompletionDate;
+
 	private Double assetProductionTime;
 	private Double suggestedTime;
 	private Double timeEstimatedHours;
 	private Double timeSpentHours;
 	private Double totalMaintHoursOffline;
 	private Double totalMaintHoursOnline;
-	private Integer DWOENotificationsSent;
-	private Integer workOrderStatusGroup;
+
+	//Previous Details
+	private WorkOrderStatus previousWorkOrderStatus;
+	private WorkOrderStatus workOrderStatus = WorkOrderStatus.OPEN;
 
 	//Used For WO Notification
 	private List<Integer> statusChangeNotifyUserList;
@@ -565,6 +571,38 @@ public class WorkOrderDTO extends BaseDTO {
 
 	public void setWorkOrderNoteDTOs(List<WorkOrderNoteDTO> workOrderNoteDTOs) {
 		this.workOrderNoteDTOs = workOrderNoteDTOs;
+	}
+
+	public String getPriorityName() {
+		return priorityName;
+	}
+
+	public String getMaintenanceTypeName() {
+		return maintenanceTypeName;
+	}
+
+	public String getChargeDepartmentName() {
+		return chargeDepartmentName;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setPriorityName(String priorityName) {
+		this.priorityName = priorityName;
+	}
+
+	public void setMaintenanceTypeName(String maintenanceTypeName) {
+		this.maintenanceTypeName = maintenanceTypeName;
+	}
+
+	public void setChargeDepartmentName(String chargeDepartmentName) {
+		this.chargeDepartmentName = chargeDepartmentName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 }
