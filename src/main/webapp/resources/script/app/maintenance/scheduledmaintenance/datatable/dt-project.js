@@ -1,5 +1,5 @@
 ﻿
-var ProjectSelectModal = function () {
+var DatatableModalProjects = function () {
 
     //
     // Pipelining function for DataTables. To be used to the `ajax` option of
@@ -168,18 +168,12 @@ var ProjectSelectModal = function () {
                 style: 'os',
             },
             rowClick : {
-                sFunc: "ScheduledMaintenanceAdd.selectProject",
+                sFunc: "DatatableModalProjects.setData",
                 aoData:[  
                     {
                         sName : "id",
                     }, {
                         sName : "name"
-                    }, {
-                        sName : "code"
-                    }, {
-                        sName : "assetCategoryName"
-                    }, {
-                        sName : "location"
                     },
                 ],
             },
@@ -198,11 +192,21 @@ var ProjectSelectModal = function () {
         });
 
     };
+    
+    function setData(id, name){
+        $("#projectId").val(id);
+        $("#projectName").val(name);
+        $("#master-modal-datatable").modal("toggle");
+    };
 
     return {
         //main function to initiate template pages
         init: function () {
             initDataTable();
+        },
+        
+        setData: function (id, name) {
+            setData(id, name);
         }
     };
 }();

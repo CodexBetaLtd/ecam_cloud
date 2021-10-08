@@ -10,5 +10,6 @@ jQuery(document).ready(function () {
     TabLog.init();
     TabNotification.init();
     TabFile.init();
+    TabGeneral.init();
     
 });

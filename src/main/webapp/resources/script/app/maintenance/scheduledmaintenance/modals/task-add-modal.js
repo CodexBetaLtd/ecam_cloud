@@ -52,32 +52,49 @@ var TaskAddModal = function () {
         });
         
     };
-    
-    var initAssignedUserSelect = function () {
+    /********************************************
+     * Initialize InputClear Components
+     ********************************************/
 
-        $("#stUserName").inputClear({
-            placeholder: "Select a User",
-            btnMethod: "TaskAddModal.assignUserSelectModal()",
-            tooltip: "Assign User",
-        });
-
+    function initInputClearComponents(){
+        initInputClearUser();
     };
+    
+    function initInputClearUser(){
+        $("#stUserName").inputClear({
+            placeholder:"Please specify a user",
+            btnMethod:"TaskAddModal.addUser()",
+        });
+    };   
+    
+    
+    /********************************************
+     * Initialize modal views
+     ********************************************/
 
-    /**********************************************************
-     * Init Modals
-     * ********************************************************/
-	
-    var assignUserSelectModal = function () {
-        var $modal = $('#sm-task-add-child-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../scheduledmaintenance/userselectmodalview';
-            $modal.load(url, '', function () {
-                dtScheduledMaintenanceUsers.smAssignedUsers();
-                $modal.modal();
-            });
-        }, 1000);
-    };      
+    function initModalUserSelect() {
+        
+        var businessId = $("#businessId option:selected").val(); 
+        
+        if (businessId != null && businessId != "" && businessId != undefined) { 
+            var $modal = $('#sm-task-add-child-modal');
+            CustomComponents.ajaxModalLoadingProgressBar();
+            setTimeout(function () {
+                var url = '../scheduledmaintenance/view/modal/users';
+                $modal.load(url, '', function () {
+                    DatatableModalUsers.init(
+                            "sm-task-add-child-modal",
+                            "tbl_users",
+                            "../restapi/users/usersbybusinessid?id=" + businessId,
+                            "setTaskUser");
+                    $modal.modal();
+                });
+            }, 1000);
+        } else {
+            alert("Please Select a Bisuness first");
+        }
+
+    };    
     
     /**********************************************************
      * Init Validator
@@ -174,12 +191,6 @@ var TaskAddModal = function () {
         });
     };
     
-    var setAssignedUser = function (id, name) {
-        $("#stUserId").val(id);
-        $("#stUserName").val(EncodeDecodeComponent.getBase64().decode(name));
-        $('#sm-task-add-child-modal').modal('toggle');
-    };
-    
     var addSmTask = function () {
     	
     	if ( $("#task-add-frm").valid() ) {   		
@@ -229,17 +240,13 @@ var TaskAddModal = function () {
 			setModal(modalName);			
             initButtons();
             initDropDown();
-            initAssignedUserSelect();
             initAssetSelect();         
+            initInputClearComponents();         
             initValidator();
         },
         
-        assignUserSelectModal: function () {
-        	assignUserSelectModal();
-        },
-        
-        setAssignedUser: function (id, name) {
-        	setAssignedUser(id, name);
+        addUser: function() {
+            initModalUserSelect();
         },
         
         addSmTask: function () {

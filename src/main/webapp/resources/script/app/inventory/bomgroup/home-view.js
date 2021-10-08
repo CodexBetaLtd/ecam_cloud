@@ -137,15 +137,16 @@
                 responsivePriority: 2,
             }, {
                 data: 'noOfParts',
-                responsivePriority: 4
+                responsivePriority: 4,
+                orderable: false,
+                searchable: false, 
             }, {
                 data: 'noOfAssets',
-                responsivePriority: 4
+                responsivePriority: 4,
+                orderable: false,
+                searchable: false, 
             }, { 
                 data: 'businessName',
-                responsivePriority: 4
-            }, { 
-                data: 'id',
                 responsivePriority: 4
             }],
             aoColumnDefs: [],

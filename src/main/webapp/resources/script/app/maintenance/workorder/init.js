@@ -12,5 +12,7 @@ jQuery(document).ready(function () {
     LogTab.init();
     FileTab.init();
     woNoteTab.init();
+    GeneralTab.init();
+    CompletionTab.init();
     
 });

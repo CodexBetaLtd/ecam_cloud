@@ -1,18 +1,40 @@
 var ScheduledMaintenanceAdd = function () {
+    
+    /************************************************
+     * Initialize InputClear Components
+     ************************************************/
+    
+    function initInputClearComponents() {
+        initInputClearProject();
+        initInputClearMaintenanceType();
+        initInputClearPriorities();
+    };
 
-    var initProjectSelect = function () {
+    
+    function initInputClearProject() {
         $("#projectName").inputClear({
-            placeholder: "Select a Project",
-            btnMethod: "ScheduledMaintenanceAdd.selectProjectModal()",
+            placeholder: "Select Project",
+            btnMethod: "ScheduledMaintenanceAdd.addProject()"
         });
     };
     
-    var initAssignUserSelect = function () {
-        $("#requestorName").inputClear({
-            placeholder: "Select a Assigned User",
-            btnMethod: "ScheduledMaintenanceAdd.selectAssignedUserModal()",
+    function initInputClearMaintenanceType() {
+        $("#maintenanceTypeName").inputClear({
+            placeholder: "Please specify a maintenance type",
+            btnMethod: "ScheduledMaintenanceAdd.addMaintenanceType()"
         });
     };
+
+    function initInputClearPriorities() {
+        $("#priorityName").inputClear({
+            placeholder: "Please specify a priority",
+            btnMethod: "ScheduledMaintenanceAdd.addPriority()"
+        });
+    };
+    
+    /************************************************
+     * Initialize Select2 Components
+     ************************************************/
 
     var initBusinessSelect = function () {
 		$("#businessId").select2({
@@ -20,16 +42,36 @@ var ScheduledMaintenanceAdd = function () {
 			allowClear: true
         });
 	}; 
+
+    var initSiteSelect = function () {
+        $("#siteId").select2({
+            placeholder: "Select a Site",
+            allowClear: true
+        });
+    };
+
+    var initWorkOrderStatusSelect = function () {
+        $("#workOrderStatus").select2({
+            placeholder: "Select a Work Order Status ",
+            allowClear: true
+        });
+    };
 	
 	var initAssetBusinessSelect = function(){
 		$("#businessId").change(function () { 
             var businessId = $("#businessId option:selected").val(); 
             setDataToSiteSelect2(businessId);
-			setDataToMaintenanceSelect2(businessId);
-			setDataToPrioritySelect2(businessId);
 			setScheduleMaintenanceCode(businessId);   
-			setDataToAccountSelect2(businessId);   
-			setDataToDepartmentSelect2(businessId);   
+			
+	        $("#maintenanceTypeName").val("");
+            $("#maintenanceTypeId").val("");
+            $("#priorityName").val("");
+            $("#priorityId").val("");
+            $("#accountName").val("");
+            $("#accountId").val("");
+            $("#chargeDepartmentName").val("");
+            $("#chargeDepartmentId").val("");
+            
         });
 	};
 	   
@@ -57,105 +99,6 @@ var ScheduledMaintenanceAdd = function () {
         });
 		
     };
-    
-    var setDataToMaintenanceSelect2 = function(id) { 
-    	
-		$.ajax({
-			type : "GET",
-			url: "../scheduledmaintenance/maintenance-type-by-business/" + id,
-			contentType : "application/json",
-			dataType : "json",
-			success : function(output) {
-				$("#maintenanceTypeId").find("option").remove();
-				$.each(output, function(key, typeList) {
-					$('#maintenanceTypeId').append($('<option>', {value: typeList.id}).text(typeList.name).trigger('change'));
-				});
-				initMaintainanceTypeSelect();
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				alert(xhr.status + " " + thrownError);
-			},
-			error : function(e) {
-				alert("Failed to load Maintainance Type");
-				console.log(e);
-			}
-		});
-    };
-    
-    var setDataToPrioritySelect2 = function(id) {
-    	
-    	$.ajax({
-    		type : "GET",
-    		url: "../scheduledmaintenance/priorities-by-business/" + id,
-    		contentType : "application/json",
-    		dataType : "json",
-    		success : function(output) {
-    			$("#priorityId").find("option").remove();
-    			$.each(output, function(key, typeList) {
-    				$('#priorityId').append($('<option>', {value: typeList.id}).text(typeList.name).trigger('change'));
-    			});
-    			initPrioritySelect();
-    		},
-    		error : function(xhr, ajaxOptions, thrownError) {
-    			alert(xhr.status + " " + thrownError);
-    		},
-    		error : function(e) {
-    			alert("Failed to load Priorities");
-    			console.log(e);
-    		}
-    	});
-    	
-    };
-    
-    var setDataToAccountSelect2 = function(id) {
-    	
-    	$.ajax({
-    		type : "GET",
-    		url: "../scheduledmaintenance/accounts-by-business/" + id,
-    		contentType : "application/json",
-    		dataType : "json",
-    		success : function(output) {
-    			$("#accountId").find("option").remove();
-    			$.each(output, function(key, accountList) {
-    				$('#accountId').append($('<option>', {value: accountList.id}).text(accountList.code).trigger('change'));
-    			}); 
-				initAccountSelect();
-    		},
-    		error : function(xhr, ajaxOptions, thrownError) {
-    			alert(xhr.status + " " + thrownError);
-    		},
-    		error : function(e) {
-    			alert("Failed to load Accounts");
-    			console.log(e);
-    		}
-    	});
-    	
-    };
-    
-    var setDataToDepartmentSelect2 = function(id) {
-		
-		$.ajax({
-			type : "GET",
-            url: "../scheduledmaintenance/departments-by-business/" + id,
-			contentType : "application/json",
-			dataType : "json",
-			success : function(output) {
-				$("#chargeDepartmentId").find("option").remove();
-				$.each(output, function(key, departmentList) {
-                    $('#chargeDepartmentId').append($('<option>', {value: departmentList.id}).text(departmentList.code).trigger('change'));
-				});
-	            initChargeDepartmentSelect(); 
-			},
-			error : function(xhr, ajaxOptions, thrownError) {
-				alert(xhr.status + " " + thrownError);
-			},
-			error : function(e) {
-				alert("Failed to load Departments");
-				console.log(e);
-			}
-		});
-		
-	};
 	
 	var setScheduleMaintenanceCode = function(id) { 
 		
@@ -184,49 +127,6 @@ var ScheduledMaintenanceAdd = function () {
         } 
 	};
 
-
-    var initSiteSelect = function () {
-        $("#siteId").select2({
-            placeholder: "Select a Site",
-            allowClear: true
-        });
-    };
-
-    var initMaintainanceTypeSelect = function () {
-        $("#maintenanceTypeId").select2({
-            placeholder: "Select a Maintanence Type",
-            allowClear: true
-        });
-    };
-
-    var initWorkOrderStatusSelect = function () {
-        $("#workOrderStatus").select2({
-            placeholder: "Select a Work Order Status ",
-            allowClear: true
-        });
-    };
-
-    var initPrioritySelect = function () {
-        $("#priorityId").select2({
-            placeholder: "Select a priority",
-            allowClear: true
-        });
-    };
-
-    var initAccountSelect = function () {
-        $("#accountId").select2({
-            placeholder: "Select a Account",
-            allowClear: true
-        });
-    };
-
-    var initChargeDepartmentSelect = function () {
-        $("#chargeDepartmentId").select2({
-            placeholder: "Select a Charge Department",
-            allowClear: true
-        });
-    };
-
     var initDatePicker = function () {
         $('.date-picker').datepicker({
             autoclose: true,
@@ -247,25 +147,49 @@ var ScheduledMaintenanceAdd = function () {
          );
     };
 
-    var selectProjectModal = function () {
+    function initModalProjectSelect () {
         var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
         setTimeout(function () {
             var url = '../scheduledmaintenance/projectselectmodalview';
             $modal.load(url, '', function () {
-                ProjectSelectModal.init();
+                DatatableModalProjects.init();
                 $modal.modal();
             });
         }, 1000);
     };
-
-    var selectAssignedUserModal = function () {
+    
+    function initModalMaintenanceTypeSelect() {
         var $modal = $('#master-modal-datatable');
         CustomComponents.ajaxModalLoadingProgressBar();
+        var bizId = $("#businessId").val();
         setTimeout(function () {
-            var url = '../scheduledmaintenance/userselectmodalview';
+            var url = '../scheduledmaintenance/view/modal/maintenance-types';
             $modal.load(url, '', function () {
-                UserSelectModel.init();
+                DatatableModalMaintenanceTypes.init(
+                        "master-modal-datatable",
+                        "tbl_maintenance_types",
+                        "../restapi/maintenance-type/tabledata?bizId=" + bizId,
+                        "setData"
+                );
+                $modal.modal();
+            });
+        }, 1000);
+    };
+    
+    function initModalPriotritySelect() {
+        var $modal = $('#master-modal-datatable');
+        CustomComponents.ajaxModalLoadingProgressBar();
+        var bizId = $("#businessId").val();
+        setTimeout(function () {
+            var url = '../scheduledmaintenance/view/modal/priorities';
+            $modal.load(url, '', function () {
+                DatatableModalPriorities.init(
+                        "master-modal-datatable",
+                        "tbl_priorities",
+                        "../restapi/priority/tabledata?bizId=" + bizId,
+                        "setData"
+                );
                 $modal.modal();
             });
         }, 1000);
@@ -378,36 +302,14 @@ var ScheduledMaintenanceAdd = function () {
             appendBusinessSiteDiv($('#businessId').val() );
         }
 	};
-	
-    /**********************************************************
-     * Scheduled Maintenance Scheduling
-     * ********************************************************/
-
-    var selectAssignedUser = function (id, name) {
-        $('#requestorId').val(id);
-        $('#requestorName').val(name);
-        $('#master-modal-datatable').modal('toggle');
-    };
-
-    var selectProject = function (id, name) {
-        $('#projectId').val(id);
-        $('#projectName').val(name);
-        $('#master-modal-datatable').modal('toggle');
-    };
 
     return {
         init: function () {
         	initValidator();
-            initProjectSelect();
-            initAssignUserSelect();
-            
-            initMaintainanceTypeSelect();
-            initPrioritySelect();
+            initInputClearComponents();
             
             initDatePicker();
             initWorkOrderStatusSelect();
-            initAccountSelect();
-            initChargeDepartmentSelect();
             initIsRunningSwitch();
             initSiteSelect();
             initBusinessSelect();
@@ -415,21 +317,17 @@ var ScheduledMaintenanceAdd = function () {
             setBusinessSiteView();
         },
 
-        selectAssignedUser: function (id, name) {
-            selectAssignedUser(id, name);
+        addProject: function () {
+            initModalProjectSelect();
         },
-
-        selectProjectModal: function () {
-            selectProjectModal();
+        
+        addMaintenanceType: function () {
+            initModalMaintenanceTypeSelect(); 
         },
-
-        selectAssignedUserModal: function () {
-            selectAssignedUserModal();
+        
+        addPriority: function () {
+            initModalPriotritySelect(); 
         },
-
-        selectProject: function (id, name) {
-            selectProject(id, name);
-        }
 
     };
 

@@ -1,7 +1,6 @@
-/*********************************************************************
- * Work Order User DataTable
- *********************************************************************/
-var DatatableModalUsers = function () {
+﻿
+var DatatableModalMiscellaneousExpenseTypes = function () {
+
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -28,25 +27,21 @@ var DatatableModalUsers = function () {
             if (settings.clearCache) {
                 ajax = true;
                 settings.clearCache = false;
-            } else if (cacheLower < 0 || requestStart < cacheLower
-                || requestEnd > cacheUpper) {
-                // outside cached data - need to make a request
+            } else if (cacheLower < 0 || requestStart < cacheLower || requestEnd > cacheUpper) {
                 ajax = true;
-            } else if (JSON.stringify(request.order) !== JSON
-                    .stringify(cacheLastRequest.order)
-                || JSON.stringify(request.columns) !== JSON
-                    .stringify(cacheLastRequest.columns)
-                || JSON.stringify(request.search) !== JSON
-                    .stringify(cacheLastRequest.search)) {
+            } else if (JSON.stringify(request.order) !== JSON.stringify(cacheLastRequest.order)
+                || JSON.stringify(request.columns) !== JSON.stringify(cacheLastRequest.columns)
+                || JSON.stringify(request.search) !== JSON.stringify(cacheLastRequest.search)) {
                 ajax = true;
             }
 
+            // Store the request for checking next time around
             cacheLastRequest = $.extend(true, {}, request);
 
             if (ajax) {
+                // Need data from the server
                 if (requestStart < cacheLower) {
-                    requestStart = requestStart
-                        - (requestLength * (conf.pages - 1));
+                    requestStart = requestStart - (requestLength * (conf.pages - 1));
 
                     if (requestStart < 0) {
                         requestStart = 0;
@@ -115,19 +110,20 @@ var DatatableModalUsers = function () {
                 url: url,
                 pages: 5
             }),
-            columns: [
-                {
-                    orderable: false,
-                    searchable: false,
-                    width: "8%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {data: 'fullName'},
-                {data: 'emailAddress'},
-                {data: 'personalCode'}
-            ],
+            columns: [{
+                orderable: false,
+                searchable: false,
+                width: "8%",
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            }, {
+                data: 'description'
+            }, {
+                data: 'code'
+            },{
+                data: 'businessName'
+            }],
             aoColumnDefs: [],
             oLanguage: {
                 sLengthMenu: "Show_MENU_Rows",
@@ -142,9 +138,9 @@ var DatatableModalUsers = function () {
             ],
             aLengthMenu: [
                 [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]
+                [5, 10, 15, 20, "All"] // change per page values here
             ],
-            scrollY: "195px",
+            // set the initial value
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
             bLengthChange: false,
@@ -152,13 +148,13 @@ var DatatableModalUsers = function () {
                 style: 'os',
             },
             rowClick : {
-                sFunc: 'DatatableModalUsers.' + method,
+                sFunc: 'DatatableModalMiscellaneousExpenseTypes.' + method,
                 aoData:[  
                     {
                         sName : "id",
                     }, {
-                        sName : "fullName"
-                    },
+                        sName : "code"
+                    }
                 ],
             },
         });
@@ -172,38 +168,14 @@ var DatatableModalUsers = function () {
         });
 
     };
-    
+
     var modalId = function (modal) {
         this.modalId = modal;
     };
     
-    function setAssignedUser(id, name){
-        $("#requestedByUserId").val(id);
-        $("#requestedByUserName").val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-    
-    function setCompletedUser(id, name){
-        $("#completedByUserId").val(id);
-        $("#completedByUserName").val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-    
-    function setWotAssignedUser(id, name) {
-        $('#woTaskAssignedUserId').val(id);
-        $('#woTaskAssignedUserName').val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-
-    function setWotCompletedUser(id, name) {
-        $('#woTaskCompletedUserId').val(id);
-        $('#woTaskCompletedUserName').val(name);
-        $("#" + this.modalId).modal('toggle');
-    }; 
-    
-    function setNotificationUser(id, userName) {
-        $('#woNotificationUserId').val(id);
-        $('#woNotificationUserName').val(userName);
+    function setData(id, name){
+        $("#chargeDepartmentId").val(id);
+        $("#chargeDepartmentName").val(name);
         $("#" + this.modalId).modal('toggle');
     };
     
@@ -213,26 +185,9 @@ var DatatableModalUsers = function () {
             modalId(modal);
             initTable(tableId, url, method);
         },
-        
-        setAssignedUser: function (id, name) {
-            setAssignedUser(id, name);
-        },
 
-        setCompletedUser: function (id, name) {
-            setCompletedUser(id, name);
-        },
-        
-        setWotAssignedUser: function (id, name) {
-            setWotAssignedUser(id, name);
-        },
-        
-        setWotCompletedUser: function (id, name) {
-            setWotCompletedUser(id, name);
-        },
-        
-        setNotificationUser: function (id, name) {
-            setNotificationUser(id, name);
+        setData: function (id, name) {
+            setData(id, name);
         }
     };
-
 }();

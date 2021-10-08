@@ -8,24 +8,27 @@ var TaskAddModal = function () {
 		
 	};
 	
-	var initAssignedUserSelect = function () {
-		
+	/********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearAssignedUser();
+        initInputClearCompletedUser();
+    };
+    
+    function initInputClearAssignedUser() {
         $("#woTaskAssignedUserName").inputClear({
-            placeholder: "Select Assigned User",
-            btnMethod: "TaskAddModal.assignedUserSelect()",
-            tooltip: "Select Assign User"
+            placeholder: "Select assigned User",
+            btnMethod: "TaskAddModal.addAssignedUser()",
         });
-        
     };
 
-    var initCompletedUserSelect = function () {
-    	
+    function initInputClearCompletedUser() {
         $("#woTaskCompletedUserName").inputClear({
-            placeholder: "Select Completed User",
-            btnMethod: "TaskAddModal.completedUserSelect()",
-            tooltip: "Select Completed User"
+            placeholder: "Select completed User",
+            btnMethod: "TaskAddModal.addCompletedUser()"
         });
-        
     };
 	
 	var initDropDown = function () {
@@ -65,53 +68,43 @@ var TaskAddModal = function () {
         });
         
     };
+
+    /********************************************
+     * Initialize modal views
+     ********************************************/
     
-    var assignedUserSelect = function () {
-    	var businessId = $("#businessId option:selected").val(); 
-    	if (businessId != null && businessId != "" && businessId != undefined) { 
-	        var $modal = $('#wo-task-add-child-modal');
-	        CustomComponents.ajaxModalLoadingProgressBar();
-	        setTimeout(function () {
-	            var url = '../workorder/user-select-modal-view';
-	            $modal.load(url, '', function () {
-	                dtWorkOrderUser.getUserList("TaskAddModal.setAssignedUser", businessId);
-	                $modal.modal();
-	            });
-	        }, 1000);
-    	} else {
-    		alert("Please Select a Bisuness first");
-    	}
+    function setAssignedUser() {
+        initModalUserSelect('setWotAssignedUser');
     };
 
-    var setAssignedUser = function (id, name) {
-        $('#woTaskAssignedUserId').val(id);
-        $('#woTaskAssignedUserName').val(EncodeDecodeComponent.getBase64().decode(name));
-        $('#wo-task-add-child-modal').modal('toggle');
+    function setCompletedUser() {
+        initModalUserSelect('setWotCompletedUser');
     };
+    
+    function initModalUserSelect(func) {
+        
+        var businessId = $("#businessId option:selected").val(); 
+        
+        if (businessId != null && businessId != "" && businessId != undefined) { 
+            var $modal = $('#wo-task-add-child-modal');
+            CustomComponents.ajaxModalLoadingProgressBar();
+            setTimeout(function () {
+                var url = '../workorder/view/modal/users';
+                $modal.load(url, '', function () {
+                    DatatableModalUsers.init(
+                            "wo-task-add-child-modal",
+                            "tbl_users",
+                            "../restapi/users/usersbybusinessid?id=" + businessId,
+                            func);
+                    $modal.modal();
+                });
+            }, 1000);
+        } else {
+            alert("Please Select a Bisuness first");
+        }
 
-    var completedUserSelect = function () {
-    	var businessId = $("#businessId option:selected").val(); 
-    	if (businessId != null && businessId != "" && businessId != undefined) { 
-	        var $modal = $('#wo-task-add-child-modal');
-	        CustomComponents.ajaxModalLoadingProgressBar();
-	        setTimeout(function () {
-	            var url = '../workorder/user-select-modal-view';
-	            $modal.load(url, '', function () {
-	                dtWorkOrderUser.getUserList("TaskAddModal.setCompletedUser", businessId);
-	                $modal.modal();
-	            });
-	        }, 1000);
-    	} else {
-    		alert("Please Select a Bisuness first");
-    	}
     };
-
-    var setCompletedUser = function (id, name) {
-        $('#woTaskCompletedUserId').val(id);
-        $('#woTaskCompletedUserName').val(EncodeDecodeComponent.getBase64().decode(name));
-        $('#wo-task-add-child-modal').modal('toggle');
-    };
-	
+    
 	var initValidator = function () {
         var form = $('#task-add-frm');
         var errorHandler = $('.errorHandler', form);
@@ -198,30 +191,21 @@ var TaskAddModal = function () {
 			initDropDown();
 			initAssetSelect();
 			initDatePickers();
-			initAssignedUserSelect();
-			initCompletedUserSelect();
             initValidator();
+            initInputClearComponents();
         },
         
         addTask: function () {
         	addTask();
         },
         
-        assignedUserSelect: function () {
-        	assignedUserSelect();
+        addAssignedUser: function () {
+            setAssignedUser();
         },
         
-        setAssignedUser: function (id, name) {
-        	setAssignedUser(id, name);
+        addCompletedUser: function () {
+            setCompletedUser();
         },
-        
-        completedUserSelect: function () {
-        	completedUserSelect();
-        },
-        
-        setCompletedUser: function (id, name) {
-        	setCompletedUser(id, name);
-        }
 
 	};
 	

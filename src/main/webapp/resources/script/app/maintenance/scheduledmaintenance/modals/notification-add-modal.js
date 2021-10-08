@@ -6,32 +6,50 @@ var NotificationAddModal = function () {
 			NotificationAddModal.addNotification();
         });
 		
-	};
+	};    
+	
+	/********************************************
+     * Initialize InputClear Components
+     ********************************************/
 
-	var initNotifyUserSelect = function () {
-        $("#notificationUserName").inputClear({
-            placeholder: "Select Notify User",
-            btnMethod: "NotificationAddModal.initNotifyUserSelectDataTable()",
-            tooltip: "Assign User",
-        });
+    function initInputClearComponents(){
+        initInputClearUser();
     };
     
-    var initNotifyUserSelectDataTable = function () {
-        var $modal = $('#sm-notification-dt-modal');
-        CustomComponents.ajaxModalLoadingProgressBar();
-        setTimeout(function () {
-            var url = '../scheduledmaintenance/smUserView';
-            $modal.load(url, '', function () {
-                dtScheduledMaintenanceUsers.smNotifyUsers("NotificationAddModal.setNotifyUser");
-                $modal.modal();
-            });
-        }, 1000);
-    };
+    function initInputClearUser(){
+        $("#notificationUserName").inputClear({
+            placeholder:"Please specify a user",
+            btnMethod:"NotificationAddModal.addUser()",
+        });
+    };   
+    
+    
+    /********************************************
+     * Initialize modal views
+     ********************************************/
 
-    var setNotifyUser = function (id, userName) {
-        $('#notificationUserId').val(id);
-        $('#notificationUserName').val(EncodeDecodeComponent.getBase64().decode(userName));
-        $('#sm-notification-dt-modal').modal('toggle');
+    function initModalUserSelect() {
+        
+        var businessId = $("#businessId option:selected").val(); 
+        
+        if (businessId != null && businessId != "" && businessId != undefined) { 
+            var $modal = $('#sm-notification-dt-modal');
+            CustomComponents.ajaxModalLoadingProgressBar();
+            setTimeout(function () {
+                var url = '../scheduledmaintenance/view/modal/users';
+                $modal.load(url, '', function () {
+                    DatatableModalUsers.init(
+                            "sm-notification-dt-modal",
+                            "tbl_users",
+                            "../restapi/users/usersbybusinessid?id=" + businessId,
+                            "setNotificationUser");
+                    $modal.modal();
+                });
+            }, 1000);
+        } else {
+            alert("Please Select a Bisuness first");
+        }
+
     };
 	
 	var initValidator = function () {
@@ -98,16 +116,12 @@ var NotificationAddModal = function () {
 		
 		init: function () {
 			initButtons();
-			initNotifyUserSelect();
+			initInputClearComponents();
             initValidator();
         },  
         
-        initNotifyUserSelectDataTable: function() {
-        	initNotifyUserSelectDataTable();
-        },
-
-        setNotifyUser: function (id, userName) {
-        	setNotifyUser(id, userName);
+        addUser: function() {
+            initModalUserSelect();
         },
         
         addNotification: function () {

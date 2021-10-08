@@ -34,6 +34,10 @@ public class ScheduledMaintenanceDTO extends BaseDTO {
 	private String scheduleDescription;
 	private String requestorName;
 	private String projectName;
+	private String priorityName;
+	private String maintenanceTypeName;
+	private String accountName;
+	private String chargeDepartmentName;
 
 	private Boolean notifyTechniciansWhenDWOE;
 	private Boolean notifyCreatorWhenDWOE;
@@ -334,6 +338,38 @@ public class ScheduledMaintenanceDTO extends BaseDTO {
 
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
+	}
+
+	public String getPriorityName() {
+		return priorityName;
+	}
+
+	public String getMaintenanceTypeName() {
+		return maintenanceTypeName;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public String getChargeDepartmentName() {
+		return chargeDepartmentName;
+	}
+
+	public void setPriorityName(String priorityName) {
+		this.priorityName = priorityName;
+	}
+
+	public void setMaintenanceTypeName(String maintenanceTypeName) {
+		this.maintenanceTypeName = maintenanceTypeName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public void setChargeDepartmentName(String chargeDepartmentName) {
+		this.chargeDepartmentName = chargeDepartmentName;
 	}
 
 }

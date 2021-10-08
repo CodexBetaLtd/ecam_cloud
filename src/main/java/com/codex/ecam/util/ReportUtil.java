@@ -11,8 +11,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.codex.ecam.dto.BaseReportDTO;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRParameter;
@@ -25,7 +23,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
-import net.sf.jasperreports.export.CsvExporterConfiguration;
 import net.sf.jasperreports.export.ExporterInput;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
@@ -58,7 +55,7 @@ public class ReportUtil {
 	}
 	public void generatePDF(List<?> dataList, final InputStream jasperStream,
 			final Map<String, Object> params, final OutputStream outputStream) {
-		 JRBeanCollectionDataSource beanColDataSource =new JRBeanCollectionDataSource(dataList);
+		final JRBeanCollectionDataSource beanColDataSource =new JRBeanCollectionDataSource(dataList);
 		try {
 			final JasperDesign jasperDesign = JRXmlLoader.load(jasperStream);
 			final JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
@@ -93,7 +90,7 @@ public class ReportUtil {
 	}
 
 
-	
+
 	public InputStream getInputStream(HttpServletRequest request,String pathToTemplate, String jasperFileName) throws FileNotFoundException {
 		final String filePath = request.getServletContext().getRealPath("").concat(pathToTemplate).concat(jasperFileName);
 		final InputStream jasperStream = new FileInputStream(filePath);

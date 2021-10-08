@@ -1,7 +1,7 @@
 /*********************************************************************
- * Scheduled Task Users DataTable
+ * Work Order User DataTable
  *********************************************************************/
-var dtScheduledMaintenanceUsers = function () {
+var DatatableModalUsers = function () {
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -104,29 +104,29 @@ var dtScheduledMaintenanceUsers = function () {
         });
     });
 
-    var getUserDataTable = function (userType) {
+    var initTable = function (tableId, url, method) {
         
-        var table_name = "user_select_tbl";
-        
-        var oTable = $('#' + table_name).DataTable({
+        $('#' + tableId).dataTable().fnDestroy();
+      
+        var oTable = $('#' + tableId).DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/users/getuserlist",
+                url: url,
                 pages: 5
             }),
-            columns: [{
-	                orderable: false,
-	                searchable: false,
-	                width: "8%",
-	                render: function (data, type, row, meta) {
-	                    return meta.row + meta.settings._iDisplayStart + 1;
-	                }
-            	},
+            columns: [
+                {
+                    orderable: false,
+                    searchable: false,
+                    width: "8%",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
                 {data: 'fullName'},
                 {data: 'emailAddress'},
-                {data: 'personalCode'},
-                {data: 'businessName'}
+                {data: 'personalCode'}
             ],
             aoColumnDefs: [],
             oLanguage: {
@@ -142,8 +142,9 @@ var dtScheduledMaintenanceUsers = function () {
             ],
             aLengthMenu: [
                 [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"] // change per page values here
+                [5, 10, 15, 20, "All"]
             ],
+            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
             bLengthChange: false,
@@ -151,108 +152,66 @@ var dtScheduledMaintenanceUsers = function () {
                 style: 'os',
             },
             rowClick : {
-                sFunc: "TaskAddModal.setAssignedUser",
+                sFunc: 'DatatableModalUsers.' + method,
                 aoData:[  
                     {
                         sName : "id",
                     }, {
-                        sName : "fullName",
-                        sRender : 'EncodeDecodeComponent.getBase64().encode'
+                        sName : "fullName"
                     },
                 ],
             },
         });
-        $('#' + table_name + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
-        $('#' + table_name + '_wrapper .dataTables_length select').addClass("m-wrap small");
-        $('#' + table_name + '_wrapper .dataTables_length select').select2();
-        $('#' + table_name + '_column_toggler input[type="checkbox"]').change(function () {
-            var iCol = parseInt($(this).attr("data-column"));
-            var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
-            oTable.fnSetColumnVis(iCol, (bVis ? false : true));
-        });
-
-    };
-
-    var getNotifyUsersDataTable = function (func) {
-        
-        var tableId = "tbl_scheduled_user";
-        
-        var oTable = $("#" + tableId).dataTable({
-            processing: true,
-            serverSide: true,
-            ajax: $.fn.dataTable.pipeline({
-                url: "../restapi/users/getuserlist",
-                pages: 5
-            }),
-            columns: [{
-                orderable: false,
-                searchable: false,
-                width: "8%",
-                render: function (data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-                {data: 'fullName'},
-                {data: 'emailAddress'},
-                {data: 'personalCode'},
-                {data: 'businessName'}
-            ],
-            aoColumnDefs: [],
-            oLanguage: {
-                sLengthMenu: "Show_MENU_Rows",
-                sSearch: "",
-                oPaginate: {
-                    sPrevious: "&laquo;",
-                    sNext: "&raquo;"
-                }
-            },
-            aaSorting: [
-                [1, 'asc']
-            ],
-            aLengthMenu: [
-                [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"] // change per page values here
-            ],
-            // set the initial value
-            //  iDisplayLength: 5,
-            // scrollY: "195px",
-            sPaginationType: "full_numbers",
-            sPaging: 'pagination',
-            bLengthChange: false,
-            select: {
-                style: 'os',
-            },
-            rowClick : {
-                sFunc: func,
-                aoData:[  
-                    {
-                        sName : "id",
-                    }, {
-                        sName : "fullName",
-                        sRender : 'EncodeDecodeComponent.getBase64().encode'
-                    },
-                ],
-            },
-        });
-
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-        $('#' + tableId + '_toggler input[type="checkbox"]').change(function () {
+        $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
         });
-    };
 
+    };
+    
+    var modalId = function (modal) {
+        this.modalId = modal;
+    };
+    
+    function setAssignedUser(id, name){
+        $("#requestorId").val(id);
+        $("#requestorName").val(name);
+        $("#" + this.modalId).modal('toggle');
+    };
+    
+    function setTaskUser(id, name) {
+        $('#stUserId').val(id);
+        $('#stUserName').val(name);
+        $("#" + this.modalId).modal('toggle');
+    }; 
+
+    function setNotificationUser(id, userName) {
+        $('#notificationUserId').val(id);
+        $('#notificationUserName').val(userName);
+        $("#" + this.modalId).modal('toggle');
+    };
+    
     return {
         
-        smAssignedUsers: function () {
-            getUserDataTable();
+        init: function (modal, tableId, url, method) {
+            modalId(modal);
+            initTable(tableId, url, method);
         },
         
-        smNotifyUsers: function (func) {
-            getNotifyUsersDataTable(func);
+        setAssignedUser: function (id, name) {
+            setAssignedUser(id, name);
+        },
+        
+        setTaskUser: function (id, name) {
+            setTaskUser(id, name);
+        },
+        
+        setNotificationUser: function (id, name) {
+            setNotificationUser(id, name);
         }
     };
 

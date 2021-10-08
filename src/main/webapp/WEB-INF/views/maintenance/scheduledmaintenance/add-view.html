@@ -44,8 +44,8 @@
 		<!-- start: PAGE -->
         <div class="main-content">
         
-        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 0px; bottom: 20%; top: auto; position: fixed;"></div>
-			<div id="trigger-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-bottom: 10%; margin-top: 10%; height:100%; position: fixed;"></div>
+        	<div id="common-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
+			<div id="trigger-modal" class="modal datatable fade" role="dialog" tabindex="-1" style="margin-top:10px; position: relative;" data-focus-on="input:first" ></div>
 			<div th:replace="general/modal/modal-base :: modalFragment "></div>
 			<div th:replace="general/modal/modal-base :: largeModalFragment "></div>
 			<div th:replace="general/modal/modal-base :: stackableModalFragment "></div>
@@ -121,11 +121,11 @@
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-                                                <label class="control-label"> Maintenance Type <span class="symbol required"></span></label>
-                                                <select th:field="*{maintenanceTypeId}" class="search-select" style="width: 100%;">
-													<option value="">&nbsp;</option>
-													<option th:each="maintainanceType : ${maintainanceTypes}" th:value="${maintainanceType.id}" th:text="${maintainanceType.name}"></option>
-												</select>
+												<label class="control-label"> Maintenance Type <span class="symbol required"></span>  </label>
+												<div class="input-group">
+													<input type="hidden" th:field="*{maintenanceTypeId}" id="maintenanceTypeId">
+													<input type="text" th:field="*{maintenanceTypeName}" id="maintenanceTypeName" readonly>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -151,13 +151,13 @@
 									</div>
 
 									<div class="row">
-										<div class="col-md-6">
+                                        <div class="col-md-6">
 											<div class="form-group">
-                                                <label class="control-label"> Priority <span class="symbol required"></span></label>
-                                                <select th:field="*{priorityId}" class="search-select" style="width: 100%;">
-													<option value="">&nbsp;</option>
-                                                    <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
-												</select>
+												<label class="control-label"> Priority Type <span class="symbol required"></span>  </label>
+												<div class="input-group">
+													<input type="hidden" th:field="*{priorityId}" id="priorityId">
+													<input type="text" th:field="*{priorityName}" id="priorityName" readonly>
+												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
@@ -293,6 +293,7 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/asset-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/log-tab.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/file-tab.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/tab/general-tab.js}"></script>
 
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-asset.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-project.js}"></script>
@@ -301,6 +302,10 @@
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-users.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-task-group.js}"></script>
 	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-sm-log.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-maintenance-types.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-priorities.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-accounts.js}"></script>
+	<script type="text/javascript" th:src="@{/resources/script/app/maintenance/scheduledmaintenance/datatable/dt-charge-departments.js}"></script>
 
 	<!-- end: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
 

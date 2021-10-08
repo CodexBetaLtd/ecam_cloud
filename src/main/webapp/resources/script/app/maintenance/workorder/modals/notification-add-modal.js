@@ -8,37 +8,47 @@ var NotificationAddModal = function () {
 		
 	};
 	
-	var initNotifyUserSelect = function () {
-    	
+	/********************************************
+     * Initialize InputClear Components
+     ********************************************/
+
+    function initInputClearComponents(){
+        initInputClearUser();
+    };
+    
+    function initInputClearUser() {
         $("#woNotificationUserName").inputClear({
-            placeholder: "Select a Notify User",
-            btnMethod: "NotificationAddModal.notifyUserSelectModal()",
-            tooltip: "Select Assign User"	
+            placeholder: "Select assigned User",
+            btnMethod: "NotificationAddModal.addUser()",
         });
+    };
+    
+    /********************************************
+     * Initialize modal views
+     ********************************************/
+    
+    function initModalUserSelect() {
         
-    };
+        var businessId = $("#businessId option:selected").val(); 
+        
+        if (businessId != null && businessId != "" && businessId != undefined) { 
+            var $modal = $('#wo-notification-add-child-modal');
+            CustomComponents.ajaxModalLoadingProgressBar();
+            setTimeout(function () {
+                var url = '../workorder/view/modal/users';
+                $modal.load(url, '', function () {
+                    DatatableModalUsers.init(
+                            "wo-notification-add-child-modal",
+                            "tbl_users",
+                            "../restapi/users/usersbybusinessid?id=" + businessId,
+                            "setNotificationUser");
+                    $modal.modal();
+                });
+            }, 1000);
+        } else {
+            alert("Please Select a Bisuness first");
+        }
 
-	var notifyUserSelectModal = function () {
-		var businessId = $("#businessId option:selected").val(); 
-    	if (businessId != null && businessId != "" && businessId != undefined) { 
-	        var $modal = $('#wo-notification-add-child-modal');
-	        CustomComponents.ajaxModalLoadingProgressBar();
-	        setTimeout(function () {
-	            var url = '../workorder/user-select-modal-view';
-	            $modal.load(url, '', function () {
-	                dtWorkOrderUser.getUserList("NotificationAddModal.setNotifyUser", businessId);
-	                $modal.modal();
-	            });
-	        }, 1000);
-    	} else {
-    		alert("Please Select a Bisuness first");
-    	}
-    };
-
-    var setNotifyUser = function (id, userName) {
-        $('#woNotificationUserId').val(id);
-        $('#woNotificationUserName').val(EncodeDecodeComponent.getBase64().decode(userName));
-        $('#wo-notification-add-child-modal').modal('toggle');
     };
 	
 	var initValidator = function () {
@@ -105,17 +115,13 @@ var NotificationAddModal = function () {
 		
 		init: function () {
 			initButtons();
-			initNotifyUserSelect();
+			initInputClearComponents();
 			NotificationTab.initCheckBoxes();
             initValidator();
         },  
         
-        notifyUserSelectModal: function() {
-        	notifyUserSelectModal();
-        },
-
-        setNotifyUser: function (id, userName) {
-        	setNotifyUser(id, userName);
+        addUser: function() {
+            initModalUserSelect();
         },
         
         addNotification: function () {

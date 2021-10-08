@@ -1,7 +1,5 @@
-/*********************************************************************
- * Work Order User DataTable
- *********************************************************************/
-var DatatableModalUsers = function () {
+
+var DatatableModalMaintenanceTypes = function () {
 
     $.fn.dataTable.pipeline = function (opts) {
         // Configuration options
@@ -115,18 +113,18 @@ var DatatableModalUsers = function () {
                 url: url,
                 pages: 5
             }),
-            columns: [
-                {
-                    orderable: false,
-                    searchable: false,
-                    width: "8%",
-                    render: function (data, type, row, meta) {
-                        return meta.row + meta.settings._iDisplayStart + 1;
-                    }
-                },
-                {data: 'fullName'},
-                {data: 'emailAddress'},
-                {data: 'personalCode'}
+            columns: [{
+                orderable: false,
+                searchable: false,
+                width: "8%",
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+                {data: 'name'},
+                {data: 'description'},
+                {data: 'color'},
+                {data: 'businessName'}
             ],
             aoColumnDefs: [],
             oLanguage: {
@@ -142,9 +140,8 @@ var DatatableModalUsers = function () {
             ],
             aLengthMenu: [
                 [5, 10, 15, 20, -1],
-                [5, 10, 15, 20, "All"]
+                [5, 10, 15, 20, "All"] // change per page values here
             ],
-            scrollY: "195px",
             sPaginationType: "full_numbers",
             sPaging: 'pagination',
             bLengthChange: false,
@@ -152,20 +149,21 @@ var DatatableModalUsers = function () {
                 style: 'os',
             },
             rowClick : {
-                sFunc: 'DatatableModalUsers.' + method,
+                sFunc: 'DatatableModalMaintenanceTypes.' + method,
                 aoData:[  
                     {
                         sName : "id",
                     }, {
-                        sName : "fullName"
+                        sName : "name"
                     },
                 ],
             },
         });
+
         $('#' + tableId + '_wrapper .dataTables_filter input').addClass("form-control input-sm").attr("placeholder", "Search");
         $('#' + tableId + '_wrapper .dataTables_length select').addClass("m-wrap small");
         $('#' + tableId + '_wrapper .dataTables_length select').select2();
-        $('#' + tableId + '_column_toggler input[type="checkbox"]').change(function () {
+        $('#' + tableId + '_toggler input[type="checkbox"]').change(function () {
             var iCol = parseInt($(this).attr("data-column"));
             var bVis = oTable.fnSettings().aoColumns[iCol].bVisible;
             oTable.fnSetColumnVis(iCol, (bVis ? false : true));
@@ -177,33 +175,9 @@ var DatatableModalUsers = function () {
         this.modalId = modal;
     };
     
-    function setAssignedUser(id, name){
-        $("#requestedByUserId").val(id);
-        $("#requestedByUserName").val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-    
-    function setCompletedUser(id, name){
-        $("#completedByUserId").val(id);
-        $("#completedByUserName").val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-    
-    function setWotAssignedUser(id, name) {
-        $('#woTaskAssignedUserId').val(id);
-        $('#woTaskAssignedUserName').val(name);
-        $("#" + this.modalId).modal('toggle');
-    };
-
-    function setWotCompletedUser(id, name) {
-        $('#woTaskCompletedUserId').val(id);
-        $('#woTaskCompletedUserName').val(name);
-        $("#" + this.modalId).modal('toggle');
-    }; 
-    
-    function setNotificationUser(id, userName) {
-        $('#woNotificationUserId').val(id);
-        $('#woNotificationUserName').val(userName);
+    function setData(id, name){
+        $("#maintenanceTypeId").val(id);
+        $("#maintenanceTypeName").val(name);
         $("#" + this.modalId).modal('toggle');
     };
     
@@ -214,24 +188,8 @@ var DatatableModalUsers = function () {
             initTable(tableId, url, method);
         },
         
-        setAssignedUser: function (id, name) {
-            setAssignedUser(id, name);
-        },
-
-        setCompletedUser: function (id, name) {
-            setCompletedUser(id, name);
-        },
-        
-        setWotAssignedUser: function (id, name) {
-            setWotAssignedUser(id, name);
-        },
-        
-        setWotCompletedUser: function (id, name) {
-            setWotCompletedUser(id, name);
-        },
-        
-        setNotificationUser: function (id, name) {
-            setNotificationUser(id, name);
+        setData: function (id, name) {
+            setData(id, name);
         }
     };
 

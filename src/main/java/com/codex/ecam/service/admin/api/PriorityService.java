@@ -12,6 +12,8 @@ public interface PriorityService {
 
 	DataTablesOutput<PriorityDTO> findAll(FocusDataTablesInput input) throws Exception;
 
+	DataTablesOutput<PriorityDTO> findAllByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
+
 	PriorityDTO findById(Integer id) throws Exception;
 
 	PriorityResult delete(Integer id);

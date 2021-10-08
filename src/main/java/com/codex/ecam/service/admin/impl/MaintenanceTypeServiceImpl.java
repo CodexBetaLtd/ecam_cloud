@@ -51,6 +51,19 @@ public class MaintenanceTypeServiceImpl implements MaintenanceTypeService {
 	}
 
 	@Override
+	public DataTablesOutput<MaintenanceTypeDTO> findByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
+
+		MaintenanceTypeSearchPropertyMapper.getInstance().generateDataTableInput(input);
+
+		final Specification<MaintenanceType> specification = (root, query, cb) -> cb.equal(root.get("business"), bizId);
+
+		final DataTablesOutput<MaintenanceType> domainOut = maintenanceTypeDao.findAll(input, specification);
+
+		return MaintenanceTypeMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+
+	}
+
+	@Override
 	public MaintenanceTypeDTO findById(Integer id) throws Exception {
 		final MaintenanceType domain = findEntityById(id);
 		if (domain != null) {

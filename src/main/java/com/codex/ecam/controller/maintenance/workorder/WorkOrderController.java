@@ -31,7 +31,6 @@ import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderDTO;
 import com.codex.ecam.dto.maintenance.workOrder.WorkOrderMeterReadingDTO;
 import com.codex.ecam.result.RestResult;
-import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.admin.api.AccountService;
 import com.codex.ecam.service.admin.api.ChargeDepartmentService;
@@ -105,9 +104,10 @@ public class WorkOrderController {
 		return "maintenance/modals/asset-modal";
 	}
 
-	@RequestMapping(value = "/user-select-modal-view", method = RequestMethod.GET)
-	public String getUserView(Model model) {
-		return "maintenance/workorder/modals/user-modal";
+	@RequestMapping(value = "/view/modal/users", method = RequestMethod.GET)
+	public String getUserView(Model model, @RequestParam(name = "title", defaultValue = "User(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/users";
 	}
 
 	@RequestMapping(value = "/part-add-model-view", method = RequestMethod.GET)
@@ -178,6 +178,48 @@ public class WorkOrderController {
 	@RequestMapping(value = "/statuschangeview", method = RequestMethod.GET)
 	public String getStatusChangeView(Model model) {
 		return "maintenance/workorder/modals/status-change-note-add-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/departments", method = RequestMethod.GET)
+	public String getDepartmentModalView(Model model, @RequestParam(name = "title", defaultValue = "Department(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/departments";
+	}
+
+	@RequestMapping(value = "/view/modal/accounts", method = RequestMethod.GET)
+	public String getAccountsModalView(Model model, @RequestParam(name = "title", defaultValue = "Account(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/accounts";
+	}
+
+	@RequestMapping(value = "/view/modal/maintenance-types", method = RequestMethod.GET)
+	public String getMaintenanceTypeModalView(Model model, @RequestParam(name = "title", defaultValue = "Maintenance Type(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/maintenance-types";
+	}
+
+	@RequestMapping(value = "/view/modal/priorities", method = RequestMethod.GET)
+	public String getPriorityModalView(Model model, @RequestParam(name = "title", defaultValue = "Priority(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/priorities";
+	}
+
+	@RequestMapping(value = "/view/modal/assets", method = RequestMethod.GET)
+	public String getAssetModalView(Model model, @RequestParam(name = "title", defaultValue = "Asset(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/assets";
+	}
+
+	@RequestMapping(value = "/view/modal/meter-readings", method = RequestMethod.GET)
+	public String getMeterReadingsModalView(Model model, @RequestParam(name = "title", defaultValue = "Meter Reading(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/meter-readings";
+	}
+
+	@RequestMapping(value = "/view/modal/miscellaneous-expense-types", method = RequestMethod.GET)
+	public String getMiscellaneousExpenseTypeModalView(Model model, @RequestParam(name = "title", defaultValue = "Miscellaneous Expense Type(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/miscellaneous-expense-types";
 	}
 
 	/*********************************************************************
@@ -343,12 +385,8 @@ public class WorkOrderController {
 	 *********************************************************************/
 	private void setCommonData(Model model, WorkOrderDTO workOrder) {
 		model.addAttribute("workOrder", workOrder);
-		model.addAttribute("maintenanceTypes", maintenanceTypeService.findAllByBusiness(workOrder.getBusinessId()));
-		model.addAttribute("priorities", priorityService.findAllByBusiness(workOrder.getBusinessId()));
 		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 		model.addAttribute("sites", assetService.findSiteByBusinessId(workOrder.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
-		model.addAttribute("accounts", accountService.findAllByBusiness(workOrder.getBusinessId()));
-		model.addAttribute("chargeDepartments", chargeDeparmentService.findAllByBusiness(workOrder.getBusinessId()));
 		model.addAttribute("meterReadingUnits", meterReadingUnitService.findAllMeterReadings());
 		model.addAttribute("workOrderStatuses", WorkOrderStatus.getWorkOrderStatusList());
 	}

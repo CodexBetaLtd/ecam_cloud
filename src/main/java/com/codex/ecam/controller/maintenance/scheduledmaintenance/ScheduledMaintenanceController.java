@@ -35,7 +35,6 @@ import com.codex.ecam.dto.asset.AssetEventTypeAssetDTO;
 import com.codex.ecam.dto.asset.AssetMeterReadingDTO;
 import com.codex.ecam.dto.maintenance.scheduledmaintenance.ScheduledMaintenanceDTO;
 import com.codex.ecam.result.RestResult;
-import com.codex.ecam.result.inventory.AODResult;
 import com.codex.ecam.result.maintenance.ScheduledMaintenanceResult;
 import com.codex.ecam.result.maintenance.WorkOrderResult;
 import com.codex.ecam.service.admin.api.AccountService;
@@ -125,11 +124,6 @@ public class ScheduledMaintenanceController {
 		return "maintenance/scheduledmaintenance/modal/stock-select-modal";
 	}
 
-	@RequestMapping(value = "/userselectmodalview", method = RequestMethod.GET)
-	public String getUserTableView(Model model) {
-		return "maintenance/modals/user-modal";
-	}
-
 	@RequestMapping(value = "/smTaskGroupView", method = RequestMethod.GET)
 	public String getTaskGroupView(Model model) {
 		return "maintenance/scheduledmaintenance/modal/sm-task-group-add";
@@ -159,6 +153,36 @@ public class ScheduledMaintenanceController {
 	@RequestMapping(value = "/filemodelview", method = RequestMethod.GET)
 	public String getFileTableView(Model model) {
 		return "maintenance/scheduledmaintenance/modal/file-add-modal";
+	}
+
+	@RequestMapping(value = "/view/modal/departments", method = RequestMethod.GET)
+	public String getDepartmentModalView(Model model, @RequestParam(name = "title", defaultValue = "Department(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/departments";
+	}
+
+	@RequestMapping(value = "/view/modal/accounts", method = RequestMethod.GET)
+	public String getAccountsModalView(Model model, @RequestParam(name = "title", defaultValue = "Account(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/accounts";
+	}
+
+	@RequestMapping(value = "/view/modal/maintenance-types", method = RequestMethod.GET)
+	public String getMaintenanceTypeModalView(Model model, @RequestParam(name = "title", defaultValue = "Maintenance Type(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/maintenance-types";
+	}
+
+	@RequestMapping(value = "/view/modal/priorities", method = RequestMethod.GET)
+	public String getPriorityModalView(Model model, @RequestParam(name = "title", defaultValue = "Priority(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/priorities";
+	}
+
+	@RequestMapping(value = "/view/modal/users", method = RequestMethod.GET)
+	public String getUserTableView(Model model, @RequestParam(name = "title", defaultValue = "User(s)")String title) {
+		model.addAttribute("title", title);
+		return "general/table/users";
 	}
 
 	/*********************************************************************

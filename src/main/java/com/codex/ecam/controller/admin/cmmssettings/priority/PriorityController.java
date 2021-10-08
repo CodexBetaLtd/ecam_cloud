@@ -1,4 +1,4 @@
-package com.codex.ecam.controller.admin.cmmssettings;
+package com.codex.ecam.controller.admin.cmmssettings.priority;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

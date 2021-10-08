@@ -23,7 +23,7 @@ var PartAddModal = function () {
             $("#partTaskIndex").append($("<option></option>").attr("value", '').text('Please Select a Task'));        
             $.each(scheduledTasks, function (index, task) {
             	if ( task.assetId == assetId ) {
-            		$("#partTaskIndex").append($("<option></option>").attr("value", task.index).text(task.name));
+            		$("#partTaskIndex").append($("<option></option>").attr("value", task.index).text(task.description));
             	}
             });
         }).trigger('change');
