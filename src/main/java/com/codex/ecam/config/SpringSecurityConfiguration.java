@@ -79,11 +79,14 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.requestCache()
 		.requestCache(customRequestCache)
 		.and()
-		.exceptionHandling().accessDeniedPage("/access-denied").authenticationEntryPoint(authenticationEntryPoint());
+		.exceptionHandling().accessDeniedPage("/access-denied").authenticationEntryPoint(authenticationEntryPoint())
+		.and()
+		.sessionManagement()
+		.invalidSessionUrl("/login?invalid");
 	}
 
 	private AuthenticationEntryPoint authenticationEntryPoint() {
-		return (request, response, authException) -> response.sendRedirect(request.getContextPath() + "/session-expire-redirect");
+		return (request, response, authException) -> response.sendRedirect(request.getContextPath() + "/login?invalid");
 	}
 
 	@Bean

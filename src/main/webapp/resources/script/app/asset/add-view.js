@@ -5,6 +5,14 @@ var AssetAdd = function () {
         CustomComponents.fileInput("assetImage", true, true, src, "Asset Image" );        
     };
     
+    var initPrintButton=function(){
+        var src = "../../restapi/asset/asset-qr?id=" + $("#id").val();
+
+	    $('#btn-print-qr').on('click', function () {
+	    	AssetAdd.qrPrint(src);
+	    });
+    }
+    
     var generateQRCode=function(){
         var src = "../../restapi/asset/asset-qr?id=" + $("#id").val();
         $('#qrcode').append(
@@ -12,13 +20,35 @@ var AssetAdd = function () {
         if($("#qrimage").val()!==''){
         	$('#qrcode').append(
         			"<a href='../../asset/download-qr?id="+$('#id').val()+"' class='btn btn-xs btn-teal tooltips qr-btn' data-placement='top' data-original-title='Download'>" +
-        					"<i class='fa fa-qrcode'></i>" +
-        					" Download QR" +
-        					"</a>"
+        			"<i class='fa fa-qrcode'></i>" +
+        			" Download QR" +
+        			"</a>"+
+        			"<button id='btn-print-qr' type='button' class='btn btn-xs btn-teal tooltips qr-print-btn' data-placement='top' data-original-title='Download'>" +
+        					"<i class='fa fa-print'></i>" +
+        					" Print QR" +
+        					"</button>"
             )
+            initPrintButton();
         }else{
         	$('#qrcode').append("<span class='qr-not'>QR Not Found</span>")
         }
+    }
+    
+    
+    function qrSourcetoPrint(source) {
+        return "<html><head><script>function step1(){\n" +
+                "setTimeout('step2()', 10);}\n" +
+                "function step2(){window.print();window.close()}\n" +
+                "</scri" + "pt></head><body onload='step1()'>\n" +
+                "<img width='75px' src='" + source + "' /></body></html>";
+    };
+    
+    function qrPrint(source) {
+        Pagelink = "about:blank";
+        var pwa = window.open(Pagelink, "_new");
+        pwa.document.open();
+        pwa.document.write(qrSourcetoPrint(source));
+        pwa.document.close();
     }
     
     var initMap=function(){
@@ -431,6 +461,9 @@ var AssetAdd = function () {
 	    
 	    clearCustomer : function () {
 	    	clearCustomer();
+	    },
+	    qrPrint : function (s) {
+	    	qrPrint(s);
 	    }
 
     };
