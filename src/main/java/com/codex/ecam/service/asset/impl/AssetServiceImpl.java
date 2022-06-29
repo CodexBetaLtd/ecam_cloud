@@ -1,7 +1,6 @@
 package com.codex.ecam.service.asset.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,11 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +48,6 @@ import com.codex.ecam.dao.inventory.BOMGroupDao;
 import com.codex.ecam.dao.inventory.BOMGroupPartDao;
 import com.codex.ecam.dao.inventory.ReceiptOrderItemDao;
 import com.codex.ecam.dao.maintenance.ScheduledMaintenanceAssetDao;
-import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetEventDTO;
 import com.codex.ecam.dto.asset.AssetEventTypeAssetDTO;
@@ -78,7 +70,6 @@ import com.codex.ecam.mappers.inventory.AssetConsumingReferenceMapper;
 import com.codex.ecam.model.admin.MeterReadingUnit;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.asset.AssetBusiness;
-import com.codex.ecam.model.asset.AssetCategory;
 import com.codex.ecam.model.asset.AssetConsumingReference;
 import com.codex.ecam.model.asset.AssetEvent;
 import com.codex.ecam.model.asset.AssetEventTypeAsset;
@@ -1658,161 +1649,5 @@ public class AssetServiceImpl implements AssetService {
 		return out;
 	}
 
-	@Override
-	public void importBulkAssets(MultipartFile fileData, Integer bussinessId) throws Exception {
-
-		final FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
-
-		final Workbook workbook = new XSSFWorkbook(inputStream);
-		final Sheet location = workbook.getSheetAt(0);
-
-		final Iterator<Row> iterator = location.iterator();
-
-		while (iterator.hasNext()) {
-			final Row nextRow = iterator.next();
-			final int rowIndex = nextRow.getRowNum();
-			if (rowIndex != 0) {
-				final Iterator<Cell> cellIterator = nextRow.cellIterator();
-				final AssetDTO assetDTO = new AssetDTO();
-				while (cellIterator.hasNext()) {
-					final Cell cell = cellIterator.next();
-					final int columnIndex = cell.getColumnIndex();
-					switch (columnIndex) {
-					case 0:
-						System.out.print("Asset No - " + cell.getStringCellValue());
-						assetDTO.setCode(cell.getStringCellValue());
-						break;
-					case 1:
-						System.out.print("Asset Group Code - " + cell.getStringCellValue());
-						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),
-								AssetCategoryType.LOCATIONS_OR_FACILITIES).getId());
-
-						break;
-					case 2:
-						System.out.print("Short Description - " + cell.getStringCellValue());
-						assetDTO.setName(cell.getStringCellValue());
-						assetDTO.setDescription(cell.getStringCellValue());
-
-						break;
-					case 3:
-						System.out.print("Parent Asset - " + cell.getStringCellValue());
-						if (cell.getStringCellValue() != null) {
-							final Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
-							if (parentAsset != null) {
-								assetDTO.setParentAssetId(parentAsset.getId());
-
-							}
-
-						} else {
-							// asset.setParentAsset(parentAsset);
-						}
-						break;
-					case 5:
-						System.out.print("Asset Type - " + cell.getCellType());
-						//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
-						//						break;
-					default:
-						break;
-					}
-					System.out.print(" ___ ");
-				}
-				if (AuthenticationUtil.isAuthUserAdminLevel()) {
-					assetDTO.setBusinessId(bussinessId);
-				} else {
-					assetDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
-
-				}
-				// save(assetDTO, null);
-
-				System.out.println();
-			}
-
-		}
-		final Sheet machine = workbook.getSheetAt(1);
-		System.out.println("machine");
-		final Iterator<Row> iteratorMachine = machine.iterator();
-		//List<Asset> assetList=new ArrayList<>();
-		while (iteratorMachine.hasNext()) {
-			final Row nextRow = iteratorMachine.next();
-			final int rowIndex = nextRow.getRowNum();
-			if (rowIndex != 0) {
-				final Iterator<Cell> cellIterator = nextRow.cellIterator();
-				final AssetDTO assetDTO = new AssetDTO();
-				while (cellIterator.hasNext()) {
-					final Cell cell = cellIterator.next();
-					final int columnIndex = cell.getColumnIndex();
-					switch (columnIndex) {
-					case 0:
-						System.out.print("Asset No - " + cell.getStringCellValue());
-						assetDTO.setCode(cell.getStringCellValue());
-						break;
-					case 1:
-						System.out.print("Asset Group Code - " + cell.getStringCellValue());
-						assetDTO.setAssetCategoryId(findParentAssetCategoryByCode(cell.getStringCellValue(),
-								AssetCategoryType.EQUIPMENTS_OR_MACHINES).getId());
-
-						break;
-					case 2:
-						System.out.print("Short Description - " + cell.getStringCellValue());
-						assetDTO.setName(cell.getStringCellValue());
-						assetDTO.setDescription(cell.getStringCellValue());
-
-						break;
-					case 3:
-						System.out.print("Parent Asset - " + cell.getStringCellValue());
-						if (cell.getStringCellValue() != null) {
-							final Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
-							if (parentAsset != null) {
-								assetDTO.setParentAssetId(parentAsset.getId());
-
-							}
-
-						} else {
-							// asset.setParentAsset(parentAsset);
-						}
-						break;
-					case 5:
-						System.out.print("Asset Type - " + cell.getCellType());
-						//					System.out.print("Test 4 "+cell.getRow().getCell(4).getNumericCellValue());
-						//						break;
-					default:
-						break;
-					}
-					System.out.print(" ___ ");
-				}
-				if (AuthenticationUtil.isAuthUserAdminLevel()) {
-					assetDTO.setBusinessId(bussinessId);
-				} else {
-					assetDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
-
-				}
-				save(assetDTO, null);
-
-				System.out.println();
-			}
-
-		}
-
-		workbook.close();
-		inputStream.close();
-		/// assetDao.save(assetList);
-	}
-
-	private AssetCategory findParentAssetCategoryByCode(String code, AssetCategoryType assetCategoryType) {
-		final AssetCategoryDTO assetCategoryDTO = new AssetCategoryDTO();
-		AssetCategory assetCategory = assetCategoryDao.findByAssetCategoryByCode(code);
-		if (assetCategory != null) {
-		} else {
-			assetCategory = new AssetCategory();
-			assetCategoryDTO.setName(code);
-			assetCategoryDTO.setDescription(code);
-			assetCategoryDTO.setType(assetCategoryType);
-			assetCategoryDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
-			assetCategory = assetCategoryService.save(assetCategoryDTO).getDomainEntity();
-		}
-
-		return assetCategory;
-
-	}
 
 }

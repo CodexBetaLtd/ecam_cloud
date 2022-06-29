@@ -34,22 +34,13 @@ var AssetAdd = function () {
         }
     }
     
-    
-    function qrSourcetoPrint(source) {
-        return "<html><head><script>function step1(){\n" +
-                "setTimeout('step2()', 10);}\n" +
-                "function step2(){window.print();window.close()}\n" +
-                "</scri" + "pt></head><body onload='step1()'>\n" +
-                "<img width='75px' src='" + source + "' /></body></html>";
+    function qrPrint(source) {  
+        printJS({
+          printable: source,
+          type: 'image',
+          imageStyle: 'width:75px'
+        });
     };
-    
-    function qrPrint(source) {
-        Pagelink = "about:blank";
-        var pwa = window.open(Pagelink, "_new");
-        pwa.document.open();
-        pwa.document.write(qrSourcetoPrint(source));
-        pwa.document.close();
-    }
     
     var initMap=function(){
         var var_location = new google.maps.LatLng(locationDetails['latitude'],locationDetails['longitude']);
@@ -462,6 +453,7 @@ var AssetAdd = function () {
 	    clearCustomer : function () {
 	    	clearCustomer();
 	    },
+	    
 	    qrPrint : function (s) {
 	    	qrPrint(s);
 	    }

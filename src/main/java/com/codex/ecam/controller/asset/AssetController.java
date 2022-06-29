@@ -27,7 +27,6 @@ import com.codex.ecam.dto.admin.AssetBrandDTO;
 import com.codex.ecam.dto.admin.AssetModelDTO;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.dto.asset.AssetDTO;
-import com.codex.ecam.result.admin.UserResult;
 import com.codex.ecam.result.asset.AssetResult;
 import com.codex.ecam.service.admin.api.AssetBrandService;
 import com.codex.ecam.service.admin.api.AssetEventTypeService;
@@ -35,6 +34,7 @@ import com.codex.ecam.service.admin.api.AssetModelService;
 import com.codex.ecam.service.admin.api.CountryService;
 import com.codex.ecam.service.admin.api.CurrencyService;
 import com.codex.ecam.service.admin.api.MeterReadingUnitService;
+import com.codex.ecam.service.asset.api.AssetBulkImportService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.service.asset.api.AssetService;
 import com.codex.ecam.service.biz.api.BusinessService;
@@ -79,6 +79,9 @@ public class AssetController {
 
 	@Autowired
 	private AssetModelService assetModelService;
+
+	@Autowired
+	private AssetBulkImportService assetBulkImportService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
@@ -455,7 +458,7 @@ public class AssetController {
 
 	@RequestMapping(value = "/import-assets", method = RequestMethod.POST)
 	public void  importAssets(@RequestParam("fileData")MultipartFile file,@RequestParam("bussinessId")Integer bussinessId, HttpServletResponse response) throws Exception {
-		assetService.importBulkAssets(file,bussinessId);
+		assetBulkImportService.importBulk(file,bussinessId);
 	}
 
 	@RequestMapping(value = "/machine/delete-multiple", method = RequestMethod.GET)
