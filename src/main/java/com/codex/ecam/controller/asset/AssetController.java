@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codex.ecam.constants.AssetCategoryType;
+import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.constants.ResultStatus;
 import com.codex.ecam.constants.WarrantyType;
 import com.codex.ecam.constants.WarrantyUsageTermType;
@@ -323,7 +324,7 @@ public class AssetController {
 
 	@RequestMapping(value = "/assetimportview", method = RequestMethod.GET)
 	public String getAssetImportView(Model model) throws Exception {
-		model.addAttribute("businesses", businessService.findAll());
+		model.addAttribute("businesses", businessService.findAllByLevelList());
 		return "asset/modals/asset-import-modal";
 	}
 
@@ -504,6 +505,7 @@ public class AssetController {
 		model.addAttribute("countryList", countryService.findAll());
 		model.addAttribute("assetBrand", assetBrandService.findAll());
 		model.addAttribute("assetModel", assetModelService.findByBrandId(asset.getBrand()));
+		model.addAttribute("assetClassTypes",AssetClassType.getAssetClassType());
 
 	}
 

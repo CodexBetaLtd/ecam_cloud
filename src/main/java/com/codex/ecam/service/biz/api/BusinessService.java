@@ -20,6 +20,7 @@ public interface BusinessService {
 	List<BusinessDTO> findAllActualBusiness();
 
 	List<BusinessDTO> findAllActualBusinessByLevel();
+	List<BusinessDTO> findAllByLevelList() throws Exception ;
 
 	Business findEntityById(Integer id);
 

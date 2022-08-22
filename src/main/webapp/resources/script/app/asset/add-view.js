@@ -129,7 +129,19 @@ var AssetAdd = function () {
             allowClear: true
         });
     };
+    var runAssetClassSelect = function () {
+        $("#assetClass").select2({
+            placeholder: "Select a Class",
+            allowClear: true
+        });
+    };
 
+    var runPurchaseDatePicker = function () {
+        $('#dateOfPurchase').datepicker({
+            autoclose: true,
+            container: '#valuation-picker-container-div'
+        });
+    };
     var runSiteSelect = function () {
         $("#siteId").select2({
             placeholder: "Select a Site",
@@ -408,6 +420,7 @@ var AssetAdd = function () {
             runOnlineSwitch();
             runBusinessSelect();
             runAssetBusinessSelect();
+            runAssetClassSelect();
             runSiteSelect();
             runMeterReadingUnitSelect();
             initAssetCategorySelect();
@@ -418,6 +431,7 @@ var AssetAdd = function () {
             runImageInput();
             initValidator();
             generateQRCode();
+            runPurchaseDatePicker();
             initDocumentOnLoad();
           //  initMap();
         },

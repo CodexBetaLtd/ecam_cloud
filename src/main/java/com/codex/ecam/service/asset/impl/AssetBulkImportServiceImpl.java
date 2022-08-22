@@ -1,6 +1,8 @@
 package com.codex.ecam.service.asset.impl;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -52,17 +54,22 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void importBulk(MultipartFile fileData, Integer bussinessId) throws Exception {
+	public void importBulk(MultipartFile fileData, Integer bussinessId){
 
-		final FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
+		try {
+			final InputStream inputStream = fileData.getInputStream();
 
-		final Workbook workbook = new XSSFWorkbook(inputStream);
+			final Workbook workbook = new XSSFWorkbook(fileData.getInputStream());
 
-		importLocations(bussinessId, workbook);
-		importMachines(bussinessId, workbook);
+			importLocations(bussinessId, workbook);
+			importMachines(bussinessId, workbook);
 
-		workbook.close();
-		inputStream.close();
+			workbook.close();
+			inputStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void importLocations(Integer bussinessId, final Workbook workbook) {

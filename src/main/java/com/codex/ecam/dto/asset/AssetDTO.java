@@ -1,9 +1,12 @@
 package com.codex.ecam.dto.asset;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.codex.ecam.constants.AssetCategoryType;
+import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.dto.BaseDTO;
 import com.codex.ecam.dto.inventory.AssetConsumingReferenceDTO;
 
@@ -47,6 +50,20 @@ public class AssetDTO extends BaseDTO {
 	private String serialNo;
 	private String customerName;
 	private String assetUrl;
+	
+	private String department;
+	private AssetClassType assetClass;
+	
+	private BigDecimal size;
+	private BigDecimal quantity;
+	private BigDecimal unitCost;
+	private BigDecimal totalCost;
+	private BigDecimal usefulLife;
+	private BigDecimal yearlyDepreciationValue;
+	private BigDecimal yearEndNetBookValue ;
+	private BigDecimal accumulatedDepreciation ;
+	
+	private Date dateOfPurchase;
 
 	private AssetPurchasingDTO assetPurchasingDetail = new AssetPurchasingDTO();
 	private LocationDTO locationDTO = new LocationDTO();
@@ -429,6 +446,94 @@ public class AssetDTO extends BaseDTO {
 
 	public void setCountryName(String countryName) {
 		this.countryName = countryName;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public AssetClassType getAssetClass() {
+		return assetClass;
+	}
+
+	public void setAssetClass(AssetClassType assetClass) {
+		this.assetClass = assetClass;
+	}
+
+	public BigDecimal getSize() {
+		return size;
+	}
+
+	public void setSize(BigDecimal size) {
+		this.size = size;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getUnitCost() {
+		return unitCost;
+	}
+
+	public void setUnitCost(BigDecimal unitCost) {
+		this.unitCost = unitCost;
+	}
+
+	public BigDecimal getTotalCost() {
+		return totalCost;
+	}
+
+	public void setTotalCost(BigDecimal totalCost) {
+		this.totalCost = totalCost;
+	}
+
+	public BigDecimal getUsefulLife() {
+		return usefulLife;
+	}
+
+	public void setUsefulLife(BigDecimal usefulLife) {
+		this.usefulLife = usefulLife;
+	}
+
+	public BigDecimal getYearlyDepreciationValue() {
+		return yearlyDepreciationValue;
+	}
+
+	public void setYearlyDepreciationValue(BigDecimal yearlyDepreciationValue) {
+		this.yearlyDepreciationValue = yearlyDepreciationValue;
+	}
+
+	public BigDecimal getYearEndNetBookValue() {
+		return yearEndNetBookValue;
+	}
+
+	public void setYearEndNetBookValue(BigDecimal yearEndNetBookValue) {
+		this.yearEndNetBookValue = yearEndNetBookValue;
+	}
+
+	public BigDecimal getAccumulatedDepreciation() {
+		return accumulatedDepreciation;
+	}
+
+	public void setAccumulatedDepreciation(BigDecimal accumulatedDepreciation) {
+		this.accumulatedDepreciation = accumulatedDepreciation;
+	}
+
+	public Date getDateOfPurchase() {
+		return dateOfPurchase;
+	}
+
+	public void setDateOfPurchase(Date dateOfPurchase) {
+		this.dateOfPurchase = dateOfPurchase;
 	}
 
 

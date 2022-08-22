@@ -1,5 +1,7 @@
 package com.codex.ecam.model.asset;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,6 +22,7 @@ import javax.persistence.Transient;
 
 import org.springframework.context.ApplicationEvent;
 
+import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.constants.inventory.PartType;
 import com.codex.ecam.constants.inventory.PartUsageType;
 import com.codex.ecam.event.RootAwareEvent;
@@ -156,6 +159,39 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="part_usage_type")
 	private PartUsageType partUsageType;
+	
+	@Column(name="size")
+	private BigDecimal size;
+	
+	@Column(name="quantity")
+	private BigDecimal quantity;
+	
+	@Column(name="unit_cost")
+	private BigDecimal unitCost;
+	
+	@Column(name="total_cost")
+	private BigDecimal totalCost;
+	
+	@Column(name="useful_life")
+	private BigDecimal usefulLife;
+	
+	@Column(name="yearly_depreciation_value")
+	private BigDecimal yearlyDepreciationValue;
+	
+	@Column(name="year_end_net_book_value")
+	private BigDecimal yearEndNetBookValue ;
+	
+	@Column(name="accumulated_depreciation")
+	private BigDecimal accumulatedDepreciation ;
+	
+	@Column(name="date_of_purchase")
+	private Date dateOfPurchase;
+	
+	@Column(name="department")
+	private String department;
+	
+	@Column(name="asset_class_id")
+	private AssetClassType assetClass;
 
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReading> assetMeterReadings;
@@ -633,6 +669,94 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	public void setAssetUrl(String assetUrl) {
 		this.assetUrl = assetUrl;
+	}
+
+	public BigDecimal getSize() {
+		return size;
+	}
+
+	public void setSize(BigDecimal size) {
+		this.size = size;
+	}
+
+	public BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	public BigDecimal getUnitCost() {
+		return unitCost;
+	}
+
+	public void setUnitCost(BigDecimal unitCost) {
+		this.unitCost = unitCost;
+	}
+
+	public BigDecimal getTotalCost() {
+		return totalCost;
+	}
+
+	public void setTotalCost(BigDecimal totalCost) {
+		this.totalCost = totalCost;
+	}
+
+	public BigDecimal getUsefulLife() {
+		return usefulLife;
+	}
+
+	public void setUsefulLife(BigDecimal usefulLife) {
+		this.usefulLife = usefulLife;
+	}
+
+	public BigDecimal getYearlyDepreciationValue() {
+		return yearlyDepreciationValue;
+	}
+
+	public void setYearlyDepreciationValue(BigDecimal yearlyDepreciationValue) {
+		this.yearlyDepreciationValue = yearlyDepreciationValue;
+	}
+
+	public BigDecimal getYearEndNetBookValue() {
+		return yearEndNetBookValue;
+	}
+
+	public void setYearEndNetBookValue(BigDecimal yearEndNetBookValue) {
+		this.yearEndNetBookValue = yearEndNetBookValue;
+	}
+
+	public BigDecimal getAccumulatedDepreciation() {
+		return accumulatedDepreciation;
+	}
+
+	public void setAccumulatedDepreciation(BigDecimal accumulatedDepreciation) {
+		this.accumulatedDepreciation = accumulatedDepreciation;
+	}
+
+	public Date getDateOfPurchase() {
+		return dateOfPurchase;
+	}
+
+	public void setDateOfPurchase(Date dateOfPurchase) {
+		this.dateOfPurchase = dateOfPurchase;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public AssetClassType getAssetClass() {
+		return assetClass;
+	}
+
+	public void setAssetClass(AssetClassType assetClass) {
+		this.assetClass = assetClass;
 	}
 
 
