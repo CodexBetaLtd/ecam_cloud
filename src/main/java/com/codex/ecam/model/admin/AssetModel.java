@@ -1,6 +1,15 @@
 package com.codex.ecam.model.admin;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import com.codex.ecam.model.BaseModel;
 
@@ -15,18 +24,28 @@ public class AssetModel extends BaseModel{
 	@SequenceGenerator(name="model_asset_s", sequenceName="model_asset_s", allocationSize=1)
 	@Column(name="id")
 	private Integer id;
-	
+
 	@Column(name = "name")
 	private String modelName;
-	
+
 	@JoinColumn(name = "brand_id")
 	@ManyToOne(targetEntity = AssetBrand.class, fetch = FetchType.LAZY)
-	private AssetBrand assetBrand; 
+	private AssetBrand assetBrand;
 
+	public AssetModel(){}
+
+	public AssetModel(String modelName, AssetBrand brand, Boolean isDeleted) {
+		setModelName(modelName);
+		setAssetBrand(brand);
+		setIsDeleted(false);
+	}
+
+	@Override
 	public Integer getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}

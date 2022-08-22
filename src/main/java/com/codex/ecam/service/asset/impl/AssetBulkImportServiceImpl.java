@@ -2,6 +2,7 @@ package com.codex.ecam.service.asset.impl;
 
 import java.io.FileInputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,11 +21,11 @@ import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
 import com.codex.ecam.dao.asset.AssetDao;
 import com.codex.ecam.dao.biz.BusinessDao;
-import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.model.admin.AssetBrand;
 import com.codex.ecam.model.admin.AssetModel;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.asset.AssetCategory;
+import com.codex.ecam.model.biz.business.Business;
 import com.codex.ecam.service.asset.api.AssetBulkImportService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -52,182 +53,245 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void importBulk(MultipartFile fileData, Integer bussinessId) throws Exception {
+	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception {
 
 		final FileInputStream inputStream = (FileInputStream) fileData.getInputStream();
 
 		final Workbook workbook = new XSSFWorkbook(inputStream);
 
-		importLocations(bussinessId, workbook);
-		importMachines(bussinessId, workbook);
+		if (businessId == null) {
+			businessId = AuthenticationUtil.getLoginUserBusiness().getId();
+		}
+
+		Business business = businessDao.findOne(businessId);
+
+		importLocations(business, workbook);
+		importMachines(business, workbook);
 
 		workbook.close();
 		inputStream.close();
 	}
 
-	private void importLocations(Integer bussinessId, final Workbook workbook) {
+	private void importLocations(Business business, final Workbook workbook) {
 
 		final Sheet location = workbook.getSheetAt(0);
 
 		final Iterator<Row> iterator = location.iterator();
 
-		while (iterator.hasNext()) {
+		try {
+			while (iterator.hasNext()) {
 
-			final Row nextRow = iterator.next();
+				final Row nextRow = iterator.next();
 
-			final int rowIndex = nextRow.getRowNum();
+				final int rowIndex = nextRow.getRowNum();
 
-			if (rowIndex != 0) {
+				if (rowIndex != 0) {
 
-				final Iterator<Cell> cellIterator = nextRow.cellIterator();
+					final Iterator<Cell> cellIterator = nextRow.cellIterator();
 
-				final Asset asset = new Asset();
-				setAssetBusiness(bussinessId, asset);
+					final Asset asset = new Asset();
 
-				while (cellIterator.hasNext()) {
+					while (cellIterator.hasNext()) {
 
-					final Cell cell = cellIterator.next();
-					final int columnIndex = cell.getColumnIndex();
+						final Cell cell = cellIterator.next();
+						final int columnIndex = cell.getColumnIndex();
 
-					switch (columnIndex) {
-					case 0:
-						asset.setCode(cell.getStringCellValue());
-						break;
-					case 1:
-						setCategory(cell.getStringCellValue(),
-								AssetCategoryType.LOCATIONS_OR_FACILITIES, asset);
-						break;
-					case 2:
-						asset.setName(cell.getStringCellValue());
-						asset.setDescription(cell.getStringCellValue());
-						break;
-					case 3:
-						if (cell.getStringCellValue() != null) {
+						switch (columnIndex) {
+						case 0:
+							asset.setCode(cell.getStringCellValue());
+							break;
+						case 1:
+							setCategory(cell.getStringCellValue(),
+									AssetCategoryType.LOCATIONS_OR_FACILITIES, asset, business);
+							break;
+						case 2:
+							asset.setName(cell.getStringCellValue());
+							asset.setDescription(cell.getStringCellValue());
+							break;
+						case 3:
+							if (isNotNullCellStringValue(cell)) {
 
-							setParentAsset(asset, cell);
+								setSubLocation(asset, cell);
 
+							}
+							break;
+						case 5:
+
+						default:
+							break;
 						}
-						break;
-					case 5:
-
-					default:
-						break;
 					}
+
+					asset.setBusiness(business);
+
+					// save(assetDTO, null);
 				}
 
-				// save(assetDTO, null);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 
 		}
 	}
 
-	private void importMachines(Integer bussinessId, final Workbook workbook) {
+	private void importMachines(Business business, final Workbook workbook) throws Exception {
 
 		final Sheet machine = workbook.getSheetAt(1);
 
 		final Iterator<Row> iteratorMachine = machine.iterator();
 
-		while (iteratorMachine.hasNext()) {
+		try {
+			while (iteratorMachine.hasNext()) {
 
-			final Row nextRow = iteratorMachine.next();
+				final Row nextRow = iteratorMachine.next();
 
-			final int rowIndex = nextRow.getRowNum();
+				final int rowIndex = nextRow.getRowNum();
 
-			if (rowIndex != 0) {
+				if (rowIndex != 0) {
 
-				final Iterator<Cell> cellIterator = nextRow.cellIterator();
+					final Iterator<Cell> cellIterator = nextRow.cellIterator();
 
-				final Asset asset = new Asset();
-				asset.setIsDeleted(false);
-				setAssetBusiness(bussinessId, asset);
+					Asset asset = new Asset();
 
-				while (cellIterator.hasNext()) {
+					while (cellIterator.hasNext()) {
 
-					final Cell cell = cellIterator.next();
+						final Cell cell = cellIterator.next();
 
-					final int columnIndex = cell.getColumnIndex();
+						final int columnIndex = cell.getColumnIndex();
 
-					switch (columnIndex) {
+						switch (columnIndex) {
 
-					case 0:
-						asset.setName(cell.getStringCellValue());
-						break;
+						case 0:
 
-					case 1:
-						asset.setCode(cell.getStringCellValue());
-						break;
+							if (isNotNullCellStringValue(cell)) {
 
-					case 2:
-						asset.setDescription(cell.getStringCellValue());
-						break;
+								Asset optionalAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
 
-					case 3:
-						if (cell.getStringCellValue() != null) {
+								if (optionalAsset != null) {
+									asset = optionalAsset;
+								}
 
-							setSite(asset, cell);
+								asset.setCode(cell.getStringCellValue());
+							}
 
+							break;
+
+						case 1:
+
+							if (isNotNullCellStringValue(cell)) {
+								asset.setName(cell.getStringCellValue());
+							}
+
+							break;
+
+						case 2:
+
+							if (isNotNullCellStringValue(cell)) {
+								setCategory(cell.getStringCellValue(), AssetCategoryType.EQUIPMENTS_OR_MACHINES, asset, business);
+							}
+
+							asset.setDescription(cell.getStringCellValue());
+							break;
+
+						case 3:
+							if (isNotNullCellStringValue(cell)) {
+
+								setMainLocation(asset, cell, business);
+
+							}
+							break;
+
+						case 4:
+
+							if (isNotNullCellStringValue(cell)) {
+
+								setSubLocation(asset, cell);
+
+							}
+
+							break;
+
+						case 5:
+
+							if (isNotNullCellStringValue(cell)) {
+
+								setSubLocation(asset, cell);
+
+							}
+
+							break;
+
+						case 6:
+							if (isNotNullCellStringValue(cell) ) {
+
+								setAssetBrand(asset, cell, business);
+
+							}
+							break;
+
+						case 7:
+							if (isNotNullCellStringValue(cell) ) {
+
+								setAssetModel(asset, cell);
+
+							}
+							break;
+
+						case 8:
+							asset.setSerialNo(cell.getStringCellValue());
+							break;
+
+						case 9:
+							asset.setSerialNo(cell.getStringCellValue());
+							break;
+
+						default:
+							break;
 						}
-						break;
-
-					case 4:
-
-						setCategory(cell.getStringCellValue(), AssetCategoryType.EQUIPMENTS_OR_MACHINES, asset);
-
-						break;
-
-					case 5:
-
-						if (cell.getStringCellValue() != null) {
-
-							setParentAsset(asset, cell);
-
-						}
-
-						break;
-
-					case 6:
-						if (cell.getStringCellValue() != null ) {
-
-							setAssetBrand(asset, cell);
-
-						}
-						break;
-
-					case 7:
-						if (cell.getStringCellValue() != null ) {
-
-							setAssetModel(asset, cell);
-
-						}
-						break;
-
-					case 8:
-						asset.setSerialNo(cell.getStringCellValue());
-						break;
-
-					default:
-						break;
 					}
+
+					asset.setIsDeleted(false);
+					asset.setBusiness(business);
+
+					assetDao.save(asset);
+
 				}
 
-				assetDao.save(asset);
-
 			}
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
-	private void setSite(final Asset asset, final Cell cell) {
+	private boolean isNotNullCellStringValue(final Cell cell) {
+		return cell.getStringCellValue() != null;
+	}
 
-		final Asset site = assetDao.findByAssetByCode(cell.getStringCellValue());
+	/***************************************
+	 *  Asset Site	 *
+	 ***************************************/
+	private void setMainLocation(final Asset asset, final Cell cell, Business business) {
 
-		if (site != null) {
-			asset.setSite(site);
+		final List<Asset> assets = assetDao.findByParentAssetByCodeAndBusiness(cell.getStringCellValue(), business.getId());
+
+		if (assets != null && assets.size() > 0) {
+			asset.setSite(assets.get(0));
+		} else {
+			asset.setSite(createMainLocation(cell.getStringCellValue(), business));
 		}
 
 	}
 
-	private void setParentAsset(final Asset asset, final Cell cell) {
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private Asset createMainLocation(String stringCellValue, Business business) {
+		Asset mainLocation = new Asset();
+
+		mainLocation.setBusiness(business);
+
+		return null;
+	}
+
+	private void setSubLocation(final Asset asset, final Cell cell) {
 		final Asset parentAsset = assetDao.findByAssetByCode(cell.getStringCellValue());
 
 		if (parentAsset != null) {
@@ -235,64 +299,63 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		}
 	}
 
-	private void setAssetBrand(final Asset asset, final Cell cell) {
+	private void setAssetBrand(final Asset asset, final Cell cell, Business business) throws Exception {
+
 		AssetBrand brand =  brandDao.findByName( cell.getStringCellValue() );
 
 		if (brand == null) {
 
-			brand = new AssetBrand();
-			brand.setBrandName(cell.getStringCellValue());
-			brand.setBusiness(asset.getBusiness());
-			brand.setIsDeleted(false);
-
-			brand = brandDao.save(brand);
+			brand = createAssetBrand(cell.getStringCellValue(), business);
 
 		}
 
 		asset.setBrand(brand);
 	}
 
-	private void setAssetModel(final Asset asset, final Cell cell) {
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private AssetBrand createAssetBrand(final String brandName, Business business) throws Exception {
+
+		return brandDao.save(new AssetBrand(brandName, business, false));
+
+	}
+
+	private void setAssetModel(final Asset asset, final Cell cell) throws Exception {
+
 		AssetModel model =  modelDao.findByNameIgnoreCase( cell.getStringCellValue().toLowerCase() );
 
 		if (model == null) {
-			model = new AssetModel();
-			model.setModelName(cell.getStringCellValue());
-			model.setAssetBrand(asset.getBrand());
-			model.setIsDeleted(false);
 
-			model = modelDao.save(model);
+			model = createAssetModel(asset, cell.getStringCellValue());
+
 		}
 
 		asset.setModel(model);
 	}
 
-	private void setAssetBusiness(Integer bussinessId, final Asset asset) {
-		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			asset.setBusiness(businessDao.findOne(bussinessId));
-		} else {
-			asset.setBusiness(AuthenticationUtil.getLoginUserBusiness());
-		}
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private AssetModel createAssetModel(final Asset asset, final String modelName) throws Exception {
+
+		return modelDao.save(new AssetModel(modelName, asset.getBrand(), false));
+
 	}
 
-	private void setCategory(String code, AssetCategoryType assetCategoryType, Asset asset) {
-
-		final AssetCategoryDTO assetCategoryDTO = new AssetCategoryDTO();
+	private void setCategory(String code, AssetCategoryType assetCategoryType, Asset asset, Business business) throws Exception {
 
 		AssetCategory assetCategory = assetCategoryDao.findByAssetCategoryByCode(code);
 
 		if (assetCategory == null) {
 
-			assetCategory = new AssetCategory();
-			assetCategoryDTO.setName(code);
-			assetCategoryDTO.setDescription(code);
-			assetCategoryDTO.setType(assetCategoryType);
-			assetCategoryDTO.setBusinessId(AuthenticationUtil.getLoginUserBusiness().getId());
-
-			assetCategory = assetCategoryService.save(assetCategoryDTO).getDomainEntity();
+			assetCategory = createAssetCategory(code, assetCategoryType, business);
 		}
 
 		asset.setAssetCategory( assetCategory);
+
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private AssetCategory createAssetCategory(String code, AssetCategoryType assetCategoryType, Business business) throws Exception {
+
+		return assetCategoryDao.save(new AssetCategory(code, code, assetCategoryType, business, false));
 
 	}
 }
