@@ -1,6 +1,8 @@
 package com.codex.ecam.service.asset.impl;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.AssetCategoryType;
+import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
@@ -185,82 +188,101 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 				case 0:
 
 					asset = getExistAssetAndSetCode(asset, cell);
-
 					break;
 
 				case 1:
 
 					setName(asset, cell);
-
 					break;
 
 				case 2:
 
 					setCategory(business, asset, cell);
-
 					break;
 
 				case 3:
 
 					mainLocation = setMainLocation(business, asset, mainLocation, cell);
-
 					break;
 
 				case 4:
 
 					subLocation = getSubLocation(business, mainLocation, subLocation, cell);
-
 					break;
 
 				case 5:
 
 					setDepartment(asset, cell);
-
 					break;
 
 				case 6:
-					if (isNotNull(cell) ) {
 
-						asset.setDescription( String.valueOf( getCellValue(cell) ) );
-
-					}
+					setDescription(asset, cell);
 					break;
 
 				case 7:
-					if (isNotNull(cell) ) {
 
-
-					}
+					setAssetClass(asset, cell);
 					break;
 
 				case 8:
-					if (isNotNull(cell) ) {
-						setAssetBrand(asset, cell, business);
-					}
+
+					setAssetBrand(asset, cell, business);
 					break;
 
 				case 9:
-					if (isNotNull(cell) ) {
 
-						setAssetModel(asset, cell);
-
-					}
+					setAssetModel(asset, cell);
 					break;
 
 				case 10:
-					if (isNotNull(cell) ) {
 
-
-					}
-
+					setSize(asset, cell);
 					break;
 
 				case 11:
-					if (isNotNull(cell) ) {
 
-						asset.setSerialNo( String.valueOf( getCellValue(cell) ));
+					setSerialNo(asset, cell);
+					break;
 
-					}
+				case 12:
+
+					setQuantity(asset, cell);
+					break;
+
+				case 13:
+
+					setUnitCost(asset, cell);
+					break;
+
+				case 14:
+
+					setTotalCost(asset, cell);
+					break;
+
+				case 15:
+
+					setDateOfPurchase(asset, cell);
+					break;
+
+				case 16:
+
+					setUsefulLife(asset, cell);
+					break;
+
+				case 17:
+
+					setYearlyDepreciationValue(asset, cell);
+					break;
+
+				case 18:
+
+					setYearEndNetBookValue(asset, cell);
+					break;
+
+				case 19:
+
+					setAccumulatedDepreciation(asset, cell);
 					break;
 
 				default:
@@ -279,6 +301,101 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 			setAssetCategory(asset);
 
 			assetDao.save(asset);
+
+		}
+	}
+
+	private void setDescription(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setDescription( String.valueOf( getCellValue(cell) ) );
+
+		}
+	}
+
+	private void setAssetClass(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setAssetClass( AssetClassType.valueOf( String.valueOf( getCellValue(cell) ) ) );
+
+		}
+	}
+
+	private void setSize(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setSize( (BigDecimal) getCellValue(cell));
+		}
+	}
+
+	private void setSerialNo(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setSerialNo( String.valueOf( getCellValue(cell) ));
+
+		}
+	}
+
+	private void setQuantity(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setQuantity( (BigDecimal) getCellValue(cell) );
+
+		}
+	}
+
+	private void setUnitCost(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setUnitCost( (BigDecimal) getCellValue(cell) );
+
+		}
+	}
+
+	private void setTotalCost(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setTotalCost( (BigDecimal) getCellValue(cell) );
+
+		}
+	}
+
+	private void setDateOfPurchase(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setDateOfPurchase( (Date) getCellValue(cell));
+
+		}
+	}
+
+	private void setUsefulLife(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setUsefulLife( (BigDecimal) getCellValue(cell));
+
+		}
+	}
+
+	private void setYearlyDepreciationValue(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setYearlyDepreciationValue( (BigDecimal) getCellValue(cell));
+
+		}
+	}
+
+	private void setYearEndNetBookValue(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setYearEndNetBookValue( (BigDecimal) getCellValue(cell));
+
+		}
+	}
+
+	private void setAccumulatedDepreciation(Asset asset, final Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setAccumulatedDepreciation( (BigDecimal) getCellValue(cell));
 
 		}
 	}
@@ -309,7 +426,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setDepartment(Asset asset, final Cell cell) {
 
 		if (isNotNull(cell)) {
-			asset.setDepartmentId(null);
+			asset.setDepartment( String.valueOf( getCellValue(cell) ) );
 		}
 
 	}
@@ -432,15 +549,19 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	private void setAssetBrand(final Asset asset, final Cell cell, Business business) throws Exception {
 
-		AssetBrand brand =  brandDao.findByName(  String.valueOf( getCellValue(cell) ) );
+		if (isNotNull(cell) ) {
 
-		if (brand == null) {
+			AssetBrand brand =  brandDao.findByName(  String.valueOf( getCellValue(cell) ) );
 
-			brand = createAssetBrand( String.valueOf( getCellValue(cell) ), business);
+			if (brand == null) {
+
+				brand = createAssetBrand( String.valueOf( getCellValue(cell) ), business);
+
+			}
+
+			asset.setBrand(brand);
 
 		}
-
-		asset.setBrand(brand);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
@@ -452,15 +573,19 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	private void setAssetModel(final Asset asset, final Cell cell) throws Exception {
 
-		AssetModel model =  modelDao.findByNameIgnoreCase(  String.valueOf( getCellValue(cell) ).toLowerCase() );
+		if (isNotNull(cell) ) {
 
-		if (model == null) {
+			AssetModel model =  modelDao.findByNameIgnoreCase(  String.valueOf( getCellValue(cell) ).toLowerCase() );
 
-			model = createAssetModel(asset,  String.valueOf( getCellValue(cell) ) );
+			if (model == null) {
+
+				model = createAssetModel(asset,  String.valueOf( getCellValue(cell) ) );
+
+			}
+
+			asset.setModel(model);
 
 		}
-
-		asset.setModel(model);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
