@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:fragment="valuationTabFragment">
+    <br>
+
+        <div class="row">	
+            <div class="col-md-6">
+		    	<div class="form-group">
+		            <label class="control-label">Useful Life (Months) </label>
+		            <input type="text" th:field="*{usefulLife}" class="form-control" id="usefulLife">
+		        </div>
+            </div>
+            <div class="col-md-6">
+		    	<div class="form-group">
+		            <label class="control-label">Yearly Depreciation Value</label>
+		            <input type="text"  th:field="*{yearlyDepreciationValue}" class="form-control" id="yearlyDepreciationValue" > 
+		        </div>
+		    </div>
+		</div>
+        <div class="row">	
+            <div class="col-md-6">
+		    	<div class="form-group">
+		            <label class="control-label">Year End Net Book Value</label>
+		            <input type="text" th:field="*{yearEndNetBookValue}" class="form-control" id="yearEndNetBookValue">
+		        </div>
+            </div>
+            <div class="col-md-6">
+		    	<div class="form-group">
+		            <label class="control-label">Accumulated Depreciation</label>
+		            <input type="text"  th:field="*{accumulatedDepreciation}" class="form-control" id="accumulatedDepreciation" > 
+		        </div>
+		    </div>
+		</div>
+        <div class="row">
+            <div class="col-md-6">
+                 <div class="form-group" >
+		                <label> Date of Purchase <span class="symbol required"></span> </label>
+		                <div class="input-group" id="valuation-picker-container-div" >
+		                    <input id="dateOfPurchase" th:field="*{dateOfPurchase}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" placeholder="Eg : 08-01-2020" class="form-control" >
+		                    <span class="input-group-addon"> <i class="fa fa-calendar"></i></span>
+		                </div>
+		       </div>
+            </div>
+		</div>
+
+
+</div>
+</html>

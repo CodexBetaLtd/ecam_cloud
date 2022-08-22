@@ -237,7 +237,7 @@ public class BusinessServiceImpl implements BusinessService {
 	@Override
 	public DataTablesOutput<BusinessDTO> findAllByLevel(FocusDataTablesInput input) throws Exception {
 		DataTablesOutput<Business> domainOut = null;
-
+		
 		if (AuthenticationUtil.isAuthUserAdminLevel()) {
 			domainOut = businessDao.findAll(input,getAdminUserBusinessSpecification());
 		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
@@ -246,6 +246,20 @@ public class BusinessServiceImpl implements BusinessService {
 			domainOut = businessDao.findAll(input, getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
 		}
 		final DataTablesOutput<BusinessDTO> out = BusinessMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		return out;
+	}
+	@Override
+	public List<BusinessDTO> findAllByLevelList() throws Exception {
+		List<Business> domainOut = null;
+
+		if (AuthenticationUtil.isAuthUserAdminLevel()) {
+			domainOut = (List<Business>) businessDao.findAll();
+		} else if (AuthenticationUtil.isAuthUserSystemLevel()) {
+			domainOut = businessDao.findAll(getSystemUserBusinessSpecification(AuthenticationUtil.getLoginUserBusiness().getId()));
+		} else {
+			domainOut = businessDao.findAll(getGeneralUserBusinessSpecification(AuthenticationUtil.getLoginSite().getSite().getId()));
+		}
+		final List<BusinessDTO> out = BusinessMapper.getInstance().domainToDTOListForDataTables(domainOut);
 		return out;
 	}
 

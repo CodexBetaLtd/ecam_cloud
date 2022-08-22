@@ -1,8 +1,13 @@
 package com.codex.ecam.mappers.asset;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+
+import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetFileDTO;
 import com.codex.ecam.dto.asset.LocationDTO;
@@ -54,6 +59,19 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setVersion(domain.getVersion());
 		dto.setImageLocation(domain.getImageLocation());
 		dto.setChildCount(domain.getChildCount());
+		
+		dto.setSize(domain.getSize());
+dto.setQuantity(domain.getQuantity());
+dto.setUnitCost(domain.getUnitCost());
+dto.setTotalCost(domain.getTotalCost());
+dto.setUsefulLife(domain.getUsefulLife());
+dto.setYearlyDepreciationValue(domain.getYearlyDepreciationValue());
+dto.setYearEndNetBookValue(domain.getYearEndNetBookValue());
+dto.setAccumulatedDepreciation(domain.getAccumulatedDepreciation());
+dto.setDateOfPurchase(domain.getDateOfPurchase());
+dto.setDepartment(domain.getDepartment());
+dto.setAssetClass(domain.getAssetClass());
+
 
 		if (domain.getBusiness() != null) {
 			dto.setBusinessId(domain.getBusiness().getId());
@@ -250,6 +268,18 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		domain.setIsDeleted(dto.getIsDeleted());
 		domain.setVersion(dto.getVersion());
 		domain.setImageLocation(dto.getImageLocation());
+		
+		domain.setSize(dto.getSize());
+		domain.setQuantity(dto.getQuantity());
+		domain.setUnitCost(dto.getUnitCost());
+		domain.setTotalCost(dto.getTotalCost());
+		domain.setUsefulLife(dto.getUsefulLife());
+		domain.setYearlyDepreciationValue(dto.getYearlyDepreciationValue());
+		domain.setYearEndNetBookValue(dto.getYearEndNetBookValue());
+		domain.setAccumulatedDepreciation(dto.getAccumulatedDepreciation());
+		domain.setDateOfPurchase(dto.getDateOfPurchase());
+		domain.setDepartment(dto.getDepartment());
+		domain.setAssetClass(dto.getAssetClass());
 	}
 
 	@Override

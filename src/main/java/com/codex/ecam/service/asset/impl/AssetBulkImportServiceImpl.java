@@ -1,5 +1,6 @@
 package com.codex.ecam.service.asset.impl;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,21 +57,26 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception {
 
-		final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
+	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception{
+		try {
 
-		if (businessId == null) {
-			businessId = AuthenticationUtil.getLoginUserBusiness().getId();
+			final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
+
+			if (businessId == null) {
+				businessId = AuthenticationUtil.getLoginUserBusiness().getId();
+			}
+
+			Business business = businessDao.findOne(businessId);
+
+			importLocations(business, workbook);
+			importMachines(business, workbook);
+
+			workbook.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
-		Business business = businessDao.findOne(businessId);
-
-		importLocations(business, workbook);
-		importMachines(business, workbook);
-
-		workbook.close();
-
 	}
 
 	private void importLocations(Business business, final Workbook workbook) {
@@ -304,7 +310,6 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 		if (isNotNull(cell)) {
 			asset.setDepartmentId(null);
-
 		}
 
 	}
