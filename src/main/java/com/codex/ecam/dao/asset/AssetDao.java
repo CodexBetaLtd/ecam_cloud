@@ -27,6 +27,9 @@ public interface AssetDao extends FocusDataTableRepository<Asset, Integer> {
 	@Query("FROM Asset WHERE code = :code AND business.id = :bizId AND parentAsset IS NULL")
 	List<Asset> findByParentAssetByCodeAndBusiness(@Param("code") String code, @Param("bizId") Integer bizId);
 
+	@Query("FROM Asset WHERE code = :code AND business.id = :bizId AND parentAsset IS NOT NULL")
+	List<Asset> findByChildAssetByCodeAndBusiness(@Param("code") String code, @Param("bizId") Integer bizId);
+
 	@Query("from Asset where code=:code")
 	Asset findByAssetByCode(@Param("code") String code);
 

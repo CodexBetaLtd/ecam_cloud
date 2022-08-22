@@ -208,10 +208,12 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	@Transient
 	private Integer childCount;
 
+	@Override
 	public Integer getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}

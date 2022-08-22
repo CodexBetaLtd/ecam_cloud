@@ -20,7 +20,7 @@ public interface AssetCategoryDao extends FocusDataTableRepository<AssetCategory
 	List<AssetCategory> findByAssetCategoyType(@Param("type") AssetCategoryType type);
 	
 	@Query("from AssetCategory where name = :name")
-	AssetCategory findByAssetCategoryByCode(@Param("name") String name);
+	AssetCategory findByAssetCategoryByName(@Param("name") String name);
 	
 	@Query("from AssetCategory where assetCategoryType = :type and business.id=:id ")
 	List<AssetCategory> findByAssetCategoyTypeByBusiness(@Param("type") AssetCategoryType type,@Param("id") Integer id);
