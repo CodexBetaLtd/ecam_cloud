@@ -170,21 +170,6 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6"
-                                            th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
-                                            <div class="form-group">
-                                                <label class="control-label"> This Equipment is located at <span
-                                                        class="symbol required"></span>
-                                                </label>
-                                                <select id="siteId" th:field="*{siteId}" class="search-select"
-                                                    style="width: 100%;">
-                                                    <option th:each="site : ${sites}" th:value="${site.id}"
-                                                        th:text="${site.name}"></option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">
@@ -198,15 +183,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label"> This Equipment is a part of </label>
+                                                <label class="control-label"> Main Location </label>
                                                 <div class="input-group">
                                                     <input type="hidden" th:field="*{parentAssetId}">
                                                     <input type="text" th:field="*{parentAssetName}" readonly
                                                         class="form-control" placeholder="Select a Parent Asset"
                                                         id="parentAssetName">
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6"
+                                            th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
+                                            <div class="form-group">
+                                                <label class="control-label"> Sub Location <span
+                                                        class="symbol required"></span>
+                                                </label>
+                                                <select id="siteId" th:field="*{siteId}" class="search-select"
+                                                    style="width: 100%;">
+                                                    <option th:each="site : ${sites}" th:value="${site.id}"
+                                                        th:text="${site.name}"></option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>

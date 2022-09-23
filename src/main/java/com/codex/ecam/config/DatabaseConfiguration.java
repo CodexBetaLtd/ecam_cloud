@@ -62,6 +62,7 @@ public class DatabaseConfiguration {
 		jpaProperties.put("hibernate.dialect", environment.getProperty("hibernate.dialect"));
 		jpaProperties.put("hibernate.show_sql", environment.getProperty("hibernate.show_sql"));
 		jpaProperties.put("hibernate.format_sql", "true");
+		jpaProperties.put("hibernate.hbm2ddl.auto", environment.getProperty("hibernate.hbm2ddl.auto"));
 		jpaProperties.put("hibernate.enable_lazy_load_no_trans", "true");
 		jpaProperties.put("hibernate.integrator_provider", (IntegratorProvider) () -> Collections.singletonList( RootAwareEventListenerIntegrator.INSTANCE ));
 		return jpaProperties;

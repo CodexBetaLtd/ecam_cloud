@@ -98,6 +98,7 @@ var runDropzone = function() {
 							$('#uploadingGif').css("display","none")
 							$('#dropZoneText').css("padding","20px")
 				    		$('#dropZoneText').text("File Sucessfully Uploaded");
+							console.log(response)
 						},
 						error : function() {
 							$('#dropZoneText').empty();

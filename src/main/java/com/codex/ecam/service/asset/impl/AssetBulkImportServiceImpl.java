@@ -1,12 +1,12 @@
 package com.codex.ecam.service.asset.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.codex.ecam.constants.AssetCategoryType;
-import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.dao.admin.AssetBrandDao;
 import com.codex.ecam.dao.admin.AssetModelDao;
 import com.codex.ecam.dao.asset.AssetCategoryDao;
@@ -62,90 +61,24 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 
 	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception{
-		try {
 
-			final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
+		final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
 
-			if (businessId == null) {
-				businessId = AuthenticationUtil.getLoginUserBusiness().getId();
-			}
-
-			Business business = businessDao.findOne(businessId);
-
-			importLocations(business, workbook);
-			importMachines(business, workbook);
-
-			workbook.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (businessId == null) {
+			businessId = AuthenticationUtil.getLoginUserBusiness().getId();
 		}
-	}
 
-	private void importLocations(Business business, final Workbook workbook) {
+		Business business = businessDao.findOne(businessId);
 
-		final Sheet location = workbook.getSheetAt(0);
+		importMachines(business, workbook);
 
-		final Iterator<Row> iterator = location.iterator();
+		workbook.close();
 
-		try {
-			while (iterator.hasNext()) {
-
-				final Row nextRow = iterator.next();
-
-				final int rowIndex = nextRow.getRowNum();
-
-				if (rowIndex != 0) {
-
-					final Iterator<Cell> cellIterator = nextRow.cellIterator();
-
-					final Asset asset = new Asset();
-
-					while (cellIterator.hasNext()) {
-
-						final Cell cell = cellIterator.next();
-						final int columnIndex = cell.getColumnIndex();
-
-						switch (columnIndex) {
-						case 0:
-							asset.setCode( String.valueOf( getCellValue(cell) ));
-							break;
-						case 1:
-							setCategory( String.valueOf( getCellValue(cell) ) ,
-									AssetCategoryType.LOCATIONS_OR_FACILITIES, asset, business);
-							break;
-						case 2:
-							asset.setName( String.valueOf( getCellValue(cell) ));
-							asset.setDescription( String.valueOf( getCellValue(cell) ));
-							break;
-						case 3:
-							if (isNotNull(cell)) {
-
-
-							}
-							break;
-						case 5:
-
-						default:
-							break;
-						}
-					}
-
-					asset.setBusiness(business);
-
-					// save(assetDTO, null);
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.error("Error occured while saving Location -> " + e.getMessage());
-		}
 	}
 
 	private void importMachines(Business business, final Workbook workbook) throws Exception {
 
-		final Sheet machine = workbook.getSheetAt(1);
+		final Sheet machine = workbook.getSheetAt(0);
 
 		final Iterator<Row> iteratorMachine = machine.iterator();
 
@@ -175,7 +108,8 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 			Asset asset = new Asset();
 
 			Asset mainLocation = null;
-			Asset subLocation = null;
+			Asset subLocation_1 = null;
+			Asset subLocation_2 = null;
 
 			while (cellIterator.hasNext()) {
 
@@ -207,22 +141,22 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 				case 4:
 
-					subLocation = getSubLocation(business, mainLocation, subLocation, cell);
+					subLocation_1 = getSubLocation(business, mainLocation, subLocation_1, cell);
 					break;
 
 				case 5:
 
-					setDepartment(asset, cell);
+					subLocation_2 = getSubLocation(business, subLocation_1, subLocation_2, cell);
 					break;
 
 				case 6:
 
-					setDescription(asset, cell);
+					setDepartment(asset, cell);
 					break;
 
 				case 7:
 
-					setAssetClass(asset, cell);
+					setDescription(asset, cell);
 					break;
 
 				case 8:
@@ -272,15 +206,20 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 				case 17:
 
-					setYearlyDepreciationValue(asset, cell);
+					setRemarks(asset, cell);
 					break;
 
 				case 18:
 
-					setYearEndNetBookValue(asset, cell);
+					setYearlyDepreciationValue(asset, cell);
 					break;
 
 				case 19:
+
+					setYearEndNetBookValue(asset, cell);
+					break;
+
+				case 20:
 
 					setAccumulatedDepreciation(asset, cell);
 					break;
@@ -294,9 +233,11 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 			asset.setIsOnline(false);
 			asset.setBusiness(business);
 
-			mainLocation = saveMainLocation(mainLocation);
+			saveMainLocation(asset, mainLocation);
 
-			saveSubLocation(asset, mainLocation, subLocation);
+			saveSubLocation_1(asset, mainLocation, subLocation_1);
+
+			saveSubLocation_2(asset, subLocation_1, subLocation_2);
 
 			setAssetCategory(asset);
 
@@ -313,18 +254,10 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		}
 	}
 
-	private void setAssetClass(Asset asset, final Cell cell) {
-		if (isNotNull(cell) ) {
-
-			asset.setAssetClass( AssetClassType.valueOf( String.valueOf( getCellValue(cell) ) ) );
-
-		}
-	}
-
 	private void setSize(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setSize( (BigDecimal) getCellValue(cell));
+			asset.setSize( String.valueOf( getCellValue(cell) ));
 		}
 	}
 
@@ -339,15 +272,14 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setQuantity(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setQuantity( (BigDecimal) getCellValue(cell) );
-
+			asset.setQuantity( ifDoubleConvertToBigDecimal( getCellValue(cell)) );
 		}
 	}
 
 	private void setUnitCost(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setUnitCost( (BigDecimal) getCellValue(cell) );
+			asset.setUnitCost( ifDoubleConvertToBigDecimal( getCellValue(cell)) );
 
 		}
 	}
@@ -355,7 +287,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setTotalCost(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setTotalCost( (BigDecimal) getCellValue(cell) );
+			asset.setTotalCost( ifDoubleConvertToBigDecimal( getCellValue(cell)) );
 
 		}
 	}
@@ -371,7 +303,15 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setUsefulLife(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setUsefulLife( (BigDecimal) getCellValue(cell));
+			asset.setUsefulLife( ifDoubleConvertToBigDecimal( getCellValue(cell)) );
+
+		}
+	}
+
+	private void setRemarks(Asset asset, Cell cell) {
+		if (isNotNull(cell) ) {
+
+			asset.setRemarks( String.valueOf( getCellValue(cell) ));
 
 		}
 	}
@@ -379,7 +319,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setYearlyDepreciationValue(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setYearlyDepreciationValue( (BigDecimal) getCellValue(cell));
+			asset.setYearlyDepreciationValue( ifDoubleConvertToBigDecimal( getCellValue(cell)));
 
 		}
 	}
@@ -387,7 +327,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setYearEndNetBookValue(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setYearEndNetBookValue( (BigDecimal) getCellValue(cell));
+			asset.setYearEndNetBookValue( ifDoubleConvertToBigDecimal( getCellValue(cell)));
 
 		}
 	}
@@ -395,7 +335,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void setAccumulatedDepreciation(Asset asset, final Cell cell) {
 		if (isNotNull(cell) ) {
 
-			asset.setAccumulatedDepreciation( (BigDecimal) getCellValue(cell));
+			asset.setAccumulatedDepreciation( ifDoubleConvertToBigDecimal( getCellValue(cell)));
 
 		}
 	}
@@ -406,7 +346,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		}
 	}
 
-	private void saveSubLocation(Asset asset, Asset mainLocation, Asset subLocation) {
+	private void saveSubLocation_1(Asset asset, Asset mainLocation, Asset subLocation) {
 		if (subLocation != null) {
 
 			subLocation.setParentAsset(mainLocation);
@@ -416,11 +356,22 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		}
 	}
 
-	private Asset saveMainLocation(Asset mainLocation) {
+	private void saveSubLocation_2(Asset asset, Asset mainLocation, Asset subLocation) {
+		if (subLocation != null) {
+
+			subLocation.setParentAsset(mainLocation);
+			subLocation = assetDao.save(subLocation);
+
+			asset.setSubSite(subLocation);
+		}
+	}
+
+	private void saveMainLocation(Asset asset, Asset mainLocation) {
 		if (mainLocation != null) {
 			mainLocation = assetDao.save(mainLocation);
+
+			asset.setParentAsset(mainLocation);
 		}
-		return mainLocation;
 	}
 
 	private void setDepartment(Asset asset, final Cell cell) {
@@ -618,6 +569,13 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	}
 
+	private BigDecimal ifDoubleConvertToBigDecimal(Object val) {
+		if( val instanceof Double) {
+			return new BigDecimal((Double)val);
+		}
+		return (BigDecimal) val;
+	}
+
 	private boolean isNotNull(final Cell cell) {
 		return cell == null ? false :  true;
 	}
@@ -626,10 +584,16 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		switch (cell.getCellType()) {
 
 		case NUMERIC:
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue();
+			}
 			return cell.getNumericCellValue();
 
 		case BOOLEAN:
 			return cell.getBooleanCellValue();
+
+		case STRING:
+			return cell.getStringCellValue();
 
 		default:
 			return cell.getStringCellValue();

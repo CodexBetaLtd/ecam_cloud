@@ -50,11 +50,11 @@ public class AssetDTO extends BaseDTO {
 	private String serialNo;
 	private String customerName;
 	private String assetUrl;
-	
 	private String department;
+	private String size;
+
 	private AssetClassType assetClass;
-	
-	private BigDecimal size;
+
 	private BigDecimal quantity;
 	private BigDecimal unitCost;
 	private BigDecimal totalCost;
@@ -62,7 +62,7 @@ public class AssetDTO extends BaseDTO {
 	private BigDecimal yearlyDepreciationValue;
 	private BigDecimal yearEndNetBookValue ;
 	private BigDecimal accumulatedDepreciation ;
-	
+
 	private Date dateOfPurchase;
 
 	private AssetPurchasingDTO assetPurchasingDetail = new AssetPurchasingDTO();
@@ -464,11 +464,11 @@ public class AssetDTO extends BaseDTO {
 		this.assetClass = assetClass;
 	}
 
-	public BigDecimal getSize() {
+	public String getSize() {
 		return size;
 	}
 
-	public void setSize(BigDecimal size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 

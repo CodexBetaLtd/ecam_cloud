@@ -6,8 +6,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -45,6 +49,8 @@ import com.codex.ecam.service.biz.api.SupplierService;
 @Controller
 @RequestMapping(AssetController.REQUEST_MAPPING_URL)
 public class AssetController {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(AssetController.class);
 
 	public static final String REQUEST_MAPPING_URL = "/asset";
 
@@ -452,14 +458,22 @@ public class AssetController {
 	public void  downloadFile(@RequestParam("fileId")Integer id, HttpServletResponse response) throws Exception {
 		assetService.assetFileDownload(id,response);
 	}
+
 	@RequestMapping(value = "/download-qr", method = RequestMethod.GET)
 	public void  downloadQR(@RequestParam("id")Integer id, HttpServletResponse response) throws Exception {
 		assetService.assetQRDownload(id,response);
 	}
 
 	@RequestMapping(value = "/import-assets", method = RequestMethod.POST)
-	public void  importAssets(@RequestParam("fileData")MultipartFile file,@RequestParam("bussinessId")Integer bussinessId, HttpServletResponse response) throws Exception {
-		assetBulkImportService.importBulk(file,bussinessId);
+	public @ResponseBody ResponseEntity<String>  importAssets(@RequestParam("fileData")MultipartFile file,@RequestParam("bussinessId")Integer bussinessId){
+		try {
+			assetBulkImportService.importBulk(file,bussinessId);
+			return new ResponseEntity<String>("Successfully imported!", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error("Error occured while import due to, {} " ,e.getMessage());
+			return new ResponseEntity<String>("Error occured! due to, " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@RequestMapping(value = "/machine/delete-multiple", method = RequestMethod.GET)

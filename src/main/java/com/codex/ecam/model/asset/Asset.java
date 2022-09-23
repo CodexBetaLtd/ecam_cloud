@@ -53,50 +53,6 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	@Column(name = "id")
 	private Integer id;
 
-	@JoinColumn( name = "asset_category_id" )
-	@ManyToOne( targetEntity = AssetCategory.class, fetch = FetchType.LAZY)
-	private AssetCategory assetCategory;
-
-	@JoinColumn( name = "parent_asset_id" )
-	@ManyToOne( targetEntity = Asset.class, fetch = FetchType.LAZY)
-	private Asset parentAsset;
-
-	@JoinColumn( name = "site_id" )
-	@ManyToOne( targetEntity = Asset.class, fetch = FetchType.LAZY)
-	private Asset site;
-
-	@JoinColumn( name = "asset_status_id" )
-	@ManyToOne( targetEntity = AssetStatus.class, fetch = FetchType.LAZY)
-	private AssetStatus assetStatus;
-
-	@JoinColumn( name = "asset_offline_tracker_id" )
-	@ManyToOne( targetEntity = AssetOfflineTracker.class, fetch = FetchType.LAZY)
-	private AssetOfflineTracker offLineTracker;
-
-	@JoinColumn( name = "current_customer_id" )
-	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business customer;
-
-	@JoinColumn(name = "current_asset_event_id")
-	@OneToOne(targetEntity = AssetEvent.class, fetch = FetchType.LAZY)
-	private AssetEvent currentAssetEvent;
-
-	@JoinColumn( name = "country_id" )
-	@ManyToOne( targetEntity = Country.class, fetch = FetchType.LAZY)
-	private Country country;
-
-	@JoinColumn( name="business_id" )
-	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
-	private Business business;
-
-	@JoinColumn(name="brand_id")
-	@ManyToOne(targetEntity = AssetBrand.class, fetch = FetchType.LAZY)
-	private AssetBrand brand;
-
-	@JoinColumn(name="model_id")
-	@ManyToOne(targetEntity = AssetModel.class, fetch = FetchType.LAZY)
-	private AssetModel model;
-
 	@Column(name="name")
 	private String name;
 
@@ -159,39 +115,90 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="part_usage_type")
 	private PartUsageType partUsageType;
-	
+
 	@Column(name="size")
-	private BigDecimal size;
-	
+	private String size;
+
 	@Column(name="quantity")
 	private BigDecimal quantity;
-	
+
 	@Column(name="unit_cost")
 	private BigDecimal unitCost;
-	
+
 	@Column(name="total_cost")
 	private BigDecimal totalCost;
-	
+
 	@Column(name="useful_life")
 	private BigDecimal usefulLife;
-	
+
 	@Column(name="yearly_depreciation_value")
 	private BigDecimal yearlyDepreciationValue;
-	
+
 	@Column(name="year_end_net_book_value")
 	private BigDecimal yearEndNetBookValue ;
-	
+
 	@Column(name="accumulated_depreciation")
 	private BigDecimal accumulatedDepreciation ;
-	
+
 	@Column(name="date_of_purchase")
 	private Date dateOfPurchase;
-	
+
 	@Column(name="department")
 	private String department;
-	
+
+	@Column(name="remarks")
+	private String remarks;
+
 	@Column(name="asset_class_id")
 	private AssetClassType assetClass;
+
+	@JoinColumn( name = "asset_category_id" )
+	@ManyToOne( targetEntity = AssetCategory.class, fetch = FetchType.LAZY)
+	private AssetCategory assetCategory;
+
+	@JoinColumn( name = "parent_asset_id" )
+	@ManyToOne( targetEntity = Asset.class, fetch = FetchType.LAZY)
+	private Asset parentAsset;
+
+	@JoinColumn( name = "site_id" )
+	@ManyToOne( targetEntity = Asset.class, fetch = FetchType.LAZY)
+	private Asset site;
+
+	@JoinColumn( name = "sub_site_id" )
+	@ManyToOne( targetEntity = Asset.class, fetch = FetchType.LAZY)
+	private Asset subSite;
+
+	@JoinColumn( name = "asset_status_id" )
+	@ManyToOne( targetEntity = AssetStatus.class, fetch = FetchType.LAZY)
+	private AssetStatus assetStatus;
+
+	@JoinColumn( name = "asset_offline_tracker_id" )
+	@ManyToOne( targetEntity = AssetOfflineTracker.class, fetch = FetchType.LAZY)
+	private AssetOfflineTracker offLineTracker;
+
+	@JoinColumn( name = "current_customer_id" )
+	@ManyToOne(targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Business customer;
+
+	@JoinColumn(name = "current_asset_event_id")
+	@OneToOne(targetEntity = AssetEvent.class, fetch = FetchType.LAZY)
+	private AssetEvent currentAssetEvent;
+
+	@JoinColumn( name = "country_id" )
+	@ManyToOne( targetEntity = Country.class, fetch = FetchType.LAZY)
+	private Country country;
+
+	@JoinColumn( name="business_id" )
+	@ManyToOne( targetEntity = Business.class, fetch = FetchType.LAZY)
+	private Business business;
+
+	@JoinColumn(name="brand_id")
+	@ManyToOne(targetEntity = AssetBrand.class, fetch = FetchType.LAZY)
+	private AssetBrand brand;
+
+	@JoinColumn(name="model_id")
+	@ManyToOne(targetEntity = AssetModel.class, fetch = FetchType.LAZY)
+	private AssetModel model;
 
 	@OneToMany(mappedBy = "asset", fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
 	private Set<AssetMeterReading> assetMeterReadings;
@@ -673,11 +680,11 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 		this.assetUrl = assetUrl;
 	}
 
-	public BigDecimal getSize() {
+	public String getSize() {
 		return size;
 	}
 
-	public void setSize(BigDecimal size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 
@@ -759,6 +766,22 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	public void setAssetClass(AssetClassType assetClass) {
 		this.assetClass = assetClass;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Asset getSubSite() {
+		return subSite;
+	}
+
+	public void setSubSite(Asset subSite) {
+		this.subSite = subSite;
 	}
 
 
