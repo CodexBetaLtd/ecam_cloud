@@ -1,13 +1,8 @@
 package com.codex.ecam.mappers.asset;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-
-import com.codex.ecam.constants.AssetClassType;
 import com.codex.ecam.dto.asset.AssetDTO;
 import com.codex.ecam.dto.asset.AssetFileDTO;
 import com.codex.ecam.dto.asset.LocationDTO;
@@ -71,6 +66,7 @@ dto.setAccumulatedDepreciation(domain.getAccumulatedDepreciation());
 dto.setDateOfPurchase(domain.getDateOfPurchase());
 dto.setDepartment(domain.getDepartment());
 dto.setAssetClass(domain.getAssetClass());
+dto.setRemark(domain.getRemarks());
 
 
 		if (domain.getBusiness() != null) {
@@ -86,6 +82,9 @@ dto.setAssetClass(domain.getAssetClass());
 
 		if (domain.getSite() != null) {
 			dto.setSiteId(domain.getSite().getId());
+		}
+		if (domain.getSubSite() != null) {
+			dto.setSubSiteId(domain.getSubSite().getId());
 		}
 
 		if (domain.getParentAsset() != null){
@@ -280,6 +279,7 @@ dto.setAssetClass(domain.getAssetClass());
 		domain.setDateOfPurchase(dto.getDateOfPurchase());
 		domain.setDepartment(dto.getDepartment());
 		domain.setAssetClass(dto.getAssetClass());
+		domain.setRemarks(dto.getRemark());
 	}
 
 	@Override

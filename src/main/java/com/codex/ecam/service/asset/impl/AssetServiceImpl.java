@@ -402,6 +402,7 @@ public class AssetServiceImpl implements AssetService {
 		setParentAsset(result);
 		setBusiness(result);
 		setSite(result);
+		setSubSite(result);
 		setMeterReadings(result);
 		setAssetEvents(result);
 		addUsersToAsset(result);
@@ -882,6 +883,11 @@ public class AssetServiceImpl implements AssetService {
 	private void setSite(AssetResult result) {
 		if (result.getDtoEntity() != null && result.getDtoEntity().getSiteId() != null) {
 			result.getDomainEntity().setSite(assetDao.findOne(result.getDtoEntity().getSiteId()));
+		}
+	}
+	private void setSubSite(AssetResult result) {
+		if (result.getDtoEntity() != null && result.getDtoEntity().getSubSiteId() != null) {
+			result.getDomainEntity().setSubSite(assetDao.findOne(result.getDtoEntity().getSubSiteId()));
 		}
 	}
 

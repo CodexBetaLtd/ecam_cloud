@@ -143,8 +143,14 @@ var AssetAdd = function () {
         });
     };
     var runSiteSelect = function () {
-        $("#siteId").select2({
-            placeholder: "Select a Site",
+    	$("#siteId").select2({
+    		placeholder: "Select a Site",
+    		allowClear: true
+    	});
+    };
+    var runSubSiteSelect = function () {
+        $("#subSiteId").select2({
+            placeholder: "Select a Sub Site",
             allowClear: true
         });
     };
@@ -422,6 +428,7 @@ var AssetAdd = function () {
             runAssetBusinessSelect();
             runAssetClassSelect();
             runSiteSelect();
+            runSubSiteSelect();
             runMeterReadingUnitSelect();
             initAssetCategorySelect();
             initBrandSelect();

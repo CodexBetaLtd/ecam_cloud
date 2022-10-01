@@ -16,6 +16,7 @@ public class AssetDTO extends BaseDTO {
 	private Integer assetCategoryId;
 	private Integer businessId;
 	private Integer siteId;
+	private Integer subSiteId;
 	private Integer businessTypeId;
 	private Integer parentAssetId;
 	private Integer countryId;
@@ -52,6 +53,7 @@ public class AssetDTO extends BaseDTO {
 	private String assetUrl;
 	private String department;
 	private String size;
+	private String remark;
 
 	private AssetClassType assetClass;
 
@@ -230,6 +232,16 @@ public class AssetDTO extends BaseDTO {
 
 	public void setSiteId(Integer siteId) {
 		this.siteId = siteId;
+	}
+	
+	
+
+	public Integer getSubSiteId() {
+		return subSiteId;
+	}
+
+	public void setSubSiteId(Integer subSiteId) {
+		this.subSiteId = subSiteId;
 	}
 
 	public Integer getCurrentAssetEventId() {
@@ -534,6 +546,14 @@ public class AssetDTO extends BaseDTO {
 
 	public void setDateOfPurchase(Date dateOfPurchase) {
 		this.dateOfPurchase = dateOfPurchase;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 
