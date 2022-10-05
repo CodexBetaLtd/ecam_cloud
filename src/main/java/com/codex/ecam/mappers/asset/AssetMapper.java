@@ -54,19 +54,19 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setVersion(domain.getVersion());
 		dto.setImageLocation(domain.getImageLocation());
 		dto.setChildCount(domain.getChildCount());
-		
+
 		dto.setSize(domain.getSize());
-dto.setQuantity(domain.getQuantity());
-dto.setUnitCost(domain.getUnitCost());
-dto.setTotalCost(domain.getTotalCost());
-dto.setUsefulLife(domain.getUsefulLife());
-dto.setYearlyDepreciationValue(domain.getYearlyDepreciationValue());
-dto.setYearEndNetBookValue(domain.getYearEndNetBookValue());
-dto.setAccumulatedDepreciation(domain.getAccumulatedDepreciation());
-dto.setDateOfPurchase(domain.getDateOfPurchase());
-dto.setDepartment(domain.getDepartment());
-dto.setAssetClass(domain.getAssetClass());
-dto.setRemark(domain.getRemarks());
+		dto.setQuantity(domain.getQuantity());
+		dto.setUnitCost(domain.getUnitCost());
+		dto.setTotalCost(domain.getTotalCost());
+		dto.setUsefulLife(domain.getUsefulLife());
+		dto.setYearlyDepreciationValue(domain.getYearlyDepreciationValue());
+		dto.setYearEndNetBookValue(domain.getYearEndNetBookValue());
+		dto.setAccumulatedDepreciation(domain.getAccumulatedDepreciation());
+		dto.setDateOfPurchase(domain.getDateOfPurchase());
+		dto.setDepartment(domain.getDepartment());
+		dto.setAssetClass(domain.getAssetClass());
+		dto.setRemark(domain.getRemarks());
 
 
 		if (domain.getBusiness() != null) {
@@ -267,7 +267,7 @@ dto.setRemark(domain.getRemarks());
 		domain.setIsDeleted(dto.getIsDeleted());
 		domain.setVersion(dto.getVersion());
 		domain.setImageLocation(dto.getImageLocation());
-		
+
 		domain.setSize(dto.getSize());
 		domain.setQuantity(dto.getQuantity());
 		domain.setUnitCost(dto.getUnitCost());

@@ -187,7 +187,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label"> Parent Asset </label>
+                                                <label class="control-label"> Main Location </label>
                                                 <div class="input-group">
                                                     <input type="hidden" th:field="*{parentAssetId}">
                                                     <input type="text" th:field="*{parentAssetName}" readonly
@@ -211,7 +211,7 @@
                                             <div class="col-md-6"
                                             th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
                                             <div class="form-group">
-                                                <label class="control-label">  Location <span
+                                                <label class="control-label">  Sub Location <span
                                                         class="symbol required"></span>
                                                 </label>
                                                 <select id="siteId" th:field="*{siteId}" class="search-select"
@@ -224,7 +224,7 @@
                                             <div class="col-md-6"
                                             th:if="${type != T(com.codex.ecam.constants.AssetCategoryType).LOCATIONS_OR_FACILITIES}">
                                             <div class="form-group">
-                                                <label class="control-label"> Sub Location <span
+                                                <label class="control-label"> Sub Location 2 <span
                                                         class="symbol required"></span>
                                                 </label>
                                                 <select id="subSiteId" th:field="*{subSiteId}" class="search-select"
