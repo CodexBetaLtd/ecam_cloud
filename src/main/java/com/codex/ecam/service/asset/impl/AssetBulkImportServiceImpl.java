@@ -58,8 +58,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	AssetCategoryService assetCategoryService;
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-
+	//	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception{
 
 		final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
@@ -91,10 +90,11 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error("Error occured while saving Asset -> " + e.getMessage());
+			throw new RuntimeException("Error occured while saving Asset -> " + e.getMessage());
 		}
 	}
 
-	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	private void saveAsset(Business business, final Iterator<Row> iteratorMachine) throws Exception {
 
 		final Row nextRow = iteratorMachine.next();
@@ -191,7 +191,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 				case 14:
 
-					setTotalCost(asset, cell);
+					//					setTotalCost(asset, cell);
 					break;
 
 				case 15:
@@ -233,9 +233,11 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 			asset.setIsOnline(false);
 			asset.setBusiness(business);
 
-			saveMainLocation(asset, mainLocation);
+			setAssetTotalCost(asset);
 
-			saveSubLocation_1(asset, mainLocation, subLocation_1);
+			setMainLocation(asset, mainLocation);
+
+			setSubLocation_1(asset, mainLocation, subLocation_1);
 
 			saveSubLocation_2(asset, subLocation_1, subLocation_2);
 
@@ -346,11 +348,10 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 		}
 	}
 
-	private void saveSubLocation_1(Asset asset, Asset mainLocation, Asset subLocation) {
+	private void setSubLocation_1(Asset asset, Asset mainLocation, Asset subLocation) {
 		if (subLocation != null) {
 
-			subLocation.setParentAsset(mainLocation);
-			subLocation = assetDao.save(subLocation);
+			saveSubLocation(mainLocation, subLocation);
 
 			asset.setSite(subLocation);
 		}
@@ -359,19 +360,45 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	private void saveSubLocation_2(Asset asset, Asset mainLocation, Asset subLocation) {
 		if (subLocation != null) {
 
-			subLocation.setParentAsset(mainLocation);
-			subLocation = assetDao.save(subLocation);
+			saveSubLocation(mainLocation, subLocation);
 
 			asset.setSubSite(subLocation);
 		}
 	}
 
-	private void saveMainLocation(Asset asset, Asset mainLocation) {
-		if (mainLocation != null) {
-			mainLocation = assetDao.save(mainLocation);
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private void saveSubLocation(Asset mainLocation, Asset subLocation) {
+
+		if (subLocation.getId() == null) {
+
+			subLocation.setParentAsset(mainLocation);
+			subLocation = assetDao.save(subLocation);
+
+		}
+	}
+
+	private void setAssetTotalCost(Asset asset) {
+		if (asset.getQuantity() != null && asset.getUnitCost() != null) {
+			asset.setTotalCost( asset.getQuantity().multiply(asset.getUnitCost()));
+		}
+	}
+
+	private void setMainLocation(Asset asset, Asset mainLocation) {
+		if (mainLocation != null ) {
+
+			saveMainLocation(mainLocation);
 
 			asset.setParentAsset(mainLocation);
 		}
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+	private void saveMainLocation(Asset mainLocation) {
+
+		if (mainLocation.getId() == null) {
+			mainLocation = assetDao.save(mainLocation);
+		}
+
 	}
 
 	private void setDepartment(Asset asset, final Cell cell) {
@@ -426,13 +453,17 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 		if (isNotNull(cell)) {
 
-			Asset optionalAsset = assetDao.findByAssetByCode( String.valueOf( getCellValue(cell) ));
+			String code =  String.valueOf( getCellValue(cell) );
+
+			System.out.println(code);
+
+			Asset optionalAsset = assetDao.findByAssetByCode( code );
 
 			if (optionalAsset != null) {
 				asset = optionalAsset;
 			}
 
-			asset.setCode( String.valueOf( getCellValue(cell) ));
+			asset.setCode( code );
 		}
 
 		return asset;
@@ -570,9 +601,20 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	}
 
 	private BigDecimal ifDoubleConvertToBigDecimal(Object val) {
+
 		if( val instanceof Double) {
+
 			return new BigDecimal((Double)val);
+		} else if( val instanceof String) {
+
+			if(!((String) val).isEmpty()) {
+
+				return new BigDecimal((String) val);
+			}
+
+			return BigDecimal.ZERO;
 		}
+
 		return (BigDecimal) val;
 	}
 
@@ -581,6 +623,7 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 	}
 
 	private Object getCellValue(Cell cell) {
+
 		switch (cell.getCellType()) {
 
 		case NUMERIC:
