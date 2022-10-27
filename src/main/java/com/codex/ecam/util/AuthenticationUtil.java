@@ -37,7 +37,7 @@ public class AuthenticationUtil {
 	public final static String SUB_MENU_PREFIX = "SUB_MENU_";
 
 	public final static String MENU_PREFIX = "MENU_";
-	
+
 	public static User TRIGGER_USER = null;
 
 	public static CurrentUser getCurrentUser() {
@@ -76,7 +76,7 @@ public class AuthenticationUtil {
 				for (SubMenu subMenu : SubMenu.getSubMenuByMenu(aMenu.getMenu())) {
 					authorities.add( new SimpleGrantedAuthority(SUB_MENU_PREFIX + subMenu.getId()) );
 				}
-			}			
+			}
 			setBusinessuserWigetPermision(bApp,authorities);
 		}
 		replaceCurrentAuthorities(authorities);
@@ -105,7 +105,7 @@ public class AuthenticationUtil {
 
 	private static void setBusinessuserWigetPermision(BusinessApp bApp,Set<GrantedAuthority> authorities){
 		for(BusinessWiget businessWiget:bApp.getBusinessWigets()){
-				authorities.add( new SimpleGrantedAuthority(Widgets.getWigetById(businessWiget.getAppWiget().getWidgets().getId()).toString()) );
+			authorities.add( new SimpleGrantedAuthority(Widgets.getWigetById(businessWiget.getAppWiget().getWidgets().getId()).toString()) );
 		}
 	}
 	public static Boolean isAuthUserAdminLevel() {
@@ -140,11 +140,15 @@ public class AuthenticationUtil {
 	}
 
 	private static void setPagePermission(UserGroup userGroup, Set<GrantedAuthority> authorities) {
-		for (UserGroupPage groupPage : userGroup.getPageList()) {
-			//			authorities.add( new SimpleGrantedAuthority(groupPage.getPage().toString()));
-			for (UserGroupPagePermission pagePermission : groupPage.getPermissionList()) {
-				authorities.add(new SimpleGrantedAuthority(PAGE_PERMISSION_PREFIX + pagePermission.getPagePermission().getId()));
+		try {
+			for (UserGroupPage groupPage : userGroup.getPageList()) {
+				//			authorities.add( new SimpleGrantedAuthority(groupPage.getPage().toString()));
+				for (UserGroupPagePermission pagePermission : groupPage.getPermissionList()) {
+					authorities.add(new SimpleGrantedAuthority(PAGE_PERMISSION_PREFIX + pagePermission.getPagePermission().getId()));
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

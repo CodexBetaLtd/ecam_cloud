@@ -46,7 +46,7 @@
                 <div class="btn-bar row">
 	
 					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/userGroups/add}"
-						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-placement="top" data-original-title="Add">
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_USER_GROUP_VIEW.id)" data-placement="top" data-original-title="Add">
 				    	<i class="clip-plus-circle-2  btn-new" ></i> New
 				    </a>
 				                                      
@@ -56,7 +56,7 @@
 				    </a>
 				    
 				    <a class="btn btn-default btn-sm active tooltips" id="delete" data-placement="top" 
-				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-original-title="Delete">
+				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_USER_GROUP_VIEW.id)" data-original-title="Delete">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				    </a>
 				    

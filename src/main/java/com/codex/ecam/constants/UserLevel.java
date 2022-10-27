@@ -39,8 +39,8 @@ public enum UserLevel {
 		final List<UserLevel> list = new ArrayList<UserLevel>();
 		if(AuthenticationUtil.isAuthUserAdminLevel()){
 			list.add(ADMIN_LEVEL);
+			list.add(SYSTEM_LEVEL);
 		}
-		list.add(SYSTEM_LEVEL);
 		list.add(GENERAL_LEVEL);
 		return list;
 	}

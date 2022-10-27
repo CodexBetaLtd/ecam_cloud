@@ -18,16 +18,16 @@ public enum Page {
 
 	NOTIFICATION_ADD(9, SubMenu.NEW_MAIL, "Notification Add Page"),
 	NOTIFICTION_INBOX_VIEW(10, SubMenu.INBOX, "Notification Inbox View Page"),
-	NOTIFICTION_INBOX_ADD(11, SubMenu.INBOX, "Notification Inbox View Page"),
+	//	NOTIFICTION_INBOX_ADD(11, SubMenu.INBOX, "Notification Inbox Add Page"),
 	NOTIFICTION_OUTBOX_VIEW(12, SubMenu.OUTBOX, "Notification Outbox View Page"),
-	NOTIFICTION_OUTBOX_ADD(13, SubMenu.OUTBOX, "Notification Outbox View Page"),
+	//	NOTIFICTION_OUTBOX_ADD(13, SubMenu.OUTBOX, "Notification Outbox Add Page"),
 	NOTIFICTION_TRASH_VIEW(14, SubMenu.THRASH, "Notification Trash View Page"),
 
 	ASSET_CATEGORY_VIEW(15, SubMenu.CMMS_SETTINGS, "Asset Category View Page"),
 	ASSET_CATEGORY_ADD(16, SubMenu.CMMS_SETTINGS, "Asset Category Add Page"),
 
-	TAX_VIEW(55, SubMenu.CMMS_SETTINGS, "Tax Category View Page"),
-	TAX_ADD(56, SubMenu.CMMS_SETTINGS, "Tax Category Add Page"),
+	TAX_VIEW(55, SubMenu.CMMS_SETTINGS, "Tax View Page"),
+	TAX_ADD(56, SubMenu.CMMS_SETTINGS, "Tax Add Page"),
 
 	ASSET_VIEW(17, SubMenu.ALL_ASSETS, "Asset View Page"),
 	ASSET_ADD(18, SubMenu.ALL_ASSETS, "Asset  Add Page"),
@@ -58,10 +58,10 @@ public enum Page {
 
 	RFQ_ADD(35, SubMenu.RFQ, "RFQ Add Page"),
 	RFQ_VIEW(36, SubMenu.RFQ, "RFQ View Page"),
-	RFQStatus(37, SubMenu.RFQ, "RFQ Add Page"),
+	//	RFQStatus(37, SubMenu.RFQ, "RFQ Status Page"),
 
-	USER_PROFILE_ADD(38, SubMenu.USER_PROFILE, "User Profile Add Page"),
-	USER_PROFILE_VIEW(39, SubMenu.USER_PROFILE, "User Profile View Page"),
+	//	USER_PROFILE_ADD(38, SubMenu.USER_PROFILE, "User Profile Add Page"),
+	//	USER_PROFILE_VIEW(39, SubMenu.USER_PROFILE, "User Profile View Page"),
 
 	APP_ADD(40, SubMenu.APP, "App Add Page"),
 	APP_VIEW(41, SubMenu.APP, "App View Page"),
@@ -111,9 +111,9 @@ public enum Page {
 		list.add(SUPPLIER_BUSINESS_VIEW);
 		list.add(NOTIFICATION_ADD);
 		list.add(NOTIFICTION_INBOX_VIEW);
-		list.add(NOTIFICTION_INBOX_ADD);
+		//		list.add(NOTIFICTION_INBOX_ADD);
 		list.add(NOTIFICTION_OUTBOX_VIEW);
-		list.add(NOTIFICTION_OUTBOX_ADD);
+		//		list.add(NOTIFICTION_OUTBOX_ADD);
 		list.add(NOTIFICTION_TRASH_VIEW);
 		list.add(ASSET_CATEGORY_VIEW);
 		list.add(ASSET_CATEGORY_ADD);

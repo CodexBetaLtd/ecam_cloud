@@ -50,17 +50,17 @@
 			    <div class="btn-bar row" >
 	
 					<a class="btn btn-default btn-sm active tooltips" id="new" th:href="@{/userGroups/add}" 
-						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" data-placement="top" data-original-title="Add">
+						sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_NEW_BUTTON_USER_GROUP_ADD.id)" data-placement="top" data-original-title="Add" data-placement="top" data-original-title="Add">
 				    	<i class="clip-plus-circle-2  btn-new" ></i> New
 				    </a>
 
                     <a class="btn btn-default btn-sm active tooltips" id="save" data-placement="top" data-original-title="Save"
-                       	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" onclick="document.getElementById('userGroupAddBtn').click();">
+                       	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_SAVE_BUTTON_USER_GROUP_ADD.id)" data-placement="top" data-original-title="Add" onclick="document.getElementById('userGroupAddBtn').click();">
 				       	<i class="clip-checkmark-circle-2 btn-save"></i> Save
 				    </a>
 				    
 				    <a class="btn btn-default btn-sm active tooltips" id="delete" th:href="@{/userGroups/delete(id=${userGroup.id})}"
-				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL')" th:disabled="${userGroup.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete">
+				    	sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).PAGE_PERMISSION_PREFIX + T(com.codex.ecam.constants.PagePermission).HAS_DELETE_BUTTON_USER_GROUP_ADD.id)" data-placement="top" data-original-title="Add" th:disabled="${userGroup.id} == null ? 'disabled'" data-placement="top" data-original-title="Delete">
 				        <i class=" clip-cancel-circle-2 btn-delete"></i> Delete
 				    </a>
 				    

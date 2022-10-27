@@ -44,13 +44,13 @@ public enum SubMenu {
 	STOCK_ADJUSTMENT(29, Menu.INVENTORY, "Stock Adjustment"),
 
 	USER_PROFILE(30, Menu.SETTINGS, "User Profile"),
-	
+
 	WEARHOUSE(31, Menu.BIZ, "Warehouse"),
-	
+
 	WIDGET(32, Menu.DASHBOARD, "Dashboard"),
-	
+
 	MRN(33, Menu.INVENTORY, "MRN"),
-	
+
 	GRN_REPORT(34, Menu.REPORT, "GRN Report"),
 	AOD_REPORT(35, Menu.REPORT, "AOD Report"),
 	AOD_RETURN_REPORT(36, Menu.REPORT, "AOD Return Report"),
@@ -82,8 +82,8 @@ public enum SubMenu {
 
 		return list;
 	}
-	
-	
+
+
 	public static SubMenu getSubMenuById(Integer id) {
 		for (SubMenu subMenu : values()) {
 			if (subMenu.getId().equals(id)) {
