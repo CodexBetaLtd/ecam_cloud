@@ -2,8 +2,10 @@ package com.codex.ecam.service.asset.api;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.codex.ecam.result.asset.AssetResult;
+
 public interface AssetBulkImportService {
 
-	void importBulk(MultipartFile fileData, Integer bussinessId) throws Exception;
+	AssetResult importBulk(MultipartFile fileData, Integer bussinessId) ;
 
 }

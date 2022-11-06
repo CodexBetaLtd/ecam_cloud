@@ -92,6 +92,7 @@ var AssetAdd = function () {
         $("#parentAssetName").inputClear({
             placeholder: "Select A Parent Asset",
             btnMethod: "AssetAdd.selectParentAssetModal()",
+			clearMethod:"AssetAdd.clearParentAsset()"
         });
     };
 	
@@ -309,10 +310,16 @@ var AssetAdd = function () {
     	$('#customerId').val("");
     	$('#customerName').val("");
     };
-    
+
+     var clearParentAsset = function () {
+    	$('#parentAssetName').val("");
+    	$('#parentAssetId').val("");
+         $("#siteId").val("");
+    };
     var setParentAsset = function (parentAssetId, parentAssetName) {
     	$('#parentAssetId').val(parentAssetId);
     	$('#parentAssetName').val(parentAssetName);
+		setSubLocation(parentAssetId);
     	$('#common-modal').modal('toggle');
     };
 
@@ -320,15 +327,22 @@ var AssetAdd = function () {
 
         $("#businessId").change(function () {
             var businessId = $("#businessId option:selected").val();
-            setSites(businessId);
-            setParentAssets(businessId);
+          clearParentAsset()
+          //  setParentAssets(businessId);
         });
     };
     
-    var setSites = function (businessId) {
+    var runSubLocationSelectChange = function () {
+
+        $("#siteId").change(function () {
+            var siteId = $("#siteId option:selected").val();
+			setSubLocation2(siteId);
+        });
+    };
+    var setSubLocation = function (parentLocationId) {
     	$.ajax({
             type: "GET",
-            url: "../../asset/getsites?id=" + businessId,
+            url: "../../restapi/asset/sub-location?parentLocationId=" + parentLocationId,
             contentType: "application/json",
             dataType: "json",
             success: function (output) {
@@ -344,34 +358,35 @@ var AssetAdd = function () {
                 alert(xhr.status + " " + thrownError);
             },
             error: function (e) {
-                alert("Failed to load site");
+               // alert("Failed to load site");
             }
         });
     };
-    
-    var setParentAssets = function (businessId) {
+
+    var setSubLocation2 = function (parentLocationId) {
     	$.ajax({
             type: "GET",
-            url: "../../restapi/asset/getParentAssetsByBusiness?businessId=" + businessId + "&type=" + $("#type").val(),
+            url: "../../restapi/asset/sub-location2?subLocationId=" + parentLocationId,
             contentType: "application/json",
             dataType: "json",
             success: function (output) {
-                $("#parentAssetId").find("option").remove();
-                $.each(output, function (key, asset) {
-                    $('#parentAssetId').append($('<option>', {
-                        value: asset.id
-                    }).text(asset.name));
+                $("#subSiteId").find("option").remove();
+                $.each(output, function (key, siteList) {
+                    $('#subSiteId').append($('<option>', {
+                        value: siteList.id
+                    }).text(siteList.name));
                 });
-                initParentAssetSelect();
+                runSubSiteSelect();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + " " + thrownError);
             },
             error: function (e) {
-                alert("Failed to load Assets");
+             //   alert("Failed to load site");
             }
         });
     };
+    
     
     var setAssetCategory  = function(id,name){
     	$('#assetCategoryId').val(id);
@@ -427,7 +442,7 @@ var AssetAdd = function () {
             runBusinessSelect();
             runAssetBusinessSelect();
             runAssetClassSelect();
-            runSiteSelect();
+           runSiteSelect();
             runSubSiteSelect();
             runMeterReadingUnitSelect();
             initAssetCategorySelect();
@@ -439,7 +454,8 @@ var AssetAdd = function () {
             initValidator();
             generateQRCode();
             runPurchaseDatePicker();
-            initDocumentOnLoad();
+          //  initDocumentOnLoad();
+			runSubLocationSelectChange();
           //  initMap();
         },
     
@@ -473,6 +489,9 @@ var AssetAdd = function () {
 	    
 	    clearCustomer : function () {
 	    	clearCustomer();
+	    },
+	    clearParentAsset : function () {
+	    	clearParentAsset();
 	    },
 	    
 	    qrPrint : function (s) {

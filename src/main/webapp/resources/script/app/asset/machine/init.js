@@ -54,64 +54,50 @@ var runDropzone = function() {
             businessId = $("#businessId option:selected").val();
 
         });
-	    	console.log(businessId)
+		var myDropzone = new Dropzone(".dropzone", { 
+			url: $('#frm_asset_import').attr('action'),
+			paramName : "fileData",
+			maxFilesize : 10.0, // MB
+            autoProcessQueue: false,
+            uploadMultiple: false, 
+            clickable: true,
+            maxFilesize: 1,
+            maxFiles: 1,
+            addRemoveLinks: true, 
+			acceptedFiles : ".csv,.xlsx",
+		
+		    init: function () { 
+		        var myDropzone = this;  
+		        $("#btn-import-assets").click(function (e) {
+		        	e.preventDefault();
+		        	if($('#businessId').val() != null &&  $('#businessId').val() != ""){  		        		
+			            $("#importBusinessId").val($("#businessId").val());
+		        		myDropzone.processQueue();
+		        	} else{
+		    			CustomComponents.sweetAlertError('Please Select Business First ! and Try Again.');
+		    		}
+		        }); 
+		    },
+		    success: function(file, response) { 
+		    	var $modal = $('#common-modal');
+		setTimeout(function () {
+			$modal.empty().append(response);
+			runDropzone();
+			runBusinessSelect();
+			$modal.modal();
+				}, 1000);
+            },
+			error : function(file, response) {
+			$modal.empty().append(response);
 
-	$(".dropzone")
-			.dropzone(
-					{
-						paramName : "fileData",
-						maxFilesize : 10.0, // MB
-						addRemoveLinks : true,
-						maxFiles : 1,
-						autoProcessQueue : false,
-						acceptedFiles : ".csv,.xlsx",
-						init : function() {
-							
-							$('#uploadingGif').css("display","none")
-							$('#uploadingGif').css("padding","20px")
-							var submitButton = document
-									.querySelector("#btn-import-assets")
-							fileDropzone = this;
-							submitButton.addEventListener("click", function() {
-								fileDropzone.processQueue();
-							});
-							this.on("addedfiles", function(event) {
-								
-							})
+			runDropzone();
+			runBusinessSelect();
+			$modal.modal();
+			},
+		dictDefaultMessage : "Drop files or click here to Import Asset List "
 
-						},
-						sending : function(file, xhr, formData) {
-							$('#dropZoneText').empty();
-							$('#dropZoneText').css("color","#008000")
-							$('#dropZoneText').css("font-weight","bold")
-							$('#uploadedFile').css("border-color","#008000")
-							$('#uploadingGif').css("display","")
-							$('#uploadingGif').css("padding","20px")
-				    		$('#dropZoneText').text("Please Wait File Uploading Progress");
-						      formData.append("bussinessId", businessId);
-						},
-						success : function(file, response) {
-							$('#dropZoneText').empty();
-							$('#dropZoneText').css("color","#008000")
-							$('#dropZoneText').css("font-weight","bold")
-							$('#uploadedFile').css("border-color","#008000")
-							$('#uploadingGif').css("display","none")
-							$('#dropZoneText').css("padding","20px")
-				    		$('#dropZoneText').text("File Sucessfully Uploaded");
-							console.log(response)
-						},
-						error : function() {
-							$('#dropZoneText').empty();
-							$('#dropZoneText').css("color","#a94442")
-							$('#dropZoneText').css("font-weight","bold")
-							$('#dropZoneText').css("padding","20px")
-							$('#uploadedFile').css("border-color","#a94442")
-				    		$('#dropZoneText').text("Invalid file.Unable to process for upload this file");
+		}); 
 
-						},
-						dictDefaultMessage : "Drop files or click here to Import Asset List ",
-					});
-	;
 	$('#fileRefId').val(assetCode)
 
 };

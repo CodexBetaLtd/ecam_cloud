@@ -12,20 +12,20 @@
 	<h4 class="modal-title">Import Asset</h4>
 </div>
 <div class="modal-body">
-	<div class="row">
-		<span id="import-message"></span>
-	</div>
+
+		<div th:replace="template/messageview :: message"> </div>
+		
+		<div id="spinner" class="spinner" style="display:none;">
+- 	    	<img id="img-spinner" src="../../resources/images/loading.gif" alt="Loading"/>
+		</div>
 	<div class="row">
 		<div class="col-md-6">
-			<span id="dropZoneText" class="required" style=""></span><img
-				id="uploadingGif" src="../../resources/images/loading.gif"><img
-				id="crossImg" width='20px' src="../../resources/images/cross.png"><img
-				width='20px' id="tickGif" src="../../resources/images/tick.gif">
-			<form class="dropzone"
-				th:action="@{/asset/import-assets} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}"
-				id="uploadedFile" method="post" enctype="multipart/form-data">
-
-			</form>
+		<form class="dropzone" method="post" enctype="multipart/form-data" th:action="@{/asset/import-assets} + '?' + ${_csrf.parameterName} + '=' + ${_csrf.token}" role="form" id="frm_asset_import">
+			<input type="hidden"  id="importBusinessId"  name="importBusinessId">
+			<div class="fallback">
+		    	<input name="fileData" type="file"/>
+		  	</div>
+	    </form>
 		</div>
 		<div class="col-md-6">
 

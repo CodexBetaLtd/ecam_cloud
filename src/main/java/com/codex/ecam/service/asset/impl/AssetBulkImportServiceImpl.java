@@ -1,10 +1,12 @@
 package com.codex.ecam.service.asset.impl;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,6 +32,7 @@ import com.codex.ecam.model.admin.AssetModel;
 import com.codex.ecam.model.asset.Asset;
 import com.codex.ecam.model.asset.AssetCategory;
 import com.codex.ecam.model.biz.business.Business;
+import com.codex.ecam.result.asset.AssetResult;
 import com.codex.ecam.service.asset.api.AssetBulkImportService;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -59,19 +62,47 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 	@Override
 	//	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public void importBulk(MultipartFile fileData, Integer businessId) throws Exception{
+	public AssetResult importBulk(MultipartFile fileData, Integer businessId){
+		AssetResult result=new AssetResult(null, null);
+		try {
+			final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
 
-		final Workbook workbook = WorkbookFactory.create(fileData.getInputStream());
+			if (businessId == null) {
+				businessId = AuthenticationUtil.getLoginUserBusiness().getId();
+			}
 
-		if (businessId == null) {
-			businessId = AuthenticationUtil.getLoginUserBusiness().getId();
+			Business business = businessDao.findOne(businessId);
+
+			if(business!=null) {
+				importMachines(business, workbook);
+				result.setResultStatusSuccess();
+				result.addToMessageList("Asset Import Successfully.");
+			}else {
+				result.setResultStatusError();
+				result.addToErrorList("Error occured: Can not find business");
+			}
+
+			workbook.close();
+		}
+		catch (final FileNotFoundException e) {
+			result.setResultStatusError();
+			result.addToErrorList("File not upload, Please try agian");
+			LOGGER.error(e.getMessage());
+
+			throw new RuntimeException(result.getErrorList().get(0));
+		}  catch (final SizeLimitExceededException e) {
+			result.setResultStatusError();
+			result.addToErrorList("File size is exceeded");
+			LOGGER.error(e.getMessage());
+
+		}catch (final Exception e) {
+			result.setResultStatusError();
+			result.addToErrorList("Error occured while saving Asset -> " + e.getMessage());
+			LOGGER.error(e.getMessage());
+
 		}
 
-		Business business = businessDao.findOne(businessId);
-
-		importMachines(business, workbook);
-
-		workbook.close();
+		return result;
 
 	}
 
@@ -81,17 +112,14 @@ public class AssetBulkImportServiceImpl implements AssetBulkImportService {
 
 		final Iterator<Row> iteratorMachine = machine.iterator();
 
-		try {
+		
 			while (iteratorMachine.hasNext()) {
 
 				saveAsset(business, iteratorMachine);
 
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOGGER.error("Error occured while saving Asset -> " + e.getMessage());
-			throw new RuntimeException("Error occured while saving Asset -> " + e.getMessage());
-		}
+
+		
 	}
 
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)

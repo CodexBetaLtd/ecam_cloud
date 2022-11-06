@@ -1126,7 +1126,46 @@ public class AssetServiceImpl implements AssetService {
 			return null;
 		}
 	}
+	
+	public List<AssetDTO> findAllSubLocationByMainLocationtId(Integer mainLocationId) {
 
+		final List<Asset> assets = (List<Asset>) assetDao.findAll(specSubLocationByMainLocation(mainLocationId));
+		try {
+			return AssetMapper.getInstance().domainToDTOList(assets);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
+	
+	private Specification<Asset> specSubLocationByMainLocation(Integer mainLocationId) {
+		return (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			predicates.add(cb.equal(root.get("parentAsset").get("id"), mainLocationId));
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
+	}
+	
+	public List<AssetDTO> findAllSubLocation2BySublocationLocationtId(Integer subLocationId) {
+
+		final List<Asset> assets = (List<Asset>) assetDao.findAll(specSubLocation2BySubLocation(subLocationId));
+		try {
+			return AssetMapper.getInstance().domainToDTOList(assets);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
+
+	private Specification<Asset> specSubLocation2BySubLocation(Integer subLocationId) {
+		return (root, query, cb) -> {
+			final List<Predicate> predicates = new ArrayList<>();
+			predicates.add(cb.equal(root.get("site").get("id"), subLocationId));
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
+	}
 	@Override
 	public List<AssetMeterReadingDTO> findByMeterReadingByAsset(String name) throws Exception {
 		if (name != null) {

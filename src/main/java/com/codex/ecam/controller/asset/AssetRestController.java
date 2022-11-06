@@ -138,6 +138,28 @@ public class AssetRestController {
 		}
 	}
 	
+	@RequestMapping(value = "/sub-location", method = RequestMethod.GET)
+	public List<AssetDTO> getsubLocationByParentLocation(@Valid Integer parentLocationId) {
+		try {
+			return 	 assetService.findAllSubLocationByMainLocationtId(parentLocationId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+	
+	@RequestMapping(value = "/sub-location2", method = RequestMethod.GET)
+	public List<AssetDTO> getsubLocation2BysubLocation(@Valid Integer subLocationId) {
+		try {
+			return 	 assetService.findAllSubLocation2BySublocationLocationtId(subLocationId);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+	}
+	
 	@RequestMapping(value = "/parent-facilities", method = RequestMethod.GET)
 	public DataTablesOutput<AssetDTO> getFacilityParents(@Valid FocusDataTablesInput input) {
 		try {
@@ -314,5 +336,7 @@ public class AssetRestController {
 			return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(ASSET_NO_QR_IMAGE));
 		} 
 	} 
+
+ 
 
 }
