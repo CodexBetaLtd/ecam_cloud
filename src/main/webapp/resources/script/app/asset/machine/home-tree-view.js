@@ -145,7 +145,7 @@
             },{
             	className: 'treegrid-control',
             	data: 'name', 
-            	render: function ( data, type, row, meta )  { 
+            	render: function ( data, type, row, meta )  {
             		if (row.childCount > 0) {    
             			return '<a class="parent" href="../../restapi/asset/machine-childrens?id=' + row.id +'"></a><span> <i class="fa fa-caret-right node-expand"></i> </span>' + data;
             		}
@@ -163,10 +163,10 @@
      		},{
      			data : 'customerName',
      			responsivePriority: 2   
-     		},{
-     			data : 'businessName',
-     			responsivePriority: 4   
-     		}],
+     		},{ 
+                data : 'department',
+                responsivePriority: 4   
+            }],
             aoColumnDefs: [{
             	targets: 6, //index of column starting from 0
             	data: "id", //this name should exist in your JSON response

@@ -145,7 +145,10 @@
      		},{ 
      			data : 'customerName',
      			responsivePriority: 4   
-     		}],
+     		},{ 
+                data : 'department',
+                responsivePriority: 4   
+            }],
             aoColumnDefs: [{
             	orderData: [1,5]
             }],

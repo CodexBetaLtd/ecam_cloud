@@ -38,24 +38,25 @@ public class AssetTreeServiceImpl implements AssetTreeService {
 		assets = assetDao.findAll(specification);
 		setChildrens(assets);
 		return AssetMapper.getInstance().domainToDTOList(assets);
-	} 
+	}
 
 	@Override
 	public List<AssetDTO> findAllMachineChildrens(Integer id) throws Exception {
-		List<Asset> assets = new ArrayList<>();
-		final Specification<Asset> specification = (root, query, cb) -> { 
+
+		final Specification<Asset> specification = (root, query, cb) -> {
 			query.orderBy(cb.asc(root.get("site").get("id")));
 			return cb.or(cb.equal(root.get("parentAsset").get("id"), id),
 					cb.equal(root.get("site").get("id"), id)) ;
 		};
-		assets = assetDao.findAll(specification);
+		List<Asset> assets = assetDao.findAll(specification);
 		setChildrens(assets);
 		return AssetMapper.getInstance().domainToDTOList(assets);
 	}
-	
+
+	@Override
 	public DataTablesOutput<AssetDTO> findMachineParentLocation(final FocusDataTablesInput input,Integer id,Integer assetId) throws Exception {
 		DataTablesOutput<Asset> assets =null;
-	final Specification<Asset> specification = (root, query, cb) -> { 
+		final Specification<Asset> specification = (root, query, cb) -> {
 			return cb.equal(root.get("id"), id) ;
 		};
 		assets = assetDao.findAll(input, specification);
@@ -63,12 +64,12 @@ public class AssetTreeServiceImpl implements AssetTreeService {
 		setChildrensLocation(assets.getData(),assetId);
 		return AssetMapper.getInstance().domainToDTODataTablesOutput(assets);
 	}
-	
+
 	private void setChildrensLocation(final List<Asset> domainOut,Integer assetId) {
 		for (final Asset parentAsset : domainOut) {
-				final Integer count = (int) assetDao.count(getLocationChildCount(parentAsset.getId()));
-				parentAsset.setChildCount(count);
-						
+			final Integer count = (int) assetDao.count(getLocationChildCount(parentAsset.getId()));
+			parentAsset.setChildCount(count);
+
 		}
 	}
 	private void setParentLocation(final List<Asset> domainOut,Integer assetId) {
@@ -84,7 +85,7 @@ public class AssetTreeServiceImpl implements AssetTreeService {
 	private Specification<Asset> getLocationChildCount(final Integer id) {
 		final Specification<Asset> specification = (root, query, cb) -> {
 			return cb.or(
-			cb.equal(root.get("site").get("id"), id));
+					cb.equal(root.get("site").get("id"), id));
 		};
 		return specification;
 	}
@@ -198,8 +199,8 @@ public class AssetTreeServiceImpl implements AssetTreeService {
 	private Specification<Asset> getChildCount(final Integer id) {
 		final Specification<Asset> specification = (root, query, cb) -> {
 			return cb.or(
-			cb.equal(root.get("site").get("id"), id),
-			 cb.equal(root.get("parentAsset").get("id"), id));
+					cb.equal(root.get("site").get("id"), id),
+					cb.equal(root.get("parentAsset").get("id"), id));
 		};
 		return specification;
 	}
