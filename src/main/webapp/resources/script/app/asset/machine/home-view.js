@@ -145,9 +145,6 @@
      		},{ 
      			data : 'customerName',
      			responsivePriority: 4   
-     		},{
-     			data : 'businessName',
-     			responsivePriority: 4   
      		}],
             aoColumnDefs: [{
             	orderData: [1,5]
