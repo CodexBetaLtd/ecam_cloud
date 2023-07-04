@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -466,14 +464,14 @@ public class AssetController {
 
 	@RequestMapping(value = "/import-assets", method = RequestMethod.POST)
 	public String  importAssets(@RequestParam("fileData")MultipartFile file,@ModelAttribute("importBusinessId")Integer bussinessId,Model model) throws Exception{
-	
-			AssetResult assetResult=assetBulkImportService.importBulk(file,bussinessId);
-			if (assetResult.getStatus().equals(ResultStatus.ERROR)) {
-				model.addAttribute("error", assetResult.getErrorList().get(0));
-			} else {
-				model.addAttribute("success", assetResult.getMsgList().get(0));
-			}
-			model.addAttribute("businesses", businessService.findAllByLevelList());
+
+		AssetResult assetResult=assetBulkImportService.importBulk(file,bussinessId);
+		if (assetResult.getStatus().equals(ResultStatus.ERROR)) {
+			model.addAttribute("error", assetResult.getErrorList().get(0));
+		} else {
+			model.addAttribute("success", assetResult.getMsgList().get(0));
+		}
+		model.addAttribute("businesses", businessService.findAllByLevelList());
 
 		return "asset/modals/asset-import-modal";
 	}
@@ -517,6 +515,8 @@ public class AssetController {
 		model.addAttribute("suppliers", supplierService.findAllSupplierByUserLevel());
 		model.addAttribute("businessTypes", businessTypeService.findAll());
 		model.addAttribute("sites", assetService.findSiteByBusinessId(asset.getBusinessId(), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+		model.addAttribute("locations", assetService.findAllSubLocationByMainLocationtId(asset.getSiteId()));
+		model.addAttribute("subLocations", assetService.findAllSubLocationByMainLocationtId(asset.getSubSiteId()));
 		model.addAttribute("currencies", currencyService.findAll());
 		model.addAttribute("countryList", countryService.findAll());
 		model.addAttribute("assetBrand", assetBrandService.findAll());

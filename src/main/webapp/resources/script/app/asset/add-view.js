@@ -86,42 +86,22 @@ var AssetAdd = function () {
     var setLocation=function(){	
     	$('#longitude').val(locationDetails['longitude'])
     	$('#latitude').val(locationDetails['latitude'])
-    }
-     
-	var initParentAssetSelect = function () {
-        $("#parentAssetName").inputClear({
-            placeholder: "Select A Parent Asset",
-            btnMethod: "AssetAdd.selectParentAssetModal()",
-			clearMethod:"AssetAdd.clearParentAsset()"
-        });
-    };
-	
-	var initCustomerSelect = function () {
-        $("#customerName").inputClear({
-            placeholder: "Select A Owner",
-            btnMethod: "AssetAdd.selectCustomerModal()",
-        });
-    };
-	
-	var initAssetCategorySelect = function(){
-    	$("#assetCategoryName").inputClear({
-    		placeholder:"Select a Asset Category",
-        	btnMethod:"AssetAdd.assetCategoryView()",
-    	});
     };
     
-    var initBrandSelect = function(){
-    	$("#brandName").inputClear({
-    		placeholder:"Select a Brand",
-        	btnMethod:"AssetBrandSelectModal.assetBrandView()",
-    	});
+    function initInputClearComponents() {
+        initInputClearComponent("modelName", "Select a Model", "AssetModelSelectModal.assetModelView()");
+        initInputClearComponent("brandName", "Select a Brand", "AssetBrandSelectModal.assetBrandView()");
+        initInputClearComponent("assetCategoryName", "Select a Asset Category", "AssetAdd.assetCategoryView()");
+        initInputClearComponent("customerName", "Select A Owner", "AssetAdd.selectCustomerModal()");
+        initInputClearComponent("parentAssetName", "Select A Parent Asset", "AssetAdd.selectParentAssetModal()", "AssetAdd.clearParentAsset()");
     };
     
-    var initModelSelect = function(){
-    	$("#modelName").inputClear({
-    		placeholder:"Select a Model",
-        	btnMethod:"AssetModelSelectModal.assetModelView()",
-    	});
+    function initInputClearComponent(ele, placeholder, btnMethod, clearMethod) {
+        $("#"+ele).inputClear({
+            placeholder:placeholder,
+            btnMethod:btnMethod,
+            clearMethod: clearMethod
+        });
     };
 
     var runBusinessSelect = function () {
@@ -316,7 +296,8 @@ var AssetAdd = function () {
     	$('#parentAssetId').val("");
          $("#siteId").val("");
     };
-    var setParentAsset = function (parentAssetId, parentAssetName) {
+    
+    function setParentAsset(parentAssetId, parentAssetName) {
     	$('#parentAssetId').val(parentAssetId);
     	$('#parentAssetName').val(parentAssetName);
 		setSubLocation(parentAssetId);
@@ -332,19 +313,13 @@ var AssetAdd = function () {
         });
     };
     
-    var runSubLocationSelectChange = function () {
-
-        $("#siteId").change(function () {
-            var siteId = $("#siteId option:selected").val();
-			setSubLocation2(siteId);
-        });
-    };
-    var setSubLocation = function (parentLocationId) {
+    function setSubLocation(parentLocationId) {
     	$.ajax({
             type: "GET",
             url: "../../restapi/asset/sub-location?parentLocationId=" + parentLocationId,
             contentType: "application/json",
             dataType: "json",
+            async: false,
             success: function (output) {
                 $("#siteId").find("option").remove();
                 $.each(output, function (key, siteList) {
@@ -353,6 +328,7 @@ var AssetAdd = function () {
                     }).text(siteList.name));
                 });
                 runSiteSelect();
+                setSubLocation2();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert(xhr.status + " " + thrownError);
@@ -362,29 +338,42 @@ var AssetAdd = function () {
             }
         });
     };
+    
+    function runSubLocationSelectChange() {
 
-    var setSubLocation2 = function (parentLocationId) {
-    	$.ajax({
-            type: "GET",
-            url: "../../restapi/asset/sub-location2?subLocationId=" + parentLocationId,
-            contentType: "application/json",
-            dataType: "json",
-            success: function (output) {
-                $("#subSiteId").find("option").remove();
-                $.each(output, function (key, siteList) {
-                    $('#subSiteId').append($('<option>', {
-                        value: siteList.id
-                    }).text(siteList.name));
-                });
-                runSubSiteSelect();
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status + " " + thrownError);
-            },
-            error: function (e) {
-             //   alert("Failed to load site");
-            }
+        $("#siteId").change(function () {
+            setSubLocation2();
         });
+    };
+
+    function setSubLocation2() {
+        
+        var parentLocationId = $("#siteId option:selected").val();
+        
+        if (parentLocationId != null && parentLocationId != null) {
+            
+            $.ajax({
+                type: "GET",
+                url: "../../restapi/asset/sub-location?parentLocationId=" + parentLocationId,
+                contentType: "application/json",
+                dataType: "json",
+                success: function (output) {
+                    $("#subSiteId").find("option").remove();
+                    $.each(output, function (key, siteList) {
+                        $('#subSiteId').append($('<option>', {
+                            value: siteList.id
+                        }).text(siteList.name));
+                    });
+                    runSubSiteSelect();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status + " " + thrownError);
+                },
+                error: function (e) {
+                    //   alert("Failed to load site");
+                }
+            });
+        }
     };
     
     
@@ -442,14 +431,10 @@ var AssetAdd = function () {
             runBusinessSelect();
             runAssetBusinessSelect();
             runAssetClassSelect();
-           runSiteSelect();
+            runSiteSelect();
             runSubSiteSelect();
             runMeterReadingUnitSelect();
-            initAssetCategorySelect();
-            initBrandSelect();
-            initModelSelect();
-            initCustomerSelect();
-            initParentAssetSelect();
+            initInputClearComponents();
             runImageInput();
             initValidator();
             generateQRCode();

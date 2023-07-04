@@ -1,8 +1,21 @@
 package com.codex.ecam.controller.asset;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.asset.AssetCustomerDTO;
@@ -14,18 +27,12 @@ import com.codex.ecam.service.asset.api.AssetTreeService;
 import com.codex.ecam.service.asset.api.CustomerService;
 import com.codex.ecam.util.FileDownloadUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequestMapping(AssetRestController.REQUEST_MAPPING_URL)
 public class AssetRestController {
 
 	public static final String REQUEST_MAPPING_URL = "restapi/asset";
-	
+
 	private final String ASSET_DEFAULT_IMAGE = "/resources/images/no_image.png";
 	private final String ASSET_NO_QR_IMAGE = "/resources/images/no_qr.png";
 
@@ -38,17 +45,17 @@ public class AssetRestController {
 	@Autowired
 	private CustomerService customerService;
 
-	@RequestMapping(value = "/getMeterReadingList", method = RequestMethod.GET)
+	@GetMapping(value = "/getMeterReadingList")
 	public List<AssetMeterReadingDTO> getMeterReadingListByAssetId(Integer assetId) {
 		try {
 			return assetService.findAssetMeterReadingByAssetId(assetId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
-	@RequestMapping(value = "/getMeterReadingById", method = RequestMethod.GET)
+	@GetMapping(value = "/getMeterReadingById")
 	public AssetMeterReadingDTO getMeterReadingById(Integer id) {
 		try {
 			return assetService.findAssetMeterReadingById(id);
@@ -59,37 +66,37 @@ public class AssetRestController {
 	}
 
 
-	@RequestMapping(value = "/getSitesForBusiness", method = RequestMethod.GET)
+	@GetMapping(value = "/getSitesForBusiness")
 	public List<AssetDTO> getSiteListForBusiness(Integer businessId) {
 		try {
 			return assetService.findAllSiteByBusiness(businessId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
-	
-	@RequestMapping(value = "/getParentAssetsByBusiness", method = RequestMethod.GET)
+
+	@GetMapping(value = "/getParentAssetsByBusiness")
 	public List<AssetDTO> getParentAssetByBusiness(Integer businessId, AssetCategoryType type) {
 		try {
 			return assetService.findByAssetCategoryType(businessId, type);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
-	@RequestMapping(value = "/assets-by-category-n-business", method = RequestMethod.GET)
+	@GetMapping(value = "/assets-by-category-n-business")
 	public List<AssetDTO> getAssetByBusinessNCategory(@Valid Integer bizId, @Valid Integer categoryId) {
 		try {
 			return assetService.findAssetsByCategoryBusiness(bizId, categoryId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
-	@RequestMapping(value = "/tabledata-parts-by-business", method = RequestMethod.GET)
+	@GetMapping(value = "/tabledata-parts-by-business")
 	public DataTablesOutput<AssetDTO> getPartsByBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findPartsByBusiness(input, id);
@@ -98,7 +105,7 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	@RequestMapping(value = "/tabledata-parts-repairable-by-business", method = RequestMethod.GET)
+	@GetMapping(value = "/tabledata-parts-repairable-by-business")
 	public DataTablesOutput<AssetDTO> getRepairablePartsByBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findRepairablePartsByBusiness(input, id);
@@ -108,7 +115,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/assetList", method = RequestMethod.GET)
+	@GetMapping(value = "/assetList")
 	public List<AssetDTO> getAllAssets() {
 		try {
 			return assetService.findAll();
@@ -116,9 +123,9 @@ public class AssetRestController {
 			e.printStackTrace();
 			return new ArrayList<>();
 		}
-	}	
-	
-	@RequestMapping(value = "/childrens", method = RequestMethod.GET)
+	}
+
+	@GetMapping(value = "/childrens")
 	public List<AssetDTO> getAllChildAssets(@Valid Integer id) {
 		try {
 			return assetTreeService.findAllChildrens(id);
@@ -127,8 +134,8 @@ public class AssetRestController {
 			return new ArrayList<>();
 		}
 	}
-	
-	@RequestMapping(value = "/machine-childrens", method = RequestMethod.GET)
+
+	@GetMapping(value = "/machine-childrens")
 	public List<AssetDTO> getAllChildMachines(@Valid Integer id) {
 		try {
 			return assetTreeService.findAllMachineChildrens(id);
@@ -137,8 +144,8 @@ public class AssetRestController {
 			return new ArrayList<>();
 		}
 	}
-	
-	@RequestMapping(value = "/sub-location", method = RequestMethod.GET)
+
+	@GetMapping(value = "/sub-location")
 	public List<AssetDTO> getsubLocationByParentLocation(@Valid Integer parentLocationId) {
 		try {
 			return 	 assetService.findAllSubLocationByMainLocationtId(parentLocationId);
@@ -148,8 +155,8 @@ public class AssetRestController {
 			return new ArrayList<>();
 		}
 	}
-	
-	@RequestMapping(value = "/sub-location2", method = RequestMethod.GET)
+
+	@GetMapping(value = "/sub-location2")
 	public List<AssetDTO> getsubLocation2BysubLocation(@Valid Integer subLocationId) {
 		try {
 			return 	 assetService.findAllSubLocation2BySublocationLocationtId(subLocationId);
@@ -159,8 +166,8 @@ public class AssetRestController {
 			return new ArrayList<>();
 		}
 	}
-	
-	@RequestMapping(value = "/parent-facilities", method = RequestMethod.GET)
+
+	@GetMapping(value = "/parent-facilities")
 	public DataTablesOutput<AssetDTO> getFacilityParents(@Valid FocusDataTablesInput input) {
 		try {
 			return assetTreeService.findAllParentFacilities(input);
@@ -169,8 +176,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/parent-machines", method = RequestMethod.GET)
+
+	@GetMapping(value = "/parent-machines")
 	public DataTablesOutput<AssetDTO> getParentMachines(@Valid FocusDataTablesInput input) {
 		try {
 			return assetTreeService.findAllParentMachinesAndTools(input);
@@ -179,7 +186,7 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	@RequestMapping(value = "/parent-machines-by-location", method = RequestMethod.GET)
+	@GetMapping(value = "/parent-machines-by-location")
 	public DataTablesOutput<AssetDTO> getParentMachineLocation(@Valid FocusDataTablesInput input,Integer id,Integer assetId) {
 		try {
 			return assetTreeService.findMachineParentLocation(input,id,assetId);
@@ -188,8 +195,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/tabledata", method = RequestMethod.GET)
+
+	@GetMapping(value = "/tabledata")
 	public DataTablesOutput<AssetDTO> getAssetList(@Valid FocusDataTablesInput input) {
 		try {
 			return assetService.findAll(input);
@@ -198,8 +205,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/machine-tabledata", method = RequestMethod.GET)
+
+	@GetMapping(value = "/machine-tabledata")
 	public DataTablesOutput<AssetDTO> getMachine(@Valid FocusDataTablesInput input) {
 		try {
 			return assetService.findAllMachineAndToolsByLevel(input);
@@ -209,17 +216,17 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/facility-tabledata", method = RequestMethod.GET)
-	public DataTablesOutput<AssetDTO> getFacility(@Valid FocusDataTablesInput input) {
+	@GetMapping(value = "/facility-tabledata")
+	public DataTablesOutput<AssetDTO> getFacility(@Valid FocusDataTablesInput input, @RequestParam(name = "bizId", required = false) Integer bizId) {
 		try {
-			return assetService.findAllFacilitiesByLevel(input);
+			return assetService.findAssetByCategoryTypeBusiness(input, bizId, AssetCategoryType.LOCATIONS_OR_FACILITIES);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@RequestMapping(value = "/assetsbycategorytype/{type}", method = RequestMethod.GET)
+	@GetMapping(value = "/assetsbycategorytype/{type}")
 	public DataTablesOutput<AssetDTO> assetsByCategorytype(@Valid FocusDataTablesInput input, @PathVariable("type") AssetCategoryType type) {
 		try {
 			return assetService.findByCategoryType(input, type);
@@ -229,7 +236,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/customerhistory/{assetId}", method = RequestMethod.GET)
+	@GetMapping(value = "/customerhistory/{assetId}")
 	public DataTablesOutput<AssetCustomerDTO> getCustomers(@Valid FocusDataTablesInput input, @PathVariable("assetId") Integer assetId) {
 		try {
 			return customerService.findByAsset(input, assetId);
@@ -239,7 +246,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/parts", method = RequestMethod.GET)
+	@GetMapping(value = "/parts")
 	public DataTablesOutput<AssetDTO> getParts(@Valid FocusDataTablesInput input) {
 		try {
 			return assetService.findParts(input);
@@ -249,7 +256,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/getSiteByBusiness", method = RequestMethod.GET)
+	@GetMapping(value = "/getSiteByBusiness")
 	public DataTablesOutput<AssetDTO> getSiteByBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findSiteByBusiness(input, id);
@@ -259,7 +266,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/getAnyAssetTypeByBusiness", method = RequestMethod.GET)
+	@GetMapping(value = "/getAnyAssetTypeByBusiness")
 	public DataTablesOutput<AssetDTO> getAnyAssetTypeByBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findAnyAssetTypeByBusiness(input, id);
@@ -269,7 +276,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/getAssetByBusiness", method = RequestMethod.GET)
+	@GetMapping(value = "/getAssetByBusiness")
 	public DataTablesOutput<AssetDTO> findAssetByAssetTypeAndBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findAssetByAssetTypeAndBusiness(input, AssetCategoryType.PARTS_AND_SUPPLIES, id);
@@ -279,7 +286,7 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/findNotPartByBusiness", method = RequestMethod.GET)
+	@GetMapping(value = "/findNotPartByBusiness")
 	public DataTablesOutput<AssetDTO> findAssetNotByAssetTypeAndBusiness(@Valid FocusDataTablesInput input, @Valid Integer id) {
 		try {
 			return assetService.findAssetNotByAssetTypeAndBusiness(input, AssetCategoryType.PARTS_AND_SUPPLIES, id);
@@ -288,8 +295,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/getAssetByLogUserBusiness", method = RequestMethod.GET)
+
+	@GetMapping(value = "/getAssetByLogUserBusiness")
 	public DataTablesOutput<AssetDTO> getAssetByLogUserBusiness(@Valid FocusDataTablesInput input) {
 		try {
 			return assetService.getAssetByLogUserBusiness(input);
@@ -298,8 +305,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/machines-tools-by-business-tabledata", method = RequestMethod.GET)
+
+	@GetMapping(value = "/machines-tools-by-business-tabledata")
 	public DataTablesOutput<AssetDTO> getMachineToolsByBusiness(@Valid FocusDataTablesInput input, @Valid Integer bizId) {
 		try {
 			return assetService.getMachineToolsByBusiness(input, bizId);
@@ -308,8 +315,8 @@ public class AssetRestController {
 		}
 		return null;
 	}
-	
-	@RequestMapping(value = "/parent-assets-by-business", method = RequestMethod.GET)
+
+	@GetMapping(value = "/parent-assets-by-business")
 	public DataTablesOutput<AssetDTO> getAssetByBusiness(@Valid FocusDataTablesInput input, Integer businessId, AssetCategoryType type) {
 		try {
 			return assetService.findAssetByCategoryTypeBusiness(input, businessId, type);
@@ -319,24 +326,24 @@ public class AssetRestController {
 		return null;
 	}
 
-	@RequestMapping(value = "/asset-image" , method = RequestMethod.GET)
+	@GetMapping(value = "/asset-image" )
 	public @ResponseBody byte[] getAssetImage( Integer id, HttpServletRequest request) throws IOException {
 		try {
 			return assetService.getAssetImageStream(id, request);
 		} catch (Exception e) {
 			return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(ASSET_DEFAULT_IMAGE));
-		} 
-	} 
-	
-	@RequestMapping(value = "/asset-qr" , method = RequestMethod.GET)
+		}
+	}
+
+	@GetMapping(value = "/asset-qr" )
 	public @ResponseBody byte[] getAssetQR( Integer id, HttpServletRequest request) throws IOException {
 		try {
 			return assetService.getAssetQRStream(id, request);
 		} catch (Exception e) {
 			return FileDownloadUtil.getByteInputStream( request.getServletContext().getRealPath("").concat(ASSET_NO_QR_IMAGE));
-		} 
-	} 
+		}
+	}
 
- 
+
 
 }

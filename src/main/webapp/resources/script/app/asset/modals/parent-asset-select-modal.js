@@ -112,12 +112,11 @@ var ParentAssetSelectModal = function () {
     	
         $('#parent_asset_select_tbl').dataTable().fnDestroy();
         
-        console.log($('#type').val());
         var oTable = $('#parent_asset_select_tbl').DataTable({
             processing: true,
             serverSide: true,
             ajax: $.fn.dataTable.pipeline({
-                url: "../../restapi/asset/parent-assets-by-business?businessId=" + $('#businessId').val() + "&type=" + $('#type').val(),
+                url: "../../restapi/asset/facility-tabledata?bizId=" + $('#businessId').val(),
                 pages: 5
             }),
             columns: [

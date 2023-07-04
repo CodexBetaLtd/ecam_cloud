@@ -52,7 +52,7 @@ public interface AssetService {
 	List<AssetMeterReadingDTO> findAllAssetMeterReading() throws Exception;
 
 	List<AssetMeterReadingDTO> findAssetMeterReadingByAssetId(Integer assetId) throws Exception;
-	
+
 	List<AssetDTO> findAllSubLocationByMainLocationtId(Integer mainLocationId);
 
 	List<AssetDTO> findAllSubLocation2BySublocationLocationtId(Integer subLocationId);

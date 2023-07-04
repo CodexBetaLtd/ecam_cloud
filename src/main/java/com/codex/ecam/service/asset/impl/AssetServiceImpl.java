@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -275,15 +276,16 @@ public class AssetServiceImpl implements AssetService {
 
 	@Override
 	public List<AssetDTO> findByAssetCategoryType(Integer businessId, AssetCategoryType type) {
+
 		List<Asset> assets = new ArrayList<>();
 
 		try {
 			if (businessId == null) {
 				assets = assetDao.findByAssetCategoyType(type);
 			} else {
-				final Specification<Asset> specification = getSystemUserLocationAsset(type, businessId);
-				assets = assetDao.findAll(specification);
+				assets = assetDao.findAll(getSystemUserLocationAsset(type, businessId));
 			}
+
 			return AssetMapper.getInstance().domainToDTOList(assets);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -294,19 +296,22 @@ public class AssetServiceImpl implements AssetService {
 	@Override
 	public DataTablesOutput<AssetDTO> findAssetByCategoryTypeBusiness(FocusDataTablesInput input, Integer businessId,
 			AssetCategoryType type) {
-		DataTablesOutput<Asset> assets;
 
 		try {
 			final Specification<Asset> specification = (root, query, cb) -> {
-				return cb.and(cb.equal(root.get("assetCategory").get("assetCategoryType"), type),
-						cb.equal(root.get("business").get("id"), businessId));
+				List<Predicate> predicates = new ArrayList<>();
+				if (businessId != null) {
+					predicates.add( cb.equal(root.get("business").get("id"), businessId)) ;
+				}
+				predicates.add(cb.equal(root.get("assetCategory").get("assetCategoryType"), type) );
+				return cb.and( predicates.toArray( new Predicate[0]));
 			};
-			assets = assetDao.findAll(input, specification);
+			DataTablesOutput<Asset> assets = assetDao.findAll(input, specification);
 			return AssetMapper.getInstance().domainToDTODataTablesOutput(assets);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-			return new DataTablesOutput<AssetDTO>();
+			return new DataTablesOutput<>();
 		}
 	}
 
@@ -1126,19 +1131,20 @@ public class AssetServiceImpl implements AssetService {
 			return null;
 		}
 	}
-	
+
+	@Override
 	public List<AssetDTO> findAllSubLocationByMainLocationtId(Integer mainLocationId) {
 
-		final List<Asset> assets = (List<Asset>) assetDao.findAll(specSubLocationByMainLocation(mainLocationId));
+		final List<Asset> assets = assetDao.findAll(specSubLocationByMainLocation(mainLocationId));
 		try {
 			return AssetMapper.getInstance().domainToDTOList(assets);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-			return null;
+			return Collections.emptyList();
 		}
 	}
-	
+
 	private Specification<Asset> specSubLocationByMainLocation(Integer mainLocationId) {
 		return (root, query, cb) -> {
 			final List<Predicate> predicates = new ArrayList<>();
@@ -1146,10 +1152,11 @@ public class AssetServiceImpl implements AssetService {
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 	}
-	
+
+	@Override
 	public List<AssetDTO> findAllSubLocation2BySublocationLocationtId(Integer subLocationId) {
 
-		final List<Asset> assets = (List<Asset>) assetDao.findAll(specSubLocation2BySubLocation(subLocationId));
+		final List<Asset> assets = assetDao.findAll(specSubLocation2BySubLocation(subLocationId));
 		try {
 			return AssetMapper.getInstance().domainToDTOList(assets);
 		} catch (final Exception e) {

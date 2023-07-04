@@ -214,9 +214,9 @@
                                                 <label class="control-label">  Sub Location <span
                                                         class="symbol required"></span>
                                                 </label>
-                                                <select id="siteId" th:field="*{siteId}" class="search-select"
-                                                    style="width: 100%;">
-
+                                                <select id="siteId" th:field="*{siteId}" class="search-select" style="width: 100%;">
+													<option th:each="location : ${locations}" th:value="${location.id}"
+                                                        th:text="${location.name}"></option>
                                                 </select>
                                             </div>
                                         </div>
@@ -228,6 +228,8 @@
                                                 </label>
                                                 <select id="subSiteId" th:field="*{subSiteId}" class="search-select"
                                                     style="width: 100%;">
+                                                    <option th:each="location : ${subLocations}" th:value="${location.id}"
+                                                        th:text="${location.name}"></option>
 
                                                 </select>
                                             </div>
