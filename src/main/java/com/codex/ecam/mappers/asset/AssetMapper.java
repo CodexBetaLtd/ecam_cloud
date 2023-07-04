@@ -69,48 +69,17 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setRemark(domain.getRemarks());
 
 
-		if (domain.getBusiness() != null) {
-			dto.setBusinessId(domain.getBusiness().getId());
-			dto.setBusinessName(domain.getBusiness().getName());
-		}
+		setBusiness(domain, dto);
 
-		if (domain.getAssetCategory() != null) {
-			dto.setAssetCategoryId(domain.getAssetCategory().getId());
-			dto.setAssetCategoryType(domain.getAssetCategory().getAssetCategoryType());
-			dto.setAssetCategoryName(domain.getAssetCategory().getName());
-		}
+		setAssetCategory(domain, dto);
 
-		if (domain.getSite() != null) {
-			dto.setSiteId(domain.getSite().getId());
-		}
-		if (domain.getSubSite() != null) {
-			dto.setSubSiteId(domain.getSubSite().getId());
-		}
-
-		if (domain.getParentAsset() != null){
-			dto.setParentAssetId(domain.getParentAsset().getId());
-			dto.setParentAssetName(domain.getParentAsset().getName());
-		}
-
-		if (domain.getModel() != null ){
-			dto.setModel(domain.getModel().getId());
-			dto.setModelName(domain.getModel().getModelName());
-		}
-
-		if (domain.getBrand() != null){
-			dto.setBrand(domain.getBrand().getId());
-			dto.setBrandName(domain.getBrand().getBrandName());
-		}
-
-		if ( domain.getCustomer() != null ) {
-			dto.setCustomerId(domain.getCustomer().getId());
-			dto.setCustomerName(domain.getCustomer().getName());
-		}
-
-		if (domain.getChildCount() != null) {
-			dto.setChildCount(domain.getChildCount());
-		}
-
+		setSite(domain, dto);
+		setSubSitr(domain, dto);
+		setParentAsset(domain, dto);
+		setModel(domain, dto);
+		setBrand(domain, dto);
+		setCustomer(domain, dto);
+		setChildCount(domain, dto);
 		setMeterReadings(domain, dto);
 		setLocation(dto, domain);
 		setAssetEventTypeAssets(domain, dto);
@@ -122,6 +91,69 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		setAssetCountry(domain, dto);
 
 		return dto;
+	}
+
+	private void setBusiness(Asset domain, final AssetDTO dto) {
+		if (domain.getBusiness() != null) {
+			dto.setBusinessId(domain.getBusiness().getId());
+			dto.setBusinessName(domain.getBusiness().getName());
+		}
+	}
+
+	private void setAssetCategory(Asset domain, final AssetDTO dto) {
+		if (domain.getAssetCategory() != null) {
+			dto.setAssetCategoryId(domain.getAssetCategory().getId());
+			dto.setAssetCategoryType(domain.getAssetCategory().getAssetCategoryType());
+			dto.setAssetCategoryName(domain.getAssetCategory().getName());
+		}
+	}
+
+	private void setSite(Asset domain, final AssetDTO dto) {
+		if (domain.getSite() != null) {
+			dto.setSiteId(domain.getSite().getId());
+			dto.setSiteName(domain.getSite().getName());
+		}
+	}
+
+	private void setSubSitr(Asset domain, final AssetDTO dto) {
+		if (domain.getSubSite() != null) {
+			dto.setSubSiteId(domain.getSubSite().getId());
+			dto.setSubSiteName(domain.getSubSite().getName());
+		}
+	}
+
+	private void setParentAsset(Asset domain, final AssetDTO dto) {
+		if (domain.getParentAsset() != null){
+			dto.setParentAssetId(domain.getParentAsset().getId());
+			dto.setParentAssetName(domain.getParentAsset().getName());
+		}
+	}
+
+	private void setModel(Asset domain, final AssetDTO dto) {
+		if (domain.getModel() != null ){
+			dto.setModel(domain.getModel().getId());
+			dto.setModelName(domain.getModel().getModelName());
+		}
+	}
+
+	private void setBrand(Asset domain, final AssetDTO dto) {
+		if (domain.getBrand() != null){
+			dto.setBrand(domain.getBrand().getId());
+			dto.setBrandName(domain.getBrand().getBrandName());
+		}
+	}
+
+	private void setCustomer(Asset domain, final AssetDTO dto) {
+		if ( domain.getCustomer() != null ) {
+			dto.setCustomerId(domain.getCustomer().getId());
+			dto.setCustomerName(domain.getCustomer().getName());
+		}
+	}
+
+	private void setChildCount(Asset domain, final AssetDTO dto) {
+		if (domain.getChildCount() != null) {
+			dto.setChildCount(domain.getChildCount());
+		}
 	}
 
 	private void setAssetCountry(Asset domain, final AssetDTO dto) {
@@ -288,19 +320,15 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
+		dto.setDepartment(domain.getDepartment());
 		setLocationString(dto, domain);
 		dto.setAssetCategoryName(domain.getAssetCategory().getName());
-
-		if (domain.getBusiness() != null) {
-			dto.setBusinessName(domain.getBusiness().getName());
-		}
-
-		if ( domain.getCustomer() != null ) {
-			dto.setCustomerName(domain.getCustomer().getName());
-		}
-		if (domain.getChildCount() != null) {
-			dto.setChildCount(domain.getChildCount());
-		}
+		setBusiness(domain, dto);
+		setCustomer(domain, dto);
+		setChildCount(domain, dto);
+		setParentAsset(domain, dto);
+		setSite(domain, dto);
+		setSubSitr(domain, dto);
 		return dto;
 	}
 

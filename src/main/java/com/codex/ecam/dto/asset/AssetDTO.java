@@ -27,6 +27,8 @@ public class AssetDTO extends BaseDTO {
 	private Integer brand;
 
 	private String name;
+	private String siteName;
+	private String subSiteName;
 	private String code;
 	private String description;
 	private String imageLocation;
@@ -233,8 +235,8 @@ public class AssetDTO extends BaseDTO {
 	public void setSiteId(Integer siteId) {
 		this.siteId = siteId;
 	}
-	
-	
+
+
 
 	public Integer getSubSiteId() {
 		return subSiteId;
@@ -556,6 +558,20 @@ public class AssetDTO extends BaseDTO {
 		this.remark = remark;
 	}
 
+	public String getSiteName() {
+		return siteName;
+	}
 
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
+
+	public String getSubSiteName() {
+		return subSiteName;
+	}
+
+	public void setSubSiteName(String subSiteName) {
+		this.subSiteName = subSiteName;
+	}
 
 }

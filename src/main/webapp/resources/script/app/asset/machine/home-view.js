@@ -146,6 +146,15 @@
      			data : 'customerName',
      			responsivePriority: 4   
      		},{ 
+                data : 'parentAssetName',
+                responsivePriority: 4   
+            },{ 
+                data : 'siteName',
+                responsivePriority: 4   
+            },{ 
+                data : 'subSiteName',
+                responsivePriority: 4   
+            },{ 
                 data : 'department',
                 responsivePriority: 4   
             }],
