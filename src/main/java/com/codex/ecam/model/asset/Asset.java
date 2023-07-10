@@ -143,6 +143,9 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	@Column(name="date_of_purchase")
 	private Date dateOfPurchase;
 
+	@Column(name="added_date", columnDefinition = "DATETIME DEFAULT '2023-01-01 00:00:00'")
+	private Date addedDate;
+
 	@Column(name="department")
 	private String department;
 
@@ -784,5 +787,12 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 		this.subSite = subSite;
 	}
 
+	public Date getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(Date addedDate) {
+		this.addedDate = addedDate;
+	}
 
 }

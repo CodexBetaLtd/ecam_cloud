@@ -67,6 +67,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		dto.setDepartment(domain.getDepartment());
 		dto.setAssetClass(domain.getAssetClass());
 		dto.setRemark(domain.getRemarks());
+		dto.setAddedDate(domain.getAddedDate());
 
 
 		setBusiness(domain, dto);
@@ -312,23 +313,29 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		domain.setDepartment(dto.getDepartment());
 		domain.setAssetClass(dto.getAssetClass());
 		domain.setRemarks(dto.getRemark());
+		domain.setAddedDate(dto.getAddedDate());
 	}
 
 	@Override
 	public AssetDTO domainToDtoForDataTable(Asset domain) throws Exception {
+
 		final AssetDTO dto = new AssetDTO();
+
 		dto.setId(domain.getId());
 		dto.setName(domain.getName());
 		dto.setCode(domain.getCode());
 		dto.setDepartment(domain.getDepartment());
-		setLocationString(dto, domain);
 		dto.setAssetCategoryName(domain.getAssetCategory().getName());
+		dto.setAddedDate(domain.getAddedDate());
+
+		setLocationString(dto, domain);
 		setBusiness(domain, dto);
 		setCustomer(domain, dto);
 		setChildCount(domain, dto);
 		setParentAsset(domain, dto);
 		setSite(domain, dto);
 		setSubSitr(domain, dto);
+
 		return dto;
 	}
 

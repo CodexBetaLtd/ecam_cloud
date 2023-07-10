@@ -218,7 +218,7 @@ public class AssetServiceImpl implements AssetService {
 		if (asset.getAssetCategory().getAssetCategoryType().equals(AssetCategoryType.EQUIPMENTS_OR_MACHINES)
 				|| asset.getAssetCategory().getAssetCategoryType().equals(AssetCategoryType.TOOLS)) {
 			final List<ReceiptOrderItem> items = receiptOrderItemDao.findByAsset(asset);
-			if (items != null && items.size() > 0) {
+			if (items != null && !items.isEmpty()) {
 				final ReceiptOrderItem item = items.get(0);
 				if (item.getReceiptOrder().getId() != null) {
 					assetDTO.getAssetPurchasingDetail().setReceiptOrderId(item.getReceiptOrder().getId());

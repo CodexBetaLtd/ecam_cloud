@@ -68,6 +68,7 @@ public class AssetDTO extends BaseDTO {
 	private BigDecimal accumulatedDepreciation ;
 
 	private Date dateOfPurchase;
+	private Date addedDate;
 
 	private AssetPurchasingDTO assetPurchasingDetail = new AssetPurchasingDTO();
 	private LocationDTO locationDTO = new LocationDTO();
@@ -572,6 +573,14 @@ public class AssetDTO extends BaseDTO {
 
 	public void setSubSiteName(String subSiteName) {
 		this.subSiteName = subSiteName;
+	}
+
+	public Date getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(Date addedDate) {
+		this.addedDate = addedDate;
 	}
 
 }

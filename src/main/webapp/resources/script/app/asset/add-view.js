@@ -123,6 +123,14 @@ var AssetAdd = function () {
             container: '#valuation-picker-container-div'
         });
     };
+    
+    function initDateAssetAdded() {
+            $('#addedDate').datepicker({
+                autoclose: true,
+                container: '#added-dt-div'
+            });
+    };
+    
     var runSiteSelect = function () {
     	$("#siteId").select2({
     		placeholder: "Select a Site",
@@ -439,6 +447,7 @@ var AssetAdd = function () {
             initValidator();
             generateQRCode();
             runPurchaseDatePicker();
+            initDateAssetAdded();
           //  initDocumentOnLoad();
 			runSubLocationSelectChange();
           //  initMap();
