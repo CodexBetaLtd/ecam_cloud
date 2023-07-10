@@ -1721,10 +1721,10 @@
                 if (data.DT_RowAttr) {
                     $(tr).attr(data.DT_RowAttr);
                 }
-                
+
                 $(tr).attr("title", settings.aoRowProperty != undefined ? settings.aoRowProperty.sTooltip : "")
                 $(tr).addClass(settings.aoRowProperty != undefined ? settings.aoRowProperty.sClassName : ""); 
-
+                
                 if (data.DT_RowData) {
                     $(tr).data(data.DT_RowData);
                 }
@@ -2479,7 +2479,7 @@
                 search: {
                     value: preSearch.sSearch,
                     regex: preSearch.bRegex
-                },
+                }
             };
 
             for (i = 0; i < columnCount; i++) {
@@ -2488,7 +2488,8 @@
                 dataProp = typeof column.mData == "function" ? 'function' : column.mData;
 
                 d.columns.push({
-                	isEnum: column.sIsEnum,
+                    isEnum: column.sIsEnum,
+                    isSelect2: column.sIsSelect2, 
                     isBoolean: column.sIsBoolean,
                     dropdownParent: column.sDropdownParent,
                     data: dataProp,
@@ -2498,7 +2499,7 @@
                     search: {
                         value: columnSearch.sSearch,
                         regex: columnSearch.bRegex
-                    },
+                    }
                 });
 
                 param("mDataProp_" + i, dataProp);
@@ -4926,15 +4927,15 @@
          *  @memberof DataTable#oApi
          */
         function _fnBindAction(n, oData, fn) {
-            $(n).bind('click.DT', oData, function(e) {
+            $(n)
+                .bind('click.DT', oData, function(e) {
                     n.blur(); // Remove focus outline for mouse users
                     fn(e);
                 })
                 .bind('keypress.DT', oData, function(e) {
                     if (e.which === 13) {
                         e.preventDefault();
-                        return false;
-//                      fn(e); remove due to duplicate request generate for 'Enter' keypress
+                        fn(e);
                     }
                 })
                 .bind('selectstart.DT', function() {
@@ -5056,123 +5057,142 @@
             return 'dom';
         }
 
-/*Newly added function for search input boxes and select boxes*/
+        /*Newly added function for search input boxes and select boxes*/
         function _fnSearch(options) {
         	
-        	var api = this.api(true);
-        	
-        	if (options.oFeatures.bFilter) {
-        		
-        		api.columns().every(function(index) {
+            _fnColResizable(options);
+            
+//            if (options.oFeatures.bFilter) {
+//                _initColumnSearch(options);
+//            }
+            
+        }
+        
+       function _initColumnSearch(options){
 
-            		var column = this;
-                     
-            		var title = $.trim((options.aoColumns[index].nTh.innerText)).toLowerCase();
-                     
-            		if (title.length > 0 && title != "more" && title != "#" && title!="preview" && title!="undo" && title!="delete") {
-                    	 
-            			var sTitle = column.header().innerText;
-            			$(column.header()).empty().append(sTitle); 
-                    	 
-            			if ((options.aoColumns[index].sIsEnum != true) && (options.aoColumns[index].sIsBoolean != true) && (options.aoColumns[index].sIsSelect2 != true)) {
-                     	
-            				if (options.aoColumns[index].searchable != false) {
-                         		$(column.header()).append('<div style="padding-top: 5px;"><input onclick="event.stopPropagation()" type="text" placeholder="Search ' + sTitle + '" /></div>');
-            				} else {                        		
-                         		$(column.header()).append('<div style="padding-top: 5px;"><input  class="not-allowed" onclick="event.stopPropagation()" type="text" placeholder="Search ' + sTitle + '" disabled/></div>');
-                         	}
-                             
-    						// for enter key
-    						$('input', api.column(index).header()).on('keyup', function(){
-                            	if ( api.column(index).search() !== this.value ) {
-                                    api.column(index).search( this.value ).draw();
-                                }
-                            });
-    						
-            			} else if((options.aoColumns[index].sIsBoolean == true)) {
+           var api = this.api(true);
+           
+           api.columns().every(function(index) {
+
+               var column = this;
+                
+               var title = $.trim((options.aoColumns[index].nTh.innerText)).toLowerCase();
+                
+               if (title.length > 0 && title != "more" && title != "#" && title!="preview" && title!="undo" && title!="delete") {
+                    
+                   var sTitle = column.header().innerText;
+                   $(column.header()).empty().append(sTitle); 
+                    
+                   if ((options.aoColumns[index].sIsEnum != true) && (options.aoColumns[index].sIsBoolean != true) && (options.aoColumns[index].sIsSelect2 != true)) {
+                   
+                       if (options.aoColumns[index].searchable != false) {
+                           $(column.header()).append('<div style="padding-top: 5px;"><input onclick="event.stopPropagation()" type="text" placeholder="Search ' + sTitle + '" /></div>');
+                       } else {                                
+                           $(column.header()).append('<div style="padding-top: 5px;"><input  class="not-allowed" onclick="event.stopPropagation()" type="text" placeholder="Search ' + sTitle + '" disabled/></div>');
+                       }
+                        
+                       // for enter key 
+                       $('input', api.column(index).header()).on('keypress', function(event) {
+                           if (event.keyCode === 13) { 
+                               api.column(index).search(this.value).draw();
+                           }
+                       });
+                   
+                   } else if((options.aoColumns[index].sIsBoolean == true)) {
+                  
+                       var mainDiv = $('<div class="form-group" style="padding-top: 5px;width: 100% !important;"></div>');
+                       var selectTag = $('<select style="width: 100% !important;" onclick="event.stopPropagation()" id="status_' + options.aoColumns[index].data + '" class="form-control input-sm" ><option value="" disabled selected>Search ' + sTitle + '</option></select>')
+                          .appendTo(mainDiv)
+                          .on('change', function() {
+                              _initColumnSearchDraw(this, api, index);
+                          });
+                      
+                      $(column.header()).append(mainDiv)
+                      $(mainDiv).before('<br>');
+                      $(options.aoColumns[index].sBooleanOption).each(function(d) {
                        
-            				var mainDiv = $('<div class="form-group" style="padding-top: 5px;width: 100% !important;"></div>');
-            				var selectTag = $('<select style="width: 100% !important;" onclick="event.stopPropagation()" id="status_' + options.aoColumns[index].data + '" class="form-control input-sm" ><option value="" disabled selected>Search ' + sTitle + '</option></select>')
-                               .appendTo(mainDiv)
-                               .on('change', function() {
-                            	   _initColumnSearchDraw(this, api, index);
-                               });
-                           
-                           $(column.header()).append(mainDiv)
-                           $(mainDiv).before('<br>');
-                           $(options.aoColumns[index].sBooleanOption).each(function(d) {
-                           	
-                        	   switch(options.aoColumns[index].sBooleanOption.indexOf(options.aoColumns[index].sBooleanOption[d])){
-    								case 0: $(selectTag).append('<option value="TRUE">' + options.aoColumns[index].sBooleanOption[d]+ '</option>')
-    								break
-    								case 1: $(selectTag).append('<option value="FALSE">' + options.aoColumns[index].sBooleanOption[d]+ '</option>')
-    								break
-    								default:$(selectTag).append('<option value="null">Values Not Defined</option>')
-    								break;
-                        	   }
-                           	
-                           });
-                           
-                           _initSelect2(options, index, title);
-                           
-    	               } else {
-    	            	   var mainDiv = $('<div id="select_2_'+ options.aoColumns[index].data +'" class="form-group" style="padding-top: 5px;width: 100% !important;"></div>');
-    	            	   var selectTag = $('<select style="width: 100% !important;" onclick="event.stopPropagation()" id="status_' + options.aoColumns[index].data + '" class="form-control input-sm" ><option value="" disabled selected>Search ' + sTitle + '</option></select>').appendTo(mainDiv)
-    	            	   .on('change', function() {
-    	            		   _initColumnSearchDraw(this, api, index);
-    	            	   });
-    	                 
-    	            	   $(column.header()).append(mainDiv);
-    	            	   $(mainDiv).before('<br>');
-    	
-    	            	   $(options.aoColumns[index].sOption).each(function(d) {
-    	            		   $(selectTag).append('<option value="' + options.aoColumns[index].sOption[d] + '">' + options.aoColumns[index].sOption[d] + '</option>')
-    	            	   }); 
-    	                 
-    	            	   _initSelect2(options, index, title);
-    	               }
-    	        	}
-            	});
-			} 
-        };
+                          switch(options.aoColumns[index].sBooleanOption.indexOf(options.aoColumns[index].sBooleanOption[d])){
+                               case 0: $(selectTag).append('<option value="TRUE">' + options.aoColumns[index].sBooleanOption[d]+ '</option>')
+                               break
+                               case 1: $(selectTag).append('<option value="FALSE">' + options.aoColumns[index].sBooleanOption[d]+ '</option>')
+                               break
+                               default:$(selectTag).append('<option value="null">Values Not Defined</option>')
+                               break;
+                          }
+                       
+                      });
+                      
+                      _initSelect2(options, index, title);
+                      
+                  } else {
+                      var mainDiv = $('<div id="select_2_'+ options.aoColumns[index].data +'" class="form-group" style="padding-top: 5px;width: 100% !important;"></div>');
+                      var selectTag = $('<select style="width: 100% !important;" onclick="event.stopPropagation()" id="status_' + options.aoColumns[index].data + '" class="form-control input-sm" ><option value="" disabled selected>Search ' + sTitle + '</option></select>').appendTo(mainDiv)
+                      .on('change', function() {
+                          _initColumnSearchDraw(this, api, index);
+                      });
+                    
+                      $(column.header()).append(mainDiv);
+                      $(mainDiv).before('<br>');
+   
+                      $(options.aoColumns[index].sOption).each(function(d) {
+                          $(selectTag).append('<option value="' + options.aoColumns[index].sOption[d] + '">' + options.aoColumns[index].sOption[d] + '</option>')
+                      }); 
+                    
+                      _initSelect2(options, index, title);
+                  }
+               }
+           });
+       }
 
-    	function _initColumnSearchDraw (obj, api, index){
-    		if($(obj).val() != null){
+        function _initColumnSearchDraw (obj, api, index){
+            if($(obj).val() != null){
                 var val = $.fn.dataTable.util.escapeRegex(
                     $(obj).val()
-                );	                                    
+                );                                      
                 api.column(index).search(val ? val : '', true, false).draw();
-     	   } else {
-     		   api.column(index).search('').draw();
-     	   }
-    	};
+           } else {
+               api.column(index).search('').draw();
+           }
+        }
         
         function _initSelect2(options, index, title){ 
             
-        	var isDisabled = false;
-			if (options.aoColumns[index].searchable == false) {
-				isDisabled = true;
-			}
+            var isDisabled = false;
+            if (options.aoColumns[index].searchable == false) {
+                isDisabled = true;
+            }
             
-			if (options.aoColumns[index].sDropdownParent != "") { 
-				$('#status_' + options.aoColumns[index].data).select2({
-					placeholder: 'Search ' + title,
-					allowClear: true,
-					disabled: isDisabled,
-					dropdownParent:  $('#' + options.aoColumns[index].sDropdownParent)
-				});
-			} else {
-			  	$('#status_' + options.aoColumns[index].data).select2({
-			  		placeholder: 'Search ' + title,
-			  		allowClear: true, 
-			  		disabled: isDisabled
-			  	});
-			}
-			  
-			$('.select2-selection').on('click',function( event){
-			  	event.stopPropagation();
-			});
+              if (options.aoColumns[index].sDropdownParent != "") { 
+                  $('#status_' + options.aoColumns[index].data).select2({
+                      placeholder: 'Search ' + title,
+                      allowClear: true,
+                      disabled:isDisabled,
+                      dropdownParent:  $('#' + options.aoColumns[index].sDropdownParent)
+                  });
+              } else {
+                $('#status_' + options.aoColumns[index].data).select2({
+                    placeholder: 'Search ' + title,
+                      allowClear: true, 
+                        disabled:isDisabled
+                  });
+              }
+              
+              $('.select2-selection').on('click',function( event){
+                event.stopPropagation();
+              });
         };
+        
+        function _fnColResizable(options) {
+            if ($(window).width() > 767) {        
+                $("#"+options.sTableId).colResizable({
+                    liveDrag:true,
+                    resizeMode:'fit',               
+                });           
+            } else {
+                 $("#"+options.sTableId).colResizable({ disable : true });
+            }
+        }
+
         /**
          * Binding table row td click event for the table.
          *  @param {object} oSettings dataTables settings object
@@ -5228,7 +5248,6 @@
              }
              
          };
-         
 
          function _fnProgressBar() {
              $('.table-loader').removeClass("hidden");
@@ -5586,7 +5605,6 @@
                 return data;
             };
 
-
             /**
              * Restore the table to it's original state in the DOM by removing all of DataTables
              * enhancements, alterations to the DOM structure of the table and event listeners.
@@ -5895,7 +5913,7 @@
              */
             this.fnSetColumnVis = function(iCol, bShow, bRedraw) {
                 var api = this.api(true).column(iCol).visible(bShow);
-
+                
                 if (bRedraw === undefined || bRedraw) {
                     api.columns.adjust().draw();
                 }
@@ -6185,7 +6203,6 @@
                     "fnStateSaveCallback",
                     "renderer",
                     "searchDelay",
-                    "aoRowProperty",
                     "rowId", ["iCookieDuration", "iStateDuration"], // backwards compat
                     ["oSearch", "oPreviousSearch"],
                     ["aoSearchCols", "aoPreSearchCols"],
@@ -6480,7 +6497,9 @@
             _that = null;
             
             this._fnSearch(options, this);
+
             this._fnRowClick(this);
+            
             return this;
         };
 
@@ -11775,10 +11794,9 @@
             }, 
 
             "aoRowProperty" : {
-                "sClassName" : "dtTr-editable tooltips",
+                "sClassName" : "",
                 "sTooltip" : ""
             }
-            
         };
 
         _fnHungarianMap(DataTable.defaults);
@@ -12647,11 +12665,13 @@
 
             "sIsEnum": false,
             
+            "sIsSelect2": false,
+            
             "sDropdownParent": "",
             
             "sIsBoolean": false,
 
-            "sOption": [],
+            "sEnumOption": [],
               
             "sBooleanOption": []
         };
@@ -13572,7 +13592,7 @@
              *  @default null
              */
             "rowId": null,
-
+            
             /**
              * Row Click for when the table has been initialised.
              *  @type object
@@ -13593,9 +13613,9 @@
                     "sName" : "",
                 },
             },
-            
+
             "aoRowProperty" : {
-                "sClassName" : "",
+                "sClassName" : "dtTr-editable tooltips",
                 "sTooltip" : ""
             }
         };
@@ -15094,6 +15114,7 @@
          *  @param {int} column Column index
          *  @param {bool} vis `false` if column now hidden, or `true` if visible
          */
-
+        
+        
         return $.fn.dataTable;
     }));

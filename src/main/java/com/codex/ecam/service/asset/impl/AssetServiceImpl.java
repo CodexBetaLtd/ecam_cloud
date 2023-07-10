@@ -298,6 +298,9 @@ public class AssetServiceImpl implements AssetService {
 			AssetCategoryType type) {
 
 		try {
+
+			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
+
 			final Specification<Asset> specification = (root, query, cb) -> {
 				List<Predicate> predicates = new ArrayList<>();
 				if (businessId != null) {
