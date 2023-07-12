@@ -27,7 +27,7 @@
 			</li>
 			<li>
                 <a th:href="@{/asset/facility/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).FACILITIES.id)">
-					<i class="icon-custom icon-site"></i> <span class="title"> Facility/Tool </span>
+					<i class="icon-custom icon-site"></i> <span class="title"> Facility/Location  </span>
 				</a>
 			</li>
 		</ul>
@@ -314,6 +314,11 @@
             <li>
                 <a th:href="@{/report/bincard/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).AOD_RETURN_REPORT.id)">
                     <i class="fa fa-clipboard"></i> <span class="title"> Bin Card </span>
+                </a>
+            </li>
+            <li>
+                <a th:href="@{/report/asset-depreciation/}" sec:authorize="hasAnyAuthority('ADMIN_LEVEL', 'SYSTEM_LEVEL',T(com.codex.ecam.util.AuthenticationUtil).SUB_MENU_PREFIX + T(com.codex.ecam.constants.SubMenu).ASSET_DEPRECIATION_REPORT.id)">
+                    <i class="fa fa-clipboard"></i> <span class="title"> Asset Depreciation </span>
                 </a>
             </li>
 

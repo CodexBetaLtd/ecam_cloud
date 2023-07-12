@@ -55,7 +55,8 @@ public enum SubMenu {
 	AOD_REPORT(35, Menu.REPORT, "AOD Report"),
 	AOD_RETURN_REPORT(36, Menu.REPORT, "AOD Return Report"),
 	STOCK_AGE_REPORT(37, Menu.REPORT, "Stock Age Report"),
-	PART_REPORT(38, Menu.REPORT, "Expense Report");
+	PART_REPORT(38, Menu.REPORT, "Expense Report"),
+	ASSET_DEPRECIATION_REPORT(39, Menu.REPORT, "Asset Depreciation Report");
 
 
 	private Integer id;

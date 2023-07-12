@@ -75,7 +75,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		setAssetCategory(domain, dto);
 
 		setSite(domain, dto);
-		setSubSitr(domain, dto);
+		setSubSite(domain, dto);
 		setParentAsset(domain, dto);
 		setModel(domain, dto);
 		setBrand(domain, dto);
@@ -116,7 +116,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		}
 	}
 
-	private void setSubSitr(Asset domain, final AssetDTO dto) {
+	private void setSubSite(Asset domain, final AssetDTO dto) {
 		if (domain.getSubSite() != null) {
 			dto.setSubSiteId(domain.getSubSite().getId());
 			dto.setSubSiteName(domain.getSubSite().getName());
@@ -334,7 +334,7 @@ public class AssetMapper extends GenericMapper<Asset, AssetDTO> {
 		setChildCount(domain, dto);
 		setParentAsset(domain, dto);
 		setSite(domain, dto);
-		setSubSitr(domain, dto);
+		setSubSite(domain, dto);
 
 		return dto;
 	}
