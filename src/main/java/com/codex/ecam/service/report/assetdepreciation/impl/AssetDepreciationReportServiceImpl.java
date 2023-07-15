@@ -43,7 +43,7 @@ public class AssetDepreciationReportServiceImpl implements AssetDepreciationRepo
 	}
 
 	private Specification<Asset> getDetailSpecification() {
-		final Specification<Asset> specification = (root, query, cb) -> {
+		return (root, query, cb) -> {
 
 			query.orderBy(cb.asc(root.get("name")));
 
@@ -53,8 +53,6 @@ public class AssetDepreciationReportServiceImpl implements AssetDepreciationRepo
 
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
-
-		return specification;
 	}
 
 	@Override
@@ -72,7 +70,7 @@ public class AssetDepreciationReportServiceImpl implements AssetDepreciationRepo
 
 		for (Asset asset : getReportDataList()) {
 			AssetDepreciationRepDTO dto = AssetDepreciationReportMapper.getInstance().domainToRepDTO(asset);
-			AssetDepreciationReportCalculateHelper.calculate(filter.getFromDate(), filter.getToDate(), dto);
+			AssetDepreciationReportCalculateHelper.getInstance().calculate(filter.getFromDate(), filter.getToDate(), dto);
 			dto.setFromDate(filter.getFromDate());
 			dto.setToDate(filter.getToDate());
 			list.add(dto);
