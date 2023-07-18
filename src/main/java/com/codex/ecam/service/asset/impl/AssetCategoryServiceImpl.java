@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.criteria.Predicate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
@@ -19,19 +21,13 @@ import com.codex.ecam.dao.asset.AssetCategoryDao;
 import com.codex.ecam.dao.biz.BusinessDao;
 import com.codex.ecam.dao.maintenance.TaskDao;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
-import com.codex.ecam.dto.asset.SparePartDTO;
-import com.codex.ecam.dto.inventory.mrn.MRNItemDTO;
 import com.codex.ecam.dto.maintenance.task.TaskDTO;
 import com.codex.ecam.mappers.asset.AssetCategoryMapper;
 import com.codex.ecam.mappers.maintenance.TaskMapper;
-import com.codex.ecam.model.asset.AssetBusiness;
 import com.codex.ecam.model.asset.AssetCategory;
 import com.codex.ecam.model.asset.AssetCategoryTask;
-import com.codex.ecam.model.asset.SparePart;
-import com.codex.ecam.model.inventory.mrn.MRNItem;
 import com.codex.ecam.model.maintenance.task.Task;
 import com.codex.ecam.repository.FocusDataTablesInput;
-import com.codex.ecam.result.admin.AssetCategoryResult;
 import com.codex.ecam.result.admin.AssetCategoryResult;
 import com.codex.ecam.service.asset.api.AssetCategoryService;
 import com.codex.ecam.util.AuthenticationUtil;
@@ -52,23 +48,59 @@ public class AssetCategoryServiceImpl implements AssetCategoryService {
 
 	@Override
 	public DataTablesOutput<AssetCategoryDTO> findAll(FocusDataTablesInput input) throws Exception {
-		DataTablesOutput<AssetCategoryDTO> out = null;
-		DataTablesOutput<AssetCategory> domainOut;
-		AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
-		if (AuthenticationUtil.isAuthUserAdminLevel()) {
-			domainOut = assetCategoryDao.findAll(input);
-		} else {
-			final Specification<AssetCategory> specification = (root, query, cb) -> cb.equal(root.get("business"),
-					AuthenticationUtil.getLoginUserBusiness());
-			domainOut = assetCategoryDao.findAll(input, specification);
-		}
 
 		try {
-			out = AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+
+			AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
+
+			Specification<AssetCategory> specification = (root, query, cb) ->{
+				List<Predicate> predicates = new ArrayList<>();
+
+				if (!AuthenticationUtil.isAuthUserAdminLevel()) {
+					predicates.add(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+				}
+
+				return cb.and(predicates.toArray(new Predicate[0]));
+			};
+
+			DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input, specification);
+
+			return AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		return out;
+
+		return new DataTablesOutput<> ();
+	}
+
+	@Override
+	public DataTablesOutput<AssetCategoryDTO> findAllByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception {
+		try {
+
+			AssetCategoryPropertyMapper.getInstance().generateDataTableInput(input);
+
+			Specification<AssetCategory> specification = (root, query, cb) ->{
+				List<Predicate> predicates = new ArrayList<>();
+
+				if (bizId != null) {
+					predicates.add(cb.equal(root.get("business").get("id"), bizId));
+				} else {
+					if (!AuthenticationUtil.isAuthUserAdminLevel()) {
+						predicates.add(cb.equal(root.get("business"), AuthenticationUtil.getLoginUserBusiness()));
+					}
+				}
+
+				return cb.and(predicates.toArray(new Predicate[0]));
+			};
+
+			DataTablesOutput<AssetCategory> domainOut = assetCategoryDao.findAll(input, specification);
+
+			return AssetCategoryMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		return new DataTablesOutput<> ();
 	}
 
 	@Override

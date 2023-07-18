@@ -1,13 +1,13 @@
 package com.codex.ecam.service.asset.api;
 
+import java.util.List;
+
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
 import com.codex.ecam.constants.AssetCategoryType;
 import com.codex.ecam.dto.asset.AssetCategoryDTO;
 import com.codex.ecam.repository.FocusDataTablesInput;
 import com.codex.ecam.result.admin.AssetCategoryResult;
-
-import java.util.List;
 
 public interface AssetCategoryService {
 
@@ -16,6 +16,8 @@ public interface AssetCategoryService {
 	DataTablesOutput<AssetCategoryDTO> findByAssetCategoyType(FocusDataTablesInput input, AssetCategoryType type) throws Exception;
 
 	DataTablesOutput<AssetCategoryDTO> findByAssetCategoyTypeById(FocusDataTablesInput input, Integer id) throws Exception;
+
+	DataTablesOutput<AssetCategoryDTO> findAllByBusiness(FocusDataTablesInput input, Integer bizId) throws Exception;
 
 	AssetCategoryDTO findById(Integer id) throws Exception;
 

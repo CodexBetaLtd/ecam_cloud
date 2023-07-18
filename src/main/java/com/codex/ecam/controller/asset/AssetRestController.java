@@ -116,6 +116,16 @@ public class AssetRestController {
 		return null;
 	}
 
+	@GetMapping(value = "/sub-location/tabledata")
+	public DataTablesOutput<AssetDTO> getSubLocationsByParentLocation(@Valid FocusDataTablesInput input, @Valid Integer parentLocationId) {
+		try {
+			return assetService.findAllSubLocationByMainLocationtId(input, parentLocationId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new DataTablesOutput<> ();
+	}
+
 	@GetMapping(value = "/assetList")
 	public List<AssetDTO> getAllAssets() {
 		try {

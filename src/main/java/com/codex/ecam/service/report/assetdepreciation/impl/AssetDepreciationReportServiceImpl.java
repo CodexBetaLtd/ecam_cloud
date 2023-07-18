@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,21 +40,65 @@ public class AssetDepreciationReportServiceImpl implements AssetDepreciationRepo
 		this.assetDao = assetDao;
 	}
 
-	private List<Asset> getReportDataList() throws Exception {
-		return assetDao.findAll(getDetailSpecification());
+	private List<Asset> getReportDataList(AssetDepreciationFilterDTO filter) throws Exception {
+		return assetDao.findAll(getDetailSpecification(filter));
 	}
 
-	private Specification<Asset> getDetailSpecification() {
+	private Specification<Asset> getDetailSpecification(AssetDepreciationFilterDTO filter) {
 		return (root, query, cb) -> {
 
 			query.orderBy(cb.asc(root.get("name")));
 
 			final List<Predicate> predicates = new ArrayList<>();
 
-			predicates.add(cb.notEqual(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+			filterByAssetCategory(filter, root, cb, predicates);
+			filterByMainLocation(filter, root, cb, predicates);
+			filterBySubLocation(filter, root, cb, predicates);
+			filterBySubLocation2(filter, root, cb, predicates);
+			filterByDepartment(filter, root, cb, predicates);
 
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
+	}
+
+	private void filterByDepartment(AssetDepreciationFilterDTO filter, Root<Asset> root, CriteriaBuilder cb,
+			List<Predicate> predicates) {
+		if (filter.getDepartmentName() != null) {
+			predicates.add(cb.like(cb.lower(root.get("department")), "%" + filter.getDepartmentName().toLowerCase() + "%"));
+		}
+	}
+
+	private void filterByMainLocation(AssetDepreciationFilterDTO filter, Root<Asset> root, CriteriaBuilder cb,
+			List<Predicate> predicates) {
+		if (filter.getMainLocationId() != null) {
+			predicates.add(cb.equal(root.get("parentAsset").get("id"), filter.getMainLocationId()));
+		}
+
+	}
+
+	private void filterBySubLocation(AssetDepreciationFilterDTO filter, Root<Asset> root, CriteriaBuilder cb,
+			List<Predicate> predicates) {
+		if (filter.getSubLocationId() != null) {
+			predicates.add(cb.equal(root.get("site").get("id"), filter.getSubLocationId()));
+		}
+
+	}
+
+	private void filterBySubLocation2(AssetDepreciationFilterDTO filter, Root<Asset> root, CriteriaBuilder cb,
+			List<Predicate> predicates) {
+		if (filter.getSubLocation2Id() != null) {
+			predicates.add(cb.equal(root.get("subSite").get("id"), filter.getSubLocation2Id()));
+		}
+
+	}
+
+	private void filterByAssetCategory(AssetDepreciationFilterDTO filter, Root<Asset> root, CriteriaBuilder cb,
+			final List<Predicate> predicates) {
+		if (filter.getAssetCategoryId() != null) {
+			predicates.add(cb.equal(root.get("assetCategory").get("id"), filter.getAssetCategoryId()));
+		} else {
+			predicates.add(cb.notEqual(root.get("assetCategory").get("assetCategoryType"), AssetCategoryType.LOCATIONS_OR_FACILITIES));
+		}
 	}
 
 	@Override
@@ -68,7 +114,7 @@ public class AssetDepreciationReportServiceImpl implements AssetDepreciationRepo
 
 		List<AssetDepreciationRepDTO> list = new ArrayList<>();
 
-		for (Asset asset : getReportDataList()) {
+		for (Asset asset : getReportDataList(filter)) {
 			AssetDepreciationRepDTO dto = AssetDepreciationReportMapper.getInstance().domainToRepDTO(asset);
 			AssetDepreciationReportCalculateHelper.getInstance().calculate(filter.getFromDate(), filter.getToDate(), dto);
 			dto.setFromDate(filter.getFromDate());

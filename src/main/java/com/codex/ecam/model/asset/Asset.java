@@ -119,6 +119,12 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 	@Column(name="size")
 	private String size;
 
+	@Column(name="department")
+	private String department;
+
+	@Column(name="remarks")
+	private String remarks;
+
 	@Column(name="quantity")
 	private BigDecimal quantity;
 
@@ -145,12 +151,6 @@ public class Asset extends BaseModel implements RootApplicationEventAware{
 
 	@Column(name="added_date", columnDefinition = "DATETIME DEFAULT '2023-01-01 00:00:00'")
 	private Date addedDate;
-
-	@Column(name="department")
-	private String department;
-
-	@Column(name="remarks")
-	private String remarks;
 
 	@Column(name="asset_class_id")
 	private AssetClassType assetClass;

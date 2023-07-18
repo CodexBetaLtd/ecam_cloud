@@ -4,8 +4,109 @@ var AssetDepreciationReportView = function () {
         $('.date-picker').datepicker({
             format: "yyyy-mm-dd",
             autoclose: true,
-            container: $(this).closet('#picker-container')
+            container: $(this).closest('#picker-container')
         });
+    };
+    
+    
+    function initInputClearComponents() {
+        initInputClearComponent("assetCategoryName", "Select a Asset Category", "AssetDepreciationReportView.assetCategoryView()");
+        initInputClearComponent("mainLocationName", "Select a Main Location", "AssetDepreciationReportView.mainLocationView()");
+//        initInputClearComponent("subLocationName", "Select a Sub Location", "AssetDepreciationReportView.subLocationView()");
+//        initInputClearComponent("subLocation2Name", "Select a Sub Location 2", "AssetDepreciationReportView.subLocation2View()");
+    };
+    
+    function initInputClearComponent(ele, placeholder, btnMethod, clearMethod) {
+        $("#"+ele).inputClear({
+            placeholder:placeholder,
+            btnMethod:btnMethod,
+            clearMethod: clearMethod
+        });
+    };
+
+    function initSelect2Components() {
+        $("#businessId").select2({
+            placeholder: "Select a Business",
+            allowClear: true
+        });
+    };
+    
+    function initModalViewCategorySelect() {
+        
+        var $modal = $('#common-modal');
+        
+        var bizId = CustomValidation.nullValueReplace($('#businessId option:selected').val());
+            
+            CustomComponents.ajaxModalLoadingProgressBar();
+            setTimeout(function () {
+                var url = '../../report/asset-depreciation/modal/view/asset-categories';
+                $modal.load(url, '', function () {
+                    AssetCategoryDataTable.init(bizId);
+                    $modal.modal();
+                });
+            }, 1000);
+        
+    };
+    
+    function initModalViewMainLocationSelect() {
+        
+        var bizId = $('#businessId option:selected').val();
+        
+        if ( bizId != null && bizId != "") {
+        
+            var func = "setMainLocation";
+            var url = "../../restapi/asset/facility-tabledata?bizId=" + bizId;
+            
+            loadAssetViewModal(func, url, "Main+Locations");
+        
+        } else {
+            alert("Please select a business!");
+        }
+    };
+    
+    function initModalViewSubLocationSelect() {
+        
+        var mainLocation = $('#mainLocationId').val();
+       
+        if ( mainLocation != null && mainLocation != "") {
+            
+            var func = "setSubLocation";
+            var url = "../../restapi/asset/sub-location?parentLocationId=" + mainLocation;
+            
+            loadAssetViewModal(func, url, "Sub+Locations");
+        } else {
+            alert("Please select a main location!");
+        }
+        
+    };
+    
+    function initModalViewSubLocation2Select() {
+        
+        var subLocation = $('#subLocationId').val();
+        
+        if ( subLocation != null && subLocation != "") {
+            var func = "setSubLocation2";
+            var url = "../../restapi/asset/sub-location?parentLocationId=" + subLocation;
+           
+            loadAssetViewModal(func, url, "Sub+Locations");       
+        } else {
+            alert("Please select a sub location!");
+        }
+
+    };
+    
+    function loadAssetViewModal(func, dUrl, title) {
+        
+        var $modal = $('#common-modal');
+        
+        CustomComponents.ajaxModalLoadingProgressBar();
+        setTimeout(function () {
+            var url = '../../report/asset-depreciation/modal/view/assets?title=' + title;
+            $modal.load(url, '', function () {
+                AssetSelectModal.init(func, dUrl);
+                $modal.modal();
+            });
+        }, 1000);
     };
 
     /*********************************************************************
@@ -70,9 +171,26 @@ var AssetDepreciationReportView = function () {
     return {
         init: function () {
             initValidator();
-            initButtons();
             initDatePickers();
+            initSelect2Components();
+            initInputClearComponents();
         },
+        
+        assetCategoryView: function () {
+            initModalViewCategorySelect();
+        },
+        
+        mainLocationView: function () {
+            initModalViewMainLocationSelect();
+        },
+        
+        subLocationView: function () {
+            initModalViewSubLocationSelect();
+        },
+        
+        subLocation2View: function () {
+            initModalViewSubLocation2Select();
+        }
 
     };
 }();

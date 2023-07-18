@@ -10,10 +10,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.codex.ecam.constants.util.PrintType;
-import com.codex.ecam.dto.report.filter.AODFilterDTO;
 import com.codex.ecam.dto.report.filter.assetdepreciation.AssetDepreciationFilterDTO;
+import com.codex.ecam.service.biz.api.BusinessService;
 import com.codex.ecam.service.report.assetdepreciation.api.AssetDepreciationReportService;
 
 
@@ -24,11 +25,14 @@ public class AssetDepreciationReportController {
 
 	private AssetDepreciationReportService assetDepreciationReportService;
 
+	private BusinessService businessService;
 
 	@Autowired
-	public AssetDepreciationReportController(AssetDepreciationReportService aodService) {
+	public AssetDepreciationReportController(AssetDepreciationReportService assetDepreciationReportService,
+			BusinessService businessService) {
 		super();
-		this.assetDepreciationReportService = aodService;
+		this.assetDepreciationReportService = assetDepreciationReportService;
+		this.businessService = businessService;
 	}
 
 
@@ -36,6 +40,17 @@ public class AssetDepreciationReportController {
 	public String index(Model model) {
 		setCommonData(model);
 		return "report/assetdepreciation/report-view";
+	}
+
+	@GetMapping(value = "/modal/view/asset-categories")
+	public String getAssetCategoryModalView(Model model) {
+		return "report/assetdepreciation/datatables/dt-asset-categories";
+	}
+
+	@GetMapping(value = "/modal/view/assets")
+	public String getAssetModalView(Model model, @RequestParam(name = "title", required = false) String title) {
+		model.addAttribute("title", title);
+		return "report/assetdepreciation/datatables/dt-assets";
 	}
 
 
@@ -50,6 +65,7 @@ public class AssetDepreciationReportController {
 	}
 
 	private void setCommonData(Model model) {
-		model.addAttribute("filterDTO", new AODFilterDTO());
+		model.addAttribute("filterDTO", new AssetDepreciationFilterDTO());
+		model.addAttribute("businesses", businessService.findAllActualBusinessByLevel());
 	}
 }

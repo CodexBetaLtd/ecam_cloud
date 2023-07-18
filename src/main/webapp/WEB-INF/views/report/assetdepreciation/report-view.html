@@ -4,9 +4,9 @@
 <head th:include="template/commoncss :: commoncss"></head>
 
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/select2.min.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.min.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.min.css}"/>
-<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.min.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/dataTables.bootstrap.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal-bs3patch.css}"/>
+<link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-modal.css}"/>
 <link type="text/css" rel="stylesheet" th:href="@{/resources/style/bootstrap-datepicker.min.css}"/>
 
 <body>
@@ -70,7 +70,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                          <div class="form-group">
-                                            <label class="control-label"> From Date </label>
+                                            <label class="control-label"> From Date <span class="symbol required"></span> </label>
                                             <div class="input-group" id="picker-container">
                                                 <input th:field="*{fromDate}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Select a From Date">
                                                 <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
@@ -79,7 +79,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="control-label"> To Date </label>
+                                            <label class="control-label"> To Date <span class="symbol required"></span> </label>
                                             <div class="input-group" id="picker-container">
                                                 <input th:field="*{toDate}" type="text" data-date-format="dd-mm-yyyy" data-date-viewmode="years" class="form-control date-picker" placeholder="Please Select a To Date">
                                                 <span class="input-group-addon"> <i class="fa fa-calendar"></i> </span>
@@ -87,6 +87,62 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                       <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Business </label>
+                                                <select th:field="*{businessId}" class="search-select" style="width: 100%;">
+                                                    <option th:each="business : ${businesses}" th:value="${business.id}" th:text="${business.name}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Asset Category </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{assetCategoryId}">
+                                                    <input type="text" th:field="*{assetCategoryName}" readonly class="form-control" placeholder="Select Asset Category" id="assetCategoryName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Department </label>
+                                                <input type="text" th:field="*{departmentName}" class="form-control" placeholder="Please specify a department" id="departmentName">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Main Location </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{mainLocationId}">
+                                                    <input type="text" th:field="*{mainLocationName}" readonly class="form-control" placeholder="Select a Main Location" id="mainLocationName">
+                                                </div>
+                                            </div>
+                                        </div>
+                           			</div>
+                                    <!-- <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Sub Location </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{subLocationId}">
+                                                    <input type="text" th:field="*{subLocationName}" readonly class="form-control" placeholder="Select a Sub Location" id="subLocationName">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label"> Sub Location 2 </label>
+                                                <div class="input-group">
+                                                    <input type="hidden" th:field="*{subLocation2Id}">
+                                                    <input type="text" th:field="*{subLocation2Name}" readonly class="form-control" placeholder="Select a Sub Location 2" id="subLocation2Name">
+                                                </div>
+                                            </div>
+                                        </div>
+                           			</div> -->
                             </div>
                         </div>
                     </div>
@@ -113,25 +169,29 @@
 <!-- end: MAIN JAVASCRIPTS -->
 
 <!-- start: JAVASCRIPTS REQUIRED FOR THIS PAGE ONLY -->
-<script type="text/javascript" th:src="@{/resources/script/libs/bootbox.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootbox.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.mockjax.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/select2.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.dataTables.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/dataTables.bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.spring-friendly.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/jquery.validate.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modal.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-modalmanager.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/moment.min.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/libs/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/libs/fileinput/fileinput.min.js}"></script>
 
-<script type="text/javascript" th:src="@{/resources/script/app/util/focus-button-util.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.min.js}"></script>
-<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.min.js}"></script>
-
-<script type="text/javascript" th:src="@{/resources/script/app/report/report-view-component.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/report/assetdepreciation/init.js}"></script>
 <script type="text/javascript" th:src="@{/resources/script/app/report/assetdepreciation/report-view.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/report/assetdepreciation/datatables/dt-asset.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/report/assetdepreciation/datatables/dt-asset-category.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/util/focus-validation-util.js}"></script>
+<script type="text/javascript" th:src="@{/resources/script/app/util/common-component-util.js}"></script>
+
+<script type="text/javascript" th:src="@{/resources/script/app/report/report-view-component.js}"></script>
 
 
 </body>

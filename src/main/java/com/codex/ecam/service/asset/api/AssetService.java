@@ -96,6 +96,8 @@ public interface AssetService {
 
 	DataTablesOutput<AssetDTO> findRepairablePartsByBusiness(FocusDataTablesInput input, Integer id) throws Exception;
 
+	DataTablesOutput<AssetDTO> findAllSubLocationByMainLocationtId(FocusDataTablesInput input, Integer mainLocationId);
+
 	String assetFileUpload(MultipartFile file,String refId) throws Exception;
 
 	void assetFileDownload(Integer id,HttpServletResponse response) throws Exception;

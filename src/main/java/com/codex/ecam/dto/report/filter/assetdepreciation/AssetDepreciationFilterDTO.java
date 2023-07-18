@@ -17,6 +17,19 @@ public class AssetDepreciationFilterDTO extends BaseReportFilterDTO {
 	private String templatePath="/assetdepreciation/";
 	private String reportName="Asset_Depreciation_Report";
 
+	private Integer businessId;
+	private Integer assetCategoryId;
+	private Integer mainLocationId;
+	private Integer subLocationId;
+	private Integer subLocation2Id;
+	private Integer departmentId;
+
+	private String assetCategoryName;
+	private String mainLocationName;
+	private String subLocationName;
+	private String subLocation2Name;
+	private String departmentName;
+
 	private Date fromDate;
 	private Date toDate;
 

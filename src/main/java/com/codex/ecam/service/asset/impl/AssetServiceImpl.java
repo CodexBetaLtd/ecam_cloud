@@ -1704,5 +1704,19 @@ public class AssetServiceImpl implements AssetService {
 		return out;
 	}
 
+	@Override
+	public DataTablesOutput<AssetDTO> findAllSubLocationByMainLocationtId(FocusDataTablesInput input, Integer mainLocationId) {
+
+		try {
+			AssetSearchPropertyMapper.getInstance().generateDataTableInput(input);
+			final DataTablesOutput<Asset> domainOut = assetDao.findAll(input, specSubLocationByMainLocation(mainLocationId));
+			return AssetMapper.getInstance().domainToDTODataTablesOutput(domainOut);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new DataTablesOutput<AssetDTO>();
+	}
+
 
 }
